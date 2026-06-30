@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fda887f0525fa9419fb3c649f813788, type: 3}
+  m_Name: YellowFish
+  m_EditorClassIdentifier: 
+  cardId: FISH_03
+  cardName: 
+  description: 
+  cardImage: {fileID: 21300000, guid: 9321d1a23909cf646ad9add640380661, type: 3}
+  imageMemo: 
+  atk: 1
+  hp: 2
+  size: 3
+  supportRole: 2
+  race1: 8
+  race2: 0
+  race3: 0
