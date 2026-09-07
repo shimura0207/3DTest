@@ -2,12 +2,28 @@
  *  @file   MainMenuPart
  *  @author oorui
  */
+using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 
-using UnityEngine;
+/// <summary>
+/// メインメニューパート
+/// </summary>
+public class MainMenuPart : PartBase {
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask Initialize() {
+        await base.Initialize();
+        // メニューの初期化
+    }
 
-/*
- *  メインメニューパート 
- */
-public class MainMenuPart : MonoBehaviour {
-
+    /// <summary>
+    /// 実行処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask Execute() {
+        // メインパートへ遷移
+       await UniTask.CompletedTask;
+    }
 }
