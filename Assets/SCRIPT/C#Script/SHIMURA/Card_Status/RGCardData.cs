@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * @file   RGCardData.h
+ * @author simura
+ */
 /// <summary>
 /// カード1枚分の基本データを管理するScriptableObject。
 /// 

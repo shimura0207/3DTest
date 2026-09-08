@@ -3,6 +3,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * @file   RGHandCardSlot.h
+ * @author simura
+ */
+
+
 /// <summary>
 /// Scene上の手札カード1枠を管理するスクリプト。
 /// HandCard1～5 に付ける。
