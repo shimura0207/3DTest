@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * @file  RGCardPlayController.h
+ * @author simura
+ */
 /// <summary>
 /// 手札カードを選択し、PlayerPanelに配置する流れを管理するスクリプト。
 /// 

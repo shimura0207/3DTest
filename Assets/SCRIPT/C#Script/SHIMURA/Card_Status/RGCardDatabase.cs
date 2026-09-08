@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+ * @file   RGCardDatabase.h
+ * @author simura
+ */
 /// <summary>
 /// RGカードをまとめて管理するデータベース。
 /// 

@@ -1,6 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+
+/*
+ * @file  RGDeckController.h
+ * @author simura
+ */
+
 /// <summary>
 /// RGカードゲームのデッキと手札を管理するスクリプト。
 /// 
