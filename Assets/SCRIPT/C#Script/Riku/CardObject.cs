@@ -7,6 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// カードオブジェクトクラス
+/// </summary>
 public class CardObject : MonoBehaviour {
     // 使用中かどうか
     private bool isActive;
@@ -36,7 +39,7 @@ public class CardObject : MonoBehaviour {
 
     }
 
-    void MoveHand() {
+    public void Initialize() {
 
     }
 }
