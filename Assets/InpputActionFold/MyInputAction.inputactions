@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "name": "MyInputAction",
+    "maps": [
+        {
+            "name": "MenuInput",
+            "id": "2d714ce4-3b0a-496f-9d42-841a0590ddc1",
+            "actions": [
+                {
+                    "name": "Menu",
+                    "type": "Button",
+                    "id": "ddc18783-a423-4c2a-82c5-fab1c597d3da",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PATISURO",
+                    "type": "Button",
+                    "id": "a3c2d6c0-dce3-4660-a2b0-f38344db1703",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "bcd91f24-4c0c-43d8-b7a3-d504cc249ce2",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "947b5ce2-54b8-4d84-a68a-bcdd721dc9dd",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PATISURO",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
