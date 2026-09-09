@@ -12,7 +12,7 @@ public enum eGamePart {
     Title,          // タイトル
     MainMenu,       // メニュー
     MainGame,       // メインゲーム
-    EndGame,         // エンディング
+    EndGame,        // エンディング
     Max,
 
 }

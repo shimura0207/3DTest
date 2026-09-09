@@ -9,6 +9,9 @@ using Unity.VisualScripting;
 /// メインメニューパート
 /// </summary>
 public class MainMenuPart : PartBase {
+
+    private const string MENUWINDOW_MATCHMAKINGMENU = "Part/MenuWindow/MatchMakingMenu";
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -16,6 +19,8 @@ public class MainMenuPart : PartBase {
     public override async UniTask Initialize() {
         await base.Initialize();
         // メニューの初期化
+        //await MenuWindowManager.instance.Get<MatchmakingMenu>(MENUWINDOW_MATCHMAKINGMENU).Initialize();   // マッチング画面
+        
     }
 
     /// <summary>

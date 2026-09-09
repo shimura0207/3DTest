@@ -11,7 +11,7 @@ using UnityEngine;
 /// </summary>
 public class PartManager : SystemObject {
     /// <summary>
-    /// 自身への酸素湯
+    /// 自身への参照
     /// </summary>
     public static PartManager Instance { get; private set; } = null;
 
