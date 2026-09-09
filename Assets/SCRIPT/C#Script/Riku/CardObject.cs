@@ -9,6 +9,8 @@ using UnityEngine;
 
 public class CardObject : MonoBehaviour 
 {
+    // 使用中かどうか
+    private bool isUse;
     // カードのID
     private int cardID;
 
