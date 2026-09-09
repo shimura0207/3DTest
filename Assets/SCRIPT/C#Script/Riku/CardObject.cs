@@ -7,10 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CardObject : MonoBehaviour 
-{
+public class CardObject : MonoBehaviour {
     // 使用中かどうか
-    private bool isUse;
+    private bool isActive;
     // カードのID
     private int cardID;
 
@@ -25,17 +24,19 @@ public class CardObject : MonoBehaviour
     private CardStates defaultStates;
     // 現在のステータス
     private CardStates currentStates;
-    
+
 
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    void Start() {
+
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+
+    }
+
+    void MoveHand() {
+
     }
 }
