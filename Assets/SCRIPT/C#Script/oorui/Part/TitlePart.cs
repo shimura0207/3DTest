@@ -5,6 +5,7 @@
 
 using Cysharp.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEngine;
 
 /// <summary>
 /// タイトルパート
@@ -25,7 +26,8 @@ public class TitlePart : PartBase {
     /// <returns></returns>
     public override async UniTask Execute() {
         // メインパートへ遷移
-        UniTask task = PartManager.Instance.TransitionPart(eGamePart.MainGame);
+        Debug.Log("TitlePart通過");
+        UniTask task = PartManager.Instance.TransitionPart(eGamePart.MainMenu);
         await UniTask.CompletedTask;
     }
 }

@@ -10,7 +10,7 @@ using Unity.VisualScripting;
 /// </summary>
 public class MainMenuPart : PartBase {
 
-    private const string MENUWINDOW_MATCHMAKINGMENU = "Part/MenuWindow/MatchMakingMenu";
+    private const string _MENUWINDOW_MATCHMAKINGMENU = "Prefab/Part/MenuWindow/MatchMakingMenu";
 
     /// <summary>
     /// 初期化処理
@@ -19,7 +19,7 @@ public class MainMenuPart : PartBase {
     public override async UniTask Initialize() {
         await base.Initialize();
         // メニューの初期化
-        //await MenuWindowManager.instance.Get<MatchmakingMenu>(MENUWINDOW_MATCHMAKINGMENU).Initialize();   // マッチング画面
+        await MenuWindowManager.instance.Get<MatchmakingMenu>(_MENUWINDOW_MATCHMAKINGMENU).Initialize();   // マッチング画面
         
     }
 
