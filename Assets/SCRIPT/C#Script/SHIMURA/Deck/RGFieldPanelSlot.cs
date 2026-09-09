@@ -1,6 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * @file   RGFieldPanelSlot.h
+ * @author simura
+ */
+
+
 /// <summary>
 /// フィールド上のPlayerPanel1～5を管理するスクリプト。
 /// 
