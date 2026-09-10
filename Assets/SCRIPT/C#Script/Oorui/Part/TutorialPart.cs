@@ -1,23 +1,21 @@
 /*
- *  @file   MainGamePart
+ *  @file   TutorialPart.cs
  *  @author oorui
  */
 
 using Cysharp.Threading.Tasks;
-using Unity.VisualScripting;
 
-/// <summary>
-/// メインゲームパート
-/// ※対戦
-/// </summary>
-public class MainGamePart : PartBase {
+public class TutorialPart : PartBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-    } 
+        // メニューの初期化
+
+
+    }
 
     /// <summary>
     /// 開始前準備処理
@@ -28,7 +26,7 @@ public class MainGamePart : PartBase {
     }
 
     /// <summary>
-    /// ゲーム中処理
+    /// 実行中処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
@@ -36,11 +34,12 @@ public class MainGamePart : PartBase {
     }
 
     /// <summary>
-    /// 終了時の片付け実行処理
+    /// 片付け処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Teardown() {
-        await base.Teardown();
+        // メインメニュー画面に遷移
+        UniTask task = PartManager.Instance.TransitionPart(eGamePart.MainMenu);
         await UniTask.CompletedTask;
     }
 }
