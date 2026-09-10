@@ -12,18 +12,25 @@ using Unity.VisualScripting;
 public class MainMenuPart : PartBase {
 
     // マッチング画面の階層パス
-    private const string _MENUWINDOW_MATCHMAKINGMENU =
-        "Prefab/Part/MenuWindow/MatchingMenu";
-
+    private const string _MENUWINDOW_MATCHMAKINGMENU = "Prefab/Part/MenuWindow/MatchingMenu";
     // オプション画面の階層パス
-    private const string _MENUWINDOW_OPTIONMENU =
-        "Prefab/Part/MenuWindow/OptionMenu";
+    private const string _MENUWINDOW_OPTIONMENU = "Prefab/Part/MenuWindow/OptionMenu";
+    // ガチャ画面の階層パス
+    private const string _MENUWINDOW_GATHAMENU = "Prefab/Part/MenuWindow/GachaMenu";
+    // カード関連画面の階層パス
+    private const string _MENUWINDOW_CARTMENU = "Prefab/Part/MenuWindow/CardMenu";
 
     // マッチングメニュー
     private MatchmakingMenu matchmakingMenu;
 
     // オプションメニュー
     private OptionMenu optionMenu;
+
+    // ガチャメニュー
+    private GathaMenu gachaMenu;
+
+    // カード関連メニュー
+    private CardListMenu cardListMenu;
 
     // 選択された遷移先
     private eMainMenuSelect selectMenu = eMainMenuSelect.None;
@@ -37,12 +44,15 @@ public class MainMenuPart : PartBase {
 
         // 各メニューを取得する
         matchmakingMenu = MenuWindowManager.instance.Get<MatchmakingMenu>(_MENUWINDOW_MATCHMAKINGMENU);
-
         optionMenu = MenuWindowManager.instance.Get<OptionMenu>(_MENUWINDOW_OPTIONMENU);
+        gachaMenu = MenuWindowManager.instance.Get<GathaMenu>(_MENUWINDOW_GATHAMENU);
+        cardListMenu = MenuWindowManager.instance.Get<CardListMenu>(_MENUWINDOW_CARTMENU);
 
         // 各メニューを初期化する
         await matchmakingMenu.Initialize();
         await optionMenu.Initialize();
+        await gachaMenu.Initialize();
+        await cardListMenu.Initialize();
 
         // 各メニューの選択イベントを登録する
         RegisterMenuEvent();
@@ -58,6 +68,12 @@ public class MainMenuPart : PartBase {
 
         // オプションメニューが選択された時の処理を登録する
         optionMenu.OnSelected += OnOptionSelected;
+
+        // ガチャメニューが選択された時の処理を登録する
+        gachaMenu.OnSelected += OnGachaSelected;
+
+        // カード関連メニューが選択された時の処理を登録する
+        cardListMenu.OnSelected += OnCartListSelected;
     }
 
     /// <summary>
@@ -75,6 +91,12 @@ public class MainMenuPart : PartBase {
 
         // オプションメニューを表示する
         await optionMenu.Open();
+
+        // ガチャメニューを表示する
+        await gachaMenu.Open();
+
+        // カード関連メニューを表示する
+        await cardListMenu.Open();
 
         // どれかのメニューが選択されるまで待機する
         while (selectMenu == eMainMenuSelect.None) {
@@ -109,6 +131,24 @@ public class MainMenuPart : PartBase {
     }
 
     /// <summary>
+    /// ガチャメニューが選択された時の処理
+    /// </summary>
+    /// <param name="menu"></param>
+    private void OnGachaSelected(MenuWindowBase menu) {
+        // 遷移先オプションに設定する
+        selectMenu = eMainMenuSelect.Gacha;
+    }
+
+    /// <summary>
+    /// カード関連メニューが選択された時の処理
+    /// </summary>
+    /// <param name="menu"></param>
+    private void OnCartListSelected(MenuWindowBase menu) {
+        // 遷移先オプションに設定する
+        selectMenu = eMainMenuSelect.CardList;
+    }
+
+    /// <summary>
     /// すべてのメニューを閉じる
     /// </summary>
     /// <returns></returns>
@@ -119,6 +159,12 @@ public class MainMenuPart : PartBase {
 
         // オプションメニューを閉じる
         await optionMenu.Close();
+
+        // ガチャメニューを閉じる
+        await gachaMenu.Close();
+
+        // カード関連メニューを閉じる
+        await cardListMenu.Close();
     }
 
     /// <summary>
@@ -133,32 +179,28 @@ public class MainMenuPart : PartBase {
             case eMainMenuSelect.Matchmaking:
 
                 // マッチングパートへ遷移する
-                await PartManager.Instance
-                    .TransitionPart(eGamePart.Matchmaking);
+                await PartManager.Instance.TransitionPart(eGamePart.Matchmaking);
 
                 break;
 
             case eMainMenuSelect.Option:
 
                 // オプションパートへ遷移する
-                await PartManager.Instance
-                    .TransitionPart(eGamePart.Option);
+                await PartManager.Instance.TransitionPart(eGamePart.Option);
 
                 break;
 
             case eMainMenuSelect.CardList:
 
                 // カード一覧パートへ遷移する
-                await PartManager.Instance
-                    .TransitionPart(eGamePart.CardList);
+                await PartManager.Instance.TransitionPart(eGamePart.CardList);
 
                 break;
 
             case eMainMenuSelect.Gacha:
 
                 // ガチャパートへ遷移する
-                await PartManager.Instance
-                    .TransitionPart(eGamePart.Gacha);
+                await PartManager.Instance.TransitionPart(eGamePart.Gacha);
 
                 break;
         }

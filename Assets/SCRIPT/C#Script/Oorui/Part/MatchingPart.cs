@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -16,7 +17,11 @@ public class MatchingPart : PartBase {
     public bool isReturnPart = false;       // 一つ前のシーンに戻る
     public bool isMatchingClick = false;    // マッチングボタンを押したかどうか
 
-   
+    // Inspectorから戻るボタンを設定する
+    [SerializeField] private Button returnButton;
+
+    // Inspectorからマッチングボタンを設定する
+    [SerializeField] private Button matchingButton;
 
     /// <summary>
     /// 初期化処理
@@ -24,7 +29,11 @@ public class MatchingPart : PartBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-        await UniTask.CompletedTask;
+        // 戻るボタンが押された時の処理を登録する
+        returnButton.onClick.AddListener(OnClickReturnButton);
+
+        // マッチングボタンが押された時の処理を登録する
+        matchingButton.onClick.AddListener(OnClickMatchingButton);
     }
 
     public override async UniTask SetUp() {
@@ -41,6 +50,8 @@ public class MatchingPart : PartBase {
     /// <returns></returns>
     public override async UniTask Execute() {
 
+        // 戻るボタンまたはマッチングボタンが押されるまで待機する
+        await UniTask.WaitUntil(() => isReturnPart || isMatchingClick);
 
 
         // ←が押されたらひとつ前のパートに戻る
@@ -48,6 +59,7 @@ public class MatchingPart : PartBase {
             // メインメニューパートに戻る
             Debug.Log("メインメニューに戻りました。");
             await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+            return;
         }
 
         // マッチングボタンが押されたらマッチング
@@ -61,5 +73,23 @@ public class MatchingPart : PartBase {
         }
 
 
+    }
+
+
+    /// <summary>
+    /// 戻るボタンが押された時の処理
+    /// </summary>
+    private void OnClickReturnButton() {
+        // 一つ前のパートへ戻るフラグをONにする
+        isReturnPart = true;
+    }
+
+
+    /// <summary>
+    /// マッチングボタンが押された時の処理
+    /// </summary>
+    private void OnClickMatchingButton() {
+        // マッチング開始フラグをONにする
+        isMatchingClick = true;
     }
 }

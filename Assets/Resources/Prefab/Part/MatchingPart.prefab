@@ -168,6 +168,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isReturnPart: 0
   isMatchingClick: 0
+  returnButton: {fileID: 4337245523347820760}
+  matchingButton: {fileID: 5520655117973233401}
 --- !u!1 &1365946514597646070
 GameObject:
   m_ObjectHideFlags: 0
@@ -739,4 +741,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 446817942682552724}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 576485320499167648}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 0

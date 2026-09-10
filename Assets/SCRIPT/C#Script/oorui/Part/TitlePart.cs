@@ -26,6 +26,7 @@ public class TitlePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
+        // 基底側の処理を呼ぶ
         await base.Initialize();
         // タイトルメニューを取得する
         title = MenuWindowManager.instance.Get<TitleMenu>(_MENUWINDOW_TITLE);
@@ -36,7 +37,12 @@ public class TitlePart : PartBase {
         RegisterMenuEvent();
     }
     
+    /// <summary>
+    /// 使用前準備処理
+    /// </summary>
+    /// <returns></returns>
     public override async UniTask SetUp() {
+        // 基底側の処理を呼ぶ
         await base.SetUp();
         await UniTask.CompletedTask;
     }
