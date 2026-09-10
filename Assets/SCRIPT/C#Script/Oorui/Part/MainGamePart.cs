@@ -24,6 +24,7 @@ public class MainGamePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SetUp() {
+        await base.SetUp();
         await UniTask.CompletedTask;
     }
 

@@ -11,10 +11,26 @@ public enum eGamePart {
     Standby,        // 待機
     Title,          // タイトル
     MainMenu,       // メニュー
+    Matchmaking,    // マッチング画面
+    Option,         // 設定画面
+    CardList,       // カード画面
+    Gacha,          // ガチャ画面
     MainGame,       // メインゲーム
     EndGame,        // エンディング
     Max,
 
+}
+
+/// <summary>
+/// メインメニューから選択する遷移先
+/// </summary>
+public enum eMainMenuSelect {
+    None,           // 未選択
+    Matchmaking,    // マッチング
+    Option,         // 設定
+    CardList,       // カード一覧
+    Gacha,          // ガチャ
+    Title           // タイトル
 }
 
 /// <summary>

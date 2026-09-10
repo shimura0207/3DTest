@@ -188,8 +188,8 @@ GameObject:
   - component: {fileID: 9208964757086812083}
   - component: {fileID: 8117474771617788024}
   - component: {fileID: 8262289304002416657}
-  - component: {fileID: 6536987045673926249}
   - component: {fileID: 3431585167435502453}
+  - component: {fileID: 3520876018974468203}
   m_Layer: 0
   m_Name: ClickTitle
   m_TagString: Untagged
@@ -254,19 +254,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6536987045673926249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5723820038668622812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78f1feba69a5a2f45a53d4eecf1f0bde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  click: {fileID: 175193279136068980, guid: fe62727d12a2dcb488c6686075cbc003, type: 3}
 --- !u!114 &3431585167435502453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280,6 +267,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ControlPath: <Mouse>/leftButton
+--- !u!114 &3520876018974468203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5723820038668622812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 149598409080eac418851fa356c07c67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectAction: {fileID: 175193279136068980, guid: fe62727d12a2dcb488c6686075cbc003, type: 3}
 --- !u!1 &8559985256627761558
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,4 +397,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuRoot: {fileID: 8559985256627761558}
-  isCloseMenu: 0

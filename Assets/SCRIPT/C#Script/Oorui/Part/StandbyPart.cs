@@ -11,11 +11,13 @@ using UnityEngine;
 /// </summary>
 public class StandbyPart : PartBase {
     public override async UniTask Execute() {
+
         // マスターデータの読み込み
 
-        // タイトルパートへ遷移
+        // デバッグログを表示する
         Debug.Log("StandbyPart通過");
-        UniTask task = PartManager.Instance.TransitionPart(eGamePart.Title);
-        await UniTask.CompletedTask;
+
+        // タイトルパートへ遷移し、遷移処理が完了するまで待機する
+        await PartManager.Instance.TransitionPart(eGamePart.Title);
     }
 }
