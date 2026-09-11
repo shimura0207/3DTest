@@ -58,3 +58,17 @@ public enum RGCardRace {
     Spell,
     Genesis
 }
+
+/// <summary>
+/// 自分か対戦相手か
+/// @author Riku
+/// </summary>
+public enum PlayerType {
+    None,
+
+    // 自分
+    Self,
+    // 相手
+    Opponent,
+
+}
