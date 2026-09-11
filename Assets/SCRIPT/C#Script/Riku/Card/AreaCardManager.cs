@@ -15,15 +15,22 @@ public class AreaCardManager : MonoBehaviour {
     public static AreaCardManager instance { get; private set; } = null;
 
     // 各エリアのリストにカードIDを積んで管理
-    // 山札
-    private List<int> deckCard = null;
-    // 手札
-    private List<int> handCard = null;
-    // フィールド
-    private List<int> fieldCard = null;
-    // 墓地
-    private List<int> graveCard = null;
-
+    // 山札(相手側の山札は管理しなくていいので個別)
+    private List<int> deckCards = null;
+    // 山札外のカード
+    struct OutDeckCard { 
+        // 手札
+        public List<int> handCards;
+        // フィールド
+        public List<int> fieldCards;
+        // 墓地
+        public List<int> graveCards;
+    }
+    // 自分の山札外カード
+    private OutDeckCard selfOutDeckCards = new OutDeckCard();
+    // 相手の山札外カード
+    private OutDeckCard opponentOutDeckCards = new OutDeckCard();
+    
     // Start is called before the first frame update
     void Start() {
         instance = this;
@@ -39,7 +46,7 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="setDeck"></param>
     public void SetDeck(List<int> setDeck) {
-        deckCard = setDeck;
+        deckCards = setDeck;
     }
 
     /// <summary>
@@ -49,9 +56,9 @@ public class AreaCardManager : MonoBehaviour {
     public void DrawCard(int drawCount) {
         for (int i = 0; i < drawCount; i++) {
             // 山札の一番上のカードを手札に追加
-            handCard.Add(deckCard[0]);
+            handCard.Add(deckCards[0]);
             // 山札の一番上のカードを削除
-            deckCard.RemoveAt(0);
+            deckCards.RemoveAt(0);
         }
     }
 
