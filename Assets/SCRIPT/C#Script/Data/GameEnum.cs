@@ -17,6 +17,7 @@ public enum eGamePart {
     Gacha,          // ガチャ画面
     MainGame,       // メインゲーム
     EndGame,        // エンディング
+    Tutorial,       // チュートリアル
     Max,
 
 }
@@ -30,7 +31,8 @@ public enum eMainMenuSelect {
     Option,         // 設定
     CardList,       // カード一覧
     Gacha,          // ガチャ
-    Title           // タイトル
+    Title,          // タイトル
+    EndGame         // リザルト
 }
 
 /// <summary>
