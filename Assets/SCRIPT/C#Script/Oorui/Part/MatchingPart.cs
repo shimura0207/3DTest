@@ -66,10 +66,11 @@ public class MatchingPart : PartBase {
         if (isMatchingClick) {
             // マッチング開始
 
+
+            
             // マッチしたらメインゲームパートに遷移
             Debug.Log("マッチングしました");
-            UniTask task = PartManager.Instance.TransitionPart(eGamePart.MainGame);
-            await UniTask.CompletedTask;
+            await PartManager.Instance.TransitionPart(eGamePart.MainGame);
         }
 
 

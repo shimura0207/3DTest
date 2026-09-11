@@ -5,6 +5,7 @@
 
 using Cysharp.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEngine;
 
 /// <summary>
 /// メインゲームパート
@@ -17,7 +18,7 @@ public class MainGamePart : PartBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-    } 
+    }
 
     /// <summary>
     /// 開始前準備処理
@@ -33,7 +34,12 @@ public class MainGamePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        await UniTask.CompletedTask;
+
+
+
+        // 勝敗が決まったらリザルトパートに遷移
+        Debug.Log("試合終了");
+        await PartManager.Instance.TransitionPart(eGamePart.EndGame);
     }
 
     /// <summary>
