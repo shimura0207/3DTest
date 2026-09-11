@@ -98,7 +98,6 @@ public class CardObjectManager : MonoBehaviour {
         // 未使用親オブジェクトへ親を変更
         unuseObject.transform.SetParent(unuseObjectRoot);
     }
-
     /// <summary>
     /// 未使用状態のカードオブジェクト取得
     /// </summary>
