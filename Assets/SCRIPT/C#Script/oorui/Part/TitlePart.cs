@@ -4,40 +4,90 @@
  */
 
 using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
-using UnityEngine;
 
 /// <summary>
 /// タイトルパート
 /// </summary>
 public class TitlePart : PartBase {
 
+    // タイトル画面の階層パス
     private const string _MENUWINDOW_TITLE = "Prefab/Part/MenuWindow/TitleMenu";
 
+    // タイトルメニュー
+    private TitleMenu title;
 
+    // 選択された遷移先
+    private eMainMenuSelect selectMenu = eMainMenuSelect.Title;
+    
     /// <summary>
     /// 初期化処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
+        // 基底側の処理を呼ぶ
         await base.Initialize();
-        // メニューの初期化
-        await MenuWindowManager.instance.Get<TitleMenu>(_MENUWINDOW_TITLE).Initialize();
+        // タイトルメニューを取得する
+        title = MenuWindowManager.instance.Get<TitleMenu>(_MENUWINDOW_TITLE);
+        // タイトルメニューを初期化する
+        await title.Initialize();
+
+        // タイトルメニューの選択イベントを登録する
+        RegisterMenuEvent();
     }
     
+    /// <summary>
+    /// 使用前準備処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask SetUp() {
+        // 基底側の処理を呼ぶ
+        await base.SetUp();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// メニューイベントを登録する
+    /// </summary>
+    private void RegisterMenuEvent() {
+        // タイトルメニューが選択された時の処理を登録
+        title.OnSelected += OnTitleSelected;
+    }
+
+    /// <summary>
+    /// マッチングメニューが選択された時の処理
+    /// </summary>
+    private void OnTitleSelected(MenuWindowBase menu) {
+
+        // 遷移先をタイトルに設定する
+        selectMenu = eMainMenuSelect.Title;
+    }
+
     /// <summary>
     /// 実行処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        // BGM再生
+        // BGMを再生
 
-        // タイトルメニューウィンドウ表示
-        await MenuWindowManager.instance.Get<TitleMenu>().Open();
+        // 選択状態を初期化
+        selectMenu = eMainMenuSelect.None;
 
-        // メインパートへ遷移
-        Debug.Log("TitlePart通過");
-        UniTask task = PartManager.Instance.TransitionPart(eGamePart.MainMenu);
-        await UniTask.CompletedTask;
+        // タイトルメニューを表示
+        await title.Open();
+
+        // メニューが選択されるまで待機する
+        while(selectMenu == eMainMenuSelect.None) {
+            // 次のフレームまで待機する
+            await UniTask.DelayFrame(1);
+        }
+        // タイトルメニューを閉じる
+        await title.Close();
+
+        // メインメニュー画面に遷移
+        await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
     }
+
+
 }

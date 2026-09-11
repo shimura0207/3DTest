@@ -5,18 +5,21 @@
 
 using Cysharp.Threading.Tasks;
 using System.Collections;
+using System;
 using UnityEngine;
 
 /// <summary>
 /// マッチング画面を開くメニューウィンドウ
 /// </summary>
 public class MatchmakingMenu : MenuWindowBase {
+
     /// <summary>
     /// 初期化処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -24,13 +27,9 @@ public class MatchmakingMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Open() {
+        // 基底側でメニューウィンドウを表示
         await base.Open();
-
-
-
-        // 処理が終わったあとに↓
-        // メニューウィンドウを閉じる
-        await Close();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -38,9 +37,9 @@ public class MatchmakingMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Close() {
+        // 基底側でメニューを非表示にする
         await base.Close();
-
-
         await UniTask.CompletedTask;
     }
+
 }

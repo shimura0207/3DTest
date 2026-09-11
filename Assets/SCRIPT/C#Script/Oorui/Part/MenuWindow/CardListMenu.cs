@@ -1,5 +1,5 @@
 /*
- * @file    OptionMenu
+ * @file    CartListMenu
  * @author  oorui
  */
 
@@ -8,10 +8,7 @@ using System.Collections;
 using System;
 using UnityEngine;
 
-/// <summary>
-/// オプション画面を開くメニューウィンドウ
-/// </summary>
-public class OptionMenu : MenuWindowBase {
+public class CardListMenu : MenuWindowBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -30,7 +27,6 @@ public class OptionMenu : MenuWindowBase {
         await base.Open();
         await UniTask.CompletedTask;
     }
-
 
     /// <summary>
     /// ウィンドウ非表示時の処理

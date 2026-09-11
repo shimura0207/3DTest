@@ -1,5 +1,5 @@
 /*
- * @file    OptionMenu
+ * @file    GathaMenu
  * @author  oorui
  */
 
@@ -7,11 +7,12 @@ using Cysharp.Threading.Tasks;
 using System.Collections;
 using System;
 using UnityEngine;
+using System.Threading.Tasks;
 
 /// <summary>
-/// オプション画面を開くメニューウィンドウ
+/// ガチャメニューウィンドウ
 /// </summary>
-public class OptionMenu : MenuWindowBase {
+public class GathaMenu : MenuWindowBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -26,11 +27,10 @@ public class OptionMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Open() {
-        // 基底側でメニューウィンドウを表示
+        //  基底側でメニューウィンドウを表示
         await base.Open();
         await UniTask.CompletedTask;
     }
-
 
     /// <summary>
     /// ウィンドウ非表示時の処理

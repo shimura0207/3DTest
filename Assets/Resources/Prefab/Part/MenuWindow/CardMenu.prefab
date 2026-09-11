@@ -114,9 +114,9 @@ GameObject:
   - component: {fileID: 8501173100274167494}
   - component: {fileID: 1082701301887832521}
   - component: {fileID: 2657597850288894446}
-  - component: {fileID: 606032287942773561}
+  - component: {fileID: 8395704137463790097}
   m_Layer: 0
-  m_Name: OptionMenu
+  m_Name: CardMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &606032287942773561
+--- !u!114 &8395704137463790097
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -214,7 +214,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4352518556542855508}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82951f6f3fbe1854eb79f9596c25c4e2, type: 3}
+  m_Script: {fileID: 11500000, guid: 8aac4bf3a6d219f4fa476d107d563699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   menuRoot: {fileID: 4352518556542855508}
@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 5504309852239253411}
   - component: {fileID: 8189739283726489316}
   m_Layer: 0
-  m_Name: OptionMenuClick
+  m_Name: CardMenuClick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -254,7 +254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 625, y: -300}
+  m_AnchoredPosition: {x: 105, y: -596}
   m_SizeDelta: {x: 500, y: 270}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &61737447905733088
@@ -307,7 +307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149598409080eac418851fa356c07c67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectAction: {fileID: 175193279136068980, guid: fe62727d12a2dcb488c6686075cbc003, type: 3}
 --- !u!114 &8189739283726489316
 MonoBehaviour:
   m_ObjectHideFlags: 0
