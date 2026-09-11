@@ -67,7 +67,7 @@ public class MatchingPart : PartBase {
             // マッチング開始
 
 
-            
+
             // マッチしたらメインゲームパートに遷移
             Debug.Log("マッチングしました");
             await PartManager.Instance.TransitionPart(eGamePart.MainGame);
@@ -92,5 +92,21 @@ public class MatchingPart : PartBase {
     private void OnClickMatchingButton() {
         // マッチング開始フラグをONにする
         isMatchingClick = true;
+    }
+
+
+    /// <summary>
+    /// 片付けそりー
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask Teardown() {
+        // フラグを初期化
+        // ボタンイベントを解除して重複登録を防ぐ
+        returnButton.onClick.RemoveListener(OnClickReturnButton);
+        matchingButton.onClick.RemoveListener(OnClickMatchingButton);
+        // フラグを初期化する
+        isMatchingClick = false;
+        isReturnPart = false;
+        await base.Teardown();
     }
 }

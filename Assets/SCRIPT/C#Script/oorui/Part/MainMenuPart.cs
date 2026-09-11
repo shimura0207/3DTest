@@ -77,6 +77,20 @@ public class MainMenuPart : PartBase {
     }
 
     /// <summary>
+    /// メニューイベントを登録する
+    /// </summary>
+    private void OnRegisterMenuEvent() {
+        // マッチングメニューの選択イベントを解除する
+        matchmakingMenu.OnSelected -= OnMatchmakingSelected; 
+        // オプションメニューの選択イベントを解除する
+        optionMenu.OnSelected -= OnOptionSelected; 
+        // ガチャメニューの選択イベントを解除する
+        gachaMenu.OnSelected -= OnGachaSelected; 
+        // カード関連メニューの選択イベントを解除する
+        cardListMenu.OnSelected -= OnCartListSelected;
+    }
+
+    /// <summary>
     /// 実行処理
     /// </summary>
     /// <returns></returns>
@@ -204,5 +218,16 @@ public class MainMenuPart : PartBase {
 
                 break;
         }
+    }
+
+    /// <summary>
+    /// 片付け処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask Teardown() {
+        // 選択状態を初期化する
+        selectMenu = eMainMenuSelect.None;
+        // 登録したイベントを解除
+        OnRegisterMenuEvent();
     }
 }

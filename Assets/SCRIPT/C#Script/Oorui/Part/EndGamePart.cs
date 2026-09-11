@@ -77,6 +77,6 @@ public class EndGamePart : PartBase {
         await endGame.Close();
 
         // メインメニュー画面に遷移
-        await PartManager.Instance.TransitionPart(eGamePart.MainGame);
+        await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
     }
 }
