@@ -41,4 +41,18 @@ public class BattleSystemManager : MonoBehaviour {
         // 現在のターンプレイヤーを先攻プレイヤーに
         turnPlayer = firstPlayer;
     }
+    
+    /// <summary>
+    /// ターンプレイヤーを交代する
+    /// </summary>
+    public void ChangeTurnPlayer() {
+        switch (turnPlayer) {
+            case PlayerType.Self:
+                turnPlayer = PlayerType.Opponent;
+                break;
+            case PlayerType.Opponent:
+                turnPlayer = PlayerType.Self;
+                break;
+        }
+    }
 }

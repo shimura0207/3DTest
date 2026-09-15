@@ -65,7 +65,7 @@ public enum RGCardRace {
 /// @author Riku
 /// </summary>
 public enum PlayerType {
-    None,
+    None = -1,
 
     // 自分
     Self,
