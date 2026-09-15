@@ -25,7 +25,7 @@ public class OptionPart : PartBase {
         await UniTask.CompletedTask;
     }
 
-    public override async UniTask SetUp() {
+    public override async UniTask Setup() {
         Debug.Log("設定画面表示中");
         // フラグを初期化する
         isreturnPart = false;

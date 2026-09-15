@@ -36,9 +36,9 @@ public class EndGamePart : PartBase {
     /// 使用前準備
     /// </summary>
     /// <returns></returns>
-    public override async UniTask SetUp() {
+    public override async UniTask Setup() {
         // 基底側の処理を呼ぶ
-        await base.SetUp();
+        await base.Setup();
     }
 
     /// <summary>

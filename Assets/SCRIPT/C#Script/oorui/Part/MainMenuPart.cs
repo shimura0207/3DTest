@@ -60,8 +60,8 @@ public class MainMenuPart : PartBase {
     /// 使用前準備処理
     /// </summary>
     /// <returns></returns>
-    public override async UniTask SetUp() {
-        await base.SetUp();
+    public override async UniTask Setup() {
+        await base.Setup();
 
         // 選択状態を初期化する
         selectMenu = eMainMenuSelect.None;
@@ -90,7 +90,7 @@ public class MainMenuPart : PartBase {
     }
 
     /// <summary>
-    /// メニューイベントを登録する
+    /// メニューイベントを解除する
     /// </summary>
     private void UnRegisterMenuEvent() {
         // マッチングメニューの選択イベントを解除する

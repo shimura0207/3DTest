@@ -31,8 +31,8 @@ public class MatchingPart : PartBase {
         await base.Initialize();
     }
 
-    public override async UniTask SetUp() {
-        await base.SetUp();
+    public override async UniTask Setup() {
+        await base.Setup();
         Debug.Log("マッチング画面表示中");
         // 戻るボタンが押された時の処理を登録する
         returnButton.onClick.AddListener(OnClickReturnButton);

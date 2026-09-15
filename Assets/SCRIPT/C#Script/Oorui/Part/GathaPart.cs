@@ -27,8 +27,8 @@ public class GathaPart : PartBase {
     /// 使用前準備
     /// </summary>
     /// <returns></returns>
-    public override async UniTask SetUp() {
-        await base.SetUp();
+    public override async UniTask Setup() {
+        await base.Setup();
         Debug.Log("ガチャ画面表示中");
         isreturnPart = false;
     }
