@@ -11,15 +11,14 @@ using UnityEngine;
 /// 各フェイズの基底クラス
 /// </summary>
 public class PhaseBase {
-    // 次のターンへ行くかどうか
-    private bool nextPhase = false;
+    // 次のフェイズへ行くかどうか
+    protected bool nextPhase = false;
 
     /// <summary>
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
     public virtual bool SelfExecute() {
-
         return nextPhase;
     }
 
@@ -28,7 +27,6 @@ public class PhaseBase {
     /// </summary>
     /// <returns></returns>
     public virtual bool OpponentExecute() {
-
         return nextPhase;
     }
 

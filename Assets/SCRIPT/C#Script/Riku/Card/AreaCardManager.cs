@@ -7,6 +7,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using static CommonModule;
+
 /// <summary>
 /// 各エリアのカード管理クラス
 /// </summary>
@@ -51,6 +53,8 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="drawCount">ドロー枚数</param>
     public void DrawCard(int drawCount) {
+        if (IsEmpty(deckCards)) return;
+
         for (int i = 0; i < drawCount; i++) {
             // 山札の一番上のカードを自分の手札に追加
             outDeckCards[PlayerType.Self].handCards.Add(deckCards[0]);
