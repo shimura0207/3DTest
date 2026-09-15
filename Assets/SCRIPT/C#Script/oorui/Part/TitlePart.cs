@@ -41,9 +41,9 @@ public class TitlePart : PartBase {
     /// 使用前準備処理
     /// </summary>
     /// <returns></returns>
-    public override async UniTask SetUp() {
+    public override async UniTask Setup() {
         // 基底側の処理を呼ぶ
-        await base.SetUp();
+        await base.Setup();
         await UniTask.CompletedTask;
     }
 

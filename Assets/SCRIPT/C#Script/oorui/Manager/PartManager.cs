@@ -65,7 +65,7 @@ public class PartManager : SystemObject {
         if (_currentPart != null) await _currentPart.Teardown();
         // パートの切り替え
         _currentPart = _partList[(int)nextPart];
-        await _currentPart.SetUp();
+        await _currentPart.Setup();
 
         // 次のパートの実行
         await _currentPart.Execute();

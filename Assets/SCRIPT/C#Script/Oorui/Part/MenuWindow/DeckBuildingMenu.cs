@@ -9,9 +9,10 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// 所持カード一覧メニュー
+/// デッキ編成メニュー
 /// </summary>
-public class CardListMenu : MenuWindowBase {
+public class DeckBuildingMenu : MenuWindowBase {
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -31,12 +32,8 @@ public class CardListMenu : MenuWindowBase {
         await UniTask.CompletedTask;
     }
 
-    /// <summary>
-    /// ウィンドウ非表示時の処理
-    /// </summary>
-    /// <returns></returns>
     public override async UniTask Close() {
-        // 基底側でメニューを非表示にする
+        // 基底側でメニュー非表示にする
         await base.Close();
         await UniTask.CompletedTask;
     }

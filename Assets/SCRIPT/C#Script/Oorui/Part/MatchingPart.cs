@@ -29,16 +29,16 @@ public class MatchingPart : PartBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
+    }
+
+    public override async UniTask Setup() {
+        await base.Setup();
+        Debug.Log("マッチング画面表示中");
         // 戻るボタンが押された時の処理を登録する
         returnButton.onClick.AddListener(OnClickReturnButton);
 
         // マッチングボタンが押された時の処理を登録する
         matchingButton.onClick.AddListener(OnClickMatchingButton);
-    }
-
-    public override async UniTask SetUp() {
-        await base.SetUp();
-        Debug.Log("マッチング画面表示中");
         // フラグを初期化する
         isReturnPart = false;
         isMatchingClick = false;
@@ -67,7 +67,7 @@ public class MatchingPart : PartBase {
             // マッチング開始
 
 
-            
+
             // マッチしたらメインゲームパートに遷移
             Debug.Log("マッチングしました");
             await PartManager.Instance.TransitionPart(eGamePart.MainGame);
@@ -92,5 +92,21 @@ public class MatchingPart : PartBase {
     private void OnClickMatchingButton() {
         // マッチング開始フラグをONにする
         isMatchingClick = true;
+    }
+
+
+    /// <summary>
+    /// 片付けそりー
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask Teardown() {
+        // フラグを初期化
+        // ボタンイベントを解除して重複登録を防ぐ
+        returnButton.onClick.RemoveListener(OnClickReturnButton);
+        matchingButton.onClick.RemoveListener(OnClickMatchingButton);
+        // フラグを初期化する
+        isMatchingClick = false;
+        isReturnPart = false;
+        await base.Teardown();
     }
 }

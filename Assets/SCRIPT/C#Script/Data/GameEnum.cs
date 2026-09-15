@@ -30,6 +30,7 @@ public enum eMainMenuSelect {
     Matchmaking,    // マッチング
     Option,         // 設定
     CardList,       // カード一覧
+    DeckBuilding,   // デッキ編成
     Gacha,          // ガチャ
     Title,          // タイトル
     EndGame         // リザルト

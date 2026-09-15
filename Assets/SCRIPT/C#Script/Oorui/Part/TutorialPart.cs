@@ -21,7 +21,7 @@ public class TutorialPart : PartBase {
     /// 開始前準備処理
     /// </summary>
     /// <returns></returns>
-    public override async UniTask SetUp() {
+    public override async UniTask Setup() {
         await UniTask.CompletedTask;
     }
 

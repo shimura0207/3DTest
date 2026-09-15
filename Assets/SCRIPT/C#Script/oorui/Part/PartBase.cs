@@ -25,7 +25,7 @@ public abstract class PartBase : MonoBehaviour {
     /// パート実行前準備
     /// </summary>
     /// <returns></returns>
-    public virtual async UniTask SetUp() {
+    public virtual async UniTask Setup() {
         // 実行前に表示
         gameObject.SetActive(true);
         await UniTask.CompletedTask;
