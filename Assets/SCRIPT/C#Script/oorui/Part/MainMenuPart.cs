@@ -54,7 +54,20 @@ public class MainMenuPart : PartBase {
         await gachaMenu.Initialize();
         await cardListMenu.Initialize();
 
-        // 各メニューの選択イベントを登録する
+    }
+
+    /// <summary>
+    /// 使用前準備処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask SetUp() {
+        await base.SetUp();
+
+        // 選択状態を初期化する
+        selectMenu = eMainMenuSelect.None;
+        // 念のため以前登録されているイベントを解除する
+        UnRegisterMenuEvent();
+        // メニューイベントを登録
         RegisterMenuEvent();
     }
 
@@ -79,13 +92,13 @@ public class MainMenuPart : PartBase {
     /// <summary>
     /// メニューイベントを登録する
     /// </summary>
-    private void OnRegisterMenuEvent() {
+    private void UnRegisterMenuEvent() {
         // マッチングメニューの選択イベントを解除する
-        matchmakingMenu.OnSelected -= OnMatchmakingSelected; 
+        matchmakingMenu.OnSelected -= OnMatchmakingSelected;
         // オプションメニューの選択イベントを解除する
-        optionMenu.OnSelected -= OnOptionSelected; 
+        optionMenu.OnSelected -= OnOptionSelected;
         // ガチャメニューの選択イベントを解除する
-        gachaMenu.OnSelected -= OnGachaSelected; 
+        gachaMenu.OnSelected -= OnGachaSelected;
         // カード関連メニューの選択イベントを解除する
         cardListMenu.OnSelected -= OnCartListSelected;
     }
@@ -225,9 +238,10 @@ public class MainMenuPart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Teardown() {
+        await base.Teardown();
+        // 登録したイベントを解除
+        UnRegisterMenuEvent();
         // 選択状態を初期化する
         selectMenu = eMainMenuSelect.None;
-        // 登録したイベントを解除
-        OnRegisterMenuEvent();
     }
 }

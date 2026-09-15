@@ -29,16 +29,16 @@ public class MatchingPart : PartBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-        // 戻るボタンが押された時の処理を登録する
-        returnButton.onClick.AddListener(OnClickReturnButton);
-
-        // マッチングボタンが押された時の処理を登録する
-        matchingButton.onClick.AddListener(OnClickMatchingButton);
     }
 
     public override async UniTask SetUp() {
         await base.SetUp();
         Debug.Log("マッチング画面表示中");
+        // 戻るボタンが押された時の処理を登録する
+        returnButton.onClick.AddListener(OnClickReturnButton);
+
+        // マッチングボタンが押された時の処理を登録する
+        matchingButton.onClick.AddListener(OnClickMatchingButton);
         // フラグを初期化する
         isReturnPart = false;
         isMatchingClick = false;
