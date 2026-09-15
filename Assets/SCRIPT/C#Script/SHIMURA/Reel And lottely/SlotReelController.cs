@@ -195,12 +195,7 @@ public class SlotReelController : MonoBehaviour
 
     private void Update()
     {
-        HandleMaxBetInput();
-        HandleLeverInput();
-        HandleStopInput();
-        UpdateReelRotation();
-        SyncInspectorAngles();
-        TableUp();
+        
     }
 
     //============================================================
@@ -213,6 +208,16 @@ public class SlotReelController : MonoBehaviour
     /// 各リールの最初の localRotation を保存しておくことで、
     /// モデルの初期角度を保ったまま追加回転だけをかけられます。
     /// </summary>
+    /// 
+
+    public void SlotUpdate() {
+        HandleMaxBetInput();
+        HandleLeverInput();
+        HandleStopInput();
+        UpdateReelRotation();
+        SyncInspectorAngles();
+        TableUp();
+    }
     private void InitializeReels()
     {
         int reelCount = reels.Length;
