@@ -16,7 +16,7 @@ public class SystemManager : MonoBehaviour {
     /// 管理するシステムオブジェクトのリスト
     /// </summary>
     [SerializeField]
-    private SystemObject[] _systemObjectList = null;
+    private SystemObject[] systemObjectList = null;
 
     private void Start() {
         UniTask task = Initialize();
@@ -30,8 +30,8 @@ public class SystemManager : MonoBehaviour {
     /// <returns></returns>
     private async UniTask Initialize() {
         // 全システムオブジェクトの生成、初期化
-        for (int i = 0, max = _systemObjectList.Length; i < max; i++) {
-            SystemObject origin = _systemObjectList[i];
+        for (int i = 0, max = systemObjectList.Length; i < max; i++) {
+            SystemObject origin = systemObjectList[i];
             if (origin == null) continue;
             // システムオブジェクト生成
             SystemObject createObject = Instantiate(origin, transform);
