@@ -102,4 +102,5 @@ public enum BattlePhase {
     // ターン終了フェイズ
     EndPhase,
 
+    Max
 }
