@@ -12,7 +12,7 @@ using UnityEngine;
 /// </summary>
 public class PhaseBase {
     // 次のフェイズへ行くかどうか
-    protected bool nextPhase = false;
+    public bool nextPhase { get; protected set; } = false;
 
     /// <summary>
     /// 自身のターン処理

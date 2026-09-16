@@ -28,8 +28,6 @@ public class EndPhase : PhaseBase {
     public override bool SelfExecute() {
         // ターン終了時処理(今後実装予定)
 
-        // ターンプレイヤーを交代
-        BattleSystemManager.instance.ChangeTurnPlayer();
         // 次のフェイズへ
         nextPhase = true;
 
@@ -43,8 +41,6 @@ public class EndPhase : PhaseBase {
     public override bool OpponentExecute() {
         // ターン終了時処理(今後実装予定)
 
-        // ターンプレイヤーを交代
-        BattleSystemManager.instance.ChangeTurnPlayer();
         // 次のフェイズへ
         nextPhase = true;
 
