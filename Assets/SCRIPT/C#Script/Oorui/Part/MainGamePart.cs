@@ -13,7 +13,7 @@ using UnityEngine;
 /// </summary>
 public class MainGamePart : PartBase {
     // バトル開始前準備メニューの階層パス
-    private const string _MENUWINDOW_BUTTLESETTINGSMENU = "Prefab/Part/MenuWindow/ButtleSettingsMenu";
+    //private const string _MENUWINDOW_BUTTLESETTINGSMENU = "Prefab/Part/MenuWindow/ButtleSettingsMenu";
     // バトル開始前準備メニュー
     private BattleSettingsMenu buttleSettings;
 
@@ -24,9 +24,9 @@ public class MainGamePart : PartBase {
     public override async UniTask Initialize() {
         await base.Initialize();
         // メニューを取得
-        buttleSettings = MenuWindowManager.instance.Get<BattleSettingsMenu>(_MENUWINDOW_BUTTLESETTINGSMENU);
+        //buttleSettings = MenuWindowManager.instance.Get<BattleSettingsMenu>(_MENUWINDOW_BUTTLESETTINGSMENU);
         // メニューを初期化
-        await buttleSettings.Initialize();
+        //await buttleSettings.Initialize();
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class MainGamePart : PartBase {
     public override async UniTask Execute() {
 
         // バトル準備を行う
-        await buttleSettings.Open();
+        //await buttleSettings.Open();
 
         ///            ///
         /// バトル処理 ///
