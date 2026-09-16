@@ -200,6 +200,7 @@ public class SlotReelController : MonoBehaviour
         HandleStopInput();
         UpdateReelRotation();
         SyncInspectorAngles();
+        TableUp();
     }
 
     //============================================================
@@ -746,5 +747,13 @@ public class SlotReelController : MonoBehaviour
     public string GetSlotSymbolRoleName(SlotSymbolRole role)
     {
         return roleLottery.GetRoleName(role);
+    }
+
+
+    public void TableUp() {
+        if (Input.GetKeyDown(KeyCode.U)) {
+            currentTable += 1;
+            Debug.Log(currentTable);
+        }   
     }
 }
