@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -17,6 +18,7 @@ public class BattleSystemManager : MonoBehaviour {
     private PlayerType firstPlayer = PlayerType.None;
     // 現在のターンプレイヤー
     private PlayerType turnPlayer = PlayerType.None;
+    // 各フェイズ
 
     // Start is called before the first frame update
     void Start() {
@@ -25,6 +27,13 @@ public class BattleSystemManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+
+    }
+
+    /// <summary>
+    /// フェイズの実行
+    /// </summary>
+    public void PhaseExecute() {
 
     }
 
