@@ -38,7 +38,7 @@ public class PartManager : SystemObject {
     public override async UniTask Initialize() {
         Instance = this;
         // パートの生成
-        int partMax = (int)eGamePart.Max;
+        int partMax = (int)GamePart.Max;
         // リストに生成
         _partList = new PartBase[partMax];
 
@@ -60,7 +60,7 @@ public class PartManager : SystemObject {
     /// </summary>
     /// <param name="nextPart"></param>
     /// <returns></returns>
-    public async UniTask TransitionPart(eGamePart nextPart) {
+    public async UniTask TransitionPart(GamePart nextPart) {
         // 現在のパートの切り替え
         if (_currentPart != null) await _currentPart.Teardown();
         // パートの切り替え

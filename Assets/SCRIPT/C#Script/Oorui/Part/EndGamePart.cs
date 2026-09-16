@@ -18,7 +18,7 @@ public class EndGamePart : PartBase {
     private EndGameMenu endGame;
 
     // 選択された遷移先
-    private eMainMenuSelect selectMenu = eMainMenuSelect.EndGame;
+    private MainMenuSelect selectMenu = MainMenuSelect.EndGame;
 
     public override async UniTask Initialize() {
         // 基底側の処理を呼ぶ
@@ -55,7 +55,7 @@ public class EndGamePart : PartBase {
     private void OnEndGameSelected(MenuWindowBase menu) {
 
         // 遷移先をタイトルに設定する
-        selectMenu = eMainMenuSelect.EndGame;
+        selectMenu = MainMenuSelect.EndGame;
     }
 
     public override async UniTask Execute() {
@@ -63,13 +63,13 @@ public class EndGamePart : PartBase {
 
 
         // 選択状態を初期化
-        selectMenu = eMainMenuSelect.None;
+        selectMenu = MainMenuSelect.None;
 
         // リザルトメニューを表示
         await endGame.Open();
 
         // メニューが選択されるまで待機する
-        while(selectMenu == eMainMenuSelect.None) {
+        while(selectMenu == MainMenuSelect.None) {
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
         }
@@ -77,6 +77,6 @@ public class EndGamePart : PartBase {
         await endGame.Close();
 
         // メインメニュー画面に遷移
-        await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+        await PartManager.Instance.TransitionPart(GamePart.MainMenu);
     }
 }

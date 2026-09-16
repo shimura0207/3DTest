@@ -39,7 +39,7 @@ public class OptionPart : PartBase {
         // ←が押されたらひとつ前のパートに戻る
         if (isreturnPart) {
             Debug.Log("メインメニューに戻りました。");
-            await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+            await PartManager.Instance.TransitionPart(GamePart.MainMenu);
         }
     }
 }

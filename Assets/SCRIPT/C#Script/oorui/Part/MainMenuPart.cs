@@ -33,7 +33,7 @@ public class MainMenuPart : PartBase {
     private CardRelationMenu cardRelation;
 
     // 選択された遷移先
-    private eMainMenuSelect selectMenu = eMainMenuSelect.None;
+    private MainMenuSelect selectMenu = MainMenuSelect.None;
 
     /// <summary>
     /// 初期化処理
@@ -64,7 +64,7 @@ public class MainMenuPart : PartBase {
         await base.Setup();
 
         // 選択状態を初期化する
-        selectMenu = eMainMenuSelect.None;
+        selectMenu = MainMenuSelect.None;
         // 念のため以前登録されているイベントを解除する
         UnRegisterMenuEvent();
         // メニューイベントを登録
@@ -111,7 +111,7 @@ public class MainMenuPart : PartBase {
         // BGM再生
 
         // 選択状態を初期化する
-        selectMenu = eMainMenuSelect.None;
+        selectMenu = MainMenuSelect.None;
 
         // マッチングメニューを表示する
         await matchmakingMenu.Open();
@@ -126,7 +126,7 @@ public class MainMenuPart : PartBase {
         await cardRelation.Open();
 
         // どれかのメニューが選択されるまで待機する
-        while (selectMenu == eMainMenuSelect.None) {
+        while (selectMenu == MainMenuSelect.None) {
 
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
@@ -145,7 +145,7 @@ public class MainMenuPart : PartBase {
     private void OnMatchmakingSelected(MenuWindowBase menu) {
 
         // 遷移先をマッチングに設定する
-        selectMenu = eMainMenuSelect.Matchmaking;
+        selectMenu = MainMenuSelect.Matchmaking;
     }
 
     /// <summary>
@@ -154,7 +154,7 @@ public class MainMenuPart : PartBase {
     private void OnOptionSelected(MenuWindowBase menu) {
 
         // 遷移先をオプションに設定する
-        selectMenu = eMainMenuSelect.Option;
+        selectMenu = MainMenuSelect.Option;
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public class MainMenuPart : PartBase {
     /// <param name="menu"></param>
     private void OnGachaSelected(MenuWindowBase menu) {
         // 遷移先オプションに設定する
-        selectMenu = eMainMenuSelect.Gacha;
+        selectMenu = MainMenuSelect.Gacha;
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public class MainMenuPart : PartBase {
     /// <param name="menu"></param>
     private void OnCartListSelected(MenuWindowBase menu) {
         // 遷移先オプションに設定する
-        selectMenu = eMainMenuSelect.CardRelation;
+        selectMenu = MainMenuSelect.CardRelation;
     }
 
     /// <summary>
@@ -203,31 +203,31 @@ public class MainMenuPart : PartBase {
         // 選択されたメニューによって遷移先を変更する
         switch (selectMenu) {
 
-            case eMainMenuSelect.Matchmaking:
+            case MainMenuSelect.Matchmaking:
 
                 // マッチングパートへ遷移する
-                await PartManager.Instance.TransitionPart(eGamePart.Matchmaking);
+                await PartManager.Instance.TransitionPart(GamePart.Matchmaking);
 
                 break;
 
-            case eMainMenuSelect.Option:
+            case MainMenuSelect.Option:
 
                 // オプションパートへ遷移する
-                await PartManager.Instance.TransitionPart(eGamePart.Option);
+                await PartManager.Instance.TransitionPart(GamePart.Option);
 
                 break;
 
-            case eMainMenuSelect.CardRelation:
+            case MainMenuSelect.CardRelation:
 
                 // カード一覧パートへ遷移する
-                await PartManager.Instance.TransitionPart(eGamePart.CardRelation);
+                await PartManager.Instance.TransitionPart(GamePart.CardRelation);
 
                 break;
 
-            case eMainMenuSelect.Gacha:
+            case MainMenuSelect.Gacha:
 
                 // ガチャパートへ遷移する
-                await PartManager.Instance.TransitionPart(eGamePart.Gacha);
+                await PartManager.Instance.TransitionPart(GamePart.Gacha);
 
                 break;
         }
@@ -242,6 +242,6 @@ public class MainMenuPart : PartBase {
         // 登録したイベントを解除
         UnRegisterMenuEvent();
         // 選択状態を初期化する
-        selectMenu = eMainMenuSelect.None;
+        selectMenu = MainMenuSelect.None;
     }
 }

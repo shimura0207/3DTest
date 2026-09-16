@@ -19,7 +19,7 @@ public class TitlePart : PartBase {
     private TitleMenu title;
 
     // 選択された遷移先
-    private eMainMenuSelect selectMenu = eMainMenuSelect.Title;
+    private MainMenuSelect selectMenu = MainMenuSelect.Title;
     
     /// <summary>
     /// 初期化処理
@@ -61,7 +61,7 @@ public class TitlePart : PartBase {
     private void OnTitleSelected(MenuWindowBase menu) {
 
         // 遷移先をタイトルに設定する
-        selectMenu = eMainMenuSelect.Title;
+        selectMenu = MainMenuSelect.Title;
     }
 
     /// <summary>
@@ -72,13 +72,13 @@ public class TitlePart : PartBase {
         // BGMを再生
 
         // 選択状態を初期化
-        selectMenu = eMainMenuSelect.None;
+        selectMenu = MainMenuSelect.None;
 
         // タイトルメニューを表示
         await title.Open();
 
         // メニューが選択されるまで待機する
-        while(selectMenu == eMainMenuSelect.None) {
+        while(selectMenu == MainMenuSelect.None) {
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
         }
@@ -86,7 +86,7 @@ public class TitlePart : PartBase {
         await title.Close();
 
         // メインメニュー画面に遷移
-        await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+        await PartManager.Instance.TransitionPart(GamePart.MainMenu);
     }
 
 

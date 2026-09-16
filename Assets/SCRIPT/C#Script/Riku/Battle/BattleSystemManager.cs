@@ -18,7 +18,8 @@ public class BattleSystemManager : MonoBehaviour {
     private PlayerType firstPlayer = PlayerType.None;
     // 現在のターンプレイヤー
     private PlayerType turnPlayer = PlayerType.None;
-    // 各フェイズ
+    // 各フェイズのリスト
+    private PhaseBase[] phaseList = null;
 
     // Start is called before the first frame update
     void Start() {
