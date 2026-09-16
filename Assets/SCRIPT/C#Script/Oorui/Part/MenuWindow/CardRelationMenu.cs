@@ -1,18 +1,18 @@
 /*
- * @file    MatchmakingMenu
+ * @file    CardRelationMenu
  * @author  oorui
  */
 
 using Cysharp.Threading.Tasks;
-using System.Collections;
 using System;
+using System.Collections;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 /// <summary>
-/// メインメニューで表示するマッチング画面を開くメニューウィンドウ
+/// メインメニューで表示する所持カード一覧メニュー
 /// </summary>
-public class MatchmakingMenu : MenuWindowBase {
-
+public class CardRelationMenu : MenuWindowBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -41,5 +41,4 @@ public class MatchmakingMenu : MenuWindowBase {
         await base.Close();
         await UniTask.CompletedTask;
     }
-
 }

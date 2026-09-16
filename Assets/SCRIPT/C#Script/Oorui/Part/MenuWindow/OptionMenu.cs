@@ -9,7 +9,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// オプション画面を開くメニューウィンドウ
+/// メインメニューで表示するオプション画面を開くメニューウィンドウ
 /// </summary>
 public class OptionMenu : MenuWindowBase {
     /// <summary>

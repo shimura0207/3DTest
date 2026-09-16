@@ -1,5 +1,5 @@
 /*
- * @file    CartListMenu
+ * @file    DeckBuildingMenu
  * @author  oorui
  */
 
@@ -9,9 +9,10 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// 所持カード一覧メニュー
+/// デッキ関連パートで表示する所持カード一覧画面を開くメニューウィンドウ
 /// </summary>
-public class CardListMenu : MenuWindowBase {
+public class CardHaveListMenu : MenuWindowBase {
+    
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -30,6 +31,7 @@ public class CardListMenu : MenuWindowBase {
         await base.Open();
         await UniTask.CompletedTask;
     }
+
 
     /// <summary>
     /// ウィンドウ非表示時の処理

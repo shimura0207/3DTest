@@ -1,18 +1,18 @@
 /*
- * @file    MatchmakingMenu
+ * @file    ReturnToMainMenu
  * @author  oorui
  */
 
 using Cysharp.Threading.Tasks;
-using System.Collections;
 using System;
+using System.Collections;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 /// <summary>
-/// メインメニューで表示するマッチング画面を開くメニューウィンドウ
+/// メインメニューパートに戻る汎用メニューウィンドウ
 /// </summary>
-public class MatchmakingMenu : MenuWindowBase {
-
+public class ReturnToMainMenu : MenuWindowBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -21,7 +21,7 @@ public class MatchmakingMenu : MenuWindowBase {
         await base.Initialize();
         await UniTask.CompletedTask;
     }
-
+    
     /// <summary>
     /// ウィンドウ表示時の処理
     /// </summary>

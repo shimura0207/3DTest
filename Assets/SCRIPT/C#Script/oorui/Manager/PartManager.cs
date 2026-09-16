@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ぱーお管理
+/// パート管理
 /// </summary>
 public class PartManager : SystemObject {
     /// <summary>

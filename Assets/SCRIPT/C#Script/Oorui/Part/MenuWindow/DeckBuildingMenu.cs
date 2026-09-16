@@ -1,5 +1,5 @@
 /*
- * @file    CartListMenu
+ * @file    DeckBuildingMenu
  * @author  oorui
  */
 
@@ -9,7 +9,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// デッキ編成メニュー
+/// カード関連パートで表示するデッキ編成画面を開くメニューウィンドウ
 /// </summary>
 public class DeckBuildingMenu : MenuWindowBase {
 
@@ -32,8 +32,12 @@ public class DeckBuildingMenu : MenuWindowBase {
         await UniTask.CompletedTask;
     }
 
+    /// <summary>
+    /// ウィンドウ非表示時の処理
+    /// </summary>
+    /// <returns></returns>
     public override async UniTask Close() {
-        // 基底側でメニュー非表示にする
+        // 基底側でメニューを非表示にする
         await base.Close();
         await UniTask.CompletedTask;
     }
