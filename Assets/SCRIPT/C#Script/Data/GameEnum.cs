@@ -13,7 +13,9 @@ public enum eGamePart {
     MainMenu,       // メニュー
     Matchmaking,    // マッチング画面
     Option,         // 設定画面
-    CardList,       // カード画面
+    CardRelation,   // カード関連画面
+    CardList,       // カード一覧画面
+    DeckBuild,      // デッキ構築画面
     Gacha,          // ガチャ画面
     MainGame,       // メインゲーム
     EndGame,        // エンディング
@@ -29,11 +31,20 @@ public enum eMainMenuSelect {
     None,           // 未選択
     Matchmaking,    // マッチング
     Option,         // 設定
-    CardList,       // カード一覧
-    DeckBuilding,   // デッキ編成
+    CardRelation,   // カード関連
     Gacha,          // ガチャ
     Title,          // タイトル
     EndGame         // リザルト
+}
+
+/// <summary>
+/// カード関連パートから選択する遷移先
+/// </summary>
+public enum eCardRelationMenuSelect {
+    None,           // 未選択
+    CardList,       // カード一覧
+    DeckBuilding,   // デッキ構築
+    MainMenu        // メインメニュー
 }
 
 /// <summary>

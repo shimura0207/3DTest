@@ -30,7 +30,7 @@ public class MainMenuPart : PartBase {
     private GathaMenu gachaMenu;
 
     // カード関連メニュー
-    private CardListMenu cardListMenu;
+    private CardRelationMenu cardRelation;
 
     // 選択された遷移先
     private eMainMenuSelect selectMenu = eMainMenuSelect.None;
@@ -46,13 +46,13 @@ public class MainMenuPart : PartBase {
         matchmakingMenu = MenuWindowManager.instance.Get<MatchmakingMenu>(_MENUWINDOW_MATCHMAKINGMENU);
         optionMenu = MenuWindowManager.instance.Get<OptionMenu>(_MENUWINDOW_OPTIONMENU);
         gachaMenu = MenuWindowManager.instance.Get<GathaMenu>(_MENUWINDOW_GATHAMENU);
-        cardListMenu = MenuWindowManager.instance.Get<CardListMenu>(_MENUWINDOW_CARTMENU);
+        cardRelation = MenuWindowManager.instance.Get<CardRelationMenu>(_MENUWINDOW_CARTMENU);
 
         // 各メニューを初期化する
         await matchmakingMenu.Initialize();
         await optionMenu.Initialize();
         await gachaMenu.Initialize();
-        await cardListMenu.Initialize();
+        await cardRelation.Initialize();
 
     }
 
@@ -86,7 +86,7 @@ public class MainMenuPart : PartBase {
         gachaMenu.OnSelected += OnGachaSelected;
 
         // カード関連メニューが選択された時の処理を登録する
-        cardListMenu.OnSelected += OnCartListSelected;
+        cardRelation.OnSelected += OnCartListSelected;
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class MainMenuPart : PartBase {
         // ガチャメニューの選択イベントを解除する
         gachaMenu.OnSelected -= OnGachaSelected;
         // カード関連メニューの選択イベントを解除する
-        cardListMenu.OnSelected -= OnCartListSelected;
+        cardRelation.OnSelected -= OnCartListSelected;
     }
 
     /// <summary>
@@ -123,7 +123,7 @@ public class MainMenuPart : PartBase {
         await gachaMenu.Open();
 
         // カード関連メニューを表示する
-        await cardListMenu.Open();
+        await cardRelation.Open();
 
         // どれかのメニューが選択されるまで待機する
         while (selectMenu == eMainMenuSelect.None) {
@@ -172,7 +172,7 @@ public class MainMenuPart : PartBase {
     /// <param name="menu"></param>
     private void OnCartListSelected(MenuWindowBase menu) {
         // 遷移先オプションに設定する
-        selectMenu = eMainMenuSelect.CardList;
+        selectMenu = eMainMenuSelect.CardRelation;
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public class MainMenuPart : PartBase {
         await gachaMenu.Close();
 
         // カード関連メニューを閉じる
-        await cardListMenu.Close();
+        await cardRelation.Close();
     }
 
     /// <summary>
@@ -217,10 +217,10 @@ public class MainMenuPart : PartBase {
 
                 break;
 
-            case eMainMenuSelect.CardList:
+            case eMainMenuSelect.CardRelation:
 
                 // カード一覧パートへ遷移する
-                await PartManager.Instance.TransitionPart(eGamePart.CardList);
+                await PartManager.Instance.TransitionPart(eGamePart.CardRelation);
 
                 break;
 

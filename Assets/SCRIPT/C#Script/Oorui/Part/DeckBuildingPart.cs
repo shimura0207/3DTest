@@ -1,5 +1,5 @@
 /*
- *  @file   CardListPart
+ *  @file   DeckBuildingPart
  *  @author oorui
  */
 
@@ -9,10 +9,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
-/// カード一覧パート
+/// デッキ構築パート
 /// </summary>
-public class CardListPart : PartBase {
 
+public class DeckBuildingPart : PartBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -28,8 +28,8 @@ public class CardListPart : PartBase {
     /// <returns></returns>
     public override async UniTask Setup() {
         await base.Setup();
-        Debug.Log("カード一覧画面表示中");
-        
+        Debug.Log("デッキ構築画面表示中");
+
     }
 
     /// <summary>

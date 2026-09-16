@@ -1,18 +1,18 @@
 /*
- * @file    DeckBuildingMenu
+ * @file    ReturnToMainMenu
  * @author  oorui
  */
 
 using Cysharp.Threading.Tasks;
-using System.Collections;
 using System;
+using System.Collections;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 /// <summary>
-/// カード関連パートで表示するデッキ編成画面を開くメニューウィンドウ
+/// メインメニューパートに戻る汎用メニューウィンドウ
 /// </summary>
-public class DeckBuildingMenu : MenuWindowBase {
-
+public class ReturnToMainMenu : MenuWindowBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -21,7 +21,7 @@ public class DeckBuildingMenu : MenuWindowBase {
         await base.Initialize();
         await UniTask.CompletedTask;
     }
-
+    
     /// <summary>
     /// ウィンドウ表示時の処理
     /// </summary>
@@ -41,4 +41,5 @@ public class DeckBuildingMenu : MenuWindowBase {
         await base.Close();
         await UniTask.CompletedTask;
     }
+
 }

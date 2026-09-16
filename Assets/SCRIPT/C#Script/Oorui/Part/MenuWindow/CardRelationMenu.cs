@@ -1,18 +1,18 @@
 /*
- * @file    DeckBuildingMenu
+ * @file    CardRelationMenu
  * @author  oorui
  */
 
 using Cysharp.Threading.Tasks;
-using System.Collections;
 using System;
+using System.Collections;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 /// <summary>
-/// カード関連パートで表示するデッキ編成画面を開くメニューウィンドウ
+/// メインメニューで表示する所持カード一覧メニュー
 /// </summary>
-public class DeckBuildingMenu : MenuWindowBase {
-
+public class CardRelationMenu : MenuWindowBase {
     /// <summary>
     /// 初期化処理
     /// </summary>
