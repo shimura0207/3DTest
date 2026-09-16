@@ -40,7 +40,7 @@ public class GathaPart : PartBase {
     public override async UniTask Execute() {
         // ボタンが押されたらひとつ前のパートに戻る
         if (isreturnPart) {
-            await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+            await PartManager.Instance.TransitionPart(GamePart.MainMenu);
         }
     }
 

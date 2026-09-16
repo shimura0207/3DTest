@@ -6,7 +6,7 @@
 /// <summary>
 /// ゲームのパート
 /// </summary>
-public enum eGamePart {
+public enum GamePart {
     Invalid = -1,
     Standby,        // 待機
     Title,          // タイトル
@@ -27,7 +27,7 @@ public enum eGamePart {
 /// <summary>
 /// メインメニューから選択する遷移先
 /// </summary>
-public enum eMainMenuSelect {
+public enum MainMenuSelect {
     None,           // 未選択
     Matchmaking,    // マッチング
     Option,         // 設定
@@ -40,7 +40,7 @@ public enum eMainMenuSelect {
 /// <summary>
 /// カード関連パートから選択する遷移先
 /// </summary>
-public enum eCardRelationMenuSelect {
+public enum CardRelationMenuSelect {
     None,           // 未選択
     CardList,       // カード一覧
     DeckBuilding,   // デッキ構築
@@ -83,4 +83,24 @@ public enum PlayerType {
     // 相手
     Opponent,
 
+}
+
+/// <summary>
+/// バトルの各フェイズ
+/// </summary>
+public enum BattlePhase {
+    None = -1,
+
+    // ターン開始フェイズ
+    StartPhase,
+    // メインフェイズ
+    MainPhase,
+    // パチスロフェイズ
+    PachisuroPhase,
+    // アタックフェイズ
+    AttackPhase,
+    // ターン終了フェイズ
+    EndPhase,
+
+    Max
 }

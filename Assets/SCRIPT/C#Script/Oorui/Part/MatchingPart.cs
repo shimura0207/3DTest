@@ -58,7 +58,7 @@ public class MatchingPart : PartBase {
         if (isReturnPart) {
             // メインメニューパートに戻る
             Debug.Log("メインメニューに戻りました。");
-            await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+            await PartManager.Instance.TransitionPart(GamePart.MainMenu);
             return;
         }
 
@@ -68,7 +68,7 @@ public class MatchingPart : PartBase {
 
             // マッチしたらメインゲームパートに遷移
             Debug.Log("マッチングしました");
-            await PartManager.Instance.TransitionPart(eGamePart.MainGame);
+            await PartManager.Instance.TransitionPart(GamePart.MainGame);
         }
 
 

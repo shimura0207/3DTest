@@ -1,5 +1,5 @@
 /*
- * @file    BattlePhase.cs
+ * @file    AttackPhase.cs
  * @author  Riku
  */
 
@@ -7,7 +7,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattlePhase : PhaseBase {
+/// <summary>
+/// アタックフェイズ
+/// </summary>
+public class AttackPhase : PhaseBase {
     // Start is called before the first frame update
     void Start() {
 

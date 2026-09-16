@@ -39,7 +39,7 @@ public class TutorialPart : PartBase {
     /// <returns></returns>
     public override async UniTask Teardown() {
         // メインメニュー画面に遷移
-        UniTask task = PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+        UniTask task = PartManager.Instance.TransitionPart(GamePart.MainMenu);
         await UniTask.CompletedTask;
     }
 }

@@ -32,7 +32,7 @@ public class CardRelationPart : PartBase {
     private ReturnToMainMenu returnMenu;
 
     // 選択された遷移先
-    private eCardRelationMenuSelect selectMenu = eCardRelationMenuSelect.None;
+    private CardRelationMenuSelect selectMenu = CardRelationMenuSelect.None;
 
     /// <summary>
     /// 初期化処理
@@ -63,7 +63,7 @@ public class CardRelationPart : PartBase {
         Debug.Log("カード関連画面を表示中");
 
         // 選択状態を初期化する
-        selectMenu = eCardRelationMenuSelect.None;
+        selectMenu = CardRelationMenuSelect.None;
         // 念のため以前登録されているイベントを解除する
         UnRegisterMenuEvent();
         // メニューイベントを登録
@@ -105,7 +105,7 @@ public class CardRelationPart : PartBase {
     private void OnCardListSelected(MenuWindowBase menu) {
 
         // 遷移先をマッチングに設定する
-        selectMenu = eCardRelationMenuSelect.CardList;
+        selectMenu = CardRelationMenuSelect.CardList;
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class CardRelationPart : PartBase {
     private void OnDeckBuildSelected(MenuWindowBase menu) {
 
         // 遷移先をマッチングに設定する
-        selectMenu = eCardRelationMenuSelect.DeckBuilding;
+        selectMenu = CardRelationMenuSelect.DeckBuilding;
     }
 
     /// <summary>
@@ -123,7 +123,7 @@ public class CardRelationPart : PartBase {
     /// <param name="menu"></param>
     private void OnReturnMenuSelected(MenuWindowBase menu) {
         // 遷移先をメインメニューに設定する
-        selectMenu = eCardRelationMenuSelect.MainMenu;
+        selectMenu = CardRelationMenuSelect.MainMenu;
     }
 
 
@@ -135,14 +135,14 @@ public class CardRelationPart : PartBase {
         // BGM再生
 
         // 選択状態を初期化する
-        selectMenu = eCardRelationMenuSelect.None;
+        selectMenu = CardRelationMenuSelect.None;
 
         // 各メニュー表示
         await cardList.Open();
         await deckBuild.Open();
         await returnMenu.Open();
 
-        while (selectMenu == eCardRelationMenuSelect.None) {
+        while (selectMenu == CardRelationMenuSelect.None) {
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
         }
@@ -169,17 +169,17 @@ public class CardRelationPart : PartBase {
     private async UniTask TransitionSelectedPart() {
         // 選択されたメニューによって遷移先を変更する
         switch (selectMenu) {
-            case eCardRelationMenuSelect.CardList:
+            case CardRelationMenuSelect.CardList:
                 // カード一覧パートに遷移
-                await PartManager.Instance.TransitionPart(eGamePart.CardList);
+                await PartManager.Instance.TransitionPart(GamePart.CardList);
                 break;
-            case eCardRelationMenuSelect.DeckBuilding:
+            case CardRelationMenuSelect.DeckBuilding:
                 // デッキ構築パートに遷移
-                await PartManager.Instance.TransitionPart(eGamePart.DeckBuild);
+                await PartManager.Instance.TransitionPart(GamePart.DeckBuild);
                 break;
-            case eCardRelationMenuSelect.MainMenu:
+            case CardRelationMenuSelect.MainMenu:
                 // メインメニューパートに遷移
-                await PartManager.Instance.TransitionPart(eGamePart.MainMenu);
+                await PartManager.Instance.TransitionPart(GamePart.MainMenu);
                 break;
         }
     }
@@ -193,7 +193,7 @@ public class CardRelationPart : PartBase {
         // 登録したイベントを解除
         UnRegisterMenuEvent();
         // 選択状態を初期化する
-        selectMenu = eCardRelationMenuSelect.None;
+        selectMenu = CardRelationMenuSelect.None;
     }
 
 }

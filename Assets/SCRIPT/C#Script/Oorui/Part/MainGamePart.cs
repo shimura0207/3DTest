@@ -54,7 +54,7 @@ public class MainGamePart : PartBase {
 
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
-        await PartManager.Instance.TransitionPart(eGamePart.EndGame);
+        await PartManager.Instance.TransitionPart(GamePart.EndGame);
     }
 
     /// <summary>
