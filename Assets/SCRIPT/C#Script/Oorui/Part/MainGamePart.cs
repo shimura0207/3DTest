@@ -35,6 +35,9 @@ public class MainGamePart : PartBase {
     /// <returns></returns>
     public override async UniTask Execute() {
 
+        // バトル準備を行う
+
+
 
 
         // 勝敗が決まったらリザルトパートに遷移
