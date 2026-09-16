@@ -9,7 +9,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// マッチング画面を開くメニューウィンドウ
+/// メインメニューで表示するマッチング画面を開くメニューウィンドウ
 /// </summary>
 public class MatchmakingMenu : MenuWindowBase {
 

@@ -9,7 +9,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// 所持カード一覧メニュー
+/// メインメニューで表示する所持カード一覧メニュー
 /// </summary>
 public class CardListMenu : MenuWindowBase {
     /// <summary>
