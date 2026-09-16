@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -25,6 +26,22 @@ using UnityEngine;
 /// </summary>
 public class SlotReelController : MonoBehaviour
 {
+
+
+
+    
+
+    bool n_first=false;
+    bool n_second=false;
+    bool n_Therrd=false;
+
+    //G数
+    public int slotIndex=0;
+    public readonly int SLOT_TEARN_MAX_G = 5;
+
+    //引いた役保存LIST
+    private List<SlotSymbolRole> roles = new List<SlotSymbolRole>();
+
     //============================================================
     // 抽選関連
     //============================================================
@@ -195,7 +212,10 @@ public class SlotReelController : MonoBehaviour
 
     private void Update()
     {
-        
+        SlotUpdate();
+        if (Input.GetKeyDown(KeyCode.P)) {
+            DebugRoles();
+        }
     }
 
     //============================================================
@@ -214,6 +234,15 @@ public class SlotReelController : MonoBehaviour
         HandleMaxBetInput();
         HandleLeverInput();
         HandleStopInput();
+        UpdateReelRotation();
+        SyncInspectorAngles();
+        TableUp();
+    }
+
+
+    public void EnemySlotUpdate() {
+       
+        E_HandleStopInput();
         UpdateReelRotation();
         SyncInspectorAngles();
         TableUp();
@@ -275,6 +304,11 @@ public class SlotReelController : MonoBehaviour
         }
     }
 
+    public void E_HandleMaxBetInput() {
+        
+        maxBet = true;
+    }
+
     /// <summary>
     /// レバーON入力。
     /// 
@@ -292,6 +326,15 @@ public class SlotReelController : MonoBehaviour
             return;
         }
 
+        TryStartSpin();
+    }
+
+    public void E_HandleLeverInput() {
+        if (!maxBet) {
+            return;
+        }
+
+       
         TryStartSpin();
     }
 
@@ -319,6 +362,25 @@ public class SlotReelController : MonoBehaviour
         }
     }
 
+
+    private void E_HandleStopInput() {
+        for (int i = 0; i < reels.Length; i++) {
+            if (i >= stopKeys.Length) {
+                continue;
+            }
+
+            if (n_first || n_second || n_Therrd) { 
+
+            int reelCount = GetReelCount();
+                for (int reelIndex = 0; reelIndex < reelCount; reelIndex++) {
+                    TryReserveStop(reelIndex);
+                }
+
+
+            }
+        
+        }
+    }
 
     //============================================================
     // 外部スクリプト用 公開メソッド
@@ -388,7 +450,8 @@ public class SlotReelController : MonoBehaviour
 
             state.StartReel(i);
         }
-
+        AddRole(currentSlotSymbolRole);
+        slotIndex ++;//G数を1G増加
         return true;
     }
 
@@ -760,5 +823,36 @@ public class SlotReelController : MonoBehaviour
             currentTable += 1;
             Debug.Log(currentTable);
         }   
+    }
+
+
+    //1G終了時に保存
+    public void AddRole(SlotSymbolRole _role) {
+        roles.Add(_role);
+        //5G以降は古いものから消す
+        if (roles.Count > 5) {
+            roles.RemoveAt(0);
+        }
+    }
+
+
+    //保存された役の取得
+    public List<SlotSymbolRole> GetRoles() {
+        return roles;
+    }
+
+    //保存内容消去
+    public void RolesDelete() {
+        roles.Clear();
+    }
+
+
+    //呼び出せば見れる
+    public void DebugRoles() {
+        Debug.Log("===現在の保存===");
+        for (int i = 0; i < roles.Count; i++) {
+            Debug.Log($"{i + 1}G目:{roles[i]}");
+        }
+        Debug.Log("================");
     }
 }
