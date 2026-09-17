@@ -26,6 +26,13 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override bool SelfExecute() {
+        GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
+        GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+
+
+        hand.SetActive(true);
+        deck.SetActive(true);
+
         nextPhase = RGDeckController.i;
         return base.SelfExecute();
     }
