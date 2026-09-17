@@ -26,6 +26,7 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override bool SelfExecute() {
+        nextPhase = RGDeckController.i;
         return base.SelfExecute();
     }
 
@@ -37,7 +38,5 @@ public class MainPhase : PhaseBase {
         return base.OpponentExecute();
     }
 
-    public void NEXT() {
-        nextPhase = true;
-    }
+    
 }
