@@ -27,12 +27,15 @@ public class AttackPhase : PhaseBase {
     /// <returns></returns>
     public override bool SelfExecute() {
         // 当選役取得
-        { 
-            RGDeckController slot; //呼ぶスクリプトにあだなつける
+        {
+            SlotReelController slot; //呼ぶスクリプトにあだなつける
             GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-            slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
-
+            slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+            // 当選役を保存
+            List<PachiSlotSymbolRoleEnum> koyakuList = slot.GetRoles();
         }
+
+
 
         return base.SelfExecute();
     }
