@@ -122,7 +122,7 @@ public class MainGamePart : PartBase {
             // バトルシステム管理を初期化
             battleSystemManager.Initialize();
         }
-
+        // 各エリアのカード管理のPrefabを作成
         if (areaCardManagerPrefab != null) {
             // 自身の傘下に生成
             GameObject areacardObject = Instantiate(areaCardManagerPrefab, transform);
