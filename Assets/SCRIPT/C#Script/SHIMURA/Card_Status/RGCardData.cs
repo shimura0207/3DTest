@@ -74,7 +74,7 @@ public class RGCardData : ScriptableObject
     [Header("対応役")]
 
     [Tooltip("このカードが反応するパチスロ役。既存の SlotSymbolRole を使う。")]
-    [SerializeField] private SlotSymbolRole supportRole;
+    [SerializeField] private PachiSlotSymbolRoleEnum supportRole;
 
     //============================================================
     // 種族
@@ -106,7 +106,7 @@ public class RGCardData : ScriptableObject
     public int Hp => hp;
     public int Size => size;
 
-    public SlotSymbolRole SupportRole => supportRole;
+    public PachiSlotSymbolRoleEnum SupportRole => supportRole;
 
     public RGCardRace Race1 => race1;
     public RGCardRace Race2 => race2;

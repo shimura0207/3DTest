@@ -63,7 +63,7 @@ public class SlotRoleDrawer
     /// table は 1〜5 を想定しています。
     /// 1未満なら1、5より大きければ5として扱います。
     /// </summary>
-    public SlotSymbolRole DrawRole(int table)
+    public PachiSlotSymbolRoleEnum DrawRole(int table)
     {
         // Inspector で範囲外の値が入っても壊れないように補正します。
         int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
@@ -81,45 +81,45 @@ public class SlotRoleDrawer
 
             if (randomValue < border)
             {
-                return (SlotSymbolRole)i;
+                return (PachiSlotSymbolRoleEnum)i;
             }
         }
 
         // 通常はここには来ません。
         // テーブル合計が 65536 未満だった場合などの保険です。
-        return SlotSymbolRole.Miss;
+        return PachiSlotSymbolRoleEnum.Miss;
     }
 
     /// <summary>
     /// 役の日本語表示名を返します。
     /// Debug.Log や UI 表示に使います。
     /// </summary>
-    public string GetRoleName(SlotSymbolRole role)
+    public string GetRoleName(PachiSlotSymbolRoleEnum role)
     {
         switch (role)
         {
-            case SlotSymbolRole.Miss:
+            case PachiSlotSymbolRoleEnum.Miss:
                 return "ハズレ";
 
-            case SlotSymbolRole.Bell:
+            case PachiSlotSymbolRoleEnum.Bell:
                 return "ベル";
 
-            case SlotSymbolRole.Replay:
+            case PachiSlotSymbolRoleEnum.Replay:
                 return "リプレイ";
 
-            case SlotSymbolRole.WeakCherry:
+            case PachiSlotSymbolRoleEnum.WeakCherry:
                 return "弱チェリー";
 
-            case SlotSymbolRole.Watermelon:
+            case PachiSlotSymbolRoleEnum.Watermelon:
                 return "スイカ";
 
-            case SlotSymbolRole.Chance:
+            case PachiSlotSymbolRoleEnum.Chance:
                 return "チャンス目";
 
-            case SlotSymbolRole.StrongCherry:
+            case PachiSlotSymbolRoleEnum.StrongCherry:
                 return "強チェリー";
 
-            case SlotSymbolRole.Seven:
+            case PachiSlotSymbolRoleEnum.Seven:
                 return "7揃い";
 
             default:
