@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aeac2be0044c4345859a7ac707a080d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _systemObjectList:
+  systemObjectList:
   - {fileID: 6309012563151378442, guid: 289adea8204679b44a094c5871819023, type: 3}
   - {fileID: 1147851618922813447, guid: 9de35b714bcc0fc43ae3cdbc5549b499, type: 3}
 --- !u!4 &834621623
