@@ -26,6 +26,14 @@ public class AttackPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override bool SelfExecute() {
+        // 当選役取得
+        { 
+            RGDeckController slot; //呼ぶスクリプトにあだなつける
+            GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+            slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
+
+        }
+
         return base.SelfExecute();
     }
 

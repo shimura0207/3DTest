@@ -100,6 +100,8 @@ public class BattleSystemManager : MonoBehaviour {
         firstPlayer = setFirsetPlayer;
         // 現在のターンプレイヤーを先攻プレイヤーに
         turnPlayer = firstPlayer;
+        // フェイズをスタートに
+        currentPhase = BattlePhase.StartPhase;
         // HPの初期化
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             playerHP[i] = PLAYER_HP;
