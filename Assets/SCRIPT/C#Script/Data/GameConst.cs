@@ -9,4 +9,6 @@ using UnityEngine;
 
 public class GameConst {
 
+    // プレイヤーの体力
+    public static readonly int PLAYER_HP = 50;
 }
