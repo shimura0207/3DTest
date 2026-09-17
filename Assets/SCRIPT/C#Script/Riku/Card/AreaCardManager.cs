@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 
 using static CommonModule;
@@ -30,14 +31,13 @@ public class AreaCardManager : MonoBehaviour {
     }
     // プレイヤーごとの山札外カード
     private Dictionary<PlayerType, OutDeckCards> outDeckCards;
-    
-    // Start is called before the first frame update
-    void Start() {
-        instance = this;
-    }
 
-    // Update is called once per frame
-    void Update() {
+    /// <summary>
+    /// 初期化処理
+    /// @author oorui
+    /// </summary>
+    public void Initialize() {
+        instance = this;
     }
 
     /// <summary>

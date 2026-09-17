@@ -41,7 +41,7 @@ public class BattleSystemManager : MonoBehaviour {
         // リスト生成
         int phaseMax = (int)BattlePhase.Max;
         phaseList = new PhaseBase[phaseMax];
-
+        playerHP = new Dictionary<PlayerType, int>();
         // 対戦中に切り替え
         battleState = BattleState.InProgress;
     }
