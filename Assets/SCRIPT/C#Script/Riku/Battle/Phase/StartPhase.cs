@@ -29,7 +29,11 @@ public class StartPhase : PhaseBase {
         // ターン開始時効果確認(今後実装予定)
 
         // ターン開始時ドロー
-        AreaCardManager.instance.DrawCard(1);
+        RGDeckController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
+        slot.DrawCardToHand();
+        //AreaCardManager.instance.DrawCard(1);
         // 次のフェイズへ
         nextPhase = true;
 

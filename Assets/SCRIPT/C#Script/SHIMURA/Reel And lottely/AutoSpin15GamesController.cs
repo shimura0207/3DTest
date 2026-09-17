@@ -37,8 +37,8 @@ public class AutoSpin15GamesController : MonoBehaviour
     /// Replay → 3回
     /// Miss → 7回
     /// </summary>
-    private Dictionary<SlotSymbolRole, int> roleResultCounts =
-        new Dictionary<SlotSymbolRole, int>();
+    private Dictionary<PachiSlotSymbolRoleEnum, int> roleResultCounts =
+        new Dictionary<PachiSlotSymbolRoleEnum, int>();
 
     private void Awake()
     {
@@ -112,7 +112,7 @@ public class AutoSpin15GamesController : MonoBehaviour
             }
 
             // 今ゲームで引いた役を取得
-            SlotSymbolRole drawnRole = slotReelController.GetCurrentSlotSymbolRole();
+            PachiSlotSymbolRoleEnum drawnRole = slotReelController.GetCurrentSlotSymbolRole();
 
             // 引いた役を集計
             AddRoleResult(drawnRole);
@@ -150,7 +150,7 @@ public class AutoSpin15GamesController : MonoBehaviour
     /// <summary>
     /// 引いた役を1回分カウントします。
     /// </summary>
-    private void AddRoleResult(SlotSymbolRole role)
+    private void AddRoleResult(PachiSlotSymbolRoleEnum role)
     {
         if (!roleResultCounts.ContainsKey(role))
         {
@@ -171,7 +171,7 @@ public class AutoSpin15GamesController : MonoBehaviour
 
         int totalGame = 0;
 
-        foreach (KeyValuePair<SlotSymbolRole, int> result in roleResultCounts)
+        foreach (KeyValuePair<PachiSlotSymbolRoleEnum, int> result in roleResultCounts)
         {
             totalGame += result.Value;
         }
@@ -179,7 +179,7 @@ public class AutoSpin15GamesController : MonoBehaviour
         resultText.AppendLine($"総ゲーム数: {totalGame}G");
         resultText.AppendLine("");
 
-        foreach (KeyValuePair<SlotSymbolRole, int> result in roleResultCounts)
+        foreach (KeyValuePair<PachiSlotSymbolRoleEnum, int> result in roleResultCounts)
         {
             string roleName = slotReelController.GetSlotSymbolRoleName(result.Key);
             int count = result.Value;
