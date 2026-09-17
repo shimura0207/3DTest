@@ -29,6 +29,7 @@ public class OptionPart : PartBase {
         Debug.Log("設定画面表示中");
         // フラグを初期化する
         isreturnPart = false;
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
