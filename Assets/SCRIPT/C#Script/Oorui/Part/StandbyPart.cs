@@ -13,7 +13,7 @@ public class StandbyPart : PartBase {
     public override async UniTask Execute() {
 
         // マスターデータの読み込み
-
+        MasterDataManager.LoadAllData();
         // デバッグログを表示する
         Debug.Log("StandbyPart通過");
 

@@ -15,11 +15,17 @@ public class PachisuroPhase :PhaseBase
     /// <returns></returns>
     public override bool SelfExecute() {
 
+        GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
+        GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+
         SlotReelController slot; //呼ぶスクリプトにあだなつける
         GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
         slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
 
         
+
+        hand.SetActive(false);
+        deck.SetActive(false);
         slot.SlotUpdate();
         //5回転が終わっており、リールが回っていない場合にNEXTする
         if (slot.IsAnyReelRotating() == false&&slot.slotIndex==slot.SLOT_TEARN_MAX_G) {

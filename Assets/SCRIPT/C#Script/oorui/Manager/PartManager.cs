@@ -1,7 +1,9 @@
+
 /*
  *  @file   PartManager
  *  @author oorui
  */
+
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,64 +12,107 @@ using UnityEngine;
 /// パート管理
 /// </summary>
 public class PartManager : SystemObject {
+
     /// <summary>
     /// 自身への参照
     /// </summary>
     public static PartManager Instance { get; private set; } = null;
 
     /// <summary>
-    /// パートオブジェクトのオリジナル
+    /// パートの参照設定
     /// </summary>
     [SerializeField]
-    private PartBase[] _partOriginList = null;
+    private PartManagerConfig partManagerConfig = null;
 
     /// <summary>
     /// 管理中のパートオブジェクト
     /// </summary>
-    private PartBase[] _partList = null;
+    private PartBase[] partList = null;
 
     /// <summary>
     /// 現在のパート
     /// </summary>
-    private PartBase _currentPart = null;
+    private PartBase currentPart = null;
 
     /// <summary>
     /// 初期化処理
     /// </summary>
-    /// <returns></returns>
+    /// <returns>初期化処理のUniTask</returns>
     public override async UniTask Initialize() {
-        Instance = this;
-        // パートの生成
-        int partMax = (int)GamePart.Max;
-        // リストに生成
-        _partList = new PartBase[partMax];
 
-        // UniTaskをまとめて管理するためのリストを用意
+        // 自身をシングルトンのインスタンスに設定する
+        Instance = this;
+
+        // PartManagerConfigが設定されていなければ抜ける
+        if (partManagerConfig == null) return;
+
+        // ScriptableObjectからパートのPrefab一覧を取得する
+        PartBase[] partOriginList = partManagerConfig.PartOriginList;
+
+        // パートの参照一覧が設定されていなければ抜ける
+        if (partOriginList == null) return;
+
+        // GamePart.Maxを基準に管理するパート数を設定する
+        int partMax = (int)GamePart.Max;
+
+        // パート数の一致確認
+        if (partOriginList.Length != partMax) return;
+
+        // 管理するパートの配列を生成する
+        partList = new PartBase[partMax];
+
+        // UniTaskをまとめて管理するためのリストを用意する
         List<UniTask> taskList = new List<UniTask>(partMax);
+
+        // 全パートを生成して初期化する
         for (int i = 0; i < partMax; i++) {
-            // パートオブジェクトの生成
-            _partList[i] = Instantiate(_partOriginList[i], transform);
-            // 初期化処理を実行
-            taskList.Add(_partList[i].Initialize());
+
+            // 生成元のパートPrefabを取得する
+            PartBase origin = partOriginList[i];
+
+            // パートの参照が設定されていなければ抜ける
+            if (origin == null) return;
+
+            // パートPrefabを自身の子オブジェクトとして生成する
+            partList[i] = Instantiate(origin, transform);
+
+            // 生成したパートの初期化処理を登録する
+            taskList.Add(partList[i].Initialize());
         }
 
-        // すべてのパートの初期化処理を待つ
+        // すべてのパートの初期化処理が完了するまで待機する
         await CommonModule.WaitTask(taskList);
     }
 
     /// <summary>
     /// パートの切り替え
     /// </summary>
-    /// <param name="nextPart"></param>
-    /// <returns></returns>
+    /// <param name="nextPart">切り替え先のパート</param>
+    /// <returns>切り替え処理のUniTask</returns>
     public async UniTask TransitionPart(GamePart nextPart) {
-        // 現在のパートの切り替え
-        if (_currentPart != null) await _currentPart.Teardown();
-        // パートの切り替え
-        _currentPart = _partList[(int)nextPart];
-        await _currentPart.Setup();
 
-        // 次のパートの実行
-        await _currentPart.Execute();
+        // パートの管理配列が初期化されていなければ抜ける
+        if (partList == null) return;
+
+        // パートの列挙値が有効な範囲か確認する
+        int nextPartIndex = (int)nextPart;
+        if (nextPartIndex < 0 || nextPartIndex >= partList.Length) return;
+
+        // 現在のパートが存在する場合は終了処理を実行する
+        if (currentPart != null) {
+            await currentPart.Teardown();
+        }
+
+        // 切り替え先のパートを取得する
+        currentPart = partList[nextPartIndex];
+
+        // 切り替え先のパートが存在しなければ抜ける
+        if (currentPart == null) return;
+
+        // 切り替え先のパートをセットアップする
+        await currentPart.Setup();
+
+        // 切り替え先のパートを実行する
+        await currentPart.Execute();
     }
 }

@@ -66,8 +66,6 @@ public class MatchingPart : PartBase {
         if (isMatchingClick) {
             // マッチング開始
 
-
-
             // マッチしたらメインゲームパートに遷移
             Debug.Log("マッチングしました");
             await PartManager.Instance.TransitionPart(GamePart.MainGame);

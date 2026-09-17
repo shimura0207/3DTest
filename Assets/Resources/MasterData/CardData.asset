@@ -1,0 +1,220 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f15d0e2e8c6a4429a01006ae490136, type: 3}
+  m_Name: CardData
+  m_EditorClassIdentifier: 
+  sheets:
+  - name: Data
+    list:
+    - CardID: 10001
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10002
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10003
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10004
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10005
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10006
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10007
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10008
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10009
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10010
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10011
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10012
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10013
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10014
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10015
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10016
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10017
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10018
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10019
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10020
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10021
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10022
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10023
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10024
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10025
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10026
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10027
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10028
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
+    - CardID: 10029
+      RarityID: 1
+      ThemeID: 1
+      RaceID: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2

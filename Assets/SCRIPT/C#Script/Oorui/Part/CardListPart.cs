@@ -37,6 +37,6 @@ public class CardListPart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-
+        await UniTask.CompletedTask;
     }
 }

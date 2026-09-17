@@ -40,7 +40,7 @@ public class SlotReelController : MonoBehaviour
     public readonly int SLOT_TEARN_MAX_G = 5;
 
     //引いた役保存LIST
-    private List<SlotSymbolRole> roles = new List<SlotSymbolRole>();
+    private List<PachiSlotSymbolRoleEnum> roles = new List<PachiSlotSymbolRoleEnum>();
 
     //============================================================
     // 抽選関連
@@ -67,7 +67,7 @@ public class SlotReelController : MonoBehaviour
     /// レバーON時に抽選された現在の役。
     /// 停止角度を決めるときに使います。
     /// </summary>
-    private SlotSymbolRole currentSlotSymbolRole = SlotSymbolRole.Miss;
+    private PachiSlotSymbolRoleEnum currentSlotSymbolRole = PachiSlotSymbolRoleEnum.Miss;
 
     //============================================================
     // リール基本設定
@@ -131,14 +131,14 @@ public class SlotReelController : MonoBehaviour
     [SerializeField]
     private RoleAngleRule[] roleStopAngleSettings =
     {
-        new RoleAngleRule(SlotSymbolRole.Miss),
-        new RoleAngleRule(SlotSymbolRole.Bell),
-        new RoleAngleRule(SlotSymbolRole.Replay),
-        new RoleAngleRule(SlotSymbolRole.WeakCherry),
-        new RoleAngleRule(SlotSymbolRole.Watermelon),
-        new RoleAngleRule(SlotSymbolRole.Chance),
-        new RoleAngleRule(SlotSymbolRole.StrongCherry),
-        new RoleAngleRule(SlotSymbolRole.Seven)
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.Miss),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.Bell),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.Replay),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.WeakCherry),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.Watermelon),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.Chance),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.StrongCherry),
+        new RoleAngleRule(PachiSlotSymbolRoleEnum.Seven)
     };
 
     //============================================================
@@ -601,7 +601,7 @@ public class SlotReelController : MonoBehaviour
     /// currentAngle: 今のリール角度
     /// role: 今回成立した役
     /// </summary>
-    private float GetNextStopAngle(int reelIndex, float currentAngle, SlotSymbolRole role)
+    private float GetNextStopAngle(int reelIndex, float currentAngle, PachiSlotSymbolRoleEnum role)
     {
         currentAngle = AngleNormalizer.NormalizeAngle(currentAngle);
 
@@ -655,7 +655,7 @@ public class SlotReelController : MonoBehaviour
     /// 例：
     /// role = Bell, reelIndex = 0 なら、ベル成立時の左リール停止角度を返します。
     /// </summary>
-    private float[] GetStopAnglesByRole(int reelIndex, SlotSymbolRole role)
+    private float[] GetStopAnglesByRole(int reelIndex, PachiSlotSymbolRoleEnum role)
     {
         if (roleStopAngleSettings == null)
         {
@@ -803,7 +803,7 @@ public class SlotReelController : MonoBehaviour
     /// 今回のゲームで抽選された役を返します。
     /// 自動回転リザルト表示で「何の役を引いたか」を集計するために使います。
     /// </summary>
-    public SlotSymbolRole GetCurrentSlotSymbolRole()
+    public PachiSlotSymbolRoleEnum GetCurrentSlotSymbolRole()
     {
         return currentSlotSymbolRole;
     }
@@ -812,7 +812,7 @@ public class SlotReelController : MonoBehaviour
     /// 役を日本語名で返します。
     /// Console表示用です。
     /// </summary>
-    public string GetSlotSymbolRoleName(SlotSymbolRole role)
+    public string GetSlotSymbolRoleName(PachiSlotSymbolRoleEnum role)
     {
         return roleLottery.GetRoleName(role);
     }
@@ -827,7 +827,7 @@ public class SlotReelController : MonoBehaviour
 
 
     //1G終了時に保存
-    public void AddRole(SlotSymbolRole _role) {
+    public void AddRole(PachiSlotSymbolRoleEnum _role) {
         roles.Add(_role);
         //5G以降は古いものから消す
         if (roles.Count > 5) {
@@ -837,7 +837,7 @@ public class SlotReelController : MonoBehaviour
 
 
     //保存された役の取得
-    public List<SlotSymbolRole> GetRoles() {
+    public List<PachiSlotSymbolRoleEnum> GetRoles() {
         return roles;
     }
 
