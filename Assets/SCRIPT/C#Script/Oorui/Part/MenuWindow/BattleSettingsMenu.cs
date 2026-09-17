@@ -38,6 +38,9 @@ public class BattleSettingsMenu : MenuWindowBase {
 
         // バトル開始前の準備をする
         BattleSystemManager.instance.BattleSetup(useDeckList,firstPlayer);
+
+        // メニューを閉じる
+        await Close();
         await UniTask.CompletedTask;
     }
 
@@ -47,9 +50,16 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// <returns></returns>
     private PlayerType DecideFirstPlayer() {
         // ランダムで決める
+        int randomValue = UnityEngine.Random.Range(0, 2);
 
-        
-        return PlayerType.Self;
+        // 0の場合は自分を先攻にする
+        if (randomValue == 0) {
+            return PlayerType.Self;
+        }
+
+        // 1の場合は相手を先攻にする
+        return PlayerType.Opponent;
+
     }
 
     /// <summary>
