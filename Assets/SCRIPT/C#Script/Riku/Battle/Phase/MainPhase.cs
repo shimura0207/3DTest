@@ -36,4 +36,8 @@ public class MainPhase : PhaseBase {
     public override bool OpponentExecute() {
         return base.OpponentExecute();
     }
+
+    public void NEXT() {
+        nextPhase = true;
+    }
 }

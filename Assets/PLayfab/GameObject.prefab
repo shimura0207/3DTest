@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99833398e9898a14c85dda2e5225e710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slotIndex: 0
   currentTable: 1
   reelSpeed: -320
   rotationAxis: 1
@@ -3007,8 +3008,8 @@ Transform:
   - {fileID: 8319125384273604729}
   - {fileID: 4337803538866512066}
   - {fileID: 898228346669790055}
-  - {fileID: 1477590423572621844}
   - {fileID: 5044744687693699493}
+  - {fileID: 1477590423572621844}
   - {fileID: 2073298677168589747}
   - {fileID: 2257461043407973588}
   - {fileID: 5544550016907912948}
