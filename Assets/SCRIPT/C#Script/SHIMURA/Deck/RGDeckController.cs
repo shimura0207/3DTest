@@ -162,6 +162,8 @@ public class RGDeckController : MonoBehaviour
     /// </summary>
     public void DrawCardToHand()
     {
+
+        
         if (runtimeDeck.Count <= 0)
         {
             Debug.LogWarning("デッキが空なのでカードを引けません。");
@@ -175,6 +177,7 @@ public class RGDeckController : MonoBehaviour
 
         Debug.Log("カードを引きました: " + drawnCard.CardName + " / 残りデッキ枚数: " + runtimeDeck.Count);
         RefreshDeckCountText();
+        
     }
 
     /// <summary>
@@ -382,5 +385,14 @@ public class RGDeckController : MonoBehaviour
         }
 
         deckCountText.text = deckCountPrefix + runtimeDeck.Count;
+    }
+
+
+    public static bool i;
+    public static void Ichenge() {
+        i = true;
+    }
+    public static void NotIchenge() {
+        i = false;
     }
 }
