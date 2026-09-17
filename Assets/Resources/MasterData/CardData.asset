@@ -19,202 +19,202 @@ MonoBehaviour:
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10002
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10003
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10004
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10005
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10006
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10007
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10008
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10009
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10010
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10011
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10012
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10013
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10014
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10015
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10016
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10017
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10018
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10019
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10020
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10021
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10022
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10023
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10024
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10025
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10026
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10027
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10028
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2
     - CardID: 10029
       RarityID: 1
       ThemeID: 1
       RaceID: 1
-      ATK: 1000
-      HP: 1000
-      SIZE: 1
+      ATK: 10
+      HP: 10
+      SIZE: 2

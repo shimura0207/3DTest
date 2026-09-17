@@ -37,7 +37,7 @@ public class BattleSettingsMenu : MenuWindowBase {
         List<int> useDeckList = GetUseDeckList();
 
         // バトル開始前の準備をする
-        BattleSystemManager.instance.BattleSetup(useDeckList,firstPlayer);
+        BattleSystemManager.instance.BattleSetup(useDeckList, firstPlayer);
 
         // メニューを閉じる
         await Close();
@@ -68,7 +68,7 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// <returns></returns>
     private List<int> GetUseDeckList() {
         return new List<int>() {
-            1, 2, 3, 4, 5, 6, 7
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
         };
     }
 

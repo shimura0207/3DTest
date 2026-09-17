@@ -60,6 +60,8 @@ public class MainGamePart : PartBase {
         // オブジェクトを表示する
         patisuroInstance.SetActive(true);
 
+        
+
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
         //await PartManager.Instance.TransitionPart(GamePart.EndGame);

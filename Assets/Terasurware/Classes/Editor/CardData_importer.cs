@@ -17,10 +17,10 @@ public class CardData_importer : AssetPostprocessor {
 		foreach (string asset in importedAssets) {
 			if (!filePath.Equals (asset))
 				continue;
-				
-			Entity_Data data = (Entity_Data)AssetDatabase.LoadAssetAtPath (exportPath, typeof(Entity_Data));
+
+            Entity_CardData data = (Entity_CardData)AssetDatabase.LoadAssetAtPath (exportPath, typeof(Entity_CardData));
 			if (data == null) {
-				data = ScriptableObject.CreateInstance<Entity_Data> ();
+				data = ScriptableObject.CreateInstance<Entity_CardData> ();
 				AssetDatabase.CreateAsset ((ScriptableObject)data, exportPath);
 				data.hideFlags = HideFlags.NotEditable;
 			}
@@ -41,14 +41,14 @@ public class CardData_importer : AssetPostprocessor {
 						continue;
 					}
 
-					Entity_Data.Sheet s = new Entity_Data.Sheet ();
+                    Entity_CardData.Sheet s = new Entity_CardData.Sheet ();
 					s.name = sheetName;
 				
 					for (int i=1; i<= sheet.LastRowNum; i++) {
 						IRow row = sheet.GetRow (i);
 						ICell cell = null;
-						
-						Entity_Data.Param p = new Entity_Data.Param ();
+
+                        Entity_CardData.Param p = new Entity_CardData.Param ();
 						
 					cell = row.GetCell(0); p.CardID = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(1); p.RarityID = (int)(cell == null ? 0 : cell.NumericCellValue);

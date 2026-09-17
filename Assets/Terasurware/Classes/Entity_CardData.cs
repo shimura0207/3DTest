@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Entity_Data : ScriptableObject
+public class Entity_CardData : ScriptableObject
 {	
 	public List<Sheet> sheets = new List<Sheet> ();
 
