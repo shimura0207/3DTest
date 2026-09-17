@@ -83,6 +83,7 @@ public enum PlayerType {
     // 相手
     Opponent,
 
+    Max
 }
 
 /// <summary>
@@ -101,6 +102,22 @@ public enum BattlePhase {
     AttackPhase,
     // ターン終了フェイズ
     EndPhase,
+
+    Max
+}
+
+/// <summary>
+/// 対戦の状態
+/// </summary>
+public enum BattleState { 
+    None = -1,
+
+    // 対戦進行中
+    InProgress,
+    // 勝利
+    Win,
+    // 敗北
+    Lose,
 
     Max
 }

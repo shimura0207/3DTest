@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Transactions;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
+
+using static GameConst;
 
 /// <summary>
 /// バトルシステム管理クラス
@@ -24,19 +27,23 @@ public class BattleSystemManager : MonoBehaviour {
     private PhaseBase[] phaseList = null;
     // 現在のフェイズ
     private BattlePhase currentPhase = BattlePhase.None;
+    // 対戦の状態
+    public BattleState battleState { get; private set; } = BattleState.None;
+    // プレイヤーの体力
+    public Dictionary<PlayerType, int> playerHP { get; private set; } = null;
 
-    // Start is called before the first frame update
-    void Start() {
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
+    public void Initialize() {
         instance = this;
 
         // リスト生成
         int phaseMax = (int)BattlePhase.Max;
         phaseList = new PhaseBase[phaseMax];
-    }
 
-    // Update is called once per frame
-    void Update() {
-
+        // 対戦中に切り替え
+        battleState = BattleState.InProgress;
     }
 
     /// <summary>
@@ -93,8 +100,12 @@ public class BattleSystemManager : MonoBehaviour {
         firstPlayer = setFirsetPlayer;
         // 現在のターンプレイヤーを先攻プレイヤーに
         turnPlayer = firstPlayer;
+        // HPの初期化
+        for (PlayerType i = 0; i < PlayerType.Max; i++) {
+            playerHP[i] = PLAYER_HP;
+        }
     }
-    
+
     /// <summary>
     /// ターンプレイヤーを交代する
     /// </summary>
@@ -105,6 +116,31 @@ public class BattleSystemManager : MonoBehaviour {
                 break;
             case PlayerType.Opponent:
                 turnPlayer = PlayerType.Self;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーに指定のダメージを与える
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="giveDamage">与えるダメージ量</param>
+    public void PlayerGiveDamage(PlayerType player, int giveDamage) {
+        // ダメージ分HPを減らす
+        playerHP[player] -= giveDamage;
+
+        // HPが0以下なら勝敗がつく
+        if (playerHP[player] > 0) return;
+
+        playerHP[player] = 0;
+        switch (player) {
+            case PlayerType.Self:
+                // 自身のHPが0なら敗北
+                battleState = BattleState.Lose;
+                break;
+            case PlayerType.Opponent:
+                // 相手のHPが0なら勝利
+                battleState = BattleState.Win;
                 break;
         }
     }
