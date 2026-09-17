@@ -31,6 +31,7 @@ public class CardListPart : PartBase {
         Debug.Log("カード一覧画面表示中");
         
     }
+    
 
     /// <summary>
     /// 実行処理
