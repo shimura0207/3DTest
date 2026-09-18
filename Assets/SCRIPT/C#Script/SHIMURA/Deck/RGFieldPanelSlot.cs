@@ -134,7 +134,7 @@ public class RGFieldPanelSlot : MonoBehaviour
         }
 
         placedCardObject = Instantiate(sourceHandSlot.gameObject, cardParent);
-        placedCardObject.name = "FieldCard_" + cardData.CardName;
+        placedCardObject.name = "FieldCard_"/* + cardData.CardName*/;
 
         placedCardData = cardData;
         // コピーしたカードのButtonを無効化。
