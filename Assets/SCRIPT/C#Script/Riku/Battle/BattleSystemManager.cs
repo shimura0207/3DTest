@@ -85,6 +85,7 @@ public class BattleSystemManager : MonoBehaviour {
         else {
             // フェイズを一つ進める
             currentPhase++;
+            Debug.Log("次のフェイズ");
         }
     }
 
@@ -115,9 +116,11 @@ public class BattleSystemManager : MonoBehaviour {
         switch (turnPlayer) {
             case PlayerType.Self:
                 turnPlayer = PlayerType.Opponent;
+                Debug.Log("相手のターン");
                 break;
             case PlayerType.Opponent:
                 turnPlayer = PlayerType.Self;
+                Debug.Log("自分のターン");
                 break;
         }
     }
