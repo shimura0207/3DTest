@@ -33,7 +33,8 @@ public class MainPhase : PhaseBase {
         hand.SetActive(true);
         deck.SetActive(true);
 
-        nextPhase = RGDeckController.i;
+        //nextPhase = RGDeckController.i;
+        nextPhase = Input.GetKeyDown(KeyCode.Space);
         return base.SelfExecute();
     }
 

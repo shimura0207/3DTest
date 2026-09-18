@@ -23,9 +23,10 @@ public class PachisuroPhase :PhaseBase
         slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
 
         
-
-        hand.SetActive(false);
-        deck.SetActive(false);
+        if (hand)
+            hand.SetActive(false);
+        if (deck)
+            deck.SetActive(false);
         slot.SlotUpdate();
         //5回転が終わっており、リールが回っていない場合にNEXTする
         if (slot.IsAnyReelRotating() == false&&slot.slotIndex==slot.SLOT_TEARN_MAX_G) {
