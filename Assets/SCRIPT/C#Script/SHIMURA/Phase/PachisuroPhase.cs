@@ -44,17 +44,14 @@ public class PachisuroPhase :PhaseBase
     /// </summary>
     /// <returns></returns>
     public override bool OpponentExecute() {
-        SlotReelController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        //SlotReelController slot; //呼ぶスクリプトにあだなつける
+        //GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        //slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        //
+        //
+        //slot.EnemySlotUpdate();
 
-
-        slot.EnemySlotUpdate();
-        //5回転が終わっており、リールが回っていない場合にNEXTする
-        if (slot.IsAnyReelRotating() == false && slot.slotIndex == slot.SLOT_TEARN_MAX_G) {
-            slot.slotIndex = 0;//ターンごとのゲーム数リセット
-            nextPhase = true;
-        }
+        nextPhase = true;
         return base.OpponentExecute();
     }
 }

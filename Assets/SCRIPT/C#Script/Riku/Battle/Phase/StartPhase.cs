@@ -30,7 +30,7 @@ public class StartPhase : PhaseBase {
 
         // ターン開始時ドロー
         RGDeckController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
         slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
         slot.DrawCardToHand();
         //AreaCardManager.instance.DrawCard(1);
