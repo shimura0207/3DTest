@@ -39,10 +39,10 @@ public class NewBehaviourScript : MonoBehaviour
 
 
         // ターン開始時ドロー
-        //RGDeckController slot; //呼ぶスクリプトにあだなつける
-        //GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        //slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
-        //slot.DrawCardToHand();
-        //AreaCardManager.instance.DrawCard(1);
+        RGDeckController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
+        slot.DrawCardToHand();
+        AreaCardManager.instance.DrawCard(1);
     }
 }
