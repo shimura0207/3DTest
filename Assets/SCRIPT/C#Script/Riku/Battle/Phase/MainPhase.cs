@@ -42,6 +42,8 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override bool OpponentExecute() {
+        // 次のフェイズへ
+        nextPhase = true;
         return base.OpponentExecute();
     }
 

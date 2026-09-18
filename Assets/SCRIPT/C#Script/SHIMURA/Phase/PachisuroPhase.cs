@@ -50,6 +50,11 @@ public class PachisuroPhase :PhaseBase
 
 
         slot.EnemySlotUpdate();
+        //5回転が終わっており、リールが回っていない場合にNEXTする
+        if (slot.IsAnyReelRotating() == false && slot.slotIndex == slot.SLOT_TEARN_MAX_G) {
+            slot.slotIndex = 0;//ターンごとのゲーム数リセット
+            nextPhase = true;
+        }
         return base.OpponentExecute();
     }
 }

@@ -10,7 +10,7 @@ using UnityEngine;
 /// <summary>
 /// 各フェイズの基底クラス
 /// </summary>
-public class PhaseBase {
+public class PhaseBase : MonoBehaviour{
     // 次のフェイズへ行くかどうか
     public bool nextPhase { get; protected set; } = false;
 
