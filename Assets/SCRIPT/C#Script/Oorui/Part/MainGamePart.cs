@@ -89,6 +89,8 @@ public class MainGamePart : PartBase {
             else if(Input.GetKeyDown(KeyCode.E)){
                 battleState = BattleState.Lose;
             }
+            // フレーム待機
+            await UniTask.Yield();
         }
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
