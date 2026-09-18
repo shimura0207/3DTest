@@ -35,4 +35,24 @@ public class EndGameMenu : MenuWindowBase {
         // 基底側でメニューを非表示にする
         await base.Close();
     }
+
+
+    /// <summary>
+    /// 対戦結果を設定する
+    /// </summary>
+    /// <param name="result">対戦結果</param>
+    public void SetBattleResult(BattleState result) {
+        // 対戦結果に応じて表示内容を切り替える
+        switch (result) {
+            case BattleState.Win:
+                // 勝利画像表示
+                Debug.Log("Win");
+                break;
+
+            case BattleState.Lose:
+                // 敗北画像表示
+                Debug.Log("Lose");
+                break;
+        }
+    }
 }

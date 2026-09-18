@@ -11,6 +11,9 @@ using Unity.VisualScripting;
 /// リザルト画面
 /// </summary>
 public class EndGamePart : PartBase {
+    // 自分視点の対戦結果を保持する
+    private BattleState battleResult = BattleState.None;
+
     // リザルト画面の階層パス
     private const string _MENUWINDOW_ENDGAME = "Prefab/Part/MenuWindow/EndGameMenu";
 
@@ -59,24 +62,34 @@ public class EndGamePart : PartBase {
     }
 
     public override async UniTask Execute() {
-        // BGMを再生
-
-
-        // 選択状態を初期化
+        // 選択状態を初期化する
         selectMenu = MainMenuSelect.None;
 
-        // リザルトメニューを表示
+        // 保存した対戦結果をリザルトメニューに設定する
+        endGame.SetBattleResult(battleResult);
+
+        // リザルトメニューを表示する
         await endGame.Open();
 
         // メニューが選択されるまで待機する
-        while(selectMenu == MainMenuSelect.None) {
+        while (selectMenu == MainMenuSelect.None) {
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
         }
+
         // リザルトメニューを閉じる
         await endGame.Close();
 
-        // メインメニュー画面に遷移
+        // メインメニュー画面に遷移する
         await PartManager.Instance.TransitionPart(GamePart.MainMenu);
+    }
+
+    /// <summary>
+    /// 対戦結果を設定する
+    /// </summary>
+    /// <param name="result">自分視点の対戦結果</param>
+    public void SetBattleResult(BattleState result) {
+        // 受け取った対戦結果を保存する
+        battleResult = result;
     }
 }

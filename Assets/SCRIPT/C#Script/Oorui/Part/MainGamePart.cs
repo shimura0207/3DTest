@@ -71,7 +71,8 @@ public class MainGamePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-
+        // バトル状態を進行中に初期化する
+        battleState = BattleState.InProgress;
         // バトル準備を行う
         await buttleSettings.Open();
 
@@ -82,11 +83,17 @@ public class MainGamePart : PartBase {
         while (battleState == BattleState.InProgress) {
             // フェイズの進行
             battleSystemManager.PhaseExecute();
+            if (Input.GetKeyDown(KeyCode.Q)) {
+                battleState = BattleState.Win;
+            }
+            else if(Input.GetKeyDown(KeyCode.E)){
+                battleState = BattleState.Lose;
+            }
         }
-
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
-        //await PartManager.Instance.TransitionPart(GamePart.EndGame);
+        // 勝敗を渡して、リザルトパートに遷移
+        await PartManager.Instance.TransitionPart(GamePart.EndGame, battleState);
         await UniTask.CompletedTask;
     }
 
