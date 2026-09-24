@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class StartPhase : PhaseBase {
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool SelfExecute() {
+    public override async UniTask SelfExecute() {
         // ターン開始時効果確認(今後実装予定)
 
         // ターン開始時ドロー
@@ -46,14 +47,14 @@ public class StartPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
-        return base.SelfExecute();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool OpponentExecute() {
+    public override async UniTask OpponentExecute() {
         // ターン開始時効果確認(今後実装予定)
 
         // ターン開始時ドロー(今後実装予定)
@@ -61,6 +62,6 @@ public class StartPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
-        return base.OpponentExecute();
+        await UniTask.CompletedTask;
     }
 }

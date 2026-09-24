@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class AttackPhase : PhaseBase {
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool SelfExecute() {
+    public override async UniTask SelfExecute() {
         // 当選役取得
         {
             // 当選役を保存
@@ -97,16 +98,16 @@ public class AttackPhase : PhaseBase {
             // 次のフェイズへ
             nextPhase = true;
         }
-        return base.SelfExecute();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool OpponentExecute() {
+    public override async UniTask OpponentExecute() {
         // 次のフェイズへ
         nextPhase = true;
-        return base.OpponentExecute();
+        await UniTask.CompletedTask;
     }
 }
