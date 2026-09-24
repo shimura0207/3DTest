@@ -18,7 +18,7 @@ public class PachisuroPhase :PhaseBase
         GameObject hand = GameObject.Find("HANDCanvas"); 
         GameObject deck = GameObject.Find("DeckContlol");
 
-       Canvas rend= hand.GetComponent<Canvas>();
+        Canvas rend= hand.GetComponent<Canvas>();
         SlotReelController slot; //呼ぶスクリプトにあだなつける
         GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
         slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
