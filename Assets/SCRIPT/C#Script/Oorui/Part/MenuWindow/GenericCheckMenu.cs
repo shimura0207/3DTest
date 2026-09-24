@@ -5,6 +5,7 @@
 
 using Cysharp.Threading.Tasks;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,10 +19,11 @@ public class GenericCheckMenu : MenuWindowBase {
     // はいボタン
     [SerializeField] private Button yesButton;
 
-    // このウィンドウを閉じる
-    public bool isCloseWindow = false;
-    // 選択されたアクションを実行
-    public bool isAction = false;
+    // 確認メッセージを表示するテキスト
+    [SerializeField] private TMP_Text messageText;
+
+    // ボタンが選択されるまで待機するための完了通知
+    private UniTaskCompletionSource<bool> completionSource;
 
     /// <summary>
     /// 初期化処理
@@ -46,20 +48,24 @@ public class GenericCheckMenu : MenuWindowBase {
     /// ウィンドウ表示時の処理
     /// </summary>
     /// <returns></returns>
-    public override async UniTask Open() {
-        // 基底側でメニューウィンドウを表示
+    public async UniTask<bool> Open(string message) {
+        // 表示するメッセージを設定
+        messageText.text = message;
+
+        // ボタン選択結果を受け取るための待機処理を作成
+        completionSource = new UniTaskCompletionSource<bool>();
+
+        // ウィンドウを表示
         await base.Open();
-        // ボタンが押されるまで待機
-        await UniTask.WaitUntil(() => isCloseWindow || isAction);
+
+        // はい・いいえのどちらかが押されるまで待機
+        bool result = await completionSource.Task;
 
         // ウィンドウを閉じる
-        if (isCloseWindow) {
-            await Close();
-        }
-        
-        else if (isAction) {
+        await Close();
 
-        }
+        // 選択結果を呼び出し元へ返す
+        return result;
 
     }
 
@@ -76,14 +82,15 @@ public class GenericCheckMenu : MenuWindowBase {
     /// いいえボタンが押された時の処理
     /// </summary>
     private void OnClickNoButton() {
-        // フラグ変更
-        isCloseWindow = true;
+        // 「いいえ」を選択したことを呼び出し元へ通知
+        completionSource.TrySetResult(false);
     }
 
     /// <summary>
     /// はいボタンが押された時の処理
     /// </summary>
     private void OnClickYesButton() {
-        isAction = true;
+        // 「はい」を選択したことを呼び出し元へ通知
+        completionSource.TrySetResult(true);
     }
 }

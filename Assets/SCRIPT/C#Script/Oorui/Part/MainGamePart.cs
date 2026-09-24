@@ -84,15 +84,12 @@ public class MainGamePart : PartBase {
         while (battleState == BattleState.InProgress) {
             // フェイズの進行
             battleSystemManager.PhaseExecute();
-            if (Input.GetKeyDown(KeyCode.Q)) {
-                battleState = BattleState.Win;
-            }
-            else if(Input.GetKeyDown(KeyCode.E)){
-                battleState = BattleState.Lose;
-            }
+            // 進行状況を取得
+            battleState = BattleSystemManager.instance.battleState;
             // フレーム待機
             await UniTask.Yield();
         }
+
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
         // 勝敗を渡して、リザルトパートに遷移
