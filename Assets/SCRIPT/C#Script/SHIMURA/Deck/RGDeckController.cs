@@ -144,7 +144,7 @@ public class RGDeckController : MonoBehaviour
             runtimeDeck[randomIndex] = temp;
         }
 
-        //Debug.Log("デッキをシャッフルしました。");
+        Debug.Log("デッキをシャッフルしました。");
     }
 
     /// <summary>
@@ -362,7 +362,7 @@ public class RGDeckController : MonoBehaviour
             return;
         }
 
-        Debug.Log("手札を消費しました: " + handCards[removeIndex].CardName);
+       // Debug.Log("手札を消費しました: " + handCards[removeIndex].CardName);
 
         for (int i = removeIndex; i < handCards.Length - 1; i++)
         {
