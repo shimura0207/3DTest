@@ -1,3 +1,5 @@
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +20,19 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public class RGFieldPanelSlot : MonoBehaviour
 {
+
+    /// <summary>
+    /// このフィールドに置かれているカードのScriptableObject。
+    /// </summary>
+    private RGCardData placedCardData;
+
+    /// <summary>
+    /// 現在フィールドに置かれているカードのScriptableObjectを取得。
+    /// 他のスクリプトからカードステータスを読むために使用します。
+    /// </summary>
+    public RGCardData PlacedCardData => placedCardData;
+
+
     [Header("Panel Button")]
 
     [Tooltip("PlayerPanelのButton。空なら自動取得します。")]
@@ -79,7 +94,11 @@ public class RGFieldPanelSlot : MonoBehaviour
 
         panelButton.interactable = enabled;
     }
-
+    public void Update() {
+        if (Input.GetKeyDown(KeyCode.S)) {
+            ATTACK();
+        }
+    }
     /// <summary>
     /// 手札カードをこのPanel上に配置します。
     /// 
@@ -115,8 +134,9 @@ public class RGFieldPanelSlot : MonoBehaviour
         }
 
         placedCardObject = Instantiate(sourceHandSlot.gameObject, cardParent);
-        placedCardObject.name = "FieldCard_" + cardData.CardName;
+        placedCardObject.name = "FieldCard_"/* + cardData.CardName*/;
 
+        placedCardData = cardData;
         // コピーしたカードのButtonを無効化。
         // フィールド上のカードを手札ボタンとして押せないようにします。
         DisableButtonsInChildren(placedCardObject);
@@ -129,10 +149,39 @@ public class RGFieldPanelSlot : MonoBehaviour
             copiedSlot.SetCard(cardData);
         }
 
+        // フィールドカード用コンポーネントを取得
+        RGFieldCard fieldCard =
+            placedCardObject.GetComponent<RGFieldCard>();
+
+        // なければ追加
+        if (fieldCard == null) {
+            fieldCard =
+                placedCardObject.AddComponent<RGFieldCard>();
+        }
+
+        // ScriptableObjectを設定
+        fieldCard.SetCardData(cardData);
+
+        fieldCard.SetCardData(cardData);
+
         FitCardToPanel(placedCardObject);
 
         Debug.Log($"{gameObject.name} にカードを配置しました: {cardData.CardName}");
+        // ScriptableObjectを設定
+        fieldCard.SetCardData(cardData);
 
+        // 配置したカードのステータスをDebug.Log
+        Debug.Log(
+            $"===== フィールドカード配置 =====\n" +
+            $"カード名 : {cardData.CardName}\n" +
+            $"CardID   : {cardData.CardId}\n" +
+            $"ATK      : {cardData.Atk}\n" +
+            $"HP       : {cardData.Hp}\n" +
+            $"SIZE     : {cardData.Size}\n" +
+            $"対応役   : {cardData.SupportRole}\n" +
+            $"種族     : {cardData.Race1}, {cardData.Race2}, {cardData.Race3}\n" +
+            $"=============================="
+        );
         return true;
     }
 
@@ -201,5 +250,10 @@ public class RGFieldPanelSlot : MonoBehaviour
         }
 
         return panelButton;
+    }
+
+
+    public void ATTACK() {
+        
     }
 }

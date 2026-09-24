@@ -15,17 +15,18 @@ public class PachisuroPhase :PhaseBase
     /// <returns></returns>
     public override bool SelfExecute() {
 
-        GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
-        GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+        GameObject hand = GameObject.Find("HANDCanvas"); 
+        GameObject deck = GameObject.Find("DeckContlol");
 
+       Canvas rend= hand.GetComponent<Canvas>();
         SlotReelController slot; //呼ぶスクリプトにあだなつける
         GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
         slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
 
-        
 
-        hand.SetActive(false);
-        deck.SetActive(false);
+        //Canvas rend = hand.GetComponent<Canvas>();
+        rend.enabled = false;
+
         slot.SlotUpdate();
         //5回転が終わっており、リールが回っていない場合にNEXTする
         if (slot.IsAnyReelRotating() == false&&slot.slotIndex==slot.SLOT_TEARN_MAX_G) {
@@ -37,17 +38,21 @@ public class PachisuroPhase :PhaseBase
         
     }
 
+
+
     /// <summary>
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
     public override bool OpponentExecute() {
-        SlotReelController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        //SlotReelController slot; //呼ぶスクリプトにあだなつける
+        //GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        //slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        //
+        //
+        //slot.EnemySlotUpdate();
 
-
-        slot.EnemySlotUpdate();
+        nextPhase = true;
         return base.OpponentExecute();
     }
 }

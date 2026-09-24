@@ -20,7 +20,7 @@ public class StartPhase : PhaseBase {
     void Update() {
 
     }
-    
+
     /// <summary>
     /// 自身のターン処理
     /// </summary>
@@ -29,9 +29,18 @@ public class StartPhase : PhaseBase {
         // ターン開始時効果確認(今後実装予定)
 
         // ターン開始時ドロー
+        GameObject hand = GameObject.Find("HANDCanvas");
+
         RGDeckController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+        
+            Canvas rend = hand.GetComponent<Canvas>();
+            rend.enabled = true;
+        
+        
+        
         slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
+        RGDeckController.NotIchenge();
         slot.DrawCardToHand();
         //AreaCardManager.instance.DrawCard(1);
         // 次のフェイズへ

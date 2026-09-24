@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1323235478924805909
+--- !u!1 &7493591886349894141
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2885772943011725880}
-  - component: {fileID: 4080060702279833854}
+  - component: {fileID: 91774024688527649}
+  - component: {fileID: 3348363634008065958}
   m_Layer: 0
-  m_Name: MainGamePart
+  m_Name: PachisuroPhase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2885772943011725880
+--- !u!4 &91774024688527649
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1323235478924805909}
+  m_GameObject: {fileID: 7493591886349894141}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,18 +32,15 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4080060702279833854
+--- !u!114 &3348363634008065958
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1323235478924805909}
+  m_GameObject: {fileID: 7493591886349894141}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ffb4d3b528e6cb4d8d28059be7fd214, type: 3}
+  m_Script: {fileID: 11500000, guid: 325b774f8b039d346b980b1fe2cf76de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleSystemManagerPrefab: {fileID: 624098051490861473, guid: e9a29de81db761e4a811a46bd840f7cc, type: 3}
-  areaCardManagerPrefab: {fileID: 4668767147136827646, guid: f62c1e95044abb94c9fdde362348adda, type: 3}
-  patisuro: {fileID: 4158583410018202540, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}

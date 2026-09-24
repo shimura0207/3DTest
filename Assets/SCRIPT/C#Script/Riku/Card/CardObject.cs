@@ -14,7 +14,7 @@ public class CardObject : MonoBehaviour {
     // オブジェクトを判別する個別ID
     public int objectID { get; private set; } = -1;
     // 使用中かどうか
-    private bool isActive = false;
+    //private bool isActive = false;
     // カードの種類を判別するID
     public int cardID { get; private set; } = -1;
 
@@ -54,7 +54,7 @@ public class CardObject : MonoBehaviour {
     /// </summary>
     public void Teardown() {
         objectID = -1;
-        isActive = false;
+        //isActive = false;
         cardID = -1;
         defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };

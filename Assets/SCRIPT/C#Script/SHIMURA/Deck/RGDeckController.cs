@@ -80,7 +80,7 @@ public class RGDeckController : MonoBehaviour
     // Unityイベント
     //============================================================
 
-    private void Start()
+    public void Initialize()
     {
         ResetDeck();
 

@@ -39,9 +39,9 @@ public class BattleSystemManager : MonoBehaviour {
         instance = this;
 
         // リスト生成
-        int phaseMax = (int)BattlePhase.Max;
-        phaseList = new PhaseBase[phaseMax];
-
+        //int phaseMax = (int)BattlePhase.Max;
+        //phaseList = new PhaseBase[phaseMax];
+        playerHP = new Dictionary<PlayerType, int>();
         // 対戦中に切り替え
         battleState = BattleState.InProgress;
     }
@@ -81,10 +81,30 @@ public class BattleSystemManager : MonoBehaviour {
             ChangeTurnPlayer();
             // スタートフェイズに戻る
             currentPhase = BattlePhase.StartPhase;
+            
+            Debug.Log("スタートフェイズ");
         }
         else {
             // フェイズを一つ進める
             currentPhase++;
+            
+            switch (currentPhase) {
+                case BattlePhase.StartPhase:
+                    Debug.Log("スタートフェイズ");
+                    break;
+                case BattlePhase.MainPhase:
+                    Debug.Log("メインフェイズ");
+                    break;
+                case BattlePhase.PachisuroPhase:
+                    Debug.Log("パチスロフェイズ");
+                    break;
+                case BattlePhase.AttackPhase:
+                    Debug.Log("アタックフェイズ");
+                    break;
+                case BattlePhase.EndPhase:
+                    Debug.Log("エンドフェイズ");
+                    break;
+            }
         }
     }
 
@@ -94,16 +114,29 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="setUseDeckList">使用デッキリスト</param>
     /// <param name="setFirsetPlayer">先攻プレイヤー</param>
     public void BattleSetup(List<int> setUseDeckList, PlayerType setFirsetPlayer) {
+        // 各フェイズ生成
+        for (int i = 0; i < phaseList.Length; i++) {
+            Instantiate(phaseList[i], transform);
+        }
         // 自身の使用デッキ登録
         AreaCardManager.instance.SetDeck(setUseDeckList);
         // 先攻プレイヤー登録
         firstPlayer = setFirsetPlayer;
         // 現在のターンプレイヤーを先攻プレイヤーに
         turnPlayer = firstPlayer;
+        // フェイズをスタートに
+        currentPhase = BattlePhase.StartPhase;
         // HPの初期化
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             playerHP[i] = PLAYER_HP;
         }
+
+        // 手札5枚用意
+        RGDeckController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
+        slot.Initialize();
+        slot.DrawCardsToHand(5);
     }
 
     /// <summary>
@@ -113,9 +146,11 @@ public class BattleSystemManager : MonoBehaviour {
         switch (turnPlayer) {
             case PlayerType.Self:
                 turnPlayer = PlayerType.Opponent;
+                Debug.Log("相手のターン");
                 break;
             case PlayerType.Opponent:
                 turnPlayer = PlayerType.Self;
+                Debug.Log("自分のターン");
                 break;
         }
     }

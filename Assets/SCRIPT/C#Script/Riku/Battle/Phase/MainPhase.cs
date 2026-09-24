@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -26,7 +27,15 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override bool SelfExecute() {
+        GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
+        GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+
+
+        hand.SetActive(true);
+        deck.SetActive(true);
+
         nextPhase = RGDeckController.i;
+        //nextPhase = Input.GetKeyDown(KeyCode.Space);
         return base.SelfExecute();
     }
 
@@ -35,8 +44,10 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override bool OpponentExecute() {
+        // 次のフェイズへ
+        nextPhase = true;
         return base.OpponentExecute();
     }
 
-    
+  
 }
