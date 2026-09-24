@@ -38,9 +38,9 @@ public class StartPhase : PhaseBase {
             rend.enabled = true;
         
         
-       
+        
         slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
-
+        RGDeckController.NotIchenge();
         slot.DrawCardToHand();
         //AreaCardManager.instance.DrawCard(1);
         // 次のフェイズへ
