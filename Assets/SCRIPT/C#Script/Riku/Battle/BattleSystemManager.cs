@@ -124,10 +124,6 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="setUseDeckList">使用デッキリスト</param>
     /// <param name="setFirsetPlayer">先攻プレイヤー</param>
     public void BattleSetup(List<int> setUseDeckList, PlayerType setFirsetPlayer) {
-        // 各フェイズ生成
-        for (int i = 0; i < phaseList.Length; i++) {
-            Instantiate(phaseList[i], transform);
-        }
         // 自身の使用デッキ登録
         AreaCardManager.instance.SetDeck(setUseDeckList);
         // 先攻プレイヤー登録
