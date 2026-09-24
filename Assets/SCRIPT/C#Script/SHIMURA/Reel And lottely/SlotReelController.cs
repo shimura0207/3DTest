@@ -212,7 +212,7 @@ public class SlotReelController : MonoBehaviour
 
     private void Update()
     {
-        SlotUpdate();
+        //SlotUpdate();
         if (Input.GetKeyDown(KeyCode.P)) {
             DebugRoles();
         }
