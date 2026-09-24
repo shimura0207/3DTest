@@ -1,11 +1,13 @@
-using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 /*
  * @file    SlotPhase.cs
  * @author  Shimura
  */
+
+using Cysharp.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class PachisuroPhase :PhaseBase
 {
     
@@ -54,6 +56,8 @@ public class PachisuroPhase :PhaseBase
         //slot.EnemySlotUpdate();
 
         nextPhase = true;
+
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 }

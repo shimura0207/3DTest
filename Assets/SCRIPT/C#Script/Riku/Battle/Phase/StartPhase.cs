@@ -34,12 +34,8 @@ public class StartPhase : PhaseBase {
 
         RGDeckController slot; //呼ぶスクリプトにあだなつける
         GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
-        
-            Canvas rend = hand.GetComponent<Canvas>();
-            rend.enabled = true;
-        
-        
-        
+        Canvas rend = hand.GetComponent<Canvas>();
+        rend.enabled = true;
         slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
         RGDeckController.NotIchenge();
         slot.DrawCardToHand();
@@ -47,6 +43,7 @@ public class StartPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 
@@ -62,6 +59,7 @@ public class StartPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 }

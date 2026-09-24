@@ -32,6 +32,7 @@ public class EndPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 
@@ -45,6 +46,7 @@ public class EndPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 }

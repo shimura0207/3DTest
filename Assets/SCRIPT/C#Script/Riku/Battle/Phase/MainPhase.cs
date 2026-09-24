@@ -47,6 +47,8 @@ public class MainPhase : PhaseBase {
     public override async UniTask OpponentExecute() {
         // 次のフェイズへ
         nextPhase = true;
+
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     } 
 }
