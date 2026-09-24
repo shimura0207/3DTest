@@ -135,15 +135,15 @@ public class RGHandCardSlot : MonoBehaviour
 
         if (currentCard != null)
         {
-            Debug.Log(
-                $"{gameObject.name} にカード追加: " +
-                $"ID={currentCard.CardId}, " +
-                $"Name={currentCard.CardName}, " +
-                $"ATK={currentCard.Atk}, " +
-                $"HP={currentCard.Hp}, " +
-                $"SIZE={currentCard.Size}, " +
-                $"Role={currentCard.SupportRole}"
-            );
+            //Debug.Log(
+                //$"{gameObject.name} にカード追加: " +
+                //$"ID={currentCard.CardId}, " +
+               // $"Name={currentCard.CardName}, " +
+               // $"ATK={currentCard.Atk}, " +
+               // $"HP={currentCard.Hp}, " +
+               // $"SIZE={currentCard.Size}, " +
+               // $"Role={currentCard.SupportRole}"
+           // );
         }
 
         RefreshView();

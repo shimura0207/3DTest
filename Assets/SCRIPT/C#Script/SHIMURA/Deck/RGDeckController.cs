@@ -124,7 +124,7 @@ public class RGDeckController : MonoBehaviour
             runtimeDeck.Add(deckCards[i]);
         }
 
-        Debug.Log("デッキを初期化しました。枚数: " + runtimeDeck.Count);
+       // Debug.Log("デッキを初期化しました。枚数: " + runtimeDeck.Count);
         RefreshDeckCountText();
     }
 
@@ -144,7 +144,7 @@ public class RGDeckController : MonoBehaviour
             runtimeDeck[randomIndex] = temp;
         }
 
-        Debug.Log("デッキをシャッフルしました。");
+        //Debug.Log("デッキをシャッフルしました。");
     }
 
     /// <summary>
@@ -175,7 +175,7 @@ public class RGDeckController : MonoBehaviour
 
         AddCardToHandLeft(drawnCard);
 
-        Debug.Log("カードを引きました: " + drawnCard.CardName + " / 残りデッキ枚数: " + runtimeDeck.Count);
+        //Debug.Log("カードを引きました: " + drawnCard.CardName + " / 残りデッキ枚数: " + runtimeDeck.Count);
         RefreshDeckCountText();
         
     }
