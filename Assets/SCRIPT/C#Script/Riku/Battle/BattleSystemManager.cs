@@ -143,6 +143,16 @@ public class BattleSystemManager : MonoBehaviour {
         slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
         slot.Initialize();
         slot.DrawCardsToHand(5);
+
+        // ログ
+        switch (turnPlayer) {
+            case PlayerType.Self:
+                Debug.Log("先攻：自分のターン");
+                break;
+            case PlayerType.Opponent:
+                Debug.Log("先攻：相手のターン");
+                break;
+        }
     }
 
     /// <summary>
