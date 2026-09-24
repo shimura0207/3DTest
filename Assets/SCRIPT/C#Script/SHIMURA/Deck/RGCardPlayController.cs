@@ -60,7 +60,7 @@ public class RGCardPlayController : MonoBehaviour
 
         isBound = true;
 
-        Debug.Log("RGCardPlayController: Button登録完了");
+       // Debug.Log("RGCardPlayController: Button登録完了");
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public class RGCardPlayController : MonoBehaviour
 
             handButton.onClick.AddListener(() => SelectHandCard(index));
 
-            Debug.Log("手札Button登録: HandCard" + (index + 1));
+            //Debug.Log("手札Button登録: HandCard" + (index + 1));
         }
     }
 
@@ -117,7 +117,7 @@ public class RGCardPlayController : MonoBehaviour
 
             panelButton.onClick.AddListener(() => PlaceSelectedCardToPanel(index));
 
-            Debug.Log("PlayerPanel Button登録: PlayerPanel" + (index + 1));
+           // Debug.Log("PlayerPanel Button登録: PlayerPanel" + (index + 1));
         }
     }
 
@@ -140,7 +140,7 @@ public class RGCardPlayController : MonoBehaviour
 
         if (card == null)
         {
-            Debug.Log("空の手札は選択できません。HandCard" + (handIndex + 1));
+            //Debug.Log("空の手札は選択できません。HandCard" + (handIndex + 1));
             ClearSelection();
             return;
         }
@@ -149,7 +149,7 @@ public class RGCardPlayController : MonoBehaviour
 
         SetAllPlayerPanelButtons(true);
 
-        Debug.Log("手札を選択しました: HandCard" + (handIndex + 1) + " / " + card.CardName);
+        //Debug.Log("手札を選択しました: HandCard" + (handIndex + 1) + " / " + card.CardName);
     }
 
     /// <summary>
@@ -157,23 +157,23 @@ public class RGCardPlayController : MonoBehaviour
     /// </summary>
     private void PlaceSelectedCardToPanel(int panelIndex)
     {
-        Debug.Log("PlayerPanelが押されました: PlayerPanel" + (panelIndex + 1));
+       // Debug.Log("PlayerPanelが押されました: PlayerPanel" + (panelIndex + 1));
 
         if (selectedHandIndex < 0)
         {
-            Debug.LogWarning("手札が選択されていません。");
+           // Debug.LogWarning("手札が選択されていません。");
             return;
         }
 
         if (panelIndex < 0 || panelIndex >= playerPanels.Length)
         {
-            Debug.LogWarning("Panel番号が範囲外です: " + panelIndex);
+           // Debug.LogWarning("Panel番号が範囲外です: " + panelIndex);
             return;
         }
 
         if (deckController == null)
         {
-            Debug.LogWarning("RGDeckControllerが設定されていません。");
+           Debug.LogWarning("RGDeckControllerが設定されていません。");
             return;
         }
 
@@ -211,7 +211,7 @@ public class RGCardPlayController : MonoBehaviour
             return;
         }
 
-        Debug.Log("カード配置成功: " + selectedCard.CardName);
+        //Debug.Log("カード配置成功: " + selectedCard.CardName);
 
         // 手札を消費して左詰め
         deckController.RemoveHandCardAtAndCompact(selectedHandIndex);
