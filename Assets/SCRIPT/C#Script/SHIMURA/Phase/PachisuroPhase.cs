@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class PachisuroPhase :PhaseBase
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool SelfExecute() {
+    public override async UniTask SelfExecute() {
 
         GameObject hand = GameObject.Find("HANDCanvas"); 
         GameObject deck = GameObject.Find("DeckContlol");
@@ -34,7 +35,7 @@ public class PachisuroPhase :PhaseBase
             nextPhase = true;
         }
 
-        return base.SelfExecute();
+        await UniTask.CompletedTask;
         
     }
 
@@ -44,7 +45,7 @@ public class PachisuroPhase :PhaseBase
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool OpponentExecute() {
+    public override async UniTask OpponentExecute() {
         //SlotReelController slot; //呼ぶスクリプトにあだなつける
         //GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
         //slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
@@ -53,6 +54,6 @@ public class PachisuroPhase :PhaseBase
         //slot.EnemySlotUpdate();
 
         nextPhase = true;
-        return base.OpponentExecute();
+        await UniTask.CompletedTask;
     }
 }

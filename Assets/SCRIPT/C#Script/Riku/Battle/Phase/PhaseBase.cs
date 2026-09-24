@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Properties;
@@ -19,16 +20,16 @@ public class PhaseBase : MonoBehaviour{
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
-    public virtual bool SelfExecute() {
-        return nextPhase;
+    public virtual async UniTask SelfExecute() {
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
-    public virtual bool OpponentExecute() {
-        return nextPhase;
+    public virtual async UniTask OpponentExecute() {
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
