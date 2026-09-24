@@ -89,6 +89,8 @@ public class AttackPhase : PhaseBase {
                     if (koyakuList[i] != fieldCards[j].SupportRole) continue;
                     // カードの攻撃力分のダメージを与える
                     BattleSystemManager.instance.PlayerGiveDamage(PlayerType.Opponent, fieldCards[j].Atk);
+
+                    Debug.Log("相手プレイヤーに" + fieldCards[j].Atk + "のダメージ");
                 }
             }
 

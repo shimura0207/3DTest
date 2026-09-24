@@ -42,8 +42,6 @@ public class BattleSystemManager : MonoBehaviour {
         //int phaseMax = (int)BattlePhase.Max;
         //phaseList = new PhaseBase[phaseMax];
         playerHP = new Dictionary<PlayerType, int>();
-        // 対戦中に切り替え
-        battleState = BattleState.InProgress;
     }
 
     /// <summary>
@@ -132,6 +130,8 @@ public class BattleSystemManager : MonoBehaviour {
         turnPlayer = firstPlayer;
         // フェイズをスタートに
         currentPhase = BattlePhase.StartPhase;
+        // 対戦中状態に切り替え
+        battleState = BattleState.InProgress;
         // HPの初期化
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             playerHP[i] = PLAYER_HP;
