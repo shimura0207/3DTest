@@ -82,7 +82,7 @@ public class AttackPhase : PhaseBase {
             // 当選役の数分の対応役チェック
             for (int i = 0; i < koyakuList.Count; i++) {
                 // フィールドのカードをひとつずつチェック
-                for (int j = 0; j < fieldCards.Length; i++) {
+                for (int j = 0; j < fieldCards.Length; j++) {
                     // フィールドにカードがなければスキップ
                     if (!fieldCards[j]) continue;
                     // 対応役が成立していれば攻撃

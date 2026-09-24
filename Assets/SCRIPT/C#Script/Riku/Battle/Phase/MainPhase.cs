@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -34,6 +35,7 @@ public class MainPhase : PhaseBase {
         deck.SetActive(true);
 
         nextPhase = RGDeckController.i;
+        //nextPhase = Input.GetKeyDown(KeyCode.Space);
         return base.SelfExecute();
     }
 
@@ -47,5 +49,5 @@ public class MainPhase : PhaseBase {
         return base.OpponentExecute();
     }
 
-    
+  
 }

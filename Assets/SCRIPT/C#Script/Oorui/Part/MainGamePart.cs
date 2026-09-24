@@ -73,11 +73,12 @@ public class MainGamePart : PartBase {
     public override async UniTask Execute() {
         // バトル状態を進行中に初期化する
         battleState = BattleState.InProgress;
-        // バトル準備を行う
-        await buttleSettings.Open();
-
+        
         // オブジェクトを表示する
         pachisuroInstance.SetActive(true);
+
+        // バトル準備を行う
+        await buttleSettings.Open();
 
         // ループ
         while (battleState == BattleState.InProgress) {

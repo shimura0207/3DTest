@@ -81,11 +81,30 @@ public class BattleSystemManager : MonoBehaviour {
             ChangeTurnPlayer();
             // スタートフェイズに戻る
             currentPhase = BattlePhase.StartPhase;
+            
+            Debug.Log("スタートフェイズ");
         }
         else {
             // フェイズを一つ進める
             currentPhase++;
-            Debug.Log("次のフェイズ");
+            
+            switch (currentPhase) {
+                case BattlePhase.StartPhase:
+                    Debug.Log("スタートフェイズ");
+                    break;
+                case BattlePhase.MainPhase:
+                    Debug.Log("メインフェイズ");
+                    break;
+                case BattlePhase.PachisuroPhase:
+                    Debug.Log("パチスロフェイズ");
+                    break;
+                case BattlePhase.AttackPhase:
+                    Debug.Log("アタックフェイズ");
+                    break;
+                case BattlePhase.EndPhase:
+                    Debug.Log("エンドフェイズ");
+                    break;
+            }
         }
     }
 
@@ -111,6 +130,13 @@ public class BattleSystemManager : MonoBehaviour {
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             playerHP[i] = PLAYER_HP;
         }
+
+        // 手札5枚用意
+        RGDeckController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
+        slot.Initialize();
+        slot.DrawCardsToHand(5);
     }
 
     /// <summary>

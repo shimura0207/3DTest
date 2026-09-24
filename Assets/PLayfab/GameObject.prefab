@@ -3455,7 +3455,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1514783511305902531}
         m_TargetAssemblyTypeName: RGDeckController, Assembly-CSharp
-        m_MethodName: DrawCardToHand
+        m_MethodName: Ichenge
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
