@@ -7,6 +7,8 @@ using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -22,6 +24,9 @@ public class OptionPart : PartBase {
 
     // 選択された遷移先
     private CardRelationMenuSelect selectMenu = CardRelationMenuSelect.None;
+
+    // ゲーム終了ボタン
+    [SerializeField] private Button gameEnd;
 
     /// <summary>
     /// 初期化処理
@@ -41,7 +46,7 @@ public class OptionPart : PartBase {
         Debug.Log("設定画面表示中");
         // 選択状態を初期化する
         selectMenu = CardRelationMenuSelect.None;
-
+        gameEnd.onClick.AddListener(OnClickNoButton);
         // 念のため以前登録されているイベントを解除する
         UnRegisterMenuEvent();
         // メニューイベントを登録
@@ -126,5 +131,16 @@ public class OptionPart : PartBase {
         UnRegisterMenuEvent();
         // 選択状態を初期化する
         selectMenu = CardRelationMenuSelect.None;
+    }
+
+    /// <summary>
+    /// ゲーム終了
+    /// </summary>
+    private void OnClickNoButton() {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+#else
+    Application.Quit();//ゲームプレイ終了
+#endif
     }
 }
