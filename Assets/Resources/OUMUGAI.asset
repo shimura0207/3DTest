@@ -21,6 +21,8 @@ MonoBehaviour:
   hp: 5
   size: 5
   supportRole: 1
+  supportRole1: 8
+  supportRole2: 8
   race1: 0
   race2: 0
   race3: 0
