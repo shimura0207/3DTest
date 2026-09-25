@@ -82,7 +82,7 @@ public class RGCardDatabase : ScriptableObject
                 continue;
             }
 
-            if (card.SupportRole == role)
+            if (card.SupportRole == role|| card.SupportRole1 == role|| card.SupportRole2 == role)
             {
                 result.Add(card);
             }

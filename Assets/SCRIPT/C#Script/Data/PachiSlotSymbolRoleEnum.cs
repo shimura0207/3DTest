@@ -17,5 +17,7 @@ public enum PachiSlotSymbolRoleEnum
     Watermelon,    // スイカ
     Chance,        // チャンス目
     StrongCherry,  // 強チェリー
-    Seven          // 7揃い
+    Seven,          // 7揃い
+
+    NONE,
 }
