@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fda887f0525fa9419fb3c649f813788, type: 3}
   m_Name: OQT
   m_EditorClassIdentifier: 
-  cardId: 
+  cardId: OQT
   cardName: 
   description: 
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 0dbc0a5bab587e8419d351bbd7daddd2, type: 3}
   imageMemo: 
   atk: 0
-  hp: 1
-  size: 1
-  supportRole: 0
+  hp: 5
+  size: 5
+  supportRole: 3
   race1: 0
   race2: 0
   race3: 0
