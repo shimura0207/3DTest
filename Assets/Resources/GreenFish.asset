@@ -20,7 +20,7 @@ MonoBehaviour:
   atk: 1
   hp: 3
   size: 2
-  supportRole: 0
+  supportRole: 2
   race1: 0
   race2: 0
   race3: 0
