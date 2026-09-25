@@ -17,7 +17,7 @@ public class PachisuroPhase :PhaseBase
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
-
+        await UniTask.DelayFrame(30);
         GameObject hand = GameObject.Find("HANDCanvas"); 
         GameObject deck = GameObject.Find("DeckContlol");
 
