@@ -30,9 +30,6 @@ public class MainGamePart : PartBase {
     // 生成したカード管理のインスタンス
     private AreaCardManager areaCardManager = null;
 
-    // ゲームの状態
-    private BattleState battleState = BattleState.None;
-
     [SerializeField]
     private GameObject patisuro = null;
     // 生成したPrefabを保持する
@@ -49,7 +46,7 @@ public class MainGamePart : PartBase {
         await buttleSettings.Initialize();
         // バトル関連のマネージャーの生成、初期化
         AllManagerInitialize();
-        
+
     }
 
     /// <summary>
@@ -71,9 +68,6 @@ public class MainGamePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        // バトル状態を進行中に初期化する
-        battleState = BattleState.InProgress;
-        
         // オブジェクトを表示する
         pachisuroInstance.SetActive(true);
 
@@ -81,22 +75,20 @@ public class MainGamePart : PartBase {
         await buttleSettings.Open();
 
         // ループ
-        while (battleState == BattleState.InProgress) {
+        while (battleSystemManager.battleState == BattleState.InProgress) {
             // フェイズの進行
-            battleSystemManager.PhaseExecute();
-            if (Input.GetKeyDown(KeyCode.Q)) {
-                battleState = BattleState.Win;
-            }
-            else if(Input.GetKeyDown(KeyCode.E)){
-                battleState = BattleState.Lose;
-            }
+            await battleSystemManager.PhaseExecute();
             // フレーム待機
             await UniTask.Yield();
         }
+
+        // バトル終了後の結果を取得する
+        BattleState result = battleSystemManager.battleState;
+
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
         // 勝敗を渡して、リザルトパートに遷移
-        await PartManager.Instance.TransitionPart(GamePart.EndGame, battleState);
+        await PartManager.Instance.TransitionPart(GamePart.EndGame, result);
         await UniTask.CompletedTask;
     }
 

@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
@@ -42,23 +43,21 @@ public class BattleSystemManager : MonoBehaviour {
         //int phaseMax = (int)BattlePhase.Max;
         //phaseList = new PhaseBase[phaseMax];
         playerHP = new Dictionary<PlayerType, int>();
-        // 対戦中に切り替え
-        battleState = BattleState.InProgress;
     }
 
     /// <summary>
     /// フェイズの実行
     /// </summary>
-    public void PhaseExecute() {
+    public async UniTask PhaseExecute() {
         // 各フェイズのターン処理
         switch (turnPlayer) {
             case PlayerType.Self:
                 // 自分のターン
-                phaseList[(int)currentPhase].SelfExecute();
+                await phaseList[(int)currentPhase].SelfExecute();
                 break;
             case PlayerType.Opponent:
                 // 相手のターン
-                phaseList[(int)currentPhase].OpponentExecute();
+                await phaseList[(int)currentPhase].OpponentExecute();
                 break;
         }
 
@@ -114,10 +113,6 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="setUseDeckList">使用デッキリスト</param>
     /// <param name="setFirsetPlayer">先攻プレイヤー</param>
     public void BattleSetup(List<int> setUseDeckList, PlayerType setFirsetPlayer) {
-        // 各フェイズ生成
-        for (int i = 0; i < phaseList.Length; i++) {
-            Instantiate(phaseList[i], transform);
-        }
         // 自身の使用デッキ登録
         AreaCardManager.instance.SetDeck(setUseDeckList);
         // 先攻プレイヤー登録
@@ -126,6 +121,8 @@ public class BattleSystemManager : MonoBehaviour {
         turnPlayer = firstPlayer;
         // フェイズをスタートに
         currentPhase = BattlePhase.StartPhase;
+        // 対戦中状態に切り替え
+        battleState = BattleState.InProgress;
         // HPの初期化
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             playerHP[i] = PLAYER_HP;
@@ -137,6 +134,16 @@ public class BattleSystemManager : MonoBehaviour {
         slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
         slot.Initialize();
         slot.DrawCardsToHand(5);
+
+        // ログ
+        switch (turnPlayer) {
+            case PlayerType.Self:
+                Debug.Log("先攻：自分のターン");
+                break;
+            case PlayerType.Opponent:
+                Debug.Log("先攻：相手のターン");
+                break;
+        }
     }
 
     /// <summary>

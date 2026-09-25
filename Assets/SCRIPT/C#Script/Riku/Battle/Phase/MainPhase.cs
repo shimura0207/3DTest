@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -26,7 +27,7 @@ public class MainPhase : PhaseBase {
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool SelfExecute() {
+    public override async UniTask SelfExecute() {
         GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
         GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
 
@@ -36,18 +37,18 @@ public class MainPhase : PhaseBase {
 
         nextPhase = RGDeckController.i;
         //nextPhase = Input.GetKeyDown(KeyCode.Space);
-        return base.SelfExecute();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool OpponentExecute() {
+    public override async UniTask OpponentExecute() {
         // 次のフェイズへ
         nextPhase = true;
-        return base.OpponentExecute();
-    }
 
-  
+        await UniTask.DelayFrame(30);
+        await UniTask.CompletedTask;
+    } 
 }

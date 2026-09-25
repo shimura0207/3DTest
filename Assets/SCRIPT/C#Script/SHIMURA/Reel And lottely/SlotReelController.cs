@@ -849,10 +849,10 @@ public class SlotReelController : MonoBehaviour
 
     //呼び出せば見れる
     public void DebugRoles() {
-        Debug.Log("===現在の保存===");
-        for (int i = 0; i < roles.Count; i++) {
-            Debug.Log($"{i + 1}G目:{roles[i]}");
-        }
-        Debug.Log("================");
+       // Debug.Log("===現在の保存===");
+       // for (int i = 0; i < roles.Count; i++) {
+       //     Debug.Log($"{i + 1}G目:{roles[i]}");
+       // }
+       // Debug.Log("================");
     }
 }

@@ -146,7 +146,7 @@ public class RGFieldPanelSlot : MonoBehaviour
 
         if (copiedSlot != null)
         {
-            copiedSlot.SetCard(cardData);
+            //copiedSlot.SetCard(cardData);
         }
 
         // フィールドカード用コンポーネントを取得
@@ -166,11 +166,11 @@ public class RGFieldPanelSlot : MonoBehaviour
 
         FitCardToPanel(placedCardObject);
 
-        Debug.Log($"{gameObject.name} にカードを配置しました: {cardData.CardName}");
+        //Debug.Log($"{gameObject.name} にカードを配置しました: {cardData.CardName}");
         // ScriptableObjectを設定
         fieldCard.SetCardData(cardData);
 
-        // 配置したカードのステータスをDebug.Log
+       /* // 配置したカードのステータスをDebug.Log
         Debug.Log(
             $"===== フィールドカード配置 =====\n" +
             $"カード名 : {cardData.CardName}\n" +
@@ -182,6 +182,7 @@ public class RGFieldPanelSlot : MonoBehaviour
             $"種族     : {cardData.Race1}, {cardData.Race2}, {cardData.Race3}\n" +
             $"=============================="
         );
+       */
         return true;
     }
 

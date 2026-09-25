@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class AttackPhase : PhaseBase {
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool SelfExecute() {
+    public override async UniTask SelfExecute() {
         // 当選役取得
         {
             // 当選役を保存
@@ -89,22 +90,39 @@ public class AttackPhase : PhaseBase {
                     if (koyakuList[i] != fieldCards[j].SupportRole) continue;
                     // カードの攻撃力分のダメージを与える
                     BattleSystemManager.instance.PlayerGiveDamage(PlayerType.Opponent, fieldCards[j].Atk);
+
+                    // UIに反映
+                    PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
+                    GameObject player = GameObject.Find("Player2HP");
+                    hp = player.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
+                    hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
+                    
+                    Debug.Log("相手プレイヤーに" + fieldCards[j].Atk + "のダメージ");
+
+                    await UniTask.DelayFrame(10);
                 }
             }
 
             // 次のフェイズへ
             nextPhase = true;
         }
-        return base.SelfExecute();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 相手のターン処理
     /// </summary>
     /// <returns></returns>
-    public override bool OpponentExecute() {
+    public override async UniTask OpponentExecute() {
+        PlayerHPUIControllere hp;
+        GameObject player = GameObject.Find("Player1HP");
+        hp = player.GetComponent<PlayerHPUIControllere>();
+        hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
+
         // 次のフェイズへ
         nextPhase = true;
-        return base.OpponentExecute();
+
+        await UniTask.DelayFrame(30);
+        await UniTask.CompletedTask;
     }
 }
