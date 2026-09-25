@@ -207,13 +207,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 125104115}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: -0.26, z: -1.13}
+  m_LocalRotation: {x: -0.044848647, y: 0, z: 0, w: 0.9989938}
+  m_LocalPosition: {x: 0, y: 0.99, z: -8.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -5.141, y: 0, z: 0}
 --- !u!1 &328446581
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,7 +462,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<link=\"\u3053\u306E\u52B9\u679C\u306F\u4EEE\u3067\u3042\u308B\u3002\"></link>"
+  m_text: "<link=\"LINK\">\u3053\u306E\u52B9\u679C\u306F\u4EEE\u3067\u3042\u308B\u3002</link>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7059bdd2d803bf642b505bed59009b3d, type: 2}
   m_sharedMaterial: {fileID: 5188951547334976472, guid: 7059bdd2d803bf642b505bed59009b3d, type: 2}
