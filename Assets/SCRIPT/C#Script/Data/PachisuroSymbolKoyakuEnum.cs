@@ -8,16 +8,3 @@
 /// 例：
 /// Miss が 0 番目、Bell が 1 番目、Replay が 2 番目……という扱いになります。
 /// </summary>
-public enum PachiSlotSymbolRoleEnum
-{
-    Miss,          // ハズレ
-    Bell,          // ベル
-    Replay,        // リプレイ
-    WeakCherry,    // 弱チェリー
-    Watermelon,    // スイカ
-    Chance,        // チャンス目
-    StrongCherry,  // 強チェリー
-    Seven,          // 7揃い
-
-    NONE,
-}

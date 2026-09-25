@@ -63,7 +63,7 @@ public class SlotRoleDrawer
     /// table は 1〜5 を想定しています。
     /// 1未満なら1、5より大きければ5として扱います。
     /// </summary>
-    public PachiSlotSymbolRoleEnum DrawRole(int table)
+    public PachisuroSymbolKoyakuEnum DrawRole(int table)
     {
         // Inspector で範囲外の値が入っても壊れないように補正します。
         int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
@@ -81,45 +81,45 @@ public class SlotRoleDrawer
 
             if (randomValue < border)
             {
-                return (PachiSlotSymbolRoleEnum)i;
+                return (PachisuroSymbolKoyakuEnum)i;
             }
         }
 
         // 通常はここには来ません。
         // テーブル合計が 65536 未満だった場合などの保険です。
-        return PachiSlotSymbolRoleEnum.Miss;
+        return PachisuroSymbolKoyakuEnum.Miss;
     }
 
     /// <summary>
     /// 役の日本語表示名を返します。
     /// Debug.Log や UI 表示に使います。
     /// </summary>
-    public string GetRoleName(PachiSlotSymbolRoleEnum role)
+    public string GetRoleName(PachisuroSymbolKoyakuEnum role)
     {
         switch (role)
         {
-            case PachiSlotSymbolRoleEnum.Miss:
+            case PachisuroSymbolKoyakuEnum.Miss:
                 return "ハズレ";
 
-            case PachiSlotSymbolRoleEnum.Bell:
+            case PachisuroSymbolKoyakuEnum.Bell:
                 return "ベル";
 
-            case PachiSlotSymbolRoleEnum.Replay:
+            case PachisuroSymbolKoyakuEnum.Replay:
                 return "リプレイ";
 
-            case PachiSlotSymbolRoleEnum.WeakCherry:
+            case PachisuroSymbolKoyakuEnum.WeakCherry:
                 return "弱チェリー";
 
-            case PachiSlotSymbolRoleEnum.Watermelon:
+            case PachisuroSymbolKoyakuEnum.Watermelon:
                 return "スイカ";
 
-            case PachiSlotSymbolRoleEnum.Chance:
+            case PachisuroSymbolKoyakuEnum.Chance:
                 return "チャンス目";
 
-            case PachiSlotSymbolRoleEnum.StrongCherry:
+            case PachisuroSymbolKoyakuEnum.StrongCherry:
                 return "強チェリー";
 
-            case PachiSlotSymbolRoleEnum.Seven:
+            case PachisuroSymbolKoyakuEnum.Seven:
                 return "7揃い";
 
             default:

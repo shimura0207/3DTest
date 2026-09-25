@@ -33,7 +33,7 @@ public class AttackPhase : PhaseBase {
             SlotReelController slot; //呼ぶスクリプトにあだなつける
             GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
             slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-            List<PachiSlotSymbolRoleEnum> koyakuList = slot.GetRoles();
+            List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
 
             // フィールドのカード取得
             RGCardData[] fieldCards = new RGCardData[5];
@@ -88,6 +88,8 @@ public class AttackPhase : PhaseBase {
                     if (!fieldCards[j]) continue;
                     // 対応役が成立していれば攻撃
                     if (koyakuList[i] != fieldCards[j].SupportRole) continue;
+                    else if (koyakuList[i] != fieldCards[j].SupportRole1) continue;
+                    else if (koyakuList[i] != fieldCards[j].SupportRole2) continue;
                     // カードの攻撃力分のダメージを与える
                     BattleSystemManager.instance.PlayerGiveDamage(PlayerType.Opponent, fieldCards[j].Atk);
 
