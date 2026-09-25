@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &125104116
 AudioListener:
   m_ObjectHideFlags: 0
@@ -416,6 +416,7 @@ GameObject:
   - component: {fileID: 442201210}
   - component: {fileID: 442201212}
   - component: {fileID: 442201211}
+  - component: {fileID: 442201213}
   m_Layer: 5
   m_Name: TestText
   m_TagString: Untagged
@@ -462,7 +463,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<link=\"LINK\">\u3053\u306E\u52B9\u679C\u306F\u4EEE\u3067\u3042\u308B\u3002</link>"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7059bdd2d803bf642b505bed59009b3d, type: 2}
   m_sharedMaterial: {fileID: 5188951547334976472, guid: 7059bdd2d803bf642b505bed59009b3d, type: 2}
@@ -539,6 +540,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 442201209}
   m_CullTransparentMesh: 1
+--- !u!114 &442201213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442201209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37464e51bd917cb4ebd93670eea132fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectText: {fileID: 442201211}
+  uiCamera: {fileID: 580608311}
+  text: {fileID: 442201211}
 --- !u!1 &481502134
 GameObject:
   m_ObjectHideFlags: 0
@@ -773,7 +789,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &580608310
 AudioListener:
   m_ObjectHideFlags: 0
@@ -918,7 +934,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158583410018202540, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6323060263336037180, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
       propertyPath: roleStopAngleSettings.Array.data[6].reelStopAngles.Array.data[0].stopAngles.Array.size
