@@ -77,7 +77,7 @@ public class MainGamePart : PartBase {
         // ループ
         while (battleSystemManager.battleState == BattleState.InProgress) {
             // フェイズの進行
-            battleSystemManager.PhaseExecute();
+            await battleSystemManager.PhaseExecute();
             // フレーム待機
             await UniTask.Yield();
         }

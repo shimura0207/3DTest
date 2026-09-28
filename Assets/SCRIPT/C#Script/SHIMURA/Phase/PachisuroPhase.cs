@@ -1,11 +1,13 @@
-using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 /*
  * @file    SlotPhase.cs
  * @author  Shimura
  */
+
+using Cysharp.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class PachisuroPhase :PhaseBase
 {
     
@@ -15,7 +17,7 @@ public class PachisuroPhase :PhaseBase
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
-
+        
         GameObject hand = GameObject.Find("HANDCanvas"); 
         GameObject deck = GameObject.Find("DeckContlol");
 
@@ -54,6 +56,8 @@ public class PachisuroPhase :PhaseBase
         //slot.EnemySlotUpdate();
 
         nextPhase = true;
+
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 }

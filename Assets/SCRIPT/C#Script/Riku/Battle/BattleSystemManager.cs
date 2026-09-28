@@ -3,6 +3,7 @@
  * @author  Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
@@ -47,28 +48,18 @@ public class BattleSystemManager : MonoBehaviour {
     /// <summary>
     /// フェイズの実行
     /// </summary>
-    public void PhaseExecute() {
+    public async UniTask PhaseExecute() {
         // 各フェイズのターン処理
         switch (turnPlayer) {
             case PlayerType.Self:
                 // 自分のターン
-                phaseList[(int)currentPhase].SelfExecute();
+                await phaseList[(int)currentPhase].SelfExecute();
                 break;
             case PlayerType.Opponent:
                 // 相手のターン
-                phaseList[(int)currentPhase].OpponentExecute();
+                await phaseList[(int)currentPhase].OpponentExecute();
                 break;
         }
-
-        // UIに反映
-        PlayerHPUIControllere hp1; //呼ぶスクリプトにあだなつける
-        GameObject player1 = GameObject.Find("Player1HP");
-        hp1 = player1.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
-        hp1.SetCurrentHP(playerHP[PlayerType.Self]);
-        PlayerHPUIControllere hp2;
-        GameObject player2 = GameObject.Find("Player2HP");
-        hp2 = player2.GetComponent<PlayerHPUIControllere>();
-        hp2.SetCurrentHP(playerHP[PlayerType.Opponent]);
 
         // 次のフェイズへの移行
         if (phaseList[(int)currentPhase].nextPhase) {

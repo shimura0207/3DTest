@@ -33,7 +33,7 @@ public class AttackPhase : PhaseBase {
             SlotReelController slot; //呼ぶスクリプトにあだなつける
             GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
             slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-            List<PachiSlotSymbolRoleEnum> koyakuList = slot.GetRoles();
+            List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
 
             // フィールドのカード取得
             RGCardData[] fieldCards = new RGCardData[5];
@@ -88,10 +88,19 @@ public class AttackPhase : PhaseBase {
                     if (!fieldCards[j]) continue;
                     // 対応役が成立していれば攻撃
                     if (koyakuList[i] != fieldCards[j].SupportRole) continue;
+                    
                     // カードの攻撃力分のダメージを与える
                     BattleSystemManager.instance.PlayerGiveDamage(PlayerType.Opponent, fieldCards[j].Atk);
 
+                    // UIに反映
+                    PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
+                    GameObject player = GameObject.Find("Player2HP");
+                    hp = player.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
+                    hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
+                    
                     Debug.Log("相手プレイヤーに" + fieldCards[j].Atk + "のダメージ");
+
+                    await UniTask.DelayFrame(10);
                 }
             }
 
@@ -106,8 +115,15 @@ public class AttackPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
+        PlayerHPUIControllere hp;
+        GameObject player = GameObject.Find("Player1HP");
+        hp = player.GetComponent<PlayerHPUIControllere>();
+        hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
+
         // 次のフェイズへ
         nextPhase = true;
+
+        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 }

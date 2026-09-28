@@ -19,7 +19,7 @@ public class RoleAngleRule
     /// <summary>
     /// この設定を使う役。
     /// </summary>
-    public PachiSlotSymbolRoleEnum role;
+    public PachisuroSymbolKoyakuEnum role;
 
     /// <summary>
     /// 0:左リール / 1:中リール / 2:右リール の停止角度。
@@ -42,7 +42,7 @@ public class RoleAngleRule
     /// 初期値として役を指定したいとき用。
     /// SlotReelController.cs の初期配列で使っています。
     /// </summary>
-    public RoleAngleRule(PachiSlotSymbolRoleEnum role)
+    public RoleAngleRule(PachisuroSymbolKoyakuEnum role)
     {
         this.role = role;
     }
