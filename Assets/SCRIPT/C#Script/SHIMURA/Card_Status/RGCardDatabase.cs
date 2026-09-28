@@ -69,7 +69,7 @@ public class RGCardDatabase : ScriptableObject
     /// 例:
     /// ベル対応カードだけ取得したい場合に使う。
     /// </summary>
-    public List<RGCardData> GetCardsBySupportRole(PachiSlotSymbolRoleEnum role)
+    public List<RGCardData> GetCardsBySupportRole(PachisuroSymbolKoyakuEnum role)
     {
         List<RGCardData> result = new List<RGCardData>();
 
@@ -82,7 +82,7 @@ public class RGCardDatabase : ScriptableObject
                 continue;
             }
 
-            if (card.SupportRole == role)
+            if (card.SupportRole == role|| card.SupportRole1 == role|| card.SupportRole2 == role)
             {
                 result.Add(card);
             }

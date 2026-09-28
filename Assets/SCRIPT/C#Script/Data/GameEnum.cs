@@ -2,6 +2,18 @@
  * @file   GameEnum
  * @author oorui
  */
+public enum PachisuroSymbolKoyakuEnum {
+    Miss,          // ハズレ
+    Bell,          // ベル
+    Replay,        // リプレイ
+    WeakCherry,    // 弱チェリー
+    Watermelon,    // スイカ
+    Chance,        // チャンス目
+    StrongCherry,  // 強チェリー
+    Seven,          // 7揃い
+
+    NONE,
+}
 
 /// <summary>
 /// ゲームのパート
