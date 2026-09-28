@@ -51,14 +51,14 @@ public class CardData_importer : AssetPostprocessor {
 						Entity_CardData.Param p = new Entity_CardData.Param ();
 						
 					cell = row.GetCell(0); p.cardID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(1); p.カード名 = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(1); p.name = (cell == null ? "" : cell.StringCellValue);
 					cell = row.GetCell(3); p.rarityID = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(5); p.themeID = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(7); p.KoyakuID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(8); p.SIZE = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(9); p.ATK = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(10); p.HP = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(11); p.効果 = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(8); p.size = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(9); p.atk = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(10); p.hp = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(11); p.ability = (cell == null ? "" : cell.StringCellValue);
 						s.list.Add (p);
 					}
 					data.sheets.Add(s);

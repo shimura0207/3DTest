@@ -18,14 +18,14 @@ public class Entity_CardData : ScriptableObject
 	{
 		
 		public int cardID;
-		public string カード名;
+		public string name;
 		public int rarityID;
 		public int themeID;
 		public int KoyakuID;
-		public int SIZE;
-		public int ATK;
-		public int HP;
-		public string 効果;
+		public int size;
+		public int atk;
+		public int hp;
+		public string ability;
 	}
 }
 
