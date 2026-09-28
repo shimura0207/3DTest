@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Entity_CardData : ScriptableObject
+public class Entity_CardName : ScriptableObject
 {	
 	public List<Sheet> sheets = new List<Sheet> ();
 
@@ -17,15 +17,7 @@ public class Entity_CardData : ScriptableObject
 	public class Param
 	{
 		
-		public int cardID;
 		public string カード名;
-		public int rarityID;
-		public int themeID;
-		public int KoyakuID;
-		public int SIZE;
-		public int ATK;
-		public int HP;
-		public string 効果;
 	}
 }
 
