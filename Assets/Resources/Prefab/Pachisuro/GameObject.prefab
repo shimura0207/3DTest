@@ -365,6 +365,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99833398e9898a14c85dda2e5225e710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rush: 0
+  nrush: 0
   slotIndex: 0
   currentTable: 1
   currentSlotSymbolRole: 0
@@ -8567,6 +8569,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LeftReel
       objectReference: {fileID: 0}
+    - target: {fileID: 1129496810705857465, guid: 51c34048eca113443b838c6c91f908ff, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7c4a16a4cb4184743aac7fc56df3a408, type: 2}
     - target: {fileID: 5666261585234168772, guid: 51c34048eca113443b838c6c91f908ff, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.1546936
@@ -8718,6 +8724,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CentorReel
       objectReference: {fileID: 0}
+    - target: {fileID: 7071182760956848314, guid: 9593d80cf0e1e7c46837c726ba1a2f9b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9860c24d001c79247a8e0e52b305acc3, type: 2}
     - target: {fileID: 8513859187771203891, guid: 9593d80cf0e1e7c46837c726ba1a2f9b, type: 3}
       propertyPath: m_Name
       value: CENTORREEL
@@ -8805,6 +8815,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RIGHTREEL
       objectReference: {fileID: 0}
+    - target: {fileID: 6944656104360116776, guid: 4c7ae25f8f57beb4c8d2f7eda0bd6f1a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 821885b55701cb74a9523fd1afae62de, type: 2}
     - target: {fileID: 8946660040297601765, guid: 4c7ae25f8f57beb4c8d2f7eda0bd6f1a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.15471843
