@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
-  m_ObjectHideFlags: 8
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -15,206 +15,264 @@ MonoBehaviour:
   sheets:
   - name: Data
     list:
-    - CardID: 10001
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10002
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10003
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10004
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10005
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10006
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10007
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10008
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10009
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10010
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10011
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10012
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10013
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10014
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10015
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10016
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10017
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10018
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10019
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10020
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10021
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10022
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10023
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10024
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10025
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10026
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10027
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10028
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
-    - CardID: 10029
-      RarityID: 1
-      ThemeID: 1
-      RaceID: 1
-      ATK: 10
-      HP: 10
-      SIZE: 2
+    - cardID: 101
+      name: RG:ISUKA LV1
+      rarityID: 4
+      themeID: 1
+      KoyakuID: 5
+      size: 2
+      atk: 4
+      hp: 11
+      ability: "\u2460\u53EC\u559A\u6642\u3001\u624B\u672D\u30921\u679A\u6368\u3066\u3066\u3082\u3088\u3044\u3002\u305D\u3046\u3057\u305F\u3089\u5C71\u672D\u306E\u4E0A\u304B\u30895\u679A\u898B\u3066\u3001\u7A2E\u65CF\u306B\u300C\u30ED\u30DC\u300D\u3092\u542B\u3080\u30AB\u30FC\u30C9\u3092\uFF11\u679A\u624B\u672D\u306B\u52A0\u3048\u308B\u3002\n\u2461\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7"
+    - cardID: 102
+      name: RG:ISUKA LV2
+      rarityID: 0
+      themeID: 1
+      KoyakuID: 5
+      size: 2
+      atk: 6
+      hp: 14
+      ability: "\u2460\u30BF\u30FC\u30F3\u7D42\u4E86\u6642\u30D7\u30EC\u30A4\u30E4\u30FC\u306EHP\u30922\u56DE\u5FA9\u3059\u308B\u3002\n\u2461\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u304C\u653B\u6483\u3092\u53D7\u3051\u305F\u6642\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306EHP\u30921\u56DE\u5FA9\u3059\u308B\u3002\n\u2462\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7"
+    - cardID: 103
+      name: RG:ISUKA LV3
+      rarityID: 0
+      themeID: 1
+      KoyakuID: 5
+      size: 2
+      atk: 8
+      hp: 17
+      ability: "\u2460\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u304C\u653B\u6483\u3092\u53D7\u3051\u305F\u6642\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306Eatk\u30921\u4E0A\u6607\u3059\u308B\u3002\n\u2461\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306E\u5BFE\u5FDC\u5F79\u6210\u7ACB\u6642\u3001\u81EA\u5206\u30D5\u30A3\u30FC\u30EB\u30C9\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u5168\u3066\u3068\u81EA\u5206\u306EHP\u30921\u56DE\u5FA9\u3059\u308B\u3002\n\u2462\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u52B9\u679C\u3067\u7834\u58CA\u3055\u308C\u306A\u3044\n\u2463\u30A2\u30B9\u30EA\u30FC\u30C8"
+    - cardID: 104
+      name: RG:REACHE Lv.1
+      rarityID: 4
+      themeID: 1
+      KoyakuID: 3
+      size: 2
+      atk: 5
+      hp: 10
+      ability: "\u2460\u53EC\u559A\u6642\u3001\u76F8\u624B\u30D7\u30EC\u30A4\u30E4\u30FC\u304B\u76F8\u624B\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u306B2\u30C0\u30E1\u30FC\u30B8\u3002\n\u2461\u30BF\u30FC\u30F3\u7D42\u4E86\u6642\u3001\u5C71\u672D\u306E\u4E0A\u304B\u30893\u679A\u3092\u898B\u3066\u30B9\u30DA\u30EB\u30921\u679A\u624B\u672D\u306B\u52A0\u3048\u308B\u3002\n\u2462\u30A2\u30B9\u30EA\u30FC\u30C8\n\u2463\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7"
+    - cardID: 105
+      name: RG:REACHE Lv.2
+      rarityID: 0
+      themeID: 1
+      KoyakuID: 3
+      size: 2
+      atk: 8
+      hp: 12
+      ability: "\u2460\u30BF\u30FC\u30F3\u958B\u59CB\u6642\u3001\u76F8\u624B\u306E\u3059\u3079\u3066\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306B1\u30C0\u30E1\u30FC\u30B8\u4E0E\u3048\u308B\u3002\n\u2461\u30BF\u30FC\u30F3\u7D42\u4E86\u6642\u3001\u76F8\u624B\u306E\u30E9\u30F3\u30C0\u30E0\u306A\u30E2\u30F3\u30B9\u30BF\u30FC\u306B3\u30C0\u30E1\u30FC\u30B8\u4E0E\u3048\u308B\u3002\n\u2462\u30A2\u30B9\u30EA\u30FC\u30C8\n\u2463\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7"
+    - cardID: 106
+      name: RG:REACHE Lv.3
+      rarityID: 0
+      themeID: 1
+      KoyakuID: 3
+      size: 2
+      atk: 10
+      hp: 15
+      ability: "\u2460\u30BF\u30FC\u30F3\u958B\u59CB\u6642\u3001\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u30921\u4F53\u9078\u3076\u3002\u3053\u306E\u30BF\u30FC\u30F3\u305D\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306Eatk\u3092+3\u3059\u308B\u3002\n\u2461\u5BFE\u5FDC\u5F79\u6210\u7ACB\u6642\u3001\u30AB\u30FC\u30C9\u30921\u679A\u5F15\u304F\u3002\n\u2462\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u52B9\u679C\u3067\u7834\u58CA\u3055\u308C\u306A\u3044\u3002\n\u2463\u30A2\u30B9\u30EA\u30FC\u30C8"
+    - cardID: 107
+      name: RG:BELL
+      rarityID: 1
+      themeID: 1
+      KoyakuID: 4
+      size: 2
+      atk: 2
+      hp: 4
+      ability: "\u2460\u30BF\u30FC\u30B2\u30C3\u30C8\u96C6\u4E2D"
+    - cardID: 108
+      name: RG:REI
+      rarityID: 1
+      themeID: 1
+      KoyakuID: 2
+      size: 2
+      atk: 6
+      hp: 10
+      ability: "\u2460\u53EC\u559A\u6642\u30E9\u30F3\u30C0\u30E0\u306A\u6575\u306B2\u30C0\u30E1\u30FC\u30B8\n\u2461\u30A2\u30B9\u30EA\u30FC\u30C8"
+    - cardID: 109
+      name: RG:LANK
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 1
+      size: 2
+      atk: 4
+      hp: 10
+      ability: "\u2460\u30BF\u30FC\u30F3\u7D42\u4E86\u6642\u3001\u30AB\u30FC\u30C9\u30921\u679A\u5F15\u304F\u3002"
+    - cardID: 110
+      name: Raymond Blank
+      rarityID: 3
+      themeID: 1
+      KoyakuID: 1
+      size: 1
+      atk: 3
+      hp: 8
+      ability: "\u2460\u53EC\u559A\u6642\u30C7\u30C3\u30AD\u306E\u4E0A\u304B\u30893\u679A\u3092\u898B\u3066\u3001\u305D\u306E\u4E2D\u304B\u3089\u300C\u30ED\u30DC\u300D\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u5168\u3066\u624B\u672D\u306B\u52A0\u3048\u308B\u3002(\u3053\u306E\u52B9\u679C\u306F\u5404\u30BF\u30FC\u30F31\u5EA6\u3057\u304B\u767A\u52D5\u3057\u306A\u3044\u3002)"
+    - cardID: 111
+      name: RG:IRIS
+      rarityID: 0
+      themeID: 1
+      KoyakuID: 8
+      size: 4
+      atk: 10
+      hp: 30
+      ability: "\u2460\u53EC\u559A\u6642\u3001\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306EHP\u3092\u5168\u56DE\u5FA9\u3059\u308B\u3002\n\u2461\u5BFE\u5FDC\u5F79\u6210\u7ACB\u6642\u3001\u3053\u306E\u30BF\u30FC\u30F3\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306Eatk\u3092+5\u3059\u308B\u3002\n\u2462\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u52B9\u679C\u3067\u7834\u58CA\u3055\u308C\u306A\u3044\n\u2463\u30A2\u30B9\u30EA\u30FC\u30C8"
+    - cardID: 112
+      name: RG:REICHELS
+      rarityID: 0
+      themeID: 1
+      KoyakuID: 6
+      size: 6
+      atk: 20
+      hp: 0
+      ability: "\u2460\u76F8\u624B\u306E\u30BF\u30FC\u30F3\u4E2D\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306Eatk\u306F\u221E\u306B\u306A\u308B\u3002\n\u2461\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u96E2\u308C\u306A\u3044\u3002\n\u2462\u30A2\u30B9\u30EA\u30FC\u30C8\n\u2463\u53CD\u6483"
+    - cardID: 113
+      name: "\u30B9\u30A4\u30AB\u30D6\u30E9\u30B9\u30BF\u30FC"
+      rarityID: 3
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u3053\u306E\u30BF\u30FC\u30F3\u30C6\u30FC\u30D6\u30EB\u30921\u4E0A\u6607\u3002(\u3053\u306E\u52B9\u679C\u306F\u5404\u30BF\u30FC\u30F3\u306B1\u5EA6\u3057\u304B\u4F7F\u3048\u306A\u3044)\n\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7\u52B9\u679C\u3092\u6301\u3064\u300CRG\u300D\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7\u3002"
+    - cardID: 114
+      name: "\u30B5\u30A4\u30D0\u30FC\u30C1\u30A7\u30EA\u30FC"
+      rarityID: 3
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u76F8\u624B\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u30921\u4F53\u9078\u3076\u3002\u305D\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u6B21\u306E\u76F8\u624B\u306E\u30BF\u30FC\u30F3\u306B\u653B\u6483\u3067\u304D\u306A\u3044\u3002\n\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7\u52B9\u679C\u3092\u6301\u3064\u300CRG\u300D\uFF11\u4F53\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7\u3002"
+    - cardID: 115
+      name: "\u30D9\u30EB\u30AE\u30A2"
+      rarityID: 3
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u6B21\u306E\u81EA\u5206\u306E\u30BF\u30FC\u30F3\u307E\u3067\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u306B\u300C\u30BF\u30FC\u30B2\u30C3\u30C8\u96C6\u4E2D\u300D\u3092\u4E0E\u3048\u308B\u3002"
+    - cardID: 116
+      name: "\u30EA\u30D7\u30EC\u30A4\u30A6\u30A3\u30F3\u30B0"
+      rarityID: 3
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u81EA\u5206\u306E\u30B5\u30A4\u30BA2\u4EE5\u4E0B\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u30921\u4F53\u9078\u3076\u3002\u6B21\u306E\u81EA\u5206\u306E\u30BF\u30FC\u30F3\u307E\u3067\u305D\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u5BFE\u5FDC\u5F79\u6210\u7ACB\u306B\u3064\u304D2\u56DE\u653B\u6483\u3059\u308B\u3002"
+    - cardID: 117
+      name: "AIP\u3000\u03C7\u2010S"
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u5C71\u672D\u306E\u4E0A\u304B\u30897\u679A\u898B\u3066\u300C\u30ED\u30DC\u300D\u3092\u7A2E\u65CF\u306B\u542B\u3080\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u624B\u672D\u306B\u52A0\u3048\u308B\u3002(\u3053\u306E\u52B9\u679C\u306F\u5404\u30BF\u30FC\u30F3\u306B1\u5EA6\u3057\u304B\u4F7F\u3048\u306A\u3044)"
+    - cardID: 118
+      name: "AIP\u3000CH=RAY"
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u300CRG\u300D\u3092\u540D\u79F0\u306B\u542B\u3080\u30E2\u30F3\u30B9\u30BF\u30FC\u306E\u30EC\u30D9\u30EB\u3092\u4E0A\u3052\u308B\u3002"
+    - cardID: 119
+      name: "AIP\u3000VAIL=\u0394"
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u30921\u4F53\u9078\u3076\u3002\u305D\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u6B21\u306E\u81EA\u5206\u306E\u30BF\u30FC\u30F3\u307E\u3067\u3001\u53D7\u3051\u308B\u30C0\u30E1\u30FC\u30B8\u3092-2\u3059\u308B\u3002"
+    - cardID: 120
+      name: "AIP\u3000RERAY=0"
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u5893\u5730\u304B\u3089atk4\u4EE5\u4E0B\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u51FA\u3059"
+    - cardID: 121
+      name: "REEL\u30FBSLIP"
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u30AB\u30FC\u30C9\u30922\u679A\u5F15\u304F\u3002(\u3053\u306E\u52B9\u679C\u306F\u5404\u30BF\u30FC\u30F3\u306B1\u5EA6\u3057\u304B\u4F7F\u3048\u306A\u3044)"
+    - cardID: 122
+      name: "PERFECT\u3000STOP"
+      rarityID: 2
+      themeID: 1
+      KoyakuID: 7
+      size: -1
+      atk: -1
+      hp: -1
+      ability: "\u76F8\u624B\u306E\u3059\u3079\u3066\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306B2\u30C0\u30E1\u30FC\u30B8\u3092\u4E0E\u3048\u308B"
+    - cardID: 201
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 
+    - cardID: 202
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 
+    - cardID: 203
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 
+    - cardID: 204
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 
+    - cardID: 205
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 
+    - cardID: 206
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 
+    - cardID: 207
+      name: 
+      rarityID: 0
+      themeID: 3
+      KoyakuID: 0
+      size: 0
+      atk: 0
+      hp: 0
+      ability: 

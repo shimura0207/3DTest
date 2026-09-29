@@ -32,9 +32,10 @@ public class MainPhase : PhaseBase {
         GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
         GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
 
-
-        hand.SetActive(true);
-        deck.SetActive(true);
+        if (hand != null && deck != null) {
+            hand.SetActive(true);
+            deck.SetActive(true);
+        }
 
         nextPhase = RGDeckController.i;
         //nextPhase = Input.GetKeyDown(KeyCode.Space);

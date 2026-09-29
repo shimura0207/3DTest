@@ -6,7 +6,7 @@ using UnityEngine;
 /// ID指定のマスターデータ取得
 /// </summary>
 public class CardDataMasterUtility {
-    
+
     /// <summary>
     /// ID指定のカードデータのマスターデータ取得
     /// </summary>
@@ -16,8 +16,8 @@ public class CardDataMasterUtility {
         // カードのマスターデータ取得
         var cardMasterList = MasterDataManager.cardData[0];
         // IDが一致するものを返す
-        for(int i = 0, max = cardMasterList.Count; i < max; i++) {
-            if (cardMasterList[i].CardID != masterID) continue;
+        for (int i = 0, max = cardMasterList.Count; i < max; i++) {
+            if (cardMasterList[i].cardID != masterID) continue;
             return cardMasterList[i];
         }
         return null;
