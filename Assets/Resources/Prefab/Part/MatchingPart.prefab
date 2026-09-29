@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9157096195698888420}
   - component: {fileID: 4337245523347820760}
   m_Layer: 5
-  m_Name: Return
+  m_Name: Random
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 41, y: 123.46}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -382, y: -0.0000019073}
+  m_SizeDelta: {x: 160, y: 202.5716}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &396581269806397460
 CanvasRenderer:
@@ -166,10 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c4a21820b403f498556cd24e5c9f21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isReturnPart: 0
-  isMatchingClick: 0
-  returnButton: {fileID: 4337245523347820760}
-  matchingButton: {fileID: 5520655117973233401}
+  randomButton: {fileID: 4337245523347820760}
+  privateButton: {fileID: 5520655117973233401}
 --- !u!1 &1365946514597646070
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,9 +337,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Matching
-
-'
+  m_text: Private
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -550,9 +546,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Return
-
-'
+  m_text: Random
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -634,7 +628,7 @@ GameObject:
   - component: {fileID: 446817942682552724}
   - component: {fileID: 5520655117973233401}
   m_Layer: 5
-  m_Name: Matching
+  m_Name: Private
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -657,8 +651,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 41, y: -243.46}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 461, y: -1.9269}
+  m_SizeDelta: {x: 160, y: 201.7087}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8129434548663084760
 CanvasRenderer:

@@ -24,6 +24,8 @@ public enum GamePart {
     Title,          // タイトル
     MainMenu,       // メニュー
     Matchmaking,    // マッチング画面
+    RandomMatch,    // ランダム対戦
+    PrivateMatch,   // プライベート対戦
     Option,         // 設定画面
     CardRelation,   // カード関連画面
     CardList,       // カード一覧画面
@@ -57,6 +59,15 @@ public enum CardRelationMenuSelect {
     CardList,       // カード一覧
     DeckBuilding,   // デッキ構築
     MainMenu        // メインメニュー
+}
+/// <summary>
+/// 設定パートで選択する遷移先
+/// </summary>
+public enum OptionMenuSelect {
+    None,
+    MainMenu,   // メインメニュー
+    GameEnd,    // ゲーム終了
+    Max
 }
 
 /// <summary>
@@ -121,7 +132,7 @@ public enum BattlePhase {
 /// <summary>
 /// 対戦の状態
 /// </summary>
-public enum BattleState { 
+public enum BattleState {
     None = -1,
 
     // 対戦進行中
@@ -131,5 +142,15 @@ public enum BattleState {
     // 敗北
     Lose,
 
+    Max
+}
+
+/// <summary>
+/// 接続状況
+/// </summary>
+public enum ConnectionState {
+    None = -1,
+    Host,   // ホスト
+    Client, // クライアント
     Max
 }

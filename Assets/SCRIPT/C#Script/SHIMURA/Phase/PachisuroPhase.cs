@@ -10,13 +10,19 @@ using UnityEngine;
 
 public class PachisuroPhase :PhaseBase
 {
+
+
+    public static PachisuroPhase Instance { get; private set; }
     
 
+
+   
     /// <summary>
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
+        Instance = this;
         
         GameObject hand = GameObject.Find("HANDCanvas"); 
         GameObject deck = GameObject.Find("DeckContlol");
@@ -25,19 +31,19 @@ public class PachisuroPhase :PhaseBase
         SlotReelController slot; //呼ぶスクリプトにあだなつける
         GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
         slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        Instance = this;
+        
+            //Canvas rend = hand.GetComponent<Canvas>();
+            rend.enabled = false;
 
+            slot.SlotUpdate();
 
-        //Canvas rend = hand.GetComponent<Canvas>();
-        rend.enabled = false;
-
-        slot.SlotUpdate();
-        //5回転が終わっており、リールが回っていない場合にNEXTする
-        if (slot.IsAnyReelRotating() == false&&slot.slotIndex==slot.SLOT_TEARN_MAX_G) {
-            slot.slotIndex = 0;//ターンごとのゲーム数リセット
+        if (slot.IsAnyReelRotating() == false &&slot.slotIndex == slot.SLOT_TEARN_MAX_G) {
+            slot.DebugAAA();
             nextPhase = true;
         }
 
-        await UniTask.CompletedTask;
+            await UniTask.CompletedTask;
         
     }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 /// <summary>
@@ -29,7 +30,8 @@ public class SlotReelController : MonoBehaviour
 
 
 
-    
+    public bool rush;
+    public bool nrush;
 
     bool n_first=false;
     bool n_second=false;
@@ -61,13 +63,13 @@ public class SlotReelController : MonoBehaviour
     /// 数字が大きいほど、現在のテーブル設定ではレア役などが引きやすくなっています。
     /// </summary>
     [Header("Lottery")]
-    [SerializeField] private int currentTable = 1;
+    [SerializeField] public int currentTable = 1;
 
     /// <summary>
     /// レバーON時に抽選された現在の役。
     /// 停止角度を決めるときに使います。
     /// </summary>
-    private PachisuroSymbolKoyakuEnum currentSlotSymbolRole = PachisuroSymbolKoyakuEnum.Miss;
+    public PachisuroSymbolKoyakuEnum currentSlotSymbolRole = PachisuroSymbolKoyakuEnum.Miss;
 
     //============================================================
     // リール基本設定
@@ -208,13 +210,17 @@ public class SlotReelController : MonoBehaviour
     {
         InitializeReels();
         InitializeDebugAngles();
+        
     }
 
     private void Update()
     {
+        if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven && !nrush&&!rush) {
+            nrush = true;
+        }
         //SlotUpdate();
         if (Input.GetKeyDown(KeyCode.P)) {
-            DebugRoles();
+            //DebugRoles();
         }
     }
 
@@ -237,6 +243,7 @@ public class SlotReelController : MonoBehaviour
         UpdateReelRotation();
         SyncInspectorAngles();
         TableUp();
+        
     }
 
 
@@ -300,6 +307,8 @@ public class SlotReelController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.RightControl) && !state.IsAnyReelRotating())
         {
+            //Debug.Log(PachisuroPhase.Instance.nrush);
+            Debug.Log(rush);
             maxBet = true;
         }
     }
@@ -424,34 +433,61 @@ public class SlotReelController : MonoBehaviour
     /// </summary>
     public bool TryStartSpin()
     {
-        if (state == null)
-        {
-            Debug.LogWarning("SlotReelController がまだ初期化されていません。");
+        if (PachisuroPhase.Instance == null) {
             return false;
         }
-
-        if (state.IsAnyReelRotating())
-        {
-            return false;
-        }
-
-        maxBet = false;
-
-        currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
-
-        Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
-
-        for (int i = 0; i < reels.Length; i++)
-        {
-            if (reels[i] == null)
-            {
-                continue;
+        if (rush) {
+            if (state == null) {
+                Debug.LogWarning("SlotReelController がまだ初期化されていません。");
+                return false;
             }
 
-            state.StartReel(i);
+            if (state.IsAnyReelRotating()) {
+                return false;
+            }
+
+            maxBet = false;
+
+            currentSlotSymbolRole = roleLottery.RUSHDrawRole(currentTable);
+
+            Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
+
+            for (int i = 0; i < reels.Length; i++) {
+                if (reels[i] == null) {
+                    continue;
+                }
+
+                state.StartReel(i);
+            }
+            AddRole(currentSlotSymbolRole);
+            slotIndex++;//G数を1G増加
         }
-        AddRole(currentSlotSymbolRole);
-        slotIndex ++;//G数を1G増加
+        else {
+            if (state == null) {
+                Debug.LogWarning("SlotReelController がまだ初期化されていません。");
+                return false;
+            }
+
+            if (state.IsAnyReelRotating()) {
+                return false;
+            }
+
+            maxBet = false;
+
+            currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
+
+            Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
+
+            for (int i = 0; i < reels.Length; i++) {
+                if (reels[i] == null) {
+                    continue;
+                }
+
+                state.StartReel(i);
+            }
+            AddRole(currentSlotSymbolRole);
+            slotIndex++;//G数を1G増加
+        }
         return true;
     }
 
@@ -848,11 +884,26 @@ public class SlotReelController : MonoBehaviour
 
 
     //呼び出せば見れる
-    public void DebugRoles() {
-       // Debug.Log("===現在の保存===");
-       // for (int i = 0; i < roles.Count; i++) {
-       //     Debug.Log($"{i + 1}G目:{roles[i]}");
-       // }
-       // Debug.Log("================");
+    public void DebugAAA() {
+        
+            Debug.Log("★★★ 5G終了");
+            Debug.Log("nrush = " + nrush);
+            Debug.Log("slotIndex = " + slotIndex);
+            Debug.Log("SLOT_TEARN_MAX_G = " + SLOT_TEARN_MAX_G);
+
+            if (nrush) {
+                rush = true;
+            nrush = false;
+            Debug.Log("★★★ RUSH = true にしました");
+            }
+            else {
+                rush = false;
+                Debug.Log("★★★ RUSH = false にしました");
+            }
+
+            currentTable++;
+            slotIndex = 0;
+            
+        
     }
 }

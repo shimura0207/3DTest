@@ -28,12 +28,12 @@ public class NewBehaviourScript : MonoBehaviour
         if (Physics.Raycast(ray, out hitInfo))
         {
             // 当たったオブジェクトの名前を表示
-            Debug.Log("当たったオブジェクト: " + hitInfo.collider.gameObject.name);
+            //Debug.Log("当たったオブジェクト: " + hitInfo.collider.gameObject.name);
         }
         else
         {
             // 何も当たっていない場合
-            Debug.Log("何も当たっていません");
+            //Debug.Log("何も当たっていません");
         }
 
 
