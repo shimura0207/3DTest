@@ -67,7 +67,7 @@ public class SlotReelController : MonoBehaviour
     /// レバーON時に抽選された現在の役。
     /// 停止角度を決めるときに使います。
     /// </summary>
-    private PachisuroSymbolKoyakuEnum currentSlotSymbolRole = PachisuroSymbolKoyakuEnum.Miss;
+    public PachisuroSymbolKoyakuEnum currentSlotSymbolRole = PachisuroSymbolKoyakuEnum.Miss;
 
     //============================================================
     // リール基本設定
