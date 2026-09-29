@@ -60,6 +60,15 @@ public enum CardRelationMenuSelect {
     DeckBuilding,   // デッキ構築
     MainMenu        // メインメニュー
 }
+/// <summary>
+/// 設定パートで選択する遷移先
+/// </summary>
+public enum OptionMenuSelect {
+    None,
+    MainMenu,   // メインメニュー
+    GameEnd,    // ゲーム終了
+    Max
+}
 
 /// <summary>
 /// RGカードの種族一覧
@@ -123,7 +132,7 @@ public enum BattlePhase {
 /// <summary>
 /// 対戦の状態
 /// </summary>
-public enum BattleState { 
+public enum BattleState {
     None = -1,
 
     // 対戦進行中
