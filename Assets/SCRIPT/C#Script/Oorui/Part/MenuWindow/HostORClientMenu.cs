@@ -41,7 +41,7 @@ public class HostORClientMenu : MenuWindowBase {
     /// ウィンドウ表示時の処理
     /// </summary>
     /// <returns></returns>
-    public async UniTask<ConnectionState> Open() {
+    public async UniTask<ConnectionState> Open(ConnectionState connect) {
         // ボタン選択結果を受け取るための待機処理を作成
         completionSource = new UniTaskCompletionSource<ConnectionState>();
 
@@ -49,12 +49,12 @@ public class HostORClientMenu : MenuWindowBase {
         await base.Open();
 
         // どれかボタンが押されるまで待機
-        ConnectionState state = await completionSource.Task;
+        connect = await completionSource.Task;
 
         // ウィンドウを閉じる
         await Close();
 
-        return state;
+        return connect;
     }
 
     /// <summary>

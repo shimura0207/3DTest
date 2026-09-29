@@ -83,7 +83,7 @@ public class MatchingPart : PartBase {
             if (isPrivateMatch) {
                 // ホストまたはクライアントを選択するメニューを開く
                 Debug.Log("プライベートマッチを選択");
-                conection = await hostORClientMenu.Open();
+                conection = await hostORClientMenu.Open(conection);
 
                 // キャンセルされた場合
                 if (conection == ConnectionState.None) {
