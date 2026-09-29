@@ -367,6 +367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotIndex: 0
   currentTable: 1
+  currentSlotSymbolRole: 0
   reelSpeed: -320
   rotationAxis: 1
   reels:
@@ -492,8 +493,8 @@ MonoBehaviour:
       - 0
     - stopAngles:
       - 0
-    - stopAngles: []
-    - stopAngles: []
+    - stopAngles:
+      - 0
   stopKeys: 140100001201000013010000
   leftCurrentAngle: 0
   centerCurrentAngle: 0
