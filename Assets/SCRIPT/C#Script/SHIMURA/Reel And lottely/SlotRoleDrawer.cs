@@ -51,7 +51,7 @@ public class SlotRoleDrawer
     /// </summary>
     private readonly int[,] roleTables =
     {
-        { 45, 20, 2,  4,  2,  6, 2, 20 }, // T1
+        { 45, 20, 20,  4,  2,  6, 2, 1 }, // T1
         { 40, 22, 22,  4,  2,  6, 2, 2 }, // T2
         { 35, 22, 22,  6,  2,  8, 2, 2 }, // T3
         { 30, 24, 24,  6,  2,  8, 3, 3 }, // T4
