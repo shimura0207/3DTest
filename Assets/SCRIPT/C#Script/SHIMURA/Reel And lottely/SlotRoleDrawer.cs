@@ -21,7 +21,7 @@ public class SlotRoleDrawer
     /// 乱数の最大値。
     /// Random.Range(0, 99) なので、実際に出る値は 0〜99 です。
     /// </summary>
-    private const int MaxRandom = 99;
+    private const int MaxRandom = 100;
 
     /// <summary>
     /// テーブル番号の最小値と最大値。
@@ -30,6 +30,7 @@ public class SlotRoleDrawer
     private const int MinTable = 1;
     private const int MaxTable = 5;
 
+    int randomValue;
     /// <summary>
     /// 役抽選テーブル。
     /// 
@@ -69,7 +70,7 @@ public class SlotRoleDrawer
         int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
 
         // 0〜65535 の乱数を取得します。
-        int randomValue = Random.Range(0, MaxRandom);
+        randomValue = Random.Range(0, MaxRandom);
 
         // border は「ここまでの合計値」です。
         // 乱数が border 未満になった時点で、その役に当選します。
@@ -85,6 +86,37 @@ public class SlotRoleDrawer
             }
         }
 
+        // 通常はここには来ません。
+        // テーブル合計が 65536 未満だった場合などの保険です。
+        return PachisuroSymbolKoyakuEnum.Miss;
+    }
+
+    //RUSH
+    public PachisuroSymbolKoyakuEnum RUSHDrawRole(int table) {
+        int sevenRandomValue = Random.Range(0, 2);
+
+        if (sevenRandomValue == 0) {
+            return PachisuroSymbolKoyakuEnum.Seven;
+        }
+        else {
+            // Inspector で範囲外の値が入っても壊れないように補正します。
+            int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
+
+            // 0〜65535 の乱数を取得します。
+            randomValue = Random.Range(0, MaxRandom);
+
+            // border は「ここまでの合計値」です。
+            // 乱数が border 未満になった時点で、その役に当選します。
+            int border = 0;
+
+            for (int i = 0; i < roleTables.GetLength(1); i++) {
+                border += roleTables[tableIndex, i];
+
+                if (randomValue < border) {
+                    return (PachisuroSymbolKoyakuEnum)i;
+                }
+            }
+        }
         // 通常はここには来ません。
         // テーブル合計が 65536 未満だった場合などの保険です。
         return PachisuroSymbolKoyakuEnum.Miss;

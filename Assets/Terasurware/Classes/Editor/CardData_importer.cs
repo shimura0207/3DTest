@@ -8,8 +8,8 @@ using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
 
 public class CardData_importer : AssetPostprocessor {
-	private static readonly string filePath = "Assets/Resources/MasterData/Card/CardData.xlsx";
-	private static readonly string exportPath = "Assets/Resources/MasterData/Card/CardData.asset";
+	private static readonly string filePath = "Assets/Resources/MasterData/CardData.xlsx";
+	private static readonly string exportPath = "Assets/Resources/MasterData/CardData.asset";
 	private static readonly string[] sheetNames = { "Data", };
 	
 	static void OnPostprocessAllAssets (string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
@@ -17,8 +17,8 @@ public class CardData_importer : AssetPostprocessor {
 		foreach (string asset in importedAssets) {
 			if (!filePath.Equals (asset))
 				continue;
-
-            Entity_CardData data = (Entity_CardData)AssetDatabase.LoadAssetAtPath (exportPath, typeof(Entity_CardData));
+				
+			Entity_CardData data = (Entity_CardData)AssetDatabase.LoadAssetAtPath (exportPath, typeof(Entity_CardData));
 			if (data == null) {
 				data = ScriptableObject.CreateInstance<Entity_CardData> ();
 				AssetDatabase.CreateAsset ((ScriptableObject)data, exportPath);
@@ -41,22 +41,24 @@ public class CardData_importer : AssetPostprocessor {
 						continue;
 					}
 
-                    Entity_CardData.Sheet s = new Entity_CardData.Sheet ();
+					Entity_CardData.Sheet s = new Entity_CardData.Sheet ();
 					s.name = sheetName;
 				
 					for (int i=1; i<= sheet.LastRowNum; i++) {
 						IRow row = sheet.GetRow (i);
 						ICell cell = null;
-
-                        Entity_CardData.Param p = new Entity_CardData.Param ();
 						
-					cell = row.GetCell(0); p.CardID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(1); p.RarityID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(2); p.ThemeID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(3); p.RaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(4); p.ATK = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(5); p.HP = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(6); p.SIZE = (int)(cell == null ? 0 : cell.NumericCellValue);
+						Entity_CardData.Param p = new Entity_CardData.Param ();
+						
+					cell = row.GetCell(0); p.cardID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(1); p.name = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(3); p.rarityID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(5); p.themeID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(7); p.KoyakuID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(8); p.size = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(9); p.atk = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(10); p.hp = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(11); p.ability = (cell == null ? "" : cell.StringCellValue);
 						s.list.Add (p);
 					}
 					data.sheets.Add(s);

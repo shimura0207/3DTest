@@ -17,13 +17,15 @@ public class Entity_CardData : ScriptableObject
 	public class Param
 	{
 		
-		public int CardID;
-		public int RarityID;
-		public int ThemeID;
-		public int RaceID;
-		public int ATK;
-		public int HP;
-		public int SIZE;
+		public int cardID;
+		public string name;
+		public int rarityID;
+		public int themeID;
+		public int KoyakuID;
+		public int size;
+		public int atk;
+		public int hp;
+		public string ability;
 	}
 }
 

@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Kobayashi_Scene.unity
+    guid: 25d191bb1b12459428b677a3c9a5bd08
   m_configObjects: {}
