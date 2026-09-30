@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
 
 /// <summary>
 /// リール全体を管理するメインクラス。
@@ -202,15 +204,46 @@ public class SlotReelController : MonoBehaviour
     /// </summary>
     private float[] lastInspectorAngles = new float[3];
 
+
+    [Header("停止演出")]
+    [SerializeField] private Image stopEffectImage;
+
+    private Material stopEffectMaterial;
+
+    private Coroutine noiseCoroutine;
+
+    private int stoppedReelCount = 0;
+
+    private const string NoiseStrengthProperty = "_NoiseStrength";
     //============================================================
     // Unityイベント
     //============================================================
 
-    private void Start()
-    {
+    private void Start() {
         InitializeReels();
         InitializeDebugAngles();
-        
+
+        if (stopEffectImage != null) {
+            stopEffectImage.enabled = false;
+
+            // Imageに設定されているMaterialをコピー
+            stopEffectMaterial =
+                new Material(stopEffectImage.material);
+
+            stopEffectImage.material =
+                stopEffectMaterial;
+
+            // 最初はノイズなし
+            stopEffectMaterial.SetFloat(
+                NoiseStrengthProperty,
+                0f
+            );
+        }
+        else {
+            Debug.LogError(
+                "stopEffectImage が設定されていません！"
+            );
+        }
     }
 
     private void Update()
@@ -221,6 +254,10 @@ public class SlotReelController : MonoBehaviour
         //SlotUpdate();
         if (Input.GetKeyDown(KeyCode.P)) {
             //DebugRoles();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            HideStopEffectImage();
         }
     }
 
@@ -433,6 +470,8 @@ public class SlotReelController : MonoBehaviour
     /// </summary>
     public bool TryStartSpin()
     {
+
+        
         if (PachisuroPhase.Instance == null) {
             return false;
         }
@@ -473,7 +512,8 @@ public class SlotReelController : MonoBehaviour
             }
 
             maxBet = false;
-
+            stoppedReelCount = 0;
+            HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
@@ -604,11 +644,35 @@ public class SlotReelController : MonoBehaviour
         }
 
         // 次の移動で目標角度を通り過ぎるなら、目標角度で止めます。
-        if (distanceToTarget <= moveAmount)
-        {
+        if (distanceToTarget <= moveAmount) {
             state.ReelAngles[reelIndex] = targetAngle;
+
             ApplyReelRotation(reelIndex);
+
             state.StopReel(reelIndex);
+
+            // 停止回数
+            stoppedReelCount++;
+
+            Debug.Log(
+                "リール停止 : "
+                + stoppedReelCount
+                + "停止目"
+            );
+
+            if (stoppedReelCount == 1) {
+                // 第一停止
+                ShowNoiseImage();
+            }
+            else if (stoppedReelCount == 2) {
+                // 第二停止
+                ShowNoiseImage();
+            }
+            else if (stoppedReelCount == 3) {
+                // 第三停止
+                ShowCleanImage();
+            }
+
             return;
         }
 
@@ -905,5 +969,92 @@ public class SlotReelController : MonoBehaviour
             slotIndex = 0;
             
         
+    }
+
+    //============================================================
+    // 停止演出
+    //============================================================
+
+
+
+
+    // 第一・第二停止用
+    // ノイズ付きで表示 → 0.5秒後に消える
+    public void ShowNoiseImage() {
+        if (stopEffectImage == null)
+            return;
+
+        if (stopEffectMaterial == null)
+            return;
+
+        if (noiseCoroutine != null) {
+            StopCoroutine(noiseCoroutine);
+        }
+
+        stopEffectImage.enabled = true;
+
+        noiseCoroutine =
+            StartCoroutine(
+                NoiseImageCoroutine()
+            );
+    }
+
+
+    // 第三停止用
+    // ノイズなしで表示し、そのまま残る
+    public void ShowCleanImage() {
+        if (stopEffectImage == null)
+            return;
+
+        if (noiseCoroutine != null) {
+            StopCoroutine(noiseCoroutine);
+            noiseCoroutine = null;
+        }
+
+        // ノイズOFF
+        stopEffectMaterial.SetFloat(
+            NoiseStrengthProperty,
+            0f
+        );
+
+        // 完全表示
+        stopEffectImage.enabled = true;
+    }
+
+
+    // 画像を消す
+    public void HideStopEffectImage() {
+        if (noiseCoroutine != null) {
+            StopCoroutine(noiseCoroutine);
+            noiseCoroutine = null;
+        }
+
+        if (stopEffectImage != null) {
+            stopEffectImage.enabled = false;
+        }
+    }
+
+
+    // ノイズ表示
+    private IEnumerator NoiseImageCoroutine() {
+        float timer = 0f;
+        float duration = 0.1f;
+
+        // ノイズ最大
+        stopEffectMaterial.SetFloat(
+            NoiseStrengthProperty,
+            1f
+        );
+
+        while (timer < duration) {
+            timer += Time.deltaTime;
+
+            yield return null;
+        }
+
+        // 0.5秒後に消す
+        stopEffectImage.enabled = false;
+
+        noiseCoroutine = null;
     }
 }
