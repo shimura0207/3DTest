@@ -35,7 +35,8 @@ public class MainMenuPart : PartBase {
     /// <returns></returns>
     public override async UniTask Setup() {
         await base.Setup();
-
+        // フェードから開ける
+        await FadeManager.Instance.FadeIn(FadeType.Black,0.5f);
         // 選択状態を初期化する
         selectMenu = MainMenuSelect.None;
         // メニューイベントを登録

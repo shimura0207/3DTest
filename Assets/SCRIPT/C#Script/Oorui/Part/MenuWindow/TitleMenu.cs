@@ -35,6 +35,8 @@ public class TitleMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Close() {
+        // メニューが消える前にフェードアウトする
+        await FadeManager.Instance.FadeOut(FadeType.Black, 0.5f);
         // 基底側でメニューを非表示にする
         await base.Close();
         await UniTask.CompletedTask;

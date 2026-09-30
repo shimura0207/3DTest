@@ -84,7 +84,6 @@ public class TitlePart : PartBase {
         }
         // タイトルメニューを閉じる
         await title.Close();
-
         // メインメニュー画面に遷移
         await PartManager.Instance.TransitionPart(GamePart.MainMenu);
     }

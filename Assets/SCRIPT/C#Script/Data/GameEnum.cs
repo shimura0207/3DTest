@@ -154,3 +154,45 @@ public enum ConnectionState {
     Client, // クライアント
     Max
 }
+
+/// <summary>
+/// カードのレアリティ
+/// </summary>
+public enum CardRearity {
+    None = -1,
+    N = 1,
+    R = 2,
+    SR = 3,
+    LR = 4
+}
+
+/// <summary>
+/// カードのテーマ 
+/// </summary>
+public enum CardTheme {
+
+}
+
+/// <summary>
+/// カードの子役
+/// </summary>
+public enum CardKoyaku {
+    None = 1,
+    Replay = 2,
+    Cherry = 3,
+    Bell = 4,
+    Suika = 5,
+    OLL = 6,
+    NULL =  7,
+    Cherry_Suika = 8,
+
+}
+
+/// <summary>
+/// フェードの画像種類
+/// </summary>
+public enum FadeType {
+    White,  // 白
+    Black,  // 黒
+    Max,
+}
