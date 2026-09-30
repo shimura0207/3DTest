@@ -145,6 +145,8 @@ public class SlotReelController : MonoBehaviour
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.Seven)
     };
 
+
+    [SerializeField] private EfectManager efectManager;
     //============================================================
     // 入力設定
     //============================================================
@@ -688,6 +690,7 @@ public class SlotReelController : MonoBehaviour
 
         state.ReelAngles[reelIndex] = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
         ApplyReelRotation(reelIndex);
+        efectManager.ShowTramp(reelIndex);
     }
 
     //============================================================

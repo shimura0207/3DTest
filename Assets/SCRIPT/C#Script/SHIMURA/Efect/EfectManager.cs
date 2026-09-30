@@ -3,15 +3,116 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EfectManager : MonoBehaviour {
+    [Header("通常画像")]
     [SerializeField] private Image targetImage;
     [SerializeField] private Material noiseMaterial;
+
     private Coroutine noiseCoroutine;
 
+
     // =========================================================
-    // ノイズっぽく表示 → 0.5秒後に消す
+    // トランプ
+    // 0 = 左
+    // 1 = 中
+    // 2 = 右
+    // =========================================================
+
+    [Header("トランプ画像")]
+    [SerializeField] private Image[] trumpImages = new Image[3];
+
+    [Header("トランプ裏面")]
+    [SerializeField] private Sprite trumpBackSprite;
+
+    [Header("トランプ表面")]
+    [SerializeField] private Sprite[] trumpFrontSprites = new Sprite[3];
+
+
+    // =========================================================
+    // レバーON
+    // 裏面トランプ3枚を表示
+    // =========================================================
+    public void ShowTrumps() {
+        for (int i = 0; i < 3; i++) {
+            if (trumpImages[i] == null) {
+                Debug.LogWarning(
+                    "trumpImages[" + i + "] が設定されていません"
+                );
+
+                continue;
+            }
+
+            // 裏面にする
+            trumpImages[i].sprite = trumpBackSprite;
+
+            // 表示
+            trumpImages[i].gameObject.SetActive(true);
+            trumpImages[i].enabled = true;
+        }
+
+        Debug.Log("トランプ3枚を裏面で表示");
+    }
+
+
+    // =========================================================
+    // 停止したリールに対応するトランプを表にする
+    //
+    // 0 = 左
+    // 1 = 中
+    // 2 = 右
+    // =========================================================
+    public void ShowTramp(int reelIndex) {
+        if (reelIndex < 0 || reelIndex >= 3) {
+            Debug.LogWarning(
+                "不正なreelIndex : " + reelIndex
+            );
+
+            return;
+        }
+
+        if (trumpImages[reelIndex] == null) {
+            Debug.LogWarning(
+                "trumpImages[" + reelIndex + "] が設定されていません"
+            );
+
+            return;
+        }
+
+        if (trumpFrontSprites[reelIndex] == null) {
+            Debug.LogWarning(
+                "trumpFrontSprites[" + reelIndex + "] が設定されていません"
+            );
+
+            return;
+        }
+
+        // 裏面 → 表面へ画像を変更
+        trumpImages[reelIndex].sprite =
+            trumpFrontSprites[reelIndex];
+
+        Debug.Log(
+            "トランプ " + reelIndex + " を表面に変更"
+        );
+    }
+
+
+    // =========================================================
+    // 全トランプを消す
+    // =========================================================
+    public void HideTrumps() {
+        for (int i = 0; i < 3; i++) {
+            if (trumpImages[i] != null) {
+                trumpImages[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+
+    // =========================================================
+    // 既存のノイズ演出
     // =========================================================
     public void ShowNoiseAndHide() {
         targetImage.material = noiseMaterial;
+
         if (noiseCoroutine != null) {
             StopCoroutine(noiseCoroutine);
         }
@@ -19,11 +120,13 @@ public class EfectManager : MonoBehaviour {
         noiseCoroutine = StartCoroutine(NoiseShowCoroutine());
     }
 
-    private IEnumerator NoiseShowCoroutine() {
-        RectTransform rect = targetImage.GetComponent<RectTransform>();
 
-        // 元の状態を保存
-        Vector2 originalPosition = rect.anchoredPosition;
+    private IEnumerator NoiseShowCoroutine() {
+        RectTransform rect =
+            targetImage.GetComponent<RectTransform>();
+
+        Vector2 originalPosition =
+            rect.anchoredPosition;
 
         targetImage.gameObject.SetActive(true);
 
@@ -33,20 +136,19 @@ public class EfectManager : MonoBehaviour {
         while (timer < duration) {
             timer += Time.deltaTime;
 
-            // 高速で表示・非表示を繰り返す
-            targetImage.enabled = Random.value > 0.2f;
+            targetImage.enabled =
+                Random.value > 0.2f;
 
-            // 少しだけ位置をランダムにずらす
-            rect.anchoredPosition = originalPosition +
-                                     new Vector2(
-                                         Random.Range(-5f, 5f),
-                                         Random.Range(-5f, 5f)
-                                     );
+            rect.anchoredPosition =
+                originalPosition +
+                new Vector2(
+                    Random.Range(-5f, 5f),
+                    Random.Range(-5f, 5f)
+                );
 
             yield return null;
         }
 
-        // 元に戻して消す
         targetImage.enabled = false;
         rect.anchoredPosition = originalPosition;
 
@@ -54,12 +156,7 @@ public class EfectManager : MonoBehaviour {
     }
 
 
-    // =========================================================
-    // ノイズなしで表示
-    // 消す関数を呼ぶまで表示し続ける
-    // =========================================================
     public void ShowClean() {
-        // ノイズ演出が動いていたら停止
         if (noiseCoroutine != null) {
             StopCoroutine(noiseCoroutine);
             noiseCoroutine = null;
@@ -70,9 +167,6 @@ public class EfectManager : MonoBehaviour {
     }
 
 
-    // =========================================================
-    // 消す
-    // =========================================================
     public void Hide() {
         if (noiseCoroutine != null) {
             StopCoroutine(noiseCoroutine);
