@@ -35,6 +35,7 @@ public class HostORClientMenu : MenuWindowBase {
         hostButton.onClick.AddListener(OnClickHostButton);
         clientButton.onClick.AddListener(OnClickClientButton);
         canccelButton.onClick.AddListener(OnCanccelButton);
+        await UniTask.CompletedTask;
     }
 
     /// <summary>

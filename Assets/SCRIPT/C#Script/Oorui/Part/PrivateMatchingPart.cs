@@ -10,5 +10,6 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PrivateMatchingPart : PartBase {
     public override async UniTask Execute() {
+        await UniTask.CompletedTask;
     }
 }

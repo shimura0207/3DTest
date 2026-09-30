@@ -42,6 +42,7 @@ public class GenericCheckMenu : MenuWindowBase {
         noButton.onClick.AddListener(OnClickNoButton);
         // はいボタンが押された時
         yesButton.onClick.AddListener(OnClickYesButton);
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
