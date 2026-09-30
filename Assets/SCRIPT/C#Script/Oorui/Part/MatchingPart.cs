@@ -16,14 +16,18 @@ using UnityEngine.UI;
 /// マッチングパート
 /// </summary>
 public class MatchingPart : PartBase {
-    private bool isRandomMatch = false;       // ランダムマッチが選択されたか
+    private bool isRandomMatch = false;     // ランダムマッチが選択されたか
     private bool isPrivateMatch = false;    // プライベートマッチが選択されたか
+    private bool isReturn = false;          // メニューに戻るが選択されたか
 
     // Inspectorからランダムマッチボタンを設定する
     [SerializeField] private Button randomButton;
 
     // Inspectorからプライベートマッチボタンを設定する
     [SerializeField] private Button privateButton;
+
+    // Inspectorからメニューに戻るボタンを設定する
+    [SerializeField] private Button returnButton;
 
     // メニュー
     private const string _HOSTORCLIENT_MENU = "Prefab/Part/MenuWindow/HostORClientMenu";
@@ -51,14 +55,17 @@ public class MatchingPart : PartBase {
         // メニューの初期化
         await hostORClientMenu.Initialize();
         await hostORClientMenu.Setup();
-        // 戻るボタンが押された時の処理を登録する
-        randomButton.onClick.AddListener(OnClickReturnButton);
+        // ランダムボタンが押された時の処理を登録する
+        randomButton.onClick.AddListener(OnClickRandomButton);
         // マッチングボタンが押された時の処理を登録する
         privateButton.onClick.AddListener(OnClickMatchingButton);
+        // 戻るボタンが押された時の処理を登録
+        returnButton.onClick.AddListener(OnClickReturnButton);
 
         // フラグを初期化する
         isRandomMatch = false;
         isPrivateMatch = false;
+        isReturn = false;
     }
 
     /// <summary>
@@ -69,7 +76,7 @@ public class MatchingPart : PartBase {
         // ボタンが選択されるまで繰り返し待機する
         while (true) {
             // ランダムマッチまたはプライベートマッチが選択されるまで待機
-            await UniTask.WaitUntil(() => isRandomMatch || isPrivateMatch);
+            await UniTask.WaitUntil(() => isRandomMatch || isPrivateMatch || isReturn);
 
             // ランダムマッチが選択された場合
             if (isRandomMatch) {
@@ -102,6 +109,12 @@ public class MatchingPart : PartBase {
                 await PartManager.Instance.TransitionPart(GamePart.PrivateMatch, conection);
                 return;
             }
+
+            // メインメニューに戻るが選択された時
+            if (isReturn) {
+                // メインメニューに遷移する
+                await PartManager.Instance.TransitionPart(GamePart.MainMenu);
+            }
         }
     }
 
@@ -109,7 +122,7 @@ public class MatchingPart : PartBase {
     /// <summary>
     /// ランダムマッチボタンが押された時の処理
     /// </summary>
-    private void OnClickReturnButton() {
+    private void OnClickRandomButton() {
         // ランダムマッチフラグをONにする
         isRandomMatch = true;
     }
@@ -124,17 +137,27 @@ public class MatchingPart : PartBase {
     }
 
     /// <summary>
+    /// メニューに戻るボタンが押された時の処理
+    /// </summary>
+    private void OnClickReturnButton() {
+        // メニューに戻るフラグをONにする
+        isReturn = true;
+    }
+
+    /// <summary>
     /// 片付け処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Teardown() {
         // フラグを初期化
         // ボタンイベントを解除して重複登録を防ぐ
-        randomButton.onClick.RemoveListener(OnClickReturnButton);
+        randomButton.onClick.RemoveListener(OnClickRandomButton);
         privateButton.onClick.RemoveListener(OnClickMatchingButton);
+        returnButton.onClick.RemoveListener(OnClickReturnButton); 
         // フラグを初期化する
         isPrivateMatch = false;
         isRandomMatch = false;
+        isReturn = false;
         await base.Teardown();
     }
 }
