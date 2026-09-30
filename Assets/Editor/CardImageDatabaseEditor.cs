@@ -38,5 +38,30 @@ public class CardImageDatabaseEditor : Editor {
             inputID = -1;
             inputSprite = null;
         }
+
+        // 追加ボタンとリスト表示を分けるバー表示
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        int index = -1;
+        bool delete = false;
+        foreach (var data in database.cardImageDataList) {
+            // 登録されているカードのIDと見た目を表示
+            EditorGUILayout.ObjectField(
+                "ID：" + data.cardID.ToString(),
+                data.cardImage,
+                typeof(Sprite),
+                false);
+
+            // 登録されているデータを削除するボタン
+            index++;
+            if (GUILayout.Button("DeleteData")) {
+                // データ削除予約
+                delete = true;
+                break;
+            }
+        }
+        // 削除
+        if (delete)
+            database.DeleteCardImageData(index);
     }
 }
