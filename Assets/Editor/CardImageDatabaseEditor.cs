@@ -31,12 +31,18 @@ public class CardImageDatabaseEditor : Editor {
 
         // 追加ボタン
         if (GUILayout.Button("AddList")) {
-            // 設定したデータを追加
-            database.AddCardImageDataList(inputID, inputSprite);
+            if (inputID != -1 && inputSprite) {
+                // 設定したデータを追加
+                database.AddCardImageDataList(inputID, inputSprite);
 
-            // 設定した値をリセット
-            inputID = -1;
-            inputSprite = null;
+                // 設定した値をリセット
+                inputID = -1;
+                inputSprite = null;
+            }
+            else {
+                // IDかSpriteが入っていなければ警告
+                Debug.LogWarning("入力データが十分ではありません。");
+            }
         }
 
         // 追加ボタンとリスト表示を分けるバー表示
