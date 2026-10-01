@@ -19,7 +19,15 @@ public class CardImageDatabase : ScriptableObject {
     }
 
     // カードのイラストデータリスト
-    public List<CardImageData> cardImageDataList { get; private set; } = new List<CardImageData>();
+    [SerializeField]
+    private List<CardImageData> cardImageDataList = new List<CardImageData>();
+    /* 
+    SerializeFildはフィールドに対する機能であり、
+    { get; private set; }するとプロパティとして宣言されていしまうため
+    別で読み取り専用のプロパティを用意する必要がある
+    */
+    // リストの読み取り専用プロパティ
+    public List<CardImageData> CardImageDataList => cardImageDataList;
 
     /// <summary>
     /// リストにデータを追加
@@ -65,5 +73,21 @@ public class CardImageDatabase : ScriptableObject {
     /// <param name="deleteDataIndex">削除するデータの番号</param>
     public void DeleteCardImageData(int deleteDataIndex) {
         cardImageDataList.RemoveAt(deleteDataIndex);
+    }
+
+    /// <summary>
+    /// カードのイラスト取得
+    /// </summary>
+    /// <param name="cardID">カードのID</param>
+    /// <returns></returns>
+    public Sprite GetCardImage(int cardID) {
+        // カードIDが一致するものを探す
+        foreach (var data in cardImageDataList) {
+            // カードIDが一致したのでイラストを渡す
+            if (data.cardID == cardID)
+                return data.cardImage;
+        }
+        // 一致するものがなかった
+        return null;
     }
 }

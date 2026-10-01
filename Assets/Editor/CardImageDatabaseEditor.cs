@@ -32,8 +32,13 @@ public class CardImageDatabaseEditor : Editor {
         // 追加ボタン
         if (GUILayout.Button("AddList")) {
             if (inputID != -1 && inputSprite) {
+
                 // 設定したデータを追加
                 database.AddCardImageDataList(inputID, inputSprite);
+
+                // 変更をアセットに保存
+                EditorUtility.SetDirty(database);
+                AssetDatabase.SaveAssets();
 
                 // 設定した値をリセット
                 inputID = -1;
@@ -50,7 +55,7 @@ public class CardImageDatabaseEditor : Editor {
 
         int index = -1;
         bool delete = false;
-        foreach (var data in database.cardImageDataList) {
+        foreach (var data in database.CardImageDataList) {
             // 登録されているカードのIDと見た目を表示
             EditorGUILayout.ObjectField(
                 "ID：" + data.cardID.ToString(),
@@ -67,7 +72,13 @@ public class CardImageDatabaseEditor : Editor {
             }
         }
         // 削除
-        if (delete)
+        if (delete) {
             database.DeleteCardImageData(index);
+            // 変更をアセットに保存
+            EditorUtility.SetDirty(database);
+            AssetDatabase.SaveAssets();
+        }
+
+        
     }
 }

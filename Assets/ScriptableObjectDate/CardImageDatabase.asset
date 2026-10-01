@@ -12,3 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b8a6a3f9dc8a0648bca46c3ce99bb88, type: 3}
   m_Name: CardImageDatabase
   m_EditorClassIdentifier: 
+  cardImageDataList:
+  - cardID: 1
+    cardImage: {fileID: 21300000, guid: b8a8a3e8babdca942801f58d1d5cb997, type: 3}
+  - cardID: 2
+    cardImage: {fileID: 21300000, guid: 9321d1a23909cf646ad9add640380661, type: 3}
+  - cardID: 3
+    cardImage: {fileID: 21300000, guid: 03eb9951d09f46d4f9a54330b85f5405, type: 3}
+  - cardID: 4
+    cardImage: {fileID: 21300000, guid: 6ea3dca56f5e5a749b26642fa3d8cd26, type: 3}
+  - cardID: 5
+    cardImage: {fileID: 21300000, guid: 2fc18333ddf12d340b98da122313b0fa, type: 3}
+  - cardID: 6
+    cardImage: {fileID: 21300000, guid: bd83dd57cec84b94494ff811fcd4fe0a, type: 3}
+  - cardID: 7
+    cardImage: {fileID: 21300000, guid: 59f218b0620e2b64196c9a6343be9023, type: 3}
+  - cardID: 8
+    cardImage: {fileID: 21300000, guid: cf6826d4390dd3a40a084ca624a23579, type: 3}
+  - cardID: 9
+    cardImage: {fileID: 21300000, guid: b8250fbd7cac91f40a0f249920afa67e, type: 3}
+  - cardID: 10
+    cardImage: {fileID: 21300000, guid: 55abcc77bf4d6124fb19c483fb6a221a, type: 3}
+  - cardID: 11
+    cardImage: {fileID: 21300000, guid: 0dbc0a5bab587e8419d351bbd7daddd2, type: 3}
+  - cardID: 12
+    cardImage: {fileID: 21300000, guid: 9fecfe47787759742927c3efcc549a6f, type: 3}
+  - cardID: 13
+    cardImage: {fileID: 21300000, guid: 66745eaf225e3f14ebd13140928c15e3, type: 3}
+  - cardID: 14
+    cardImage: {fileID: 21300000, guid: 807d80a2e5c59804689b66f4fc8e98d1, type: 3}
+  - cardID: 15
+    cardImage: {fileID: 21300000, guid: f9862e9d2dcc8ac42bd880607dc2a36f, type: 3}

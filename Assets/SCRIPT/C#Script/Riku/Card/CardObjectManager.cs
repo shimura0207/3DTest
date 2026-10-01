@@ -35,8 +35,10 @@ public class CardObjectManager : MonoBehaviour {
     // ある程度の生成数
     private const int CARD_OBJECT_MAX = 30;
 
-    // Start is called before the first frame update
-    void Start() {
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    public void Initializse() {
         instance = this;
 
         // カードオブジェクトをある程度生成して未使用状態にしておく
@@ -48,16 +50,12 @@ public class CardObjectManager : MonoBehaviour {
         }
     }
 
-    // Update is called once per frame
-    void Update() {
-
-    }
-
     /// <summary>
     /// カードオブジェクトを使用状態にする
     /// </summary>
+    /// <param name="cardID">使用カードのID</param>
     /// <returns></returns>
-    public CardObject UseCardObject() {
+    public CardObject UseCardObject(int cardID) {
         // 使用可能なカードオブジェクトのインスタンスを取得
         CardObject useCard = GetUsableCardObject();
         // 使用可能なIDを取得して使用リストに追加
@@ -76,8 +74,8 @@ public class CardObjectManager : MonoBehaviour {
         }
         // 使用中親オブジェクトへ親を変更
         useCard.transform.SetParent(useObjectRoot);
-        // オブジェクトに個別IDを持たせる
-        useCard.SetObjectID(useID);
+        // オブジェクトの準備
+        useCard.Setup(useID, cardID);
         return useCard;
     }
 
