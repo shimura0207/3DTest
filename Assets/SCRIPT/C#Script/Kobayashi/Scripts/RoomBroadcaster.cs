@@ -13,6 +13,8 @@ public class RoomBroadcaster : MonoBehaviour
     // UDP通信を行うための変数
     private UdpClient udp;
 
+    private ushort gamePort;
+
     // ルームコードを保存
     public string RoomCode
     {
@@ -24,52 +26,45 @@ public class RoomBroadcaster : MonoBehaviour
     /// ルーム情報のブロードキャストを開始するための関数
     /// </summary>
     /// <param name="port"></param>
-    public void StartBroadcast(ushort port)
-    {
-        // 4桁のコードを生成する
+    public void StartBroadcast(ushort port) {
+        gamePort = port;
+
         RoomCode =
             Random.Range(
                 1000,
                 10000
             ).ToString();
 
-        // UDPを作成
+        Debug.Log($"Host IP : {GetLocalIP()}");
+
         udp = new UdpClient();
-        // ブロードキャスト送信を許可する
         udp.EnableBroadcast = true;
 
-        // SendBroadcastを繰り返し実行する
         InvokeRepeating(
             nameof(SendBroadcast),
             0f,
             1f
         );
 
-        // ログを表示
         Debug.Log(
             "Room Code : "
             + RoomCode
         );
     }
 
-    /// <summary>
-    /// ルーム情報をLANに送信するための関数
-    /// </summary>
-    private void SendBroadcast()
-    {
-        // 送信する文字列を作成
-        string message = $"{RoomCode}|{GetLocalIP()}|7777";
-        // 文字列をバイト配列に変換
-        byte[] data = Encoding.UTF8.GetBytes(message);
+    private void SendBroadcast() {
+        string message =
+            $"{RoomCode}|{GetLocalIP()}|{gamePort}";
 
-        // 送信する先を指定
+        byte[] data =
+            Encoding.UTF8.GetBytes(message);
+
         IPEndPoint target =
             new IPEndPoint(
                 IPAddress.Broadcast,
                 9000
             );
 
-        // 実際に送信を行う
         udp.Send(
             data,
             data.Length,

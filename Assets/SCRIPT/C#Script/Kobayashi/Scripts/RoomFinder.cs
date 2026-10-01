@@ -91,101 +91,91 @@ public class RoomFinder : MonoBehaviour
     /// Hostから届いた部屋情報を受け取るための関数
     /// </summary>
     /// <param name="result"></param>
-    private void Receive(IAsyncResult result)
-    {
-        // UDP通信が既に終了している場合
+    private void Receive(IAsyncResult result) {
         if (udp == null)
-            // 処理を終える
             return;
 
-        // データを送ってきた相手のIPアドレス・ポート番号を保存する変数
-        IPEndPoint sender = null;
+        try {
+            IPEndPoint sender = null;
 
-        // 届いたUDPデータを取得
-        byte[] data =
-            udp.EndReceive(
-                result,
-                ref sender
-            );
+            byte[] data =
+                udp.EndReceive(
+                    result,
+                    ref sender
+                );
 
-        // UTF-8から文字列に戻す
-        string message = Encoding.UTF8.GetString(data);
+            string message =
+                Encoding.UTF8.GetString(data);
 
-        // ログを表示
-        Debug.Log(
-            $"受信データ : {message}"
-        );
-
-        // 受信したポート番号を | で分割する
-        string[] split = message.Split('|');
-
-        // 必要なデータが足りていなければ
-        if (split.Length < 3)
-        {
-            // ログを表示
-            Debug.LogWarning(
-                "データ形式不正"
-            );
-
-            // 処理を終える
-            return;
-        }
-
-        // ルームコード
-        string hostCode = split[0];
-
-        // HostのIP
-        string hostIP = split[1];
-
-        // Hostのポート
-        ushort hostPort =
-            ushort.Parse(
-                split[2]
-            );
-
-        // 入力したコードを取り出す
-        string inputCode = (string)result.AsyncState;
-
-        // ログを表示
-        Debug.Log(
-            $"Hostコード:[{hostCode}] 入力:[{inputCode}]"
-        );
-
-        // コードが一致した場合
-        if (hostCode == inputCode)
-        {
-            // ルームを発見した状態にする
-            foundRoom = true;
-
-            // タイムアウトをキャンセル
-            CancelInvoke(
-                nameof(SearchTimeout)
-            );
-
-            // ログを表示
             Debug.Log(
-                $"接続先発見 : {hostIP}:{hostPort}"
+                $"受信データ : {message}"
             );
 
-            // Connect() をUnityのメインスレッドで実行する
-            MainThreadDispatcher
-                .Instance
-                .Enqueue(
-                () =>
-                {
-                    Connect(
-                        hostIP,
-                        hostPort
-                    );
-                });
-        }
-        // コードが一致しなかった場合
-        else
-        {
-            // まだ目的のHostが見つかっていない
+            string[] split =
+                message.Split('|');
+
+            if (split.Length < 3) {
+                Debug.LogWarning(
+                    "データ形式不正"
+                );
+
+                return;
+            }
+
+            string hostCode = split[0];
+            string hostIP = split[1];
+
+            if (!ushort.TryParse(
+                split[2],
+                out ushort hostPort)) {
+                Debug.LogWarning(
+                    "ポート番号が不正です"
+                );
+
+                return;
+            }
+
+            string inputCode =
+                (string)result.AsyncState;
+
+            Debug.Log(
+                $"Hostコード:[{hostCode}] " +
+                $"入力:[{inputCode}]"
+            );
+
+            if (hostCode == inputCode) {
+                foundRoom = true;
+
+                CancelInvoke(
+                    nameof(SearchTimeout)
+                );
+
+                Debug.Log(
+                    $"接続先発見 : " +
+                    $"{hostIP}:{hostPort}"
+                );
+
+                MainThreadDispatcher
+                    .Instance
+                    .Enqueue(
+                    () => {
+                        Connect(
+                            hostIP,
+                            hostPort
+                        );
+                    });
+
+                return;
+            }
+
             udp.BeginReceive(
                 Receive,
                 inputCode
+            );
+        }
+        catch (Exception e) {
+            Debug.LogError(
+                $"UDP受信エラー : {e}"
             );
         }
     }
