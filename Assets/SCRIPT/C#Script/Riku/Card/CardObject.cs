@@ -55,7 +55,7 @@ public class CardObject : MonoBehaviour {
         // IDのセット
         objectID = setObjectID;
         cardID = setCardID;
-        // IDからステータスを取得
+        // IDからステータスを取得(今後実装予定)
 
         // IDからイラストを取得
         spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);

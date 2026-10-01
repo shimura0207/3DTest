@@ -78,7 +78,5 @@ public class CardImageDatabaseEditor : Editor {
             EditorUtility.SetDirty(database);
             AssetDatabase.SaveAssets();
         }
-
-        
     }
 }
