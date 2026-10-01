@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class EfectManager : MonoBehaviour {
     [Header("通常画像")]
@@ -175,4 +176,17 @@ public class EfectManager : MonoBehaviour {
 
         targetImage.enabled = false;
     }
+
+    [SerializeField] GameObject start;
+    [SerializeField] VideoPlayer startvideo;
+    [SerializeField] GameObject Loop;
+    public void ShowCutinStart() {
+        start.SetActive(true);
+        startvideo.loopPointReached += ShowCutinLoop;
+    }
+
+    void ShowCutinLoop(VideoPlayer vp) {
+        Loop.SetActive(true);
+    }
+
 }
