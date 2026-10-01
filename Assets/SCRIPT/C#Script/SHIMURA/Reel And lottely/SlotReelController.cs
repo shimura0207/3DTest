@@ -246,7 +246,7 @@ public class SlotReelController : MonoBehaviour {
             );
         }
 
-        efectManager.ShowCutinStart();
+        
     }
 
     private void Update() {
@@ -496,6 +496,9 @@ public class SlotReelController : MonoBehaviour {
             StartCoroutine(ReelLockCoroutine());
             maxBet = false;
             stoppedReelCount = 0;
+
+            efectManager.ShowCutinStart();
+
             HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
             efectManager.ShowTrumps();
