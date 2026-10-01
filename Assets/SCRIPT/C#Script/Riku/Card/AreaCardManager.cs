@@ -21,7 +21,7 @@ public class AreaCardManager : MonoBehaviour {
     // 山札(相手側の山札は管理しなくていいので個別)
     private List<int> deckCards = null;
     // 山札外のカード
-    struct OutDeckCards { 
+    public struct OutDeckCards { 
         // 手札
         public List<int> handCards;
         // フィールド
@@ -30,7 +30,7 @@ public class AreaCardManager : MonoBehaviour {
         public List<int> graveCards;
     }
     // プレイヤーごとの山札外カード
-    private Dictionary<PlayerType, OutDeckCards> outDeckCards;
+    public Dictionary<PlayerType, OutDeckCards> outDeckCards { get; private set; }
 
     /// <summary>
     /// 初期化処理

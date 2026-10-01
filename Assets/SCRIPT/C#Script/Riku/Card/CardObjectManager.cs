@@ -96,6 +96,7 @@ public class CardObjectManager : MonoBehaviour {
         // 未使用親オブジェクトへ親を変更
         unuseObject.transform.SetParent(unuseObjectRoot);
     }
+
     /// <summary>
     /// 未使用状態のカードオブジェクト取得
     /// </summary>
@@ -107,5 +108,12 @@ public class CardObjectManager : MonoBehaviour {
         CardObject result = unuseObjectList[0];
         unuseObjectList.RemoveAt(0);
         return result;
+    }
+
+    /// <summary>
+    /// 手札の整列
+    /// </summary>
+    public void ArrangeHand(PlayerType player) {
+        int hand = AreaCardManager.instance.outDeckCards[player].handCards.Count;
     }
 }
