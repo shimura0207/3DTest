@@ -38,7 +38,7 @@ public class CardObjectManager : MonoBehaviour {
     /// <summary>
     /// 初期化
     /// </summary>
-    public void Initializse() {
+    public void Initialize() {
         instance = this;
 
         // カードオブジェクトをある程度生成して未使用状態にしておく
