@@ -895,12 +895,11 @@ MonoBehaviour:
   - {fileID: 9072869522588518862}
   - {fileID: 8605841579626551787}
   - {fileID: 7586397522474437006}
+  trumpBackSprite: {fileID: 21300000, guid: 6e04d9446837c3f4a841cf8fd4c22487, type: 3}
   trumpFrontSprites:
   - {fileID: 21300000, guid: ea539c1c8caba014b887d7c739424a66, type: 3}
   - {fileID: 21300000, guid: ea539c1c8caba014b887d7c739424a66, type: 3}
   - {fileID: 21300000, guid: ea539c1c8caba014b887d7c739424a66, type: 3}
-  trumpBackSprite: {fileID: 21300000, guid: 6e04d9446837c3f4a841cf8fd4c22487, type: 3}
-  trumpFlipTime: 0.25
 --- !u!1 &1188411271893256775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,7 +1815,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 354.7, y: 446.5}
+  m_SizeDelta: {x: 330, y: 440}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2891753745522641567
 CanvasRenderer:
@@ -4808,7 +4807,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -345, y: 0}
-  m_SizeDelta: {x: 354.7, y: 446.5}
+  m_SizeDelta: {x: 330, y: 440}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6638376845096255825
 CanvasRenderer:
@@ -5454,7 +5453,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 345, y: 0}
-  m_SizeDelta: {x: 354.7, y: 446.5}
+  m_SizeDelta: {x: 330, y: 440}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4362384738106897026
 CanvasRenderer:
