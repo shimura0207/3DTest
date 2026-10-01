@@ -245,6 +245,8 @@ public class SlotReelController : MonoBehaviour {
                 "stopEffectImage が設定されていません！"
             );
         }
+
+        efectManager.ShowCutinStart();
     }
 
     private void Update() {
