@@ -30,6 +30,12 @@ public class MainGamePart : PartBase {
     // 生成したカード管理のインスタンス
     private AreaCardManager areaCardManager = null;
 
+    // カードオブジェクト管理のPrefab
+    [SerializeField]
+    private GameObject cardObjectManagerPrefab = null;
+    // 生成したカード管理のインスタンス
+    private CardObjectManager cardObjectManager = null;
+
     [SerializeField]
     private GameObject patisuro = null;
     // 生成したPrefabを保持する
@@ -134,6 +140,17 @@ public class MainGamePart : PartBase {
             if (areaCardManager == null) return;
             // カード管理を初期化
             areaCardManager.Initialize();
+        }
+        // カードオブジェクト管理のPrefabを作成
+        if (cardObjectManagerPrefab != null) {
+            // 自身の傘下に生成
+            GameObject cardObjectObject = Instantiate(cardObjectManagerPrefab, transform);
+            // 生成したオブジェクトから管理コンポーネントを取得
+            cardObjectManager = cardObjectObject.GetComponent<CardObjectManager>();
+            // 管理コンポーネントが取得できたか確認
+            if (cardObjectManager == null) return;
+            // カード管理を初期化
+            cardObjectManager.Initialize();
         }
     }
 }

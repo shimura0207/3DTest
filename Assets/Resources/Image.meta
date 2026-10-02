@@ -1,7 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/Prefab/Part/MenuWindow/HostORClientMenu.prefab.meta
+guid: 7366a67a95a54c54bbaf2cf123472458
+PrefabImporter:
+========
 guid: da5271fa5d2aa2147a3f2a906bc12f13
 folderAsset: yes
 DefaultImporter:
+>>>>>>>> main:Assets/Resources/Image.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

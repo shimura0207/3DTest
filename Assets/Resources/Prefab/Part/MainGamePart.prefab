@@ -46,4 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleSystemManagerPrefab: {fileID: 624098051490861473, guid: e9a29de81db761e4a811a46bd840f7cc, type: 3}
   areaCardManagerPrefab: {fileID: 4668767147136827646, guid: f62c1e95044abb94c9fdde362348adda, type: 3}
+  cardObjectManagerPrefab: {fileID: 6752565909223491513, guid: c19dab6f76fe844449b667b10ef13145, type: 3}
   patisuro: {fileID: 4158583410018202540, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}

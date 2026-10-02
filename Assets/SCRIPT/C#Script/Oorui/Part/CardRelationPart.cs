@@ -14,25 +14,15 @@ using UnityEngine.UI;
 /// </summary>
 public class CardRelationPart : PartBase {
 
-    // カード一覧画面の階層パス
-    private const string _MENUWINDOW_CARDHAVEMENU = "Prefab/Part/MenuWindow/CardHaveListMenu";
-    // デッキ編成画面の階層パス
-    private const string _MENUWINDOW_DECKBUILDINGMENU = "Prefab/Part/MenuWindow/DeckBuildingMenu";
-    // メインメニューに戻るメニューの階層パス
-    private const string _MENUWINDOW_RETURNTOMAINMENU = "Prefab/Part/MenuWindow/ReturnToMainMenu";
-
-
-    // カード一覧メニュー
-    private CardHaveListMenu cardList;
-
-    // デッキ構築メニュー
-    private DeckBuildingMenu deckBuild;
-
-    // 戻るメニュー
-    private ReturnToMainMenu returnMenu;
 
     // 選択された遷移先
     private CardRelationMenuSelect selectMenu = CardRelationMenuSelect.None;
+    // メインメニュー復帰ボタン
+    [SerializeField] private Button returnMenu;
+    // デッキ編成ボタン
+    [SerializeField] private Button deckBuild;
+    // カード一覧ボタン
+    [SerializeField] private Button cardList;
 
     /// <summary>
     /// 初期化処理
@@ -41,16 +31,6 @@ public class CardRelationPart : PartBase {
     public override async UniTask Initialize() {
         // 基底側の処理を行う
         await base.Initialize();
-
-        // 各メニューを取得
-        cardList = MenuWindowManager.instance.Get<CardHaveListMenu>(_MENUWINDOW_CARDHAVEMENU);
-        deckBuild = MenuWindowManager.instance.Get<DeckBuildingMenu>(_MENUWINDOW_DECKBUILDINGMENU);
-        returnMenu = MenuWindowManager.instance.Get<ReturnToMainMenu>(_MENUWINDOW_RETURNTOMAINMENU);
-        // 各メニューを初期化
-        await cardList.Initialize();
-        await deckBuild.Initialize();
-        await returnMenu.Initialize();
-
         await UniTask.CompletedTask;
     }
 
@@ -64,9 +44,7 @@ public class CardRelationPart : PartBase {
 
         // 選択状態を初期化する
         selectMenu = CardRelationMenuSelect.None;
-        // 念のため以前登録されているイベントを解除する
-        UnRegisterMenuEvent();
-        // メニューイベントを登録
+        // イベント登録
         RegisterMenuEvent();
     }
 
@@ -76,33 +54,18 @@ public class CardRelationPart : PartBase {
     private void RegisterMenuEvent() {
 
         // カード一覧メニューが選択された時の処理を登録する
-        cardList.OnSelected += OnCardListSelected;
+        cardList.onClick.AddListener(OnCardListSelected);
 
         // デッキ構築メニューが選択された時の処理を登録する
-        deckBuild.OnSelected += OnDeckBuildSelected;
+        deckBuild.onClick.AddListener(OnDeckBuildSelected);
 
         // メインメニューに戻るが選択された時の処理を登録
-        returnMenu.OnSelected += OnReturnMenuSelected;
+        returnMenu.onClick.AddListener(OnReturnMenuSelected);
     }
-
-    /// <summary>
-    /// メニューイベントを解除する
-    /// </summary>
-    private void UnRegisterMenuEvent() {
-        // カード一覧メニューの選択イベントを解除する
-        cardList.OnSelected -= OnCardListSelected;
-
-        // デッキ構築メニューの選択イベントを解除する
-        deckBuild.OnSelected -= OnDeckBuildSelected;
-
-        // メインメニューの選択イベントを解除する
-        returnMenu.OnSelected -= OnReturnMenuSelected;
-    }
-
     /// <summary>
     /// マッチングメニューが選択された時の処理
     /// </summary>
-    private void OnCardListSelected(MenuWindowBase menu) {
+    private void OnCardListSelected() {
 
         // 遷移先をマッチングに設定する
         selectMenu = CardRelationMenuSelect.CardList;
@@ -111,7 +74,7 @@ public class CardRelationPart : PartBase {
     /// <summary>
     /// マッチングメニューが選択された時の処理
     /// </summary>
-    private void OnDeckBuildSelected(MenuWindowBase menu) {
+    private void OnDeckBuildSelected() {
 
         // 遷移先をマッチングに設定する
         selectMenu = CardRelationMenuSelect.DeckBuilding;
@@ -121,7 +84,7 @@ public class CardRelationPart : PartBase {
     /// メインメニューが選択された時の処理
     /// </summary>
     /// <param name="menu"></param>
-    private void OnReturnMenuSelected(MenuWindowBase menu) {
+    private void OnReturnMenuSelected() {
         // 遷移先をメインメニューに設定する
         selectMenu = CardRelationMenuSelect.MainMenu;
     }
@@ -132,55 +95,22 @@ public class CardRelationPart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        // BGM再生
+        while (true) {
+            // ボタンが押されるまで待機
+            await UniTask.WaitUntil(() => selectMenu != CardRelationMenuSelect.None);
 
-        // 選択状態を初期化する
-        selectMenu = CardRelationMenuSelect.None;
-
-        // 各メニュー表示
-        await cardList.Open();
-        await deckBuild.Open();
-        await returnMenu.Open();
-
-        while (selectMenu == CardRelationMenuSelect.None) {
-            // 次のフレームまで待機する
-            await UniTask.DelayFrame(1);
-        }
-
-        // すべてのメニューを閉じる
-        await CloseAllMenu();
-
-        // 選択されたメニューに応じて遷移する
-        await TransitionSelectedPart();
-    }
-
-    /// <summary>
-    /// すべてのメニューを閉じる
-    /// </summary>
-    /// <returns></returns>
-    private async UniTask CloseAllMenu() {
-
-        // 各メニューを閉じる
-        await cardList.Close();
-        await deckBuild.Close();
-        await returnMenu.Close();
-    }
-
-    private async UniTask TransitionSelectedPart() {
-        // 選択されたメニューによって遷移先を変更する
-        switch (selectMenu) {
-            case CardRelationMenuSelect.CardList:
-                // カード一覧パートに遷移
-                await PartManager.Instance.TransitionPart(GamePart.CardList);
-                break;
-            case CardRelationMenuSelect.DeckBuilding:
-                // デッキ構築パートに遷移
-                await PartManager.Instance.TransitionPart(GamePart.DeckBuild);
-                break;
-            case CardRelationMenuSelect.MainMenu:
-                // メインメニューパートに遷移
-                await PartManager.Instance.TransitionPart(GamePart.MainMenu);
-                break;
+            // 選択されたボタンによって処理を分岐
+            switch (selectMenu) {
+                case CardRelationMenuSelect.CardList:
+                    await PartManager.Instance.TransitionPart(GamePart.CardList);
+                    break;
+                case CardRelationMenuSelect.DeckBuilding:
+                    await PartManager.Instance.TransitionPart(GamePart.DeckBuild);
+                    break;
+                case CardRelationMenuSelect.MainMenu:
+                    await PartManager.Instance.TransitionPart(GamePart.MainMenu);
+                    return;
+            }
         }
     }
 
@@ -190,8 +120,6 @@ public class CardRelationPart : PartBase {
     /// <returns></returns>
     public override async UniTask Teardown() {
         await base.Teardown();
-        // 登録したイベントを解除
-        UnRegisterMenuEvent();
         // 選択状態を初期化する
         selectMenu = CardRelationMenuSelect.None;
     }

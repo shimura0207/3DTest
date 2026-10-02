@@ -6,6 +6,7 @@
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -16,17 +17,18 @@ using UnityEngine.UI;
 /// </summary>
 public class OptionPart : PartBase {
 
-    // メインメニューに戻るメニューの階層パス
-    private const string _MENUWINDOW_RETURNTOMAINMENU = "Prefab/Part/MenuWindow/ReturnToMainMenu";
-
-    // 戻るメニュー
-    private ReturnToMainMenu returnMenu;
-
     // 選択された遷移先
-    private CardRelationMenuSelect selectMenu = CardRelationMenuSelect.None;
+    private OptionMenuSelect selectMenu = OptionMenuSelect.None;
+
+    // 確認画面のメニュー
+    private GenericCheckMenu menu;
+    // 確認画面のメッセージ
+    private const string _GAME_END_MESSAGE = "ゲームを終了しますか？";
 
     // ゲーム終了ボタン
     [SerializeField] private Button gameEnd;
+    // メインメニュー復帰ボタン
+    [SerializeField] private Button returnMenu;
 
     /// <summary>
     /// 初期化処理
@@ -34,92 +36,83 @@ public class OptionPart : PartBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-        // 各メニューを取得
-        returnMenu = MenuWindowManager.instance.Get<ReturnToMainMenu>(_MENUWINDOW_RETURNTOMAINMENU);
-        // 各メニューを初期化
-        await returnMenu.Initialize();
         await UniTask.CompletedTask;
     }
 
     public override async UniTask Setup() {
         await base.Setup();
         Debug.Log("設定画面表示中");
+        // 確認画面の取得
+        menu = MenuWindowManager.instance.Get<GenericCheckMenu>("Prefab/Part/MenuWindow/GenericCheckMenu");
+
+        // メニューの初期化
+        await menu.Initialize();
+        await menu.Setup();
+
         // 選択状態を初期化する
-        selectMenu = CardRelationMenuSelect.None;
-        gameEnd.onClick.AddListener(OnClickNoButton);
-        // 念のため以前登録されているイベントを解除する
-        UnRegisterMenuEvent();
-        // メニューイベントを登録
-        RegisterMenuEvent();
+        selectMenu = OptionMenuSelect.None;
+        // イベント登録
+        gameEnd.onClick.AddListener(OnGameEndSelected);
+        returnMenu.onClick.AddListener(OnReturnMenuSelected);
     }
 
-    /// <summary>
-    /// メニューイベントを登録する
-    /// </summary>
-    private void RegisterMenuEvent() {
-        // メインメニューに戻るが選択された時の処理を登録
-        returnMenu.OnSelected += OnReturnMenuSelected;
-    }
-    /// <summary>
-    /// メニューイベントを解除する
-    /// </summary>
-    private void UnRegisterMenuEvent() {
-        // メインメニューの選択イベントを解除する
-        returnMenu.OnSelected -= OnReturnMenuSelected;
-    }
     /// <summary>
     /// メインメニューが選択された時の処理
     /// </summary>
     /// <param name="menu"></param>
-    private void OnReturnMenuSelected(MenuWindowBase menu) {
+    private void OnReturnMenuSelected() {
         // 遷移先をメインメニューに設定する
-        selectMenu = CardRelationMenuSelect.MainMenu;
+        selectMenu = OptionMenuSelect.MainMenu;
     }
+
+    /// <summary>
+    /// ゲーム終了ボタンが押された時の処理
+    /// </summary>
+    private void OnGameEndSelected() {
+        // ゲーム終了を選択状態にする
+        selectMenu = OptionMenuSelect.GameEnd;
+    }
+
     /// <summary>
     /// 実行処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        // BGM再生
+        // ボタンが選択されるまで繰り返し待機
+        while (true) {
+            // いずれかのボタンが押されるまで待機
+            await UniTask.WaitUntil(() => selectMenu != OptionMenuSelect.None);
 
-        // 選択状態を初期化する
-        selectMenu = CardRelationMenuSelect.None;
+            // 選択されたボタンによって処理を分岐
+            switch (selectMenu) {
+                case OptionMenuSelect.GameEnd: {
+                        // ゲーム終了の確認画面を表示
+                        bool isGameEnd = await menu.Open(_GAME_END_MESSAGE);
 
-        // 各メニュー表示
-        await returnMenu.Open();
+                        // 「はい」が選択された場合
+                        if (isGameEnd) {
+                            // ゲームを終了
+#if UNITY_EDITOR
+                            UnityEditor.EditorApplication.isPlaying = false;
+#else
+                            Application.Quit();
+#endif
+                            return;
+                        }
 
-        while (selectMenu == CardRelationMenuSelect.None) {
-            // 次のフレームまで待機する
-            await UniTask.DelayFrame(1);
-        }
+                        // 「いいえ」が選択された場合
+                        // 設定画面に留まり、再度ボタン入力を待つ
+                        selectMenu = OptionMenuSelect.None;
+                        continue;
+                    }
 
-        // すべてのメニューを閉じる
-        await CloseAllMenu();
-
-        // 選択されたメニューに応じて遷移する
-        await TransitionSelectedPart();
-    }
-
-    /// <summary>
-    /// すべてのメニューを閉じる
-    /// </summary>
-    /// <returns></returns>
-    private async UniTask CloseAllMenu() {
-
-        // 各メニューを閉じる
-        await returnMenu.Close();
-    }
-
-    private async UniTask TransitionSelectedPart() {
-        // 選択されたメニューによって遷移先を変更する
-        switch (selectMenu) {
-            case CardRelationMenuSelect.MainMenu:
-                // メインメニューパートに遷移
-                await PartManager.Instance.TransitionPart(GamePart.MainMenu);
-                break;
+                case OptionMenuSelect.MainMenu:
+                    // メインメニューパートへ遷移
+                    await PartManager.Instance.TransitionPart(GamePart.MainMenu);
+                    return;
+            }
         }
     }
-
 
     /// <summary>
     /// 片付け処理
@@ -127,20 +120,7 @@ public class OptionPart : PartBase {
     /// <returns></returns>
     public override async UniTask Teardown() {
         await base.Teardown();
-        // 登録したイベントを解除
-        UnRegisterMenuEvent();
         // 選択状態を初期化する
-        selectMenu = CardRelationMenuSelect.None;
-    }
-
-    /// <summary>
-    /// ゲーム終了
-    /// </summary>
-    private void OnClickNoButton() {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
-#else
-    Application.Quit();//ゲームプレイ終了
-#endif
+        selectMenu = OptionMenuSelect.None;
     }
 }

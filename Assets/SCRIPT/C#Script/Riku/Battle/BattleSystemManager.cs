@@ -39,9 +39,6 @@ public class BattleSystemManager : MonoBehaviour {
     public void Initialize() {
         instance = this;
 
-        // リスト生成
-        //int phaseMax = (int)BattlePhase.Max;
-        //phaseList = new PhaseBase[phaseMax];
         playerHP = new Dictionary<PlayerType, int>();
     }
 

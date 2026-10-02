@@ -13,8 +13,6 @@ using UnityEngine;
 public class CardObject : MonoBehaviour {
     // オブジェクトを判別する個別ID
     public int objectID { get; private set; } = -1;
-    // 使用中かどうか
-    //private bool isActive = false;
     // カードの種類を判別するID
     public int cardID { get; private set; } = -1;
 
@@ -33,20 +31,34 @@ public class CardObject : MonoBehaviour {
     // 現在のステータス
     private CardStates currentStatus;
 
+    // カードのイラストデータ
+    [SerializeField]
+    private CardImageDatabase cardImageDatabase = null;
+    // SpriteRendererコンポーネント
+    [SerializeField]
+    private SpriteRenderer spriteRenderer = null;
 
-    // Start is called before the first frame update
-    void Start() {
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    public void Initialize() {
         defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
     }
 
-    // Update is called once per frame
-    void Update() {
+    /// <summary>
+    /// 準備
+    /// </summary>
+    /// <param name="setObjectID">オブジェクトの個別ID</param>
+    /// <param name="setCardID">カードの識別ID</param>
+    public void Setup(int setObjectID, int setCardID) {
+        // IDのセット
+        objectID = setObjectID;
+        cardID = setCardID;
+        // IDからステータスを取得(今後実装予定)
 
-    }
-
-    public void Initialize() {
-
+        // IDからイラストを取得
+        spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
     }
 
     /// <summary>
@@ -54,16 +66,9 @@ public class CardObject : MonoBehaviour {
     /// </summary>
     public void Teardown() {
         objectID = -1;
-        //isActive = false;
         cardID = -1;
         defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
-    }
-
-    /// <summary>
-    /// オブジェクトIDをセット
-    /// </summary>
-    public void SetObjectID(int setID) {
-        objectID = setID;
+        spriteRenderer.sprite = null;
     }
 }
