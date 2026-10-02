@@ -32,6 +32,13 @@ public class CardObjectManager : MonoBehaviour {
     // 未使用のカードオブジェクトリスト
     private List<CardObject> unuseObjectList = null;
 
+    // 手札の親オブジェクト
+    [SerializeField]
+    private Transform handObjectRoot = null;
+    // フィールドの各レーン親オブジェクト
+    [SerializeField]
+    private List<Transform> fieldLaneOjectRoot = null;
+
     // ある程度の生成数
     private const int CARD_OBJECT_MAX = 30;
 
@@ -114,6 +121,7 @@ public class CardObjectManager : MonoBehaviour {
     /// 手札の整列
     /// </summary>
     public void ArrangeHand(PlayerType player) {
-        int hand = AreaCardManager.instance.outDeckCards[player].handCards.Count;
+        int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;
+
     }
 }
