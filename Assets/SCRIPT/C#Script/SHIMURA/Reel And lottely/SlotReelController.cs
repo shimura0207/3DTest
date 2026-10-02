@@ -643,6 +643,7 @@ public class SlotReelController : MonoBehaviour {
             else if (stoppedReelCount == 3) {
                 // 第三停止
                 ShowCleanImage();
+                efectManager.STOP_S();
             }
 
             return;
@@ -963,6 +964,8 @@ public class SlotReelController : MonoBehaviour {
 
         // 完全表示
         stopEffectImage.enabled = true;
+
+        
     }
 
 

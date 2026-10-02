@@ -8,7 +8,26 @@ public class EfectManager : MonoBehaviour {
     [SerializeField] private Image targetImage;
     [SerializeField] private Material noiseMaterial;
 
+    [SerializeField] GameObject start;
+    [SerializeField] VideoPlayer startvideo;
+    
+
+    [SerializeField] private Image ArrowtargetImage;
+
+    // 左へ移動する距離
+    [SerializeField] private float moveDistance = 2000f;
+
+    // 移動時間
+    [SerializeField] private float moveTime = 1f;
+
+    private RectTransform rectTransform;
+    private Vector2 defaultPosition;
+
+    private Coroutine moveCoroutine;
+
     private Coroutine noiseCoroutine;
+
+    [SerializeField] private PngAnimation CutinAnim;
 
 
     // =========================================================
@@ -177,16 +196,86 @@ public class EfectManager : MonoBehaviour {
         targetImage.enabled = false;
     }
 
-    [SerializeField] GameObject start;
-    [SerializeField] VideoPlayer startvideo;
-    [SerializeField] GameObject Loop;
+    
     public void ShowCutinStart() {
         start.SetActive(true);
-        startvideo.loopPointReached += ShowCutinLoop;
+        CutinAnim.Play();
     }
 
-    void ShowCutinLoop(VideoPlayer vp) {
-        Loop.SetActive(true);
+   
+
+
+
+    
+
+    private void Start() {
+        rectTransform = ArrowtargetImage.rectTransform;
+
+        // 最初の位置を保存
+        defaultPosition = rectTransform.anchoredPosition;
+
+        // 開始
+        moveCoroutine = StartCoroutine(MoveLoop());
     }
 
+    private IEnumerator MoveLoop() {
+        while (true) {
+            // =========================
+            // ① デフォルト位置 → 左画面外
+            // =========================
+
+            Vector2 leftPosition =
+                defaultPosition + Vector2.left * moveDistance;
+
+            yield return StartCoroutine(
+                MoveImage(defaultPosition, leftPosition, moveTime)
+            );
+
+
+            // =========================
+            // ② 右側へワープ
+            // =========================
+
+            Vector2 rightPosition =
+                defaultPosition + Vector2.right * moveDistance;
+
+            rectTransform.anchoredPosition = rightPosition;
+
+
+            // =========================
+            // ③ 右画面外 → デフォルト位置
+            // =========================
+
+            yield return StartCoroutine(
+                MoveImage(rightPosition, defaultPosition, moveTime)
+            );
+        }
+    }
+
+    private IEnumerator MoveImage(
+        Vector2 startPosition,
+        Vector2 endPosition,
+        float duration) {
+        float elapsed = 0f;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            rectTransform.anchoredPosition =
+                Vector2.Lerp(startPosition, endPosition, t);
+
+            yield return null;
+        }
+
+        // 最終位置を確実に合わせる
+        rectTransform.anchoredPosition = endPosition;
+    }
+
+
+    public void STOP_S() {
+        start.SetActive(false);
+        CutinAnim.Stop();
+    }
 }
