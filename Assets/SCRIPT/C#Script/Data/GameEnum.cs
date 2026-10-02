@@ -196,3 +196,10 @@ public enum FadeType {
     Black,  // 黒
     Max,
 }
+
+public enum VFXType {
+    Invalid = -1,
+    ClickEffect,
+
+    max,
+}
