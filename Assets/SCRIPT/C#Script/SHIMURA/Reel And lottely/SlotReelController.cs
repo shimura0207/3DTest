@@ -27,20 +27,19 @@ using UnityEngine.UI;
 /// ・roleStopAngleSettings → 役ごとの停止可能角度
 /// ・stopKeys          → 停止ボタン
 /// </summary>
-public class SlotReelController : MonoBehaviour
-{
+public class SlotReelController : MonoBehaviour {
 
 
 
     public bool rush;
     public bool nrush;
 
-    bool n_first=false;
-    bool n_second=false;
-    bool n_Therrd=false;
+    bool n_first = false;
+    bool n_second = false;
+    bool n_Therrd = false;
 
     //G数
-    public int slotIndex=0;
+    public int slotIndex = 0;
     public readonly int SLOT_TEARN_MAX_G = 5;
 
     //引いた役保存LIST
@@ -145,6 +144,8 @@ public class SlotReelController : MonoBehaviour
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.Seven)
     };
 
+
+    [SerializeField] private EfectManager efectManager;
     //============================================================
     // 入力設定
     //============================================================
@@ -244,11 +245,12 @@ public class SlotReelController : MonoBehaviour
                 "stopEffectImage が設定されていません！"
             );
         }
+
+        efectManager.ShowCutinStart();
     }
 
-    private void Update()
-    {
-        if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven && !nrush&&!rush) {
+    private void Update() {
+        if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven && !nrush && !rush) {
             nrush = true;
         }
         //SlotUpdate();
@@ -280,26 +282,23 @@ public class SlotReelController : MonoBehaviour
         UpdateReelRotation();
         SyncInspectorAngles();
         TableUp();
-        
+
     }
 
 
     public void EnemySlotUpdate() {
-       
+
         E_HandleStopInput();
         UpdateReelRotation();
         SyncInspectorAngles();
         TableUp();
     }
-    private void InitializeReels()
-    {
+    private void InitializeReels() {
         int reelCount = reels.Length;
         state = new SlotReelState(reelCount);
 
-        for (int i = 0; i < reelCount; i++)
-        {
-            if (reels[i] == null)
-            {
+        for (int i = 0; i < reelCount; i++) {
+            if (reels[i] == null) {
                 Debug.LogWarning($"reels[{i}] が設定されていません。このリールは動きません。");
                 continue;
             }
@@ -315,10 +314,8 @@ public class SlotReelController : MonoBehaviour
     /// <summary>
     /// Inspector に表示する現在角度を初期化します。
     /// </summary>
-    private void InitializeDebugAngles()
-    {
-        if (state == null || state.ReelAngles == null || state.ReelAngles.Length < 3)
-        {
+    private void InitializeDebugAngles() {
+        if (state == null || state.ReelAngles == null || state.ReelAngles.Length < 3) {
             return;
         }
 
@@ -340,10 +337,8 @@ public class SlotReelController : MonoBehaviour
     /// 
     /// RightControl が押され、かつリールが1つも回っていないなら MAXBET 成立です。
     /// </summary>
-    private void HandleMaxBetInput()
-    {
-        if (Input.GetKeyDown(KeyCode.RightControl) && !state.IsAnyReelRotating())
-        {
+    private void HandleMaxBetInput() {
+        if (Input.GetKeyDown(KeyCode.RightControl) && !state.IsAnyReelRotating()) {
             //Debug.Log(PachisuroPhase.Instance.nrush);
             Debug.Log(rush);
             maxBet = true;
@@ -351,7 +346,7 @@ public class SlotReelController : MonoBehaviour
     }
 
     public void E_HandleMaxBetInput() {
-        
+
         maxBet = true;
     }
 
@@ -360,15 +355,12 @@ public class SlotReelController : MonoBehaviour
     /// 
     /// MAXBET 後に UpArrow を押すと役抽選を行い、全リールを回転開始します。
     /// </summary>
-    private void HandleLeverInput()
-    {
-        if (!maxBet)
-        {
+    private void HandleLeverInput() {
+        if (!maxBet) {
             return;
         }
 
-        if (!Input.GetKeyDown(KeyCode.UpArrow))
-        {
+        if (!Input.GetKeyDown(KeyCode.UpArrow)) {
             return;
         }
 
@@ -380,7 +372,7 @@ public class SlotReelController : MonoBehaviour
             return;
         }
 
-       
+
         TryStartSpin();
     }
 
@@ -390,17 +382,13 @@ public class SlotReelController : MonoBehaviour
     /// stopKeys に設定されたキーが押されたら、そのリールの停止予約を入れます。
     /// 停止予約時に「どの角度まで滑るか」を決定します。
     /// </summary>
-    private void HandleStopInput()
-    {
-        for (int i = 0; i < reels.Length; i++)
-        {
-            if (i >= stopKeys.Length)
-            {
+    private void HandleStopInput() {
+        for (int i = 0; i < reels.Length; i++) {
+            if (i >= stopKeys.Length) {
                 continue;
             }
 
-            if (!Input.GetKeyDown(stopKeys[i]))
-            {
+            if (!Input.GetKeyDown(stopKeys[i])) {
                 continue;
             }
 
@@ -415,16 +403,16 @@ public class SlotReelController : MonoBehaviour
                 continue;
             }
 
-            if (n_first || n_second || n_Therrd) { 
+            if (n_first || n_second || n_Therrd) {
 
-            int reelCount = GetReelCount();
+                int reelCount = GetReelCount();
                 for (int reelIndex = 0; reelIndex < reelCount; reelIndex++) {
                     TryReserveStop(reelIndex);
                 }
 
 
             }
-        
+
         }
     }
 
@@ -436,8 +424,7 @@ public class SlotReelController : MonoBehaviour
     /// どれか1つでもリールが回っているかを返します。
     /// 自動回転側が「次Gに進んでいいか」を確認するために使います。
     /// </summary>
-    public bool IsAnyReelRotating()
-    {
+    public bool IsAnyReelRotating() {
         return state != null && state.IsAnyReelRotating();
     }
 
@@ -445,8 +432,7 @@ public class SlotReelController : MonoBehaviour
     /// 新しく1G開始できる状態かを返します。
     /// 全リール停止中なら true。
     /// </summary>
-    public bool CanStartSpin()
-    {
+    public bool CanStartSpin() {
         return state != null && !state.IsAnyReelRotating();
     }
 
@@ -454,10 +440,8 @@ public class SlotReelController : MonoBehaviour
     /// リール本数を返します。
     /// 基本は3本です。
     /// </summary>
-    public int GetReelCount()
-    {
-        if (reels == null)
-        {
+    public int GetReelCount() {
+        if (reels == null) {
             return 0;
         }
 
@@ -468,10 +452,9 @@ public class SlotReelController : MonoBehaviour
     /// 1G分の回転を開始します。
     /// 手動のレバーONと同じ処理を外部から呼べるようにしたものです。
     /// </summary>
-    public bool TryStartSpin()
-    {
+    public bool TryStartSpin() {
 
-        
+
         if (PachisuroPhase.Instance == null) {
             return false;
         }
@@ -510,12 +493,13 @@ public class SlotReelController : MonoBehaviour
             if (state.IsAnyReelRotating()) {
                 return false;
             }
-
+            StartCoroutine(ReelLockCoroutine());
             maxBet = false;
             stoppedReelCount = 0;
             HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
-
+            efectManager.ShowTrumps();
+            ShowNoiseImage();
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
 
             for (int i = 0; i < reels.Length; i++) {
@@ -535,25 +519,20 @@ public class SlotReelController : MonoBehaviour
     /// 指定したリールに停止予約を入れます。
     /// reelIndex は 0=左, 1=中, 2=右。
     /// </summary>
-    public bool TryReserveStop(int reelIndex)
-    {
-        if (state == null)
-        {
+    public bool TryReserveStop(int reelIndex) {
+        if (state == null) {
             return false;
         }
 
-        if (reels == null || reelIndex < 0 || reelIndex >= reels.Length)
-        {
+        if (reels == null || reelIndex < 0 || reelIndex >= reels.Length) {
             return false;
         }
 
-        if (reels[reelIndex] == null)
-        {
+        if (reels[reelIndex] == null) {
             return false;
         }
 
-        if (!state.RotationNow[reelIndex] || state.StoppingNow[reelIndex])
-        {
+        if (!state.RotationNow[reelIndex] || state.StoppingNow[reelIndex]) {
             return false;
         }
 
@@ -577,26 +556,20 @@ public class SlotReelController : MonoBehaviour
     /// 停止予約中なら停止予定角度まで滑らせます。
     /// 停止予約中でなければ通常回転します。
     /// </summary>
-    private void UpdateReelRotation()
-    {
-        for (int i = 0; i < reels.Length; i++)
-        {
-            if (reels[i] == null)
-            {
+    private void UpdateReelRotation() {
+        for (int i = 0; i < reels.Length; i++) {
+            if (reels[i] == null) {
                 continue;
             }
 
-            if (!state.RotationNow[i])
-            {
+            if (!state.RotationNow[i]) {
                 continue;
             }
 
-            if (state.StoppingNow[i])
-            {
+            if (state.StoppingNow[i]) {
                 MoveToStopAngle(i);
             }
-            else
-            {
+            else {
                 RotateNormally(i);
             }
         }
@@ -606,8 +579,7 @@ public class SlotReelController : MonoBehaviour
     /// 通常回転。
     /// 停止ボタンがまだ押されていない間はこの処理で回ります。
     /// </summary>
-    private void RotateNormally(int reelIndex)
-    {
+    private void RotateNormally(int reelIndex) {
         state.ReelAngles[reelIndex] += reelSpeed * Time.deltaTime;
         state.ReelAngles[reelIndex] = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
 
@@ -621,8 +593,7 @@ public class SlotReelController : MonoBehaviour
     /// ここでは絶対に逆方向へ戻しません。
     /// reelSpeed がマイナスならマイナス方向、プラスならプラス方向にだけ進みます。
     /// </summary>
-    private void MoveToStopAngle(int reelIndex)
-    {
+    private void MoveToStopAngle(int reelIndex) {
         float currentAngle = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
         float targetAngle = AngleNormalizer.NormalizeAngle(state.StopTargetAngles[reelIndex]);
 
@@ -632,13 +603,11 @@ public class SlotReelController : MonoBehaviour
         // 現在角度から目標角度まで、回転方向に進んだ場合の距離。
         float distanceToTarget;
 
-        if (reelSpeed < 0f)
-        {
+        if (reelSpeed < 0f) {
             // マイナス方向に回転している場合。
             distanceToTarget = AngleNormalizer.NormalizeAngle(currentAngle - targetAngle);
         }
-        else
-        {
+        else {
             // プラス方向に回転している場合。
             distanceToTarget = AngleNormalizer.NormalizeAngle(targetAngle - currentAngle);
         }
@@ -677,17 +646,16 @@ public class SlotReelController : MonoBehaviour
         }
 
         // まだ目標角度まで届かない場合は、回転方向にだけ進めます。
-        if (reelSpeed < 0f)
-        {
+        if (reelSpeed < 0f) {
             state.ReelAngles[reelIndex] -= moveAmount;
         }
-        else
-        {
+        else {
             state.ReelAngles[reelIndex] += moveAmount;
         }
 
         state.ReelAngles[reelIndex] = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
         ApplyReelRotation(reelIndex);
+        efectManager.ShowTramp(reelIndex);
     }
 
     //============================================================
@@ -701,8 +669,7 @@ public class SlotReelController : MonoBehaviour
     /// currentAngle: 今のリール角度
     /// role: 今回成立した役
     /// </summary>
-    private float GetNextStopAngle(int reelIndex, float currentAngle, PachisuroSymbolKoyakuEnum role)
-    {
+    private float GetNextStopAngle(int reelIndex, float currentAngle, PachisuroSymbolKoyakuEnum role) {
         currentAngle = AngleNormalizer.NormalizeAngle(currentAngle);
 
         float bestAngle = currentAngle;
@@ -714,33 +681,27 @@ public class SlotReelController : MonoBehaviour
 
         float[] angles = GetStopAnglesByRole(reelIndex, role);
 
-        if (angles == null || angles.Length == 0)
-        {
+        if (angles == null || angles.Length == 0) {
             Debug.LogWarning(role + " の停止角度が設定されていません。現在角度で停止します。");
             return currentAngle;
         }
 
-        for (int i = 0; i < angles.Length; i++)
-        {
+        for (int i = 0; i < angles.Length; i++) {
             float stopAngle = AngleNormalizer.NormalizeAngle(angles[i]);
             float distance;
 
-            if (reelSpeed < 0f)
-            {
+            if (reelSpeed < 0f) {
                 distance = AngleNormalizer.NormalizeAngle(currentAngle - stopAngle);
             }
-            else
-            {
+            else {
                 distance = AngleNormalizer.NormalizeAngle(stopAngle - currentAngle);
             }
 
-            if (distance < MinDistance)
-            {
+            if (distance < MinDistance) {
                 distance = 360f;
             }
 
-            if (distance < bestDistance)
-            {
+            if (distance < bestDistance) {
                 bestDistance = distance;
                 bestAngle = stopAngle;
             }
@@ -755,39 +716,31 @@ public class SlotReelController : MonoBehaviour
     /// 例：
     /// role = Bell, reelIndex = 0 なら、ベル成立時の左リール停止角度を返します。
     /// </summary>
-    private float[] GetStopAnglesByRole(int reelIndex, PachisuroSymbolKoyakuEnum role)
-    {
-        if (roleStopAngleSettings == null)
-        {
+    private float[] GetStopAnglesByRole(int reelIndex, PachisuroSymbolKoyakuEnum role) {
+        if (roleStopAngleSettings == null) {
             return null;
         }
 
-        for (int i = 0; i < roleStopAngleSettings.Length; i++)
-        {
+        for (int i = 0; i < roleStopAngleSettings.Length; i++) {
             RoleAngleRule setting = roleStopAngleSettings[i];
 
-            if (setting == null)
-            {
+            if (setting == null) {
                 continue;
             }
 
-            if (setting.role != role)
-            {
+            if (setting.role != role) {
                 continue;
             }
 
-            if (setting.reelStopAngles == null)
-            {
+            if (setting.reelStopAngles == null) {
                 return null;
             }
 
-            if (reelIndex < 0 || reelIndex >= setting.reelStopAngles.Length)
-            {
+            if (reelIndex < 0 || reelIndex >= setting.reelStopAngles.Length) {
                 return null;
             }
 
-            if (setting.reelStopAngles[reelIndex] == null)
-            {
+            if (setting.reelStopAngles[reelIndex] == null) {
                 return null;
             }
 
@@ -807,15 +760,12 @@ public class SlotReelController : MonoBehaviour
     /// baseRotation * addRotation にすることで、
     /// 最初からモデルについていた角度を壊さずに回転だけ追加できます。
     /// </summary>
-    private void ApplyReelRotation(int reelIndex)
-    {
-        if (reels == null || reelIndex < 0 || reelIndex >= reels.Length)
-        {
+    private void ApplyReelRotation(int reelIndex) {
+        if (reels == null || reelIndex < 0 || reelIndex >= reels.Length) {
             return;
         }
 
-        if (reels[reelIndex] == null)
-        {
+        if (reels[reelIndex] == null) {
             return;
         }
 
@@ -828,10 +778,8 @@ public class SlotReelController : MonoBehaviour
     /// <summary>
     /// Inspector で選んだ回転軸を Vector3 に変換します。
     /// </summary>
-    private Vector3 GetAxisVector()
-    {
-        switch (rotationAxis)
-        {
+    private Vector3 GetAxisVector() {
+        switch (rotationAxis) {
             case SpinAxis.X:
                 return Vector3.right;
 
@@ -857,10 +805,8 @@ public class SlotReelController : MonoBehaviour
     /// Debug 用の leftCurrentAngle / centerCurrentAngle / rightCurrentAngle の挙動に関係します。
     /// Inspector から角度を直接入力してリール位置を確認したい場合に使います。
     /// </summary>
-    private void SyncInspectorAngles()
-    {
-        if (state == null || state.ReelAngles == null || state.ReelAngles.Length < 3)
-        {
+    private void SyncInspectorAngles() {
+        if (state == null || state.ReelAngles == null || state.ReelAngles.Length < 3) {
             return;
         }
 
@@ -871,11 +817,9 @@ public class SlotReelController : MonoBehaviour
             rightCurrentAngle
         };
 
-        for (int i = 0; i < 3; i++)
-        {
+        for (int i = 0; i < 3; i++) {
             // Inspector 側の値が変更された場合。
-            if (!Mathf.Approximately(inspectorAngles[i], lastInspectorAngles[i]))
-            {
+            if (!Mathf.Approximately(inspectorAngles[i], lastInspectorAngles[i])) {
                 // Inspector から入力された角度も必ず 0〜360 に戻します。
                 state.ReelAngles[i] = AngleNormalizer.NormalizeAngle(inspectorAngles[i]);
 
@@ -885,8 +829,7 @@ public class SlotReelController : MonoBehaviour
                 inspectorAngles[i] = state.ReelAngles[i];
                 lastInspectorAngles[i] = state.ReelAngles[i];
             }
-            else
-            {
+            else {
                 // 通常時も必ず 0〜360 に戻します。
                 state.ReelAngles[i] = AngleNormalizer.NormalizeAngle(state.ReelAngles[i]);
 
@@ -903,8 +846,7 @@ public class SlotReelController : MonoBehaviour
     /// 今回のゲームで抽選された役を返します。
     /// 自動回転リザルト表示で「何の役を引いたか」を集計するために使います。
     /// </summary>
-    public PachisuroSymbolKoyakuEnum GetCurrentSlotSymbolRole()
-    {
+    public PachisuroSymbolKoyakuEnum GetCurrentSlotSymbolRole() {
         return currentSlotSymbolRole;
     }
 
@@ -912,8 +854,7 @@ public class SlotReelController : MonoBehaviour
     /// 役を日本語名で返します。
     /// Console表示用です。
     /// </summary>
-    public string GetSlotSymbolRoleName(PachisuroSymbolKoyakuEnum role)
-    {
+    public string GetSlotSymbolRoleName(PachisuroSymbolKoyakuEnum role) {
         return roleLottery.GetRoleName(role);
     }
 
@@ -922,7 +863,7 @@ public class SlotReelController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.U)) {
             currentTable += 1;
             Debug.Log(currentTable);
-        }   
+        }
     }
 
 
@@ -949,26 +890,26 @@ public class SlotReelController : MonoBehaviour
 
     //呼び出せば見れる
     public void DebugAAA() {
-        
-            Debug.Log("★★★ 5G終了");
-            Debug.Log("nrush = " + nrush);
-            Debug.Log("slotIndex = " + slotIndex);
-            Debug.Log("SLOT_TEARN_MAX_G = " + SLOT_TEARN_MAX_G);
 
-            if (nrush) {
-                rush = true;
+        Debug.Log("★★★ 5G終了");
+        Debug.Log("nrush = " + nrush);
+        Debug.Log("slotIndex = " + slotIndex);
+        Debug.Log("SLOT_TEARN_MAX_G = " + SLOT_TEARN_MAX_G);
+
+        if (nrush) {
+            rush = true;
             nrush = false;
             Debug.Log("★★★ RUSH = true にしました");
-            }
-            else {
-                rush = false;
-                Debug.Log("★★★ RUSH = false にしました");
-            }
+        }
+        else {
+            rush = false;
+            Debug.Log("★★★ RUSH = false にしました");
+        }
 
-            currentTable++;
-            slotIndex = 0;
-            
-        
+        currentTable++;
+        slotIndex = 0;
+
+
     }
 
     //============================================================
@@ -1056,5 +997,16 @@ public class SlotReelController : MonoBehaviour
         stopEffectImage.enabled = false;
 
         noiseCoroutine = null;
+    }
+
+
+    private IEnumerator ReelLockCoroutine() {
+
+        reelSpeed = 1000;
+
+        yield return new WaitForSeconds(0.2f);
+        reelSpeed = 0;
+        yield return new WaitForSeconds(1f);
+        reelSpeed = -320;
     }
 }

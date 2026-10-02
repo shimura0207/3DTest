@@ -31,12 +31,52 @@ public class CardImageDatabaseEditor : Editor {
 
         // 追加ボタン
         if (GUILayout.Button("AddList")) {
-            // 設定したデータを追加
-            database.AddCardImageDataList(inputID, inputSprite);
+            if (inputID != -1 && inputSprite) {
 
-            // 設定した値をリセット
-            inputID = -1;
-            inputSprite = null;
+                // 設定したデータを追加
+                database.AddCardImageDataList(inputID, inputSprite);
+
+                // 変更をアセットに保存
+                EditorUtility.SetDirty(database);
+                AssetDatabase.SaveAssets();
+
+                // 設定した値をリセット
+                inputID = -1;
+                inputSprite = null;
+            }
+            else {
+                // IDかSpriteが入っていなければ警告
+                Debug.LogWarning("入力データが十分ではありません。");
+            }
+        }
+
+        // 追加ボタンとリスト表示を分けるバー表示
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        int index = -1;
+        bool delete = false;
+        foreach (var data in database.CardImageDataList) {
+            // 登録されているカードのIDと見た目を表示
+            EditorGUILayout.ObjectField(
+                "ID：" + data.cardID.ToString(),
+                data.cardImage,
+                typeof(Sprite),
+                false);
+
+            // 登録されているデータを削除するボタン
+            index++;
+            if (GUILayout.Button("DeleteData")) {
+                // データ削除予約
+                delete = true;
+                break;
+            }
+        }
+        // 削除
+        if (delete) {
+            database.DeleteCardImageData(index);
+            // 変更をアセットに保存
+            EditorUtility.SetDirty(database);
+            AssetDatabase.SaveAssets();
         }
     }
 }

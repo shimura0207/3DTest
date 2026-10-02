@@ -12,16 +12,6 @@ using UnityEngine;
 /// ターン開始フェイズ
 /// </summary>
 public class StartPhase : PhaseBase {
-    // Start is called before the first frame update
-    void Start() {
-
-    }
-
-    // Update is called once per frame
-    void Update() {
-
-    }
-
     /// <summary>
     /// 自身のターン処理
     /// </summary>
@@ -42,6 +32,8 @@ public class StartPhase : PhaseBase {
         //AreaCardManager.instance.DrawCard(1);
         // 次のフェイズへ
         nextPhase = true;
+
+        CardObjectManager.instance.UseCardObject(1);
 
         await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
