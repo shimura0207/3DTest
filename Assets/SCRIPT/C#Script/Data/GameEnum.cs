@@ -96,7 +96,6 @@ public enum RGCardRace {
 
 /// <summary>
 /// 自分か対戦相手か
-/// @author Riku
 /// </summary>
 public enum PlayerType {
     None = -1,
@@ -202,4 +201,19 @@ public enum VFXType {
     ClickEffect,
 
     max,
+}
+
+/// <summary>
+/// フィールドのレーン番号
+/// </summary>
+public enum FieldLane {
+    None = -1,
+
+    Lane1,
+    Lane2,
+    Lane3,
+    Lane4,
+    Lnae5,
+
+    Max,
 }
