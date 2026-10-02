@@ -132,16 +132,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2808408294165377205}
-  m_LocalRotation: {x: -0, y: -0, z: 0.4857264, w: 0.8741109}
+  m_LocalRotation: {x: -0, y: -0, z: 0.47739986, w: 0.87868625}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2108867, y: 1.5171351, z: 1}
+  m_LocalScale: {x: 2.4200568, y: 1.5163183, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6205328576890440791}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 58.12}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 57.031}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 456, y: -100}
+  m_AnchoredPosition: {x: 454, y: -106}
   m_SizeDelta: {x: 600, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &626357544174642213
@@ -396,7 +396,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -407,7 +407,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 21300000, guid: e54d73bc28996b54b9cde073e4c6cd37, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -447,16 +447,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6446689341548126676}
-  m_LocalRotation: {x: -0, y: -0, z: 0.48711047, w: 0.87334037}
+  m_LocalRotation: {x: -0, y: -0, z: 0.49222496, w: 0.8704681}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.1226463, y: 1.2679983, z: 1}
+  m_LocalScale: {x: 2.503031, y: 1.4503906, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6205328576890440791}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 58.302}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 58.974}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 774, y: -356}
+  m_AnchoredPosition: {x: 805, y: -343}
   m_SizeDelta: {x: 600, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7268665516119521992
