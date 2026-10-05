@@ -4,8 +4,10 @@
  */
 
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 using static CommonModule;
@@ -31,6 +33,19 @@ public class CardObjectManager : MonoBehaviour {
     private List<CardObject> useObjectList = null;
     // 未使用のカードオブジェクトリスト
     private List<CardObject> unuseObjectList = null;
+
+    // 自身の手札の親オブジェクト
+    [SerializeField]
+    private Transform selfHandRoot = null;
+    // 相手の手札の親オブジェクト
+    [SerializeField]
+    private Transform opponentHandRoot = null;
+    // 自身のフィールドの各レーン親オブジェクト
+    [SerializeField]
+    private List<Transform> selfFieldLaneRoot = null;
+    // 相手のフィールドの各レーン親オブジェクト
+    [SerializeField]
+    private List<Transform> opponentFieldLaneRoot = null;
 
     // ある程度の生成数
     private const int CARD_OBJECT_MAX = 30;
@@ -96,6 +111,7 @@ public class CardObjectManager : MonoBehaviour {
         // 未使用親オブジェクトへ親を変更
         unuseObject.transform.SetParent(unuseObjectRoot);
     }
+
     /// <summary>
     /// 未使用状態のカードオブジェクト取得
     /// </summary>
@@ -107,5 +123,56 @@ public class CardObjectManager : MonoBehaviour {
         CardObject result = unuseObjectList[0];
         unuseObjectList.RemoveAt(0);
         return result;
+    }
+
+    /// <summary>
+    /// 手札への移動
+    /// </summary>
+    /// <param name="player">どっちのプレイヤーか</param>
+    /// <param name="objectID">オブジェクトの識別ID</param>
+    public void MoveToHand(PlayerType player, int objectID) {
+        // 座標を初期化
+        Transform objectTransform = useObjectList[objectID].transform;
+        objectTransform.position = Vector3.zero;
+        // 手札を親にする
+        switch (player) {
+            case PlayerType.Self:
+                objectTransform.SetParent(selfHandRoot);
+                break;
+            case PlayerType.Opponent:
+                objectTransform.SetParent(opponentHandRoot);
+                break;
+        }
+        // 手札の整列
+        ArrangeHand(player);
+    }
+
+    /// <summary>
+    /// フィールドへの移動
+    /// </summary>
+    /// <param name="player">どっちのプレイヤーか</param>
+    /// <param name="objectID">オブジェクトの識別ID</param>
+    /// <param name="setLane">置かれるレーン</param>
+    public void MoveToField(PlayerType player, int objectID, FieldLane setLane) {
+        // 座標を初期化
+        Transform objectTransform = useObjectList[objectID].transform;
+        objectTransform.position = Vector3.zero;
+        // 指定したレーンを親にする
+        switch (player) {
+            case PlayerType.Self:
+                objectTransform.SetParent(selfFieldLaneRoot[(int)setLane]);
+                break;
+            case PlayerType.Opponent:
+                objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane]);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 手札の整列
+    /// </summary>
+    public void ArrangeHand(PlayerType player) {
+        int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;
+
     }
 }

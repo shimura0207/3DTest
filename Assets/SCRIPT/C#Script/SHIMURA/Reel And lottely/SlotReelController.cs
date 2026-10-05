@@ -246,7 +246,7 @@ public class SlotReelController : MonoBehaviour {
             );
         }
 
-        efectManager.ShowCutinStart();
+        
     }
 
     private void Update() {
@@ -496,6 +496,9 @@ public class SlotReelController : MonoBehaviour {
             StartCoroutine(ReelLockCoroutine());
             maxBet = false;
             stoppedReelCount = 0;
+
+            efectManager.ShowCutinStart();
+
             HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
             efectManager.ShowTrumps();
@@ -640,6 +643,7 @@ public class SlotReelController : MonoBehaviour {
             else if (stoppedReelCount == 3) {
                 // 第三停止
                 ShowCleanImage();
+                efectManager.STOP_S();
             }
 
             return;
@@ -960,6 +964,8 @@ public class SlotReelController : MonoBehaviour {
 
         // 完全表示
         stopEffectImage.enabled = true;
+
+        
     }
 
 
