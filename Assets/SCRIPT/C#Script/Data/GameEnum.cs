@@ -182,7 +182,7 @@ public enum CardKoyaku {
     Bell = 4,
     Suika = 5,
     OLL = 6,
-    NULL =  7,
+    NULL = 7,
     Cherry_Suika = 8,
 
 }
