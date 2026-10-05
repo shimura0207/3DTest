@@ -454,7 +454,7 @@ public class SlotReelController : MonoBehaviour {
     /// </summary>
     public bool TryStartSpin() {
 
-
+        reelSpeed = -320;
         if (PachisuroPhase.Instance == null) {
             return false;
         }
@@ -500,7 +500,7 @@ public class SlotReelController : MonoBehaviour {
             HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
 
-            //
+            //レア役
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.WeakCherry
                 ||currentSlotSymbolRole==PachisuroSymbolKoyakuEnum.Watermelon
                 ||currentSlotSymbolRole==PachisuroSymbolKoyakuEnum.StrongCherry
@@ -543,6 +543,9 @@ public class SlotReelController : MonoBehaviour {
     /// reelIndex は 0=左, 1=中, 2=右。
     /// </summary>
     public bool TryReserveStop(int reelIndex) {
+        if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
+            reelSpeed = -800;
+        }
         if (state == null) {
             return false;
         }
@@ -651,18 +654,33 @@ public class SlotReelController : MonoBehaviour {
                 + stoppedReelCount
                 + "停止目"
             );
-
-            if (stoppedReelCount == 1&&currentSlotSymbolRole==PachisuroSymbolKoyakuEnum.Replay) {
+            reelSpeed = -320;
+            if (stoppedReelCount == 1) {
                 // 第一停止
+                if(currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
                 ShowNoiseImage();
+
+                }
+
+                
             }
-            else if (stoppedReelCount == 2 && currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
+            else if (stoppedReelCount == 2) {
                 // 第二停止
+                if(currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
                 ShowNoiseImage();
+
+                }
+
+                
             }
-            else if (stoppedReelCount == 3 && currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
+            else if (stoppedReelCount == 3) {
                 // 第三停止
+                if(currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
                 ShowCleanImage();
+
+                }
+
+                
                 efectManager.STOP_S();
             }
 
@@ -1035,4 +1053,7 @@ public class SlotReelController : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         reelSpeed = -320;
     }
+
+
+    
 }
