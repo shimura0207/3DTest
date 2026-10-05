@@ -185,7 +185,7 @@ public class PartManager : SystemObject {
         // 切り替え先がPrivateMatchingPartか確認する
         if (currentPart is PrivateMatchingPart privateMatching) {
             // リザルト画面に表示する対戦結果を設定する
-            // endGamePart.SetBattleResult(state);
+            privateMatching.SetConnectState(state);
         }
 
         // 切り替え先のパートのセットアップを行う
