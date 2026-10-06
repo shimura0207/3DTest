@@ -115,16 +115,27 @@ public class MatchingManager : MonoBehaviour {
         byte[] data =
             Encoding.UTF8.GetBytes(message);
 
+        Debug.Log(
+            $"[Matching] UDP送信: {message}");
+
         SendBroadcast(data);
 
         IPAddress subnetBroadcast =
             GetSubnetBroadcastAddress();
 
         if (subnetBroadcast != null) {
+            Debug.Log(
+                $"[Matching] Subnet Broadcast送信: " +
+                $"{subnetBroadcast}");
+
             SendTo(
                 data,
                 subnetBroadcast
             );
+        }
+        else {
+            Debug.LogWarning(
+                "[Matching] Subnet Broadcastを取得できませんでした。");
         }
     }
 
@@ -143,12 +154,16 @@ public class MatchingManager : MonoBehaviour {
 
             byte[] data =
                 udp.EndReceive(
-                    result,
-                    ref sender
-                );
+                result,
+                ref sender
+            );
 
             string message =
                 Encoding.UTF8.GetString(data);
+
+            Debug.Log(
+                $"[Matching] UDP受信: {message} " +
+                $"from {sender.Address}");
 
             string[] split =
                 message.Split('|');

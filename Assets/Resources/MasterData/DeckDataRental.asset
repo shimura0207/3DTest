@@ -12,4 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb349f47ba0a1e24ebeb82709a200d19, type: 3}
   m_Name: DeckDataRental
   m_EditorClassIdentifier: 
-  sheets: []
+  sheets:
+  - name: rental
+    list:
+    - DeckID: 1
+      CardID: 104
+      Count: 2
+    - DeckID: 1
+      CardID: 107
+      Count: 2
+    - DeckID: 1
+      CardID: 108
+      Count: 2
+    - DeckID: 1
+      CardID: 109
+      Count: 2
+    - DeckID: 1
+      CardID: 110
+      Count: 2
+    - DeckID: 1
+      CardID: 117
+      Count: 3
+    - DeckID: 1
+      CardID: 118
+      Count: 3
+    - DeckID: 1
+      CardID: 119
+      Count: 2
+    - DeckID: 1
+      CardID: 120
+      Count: 2
+    - DeckID: 1
+      CardID: 121
+      Count: 2
