@@ -35,6 +35,9 @@ public class NetworkUI : MonoBehaviour
     // Unity Transportそのものを格納するための変数
     private UnityTransport transport;
 
+    [SerializeField]
+    private MatchingManager matchingManager;
+
     private void Start()
     {
         // ゲームで使用しているNetworkManagerを取得する
@@ -114,6 +117,23 @@ public class NetworkUI : MonoBehaviour
 
         // ルームコードを探す
         finder.SearchRoom(code);
+    }
+
+    public void StartMatching() {
+        if (matchingManager == null) {
+            Debug.LogError(
+                "MatchingManagerが設定されていません。");
+
+            statusText.text =
+                "Matching Manager Missing";
+
+            return;
+        }
+
+        statusText.text =
+            "Matching...";
+
+        matchingManager.StartMatching();
     }
 
     /// <summary>
