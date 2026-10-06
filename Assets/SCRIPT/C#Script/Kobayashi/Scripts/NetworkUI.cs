@@ -142,23 +142,9 @@ public class NetworkUI : MonoBehaviour
     /// <param name="clientId"></param>
     private void OnClientConnected(ulong clientId)
     {
-        // このPCがHostだった場合
-        if (NetworkManager.Singleton.IsHost)
-        {
-            // 接続してきたClientIDと、自分自身のClientIDが違うか
-            if (clientId != NetworkManager.Singleton.LocalClientId)
-            {
-                // 誰かが参加してきた事をテキストで表示
-                statusText.text ="Player Joined";
-            }
-        }
+        statusText.text = "Connection";
 
-        // Clientではある状態　かつ　Hostではない状態の時
-        if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost)
-        {
-            // 接続が完了した事をテキストで表示
-            statusText.text = "Connected!";
-        }
+        Debug.Log($"Client Connected : {clientId}");
     }
 
     /// <summary>
