@@ -461,41 +461,35 @@ public class MatchingManager : MonoBehaviour {
     // Client開始
     // =========================================================
 
-    private void StartClient(
-        string hostIP,
-        ushort hostPort) {
-        if (NetworkManager.Singleton.IsListening)
+    private void StartClient(string hostIP, ushort hostPort) {
+        if (NetworkManager.Singleton.IsListening) {
+            Debug.LogWarning("すでにNetworkManagerはListening状態です。");
             return;
+        }
+
+        Debug.Log("Matching Client処理を開始します。");
+        Debug.Log($"接続先: {hostIP}:{hostPort}");
 
         if (transport == null) {
-            Debug.LogError(
-                "UnityTransportが設定されていません。"
-            );
-
-            StopMatching();
+            Debug.LogError("UnityTransportが設定されていません。");
             return;
         }
 
-        transport.SetConnectionData(
-            hostIP,
-            hostPort
-        );
+        // 接続先を設定
+        transport.SetConnectionData(hostIP, hostPort);
 
-        bool success =
-            NetworkManager.Singleton.StartClient();
+        Debug.Log($"UnityTransport設定完了: {hostIP}:{hostPort}");
+
+        // Client開始
+        bool success = NetworkManager.Singleton.StartClient();
+
+        Debug.Log($"StartClient() 結果: {success}");
 
         if (success) {
-            Debug.Log(
-                $"Matching Client開始: " +
-                $"{hostIP}:{hostPort}"
-            );
+            Debug.Log("Matching Client開始成功");
         }
         else {
-            Debug.LogError(
-                "Matching Client開始失敗"
-            );
-
-            StopMatching();
+            Debug.LogError("Matching Client開始失敗");
         }
     }
 
