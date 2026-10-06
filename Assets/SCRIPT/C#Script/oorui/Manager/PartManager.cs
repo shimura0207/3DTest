@@ -194,5 +194,44 @@ public class PartManager : SystemObject {
         // 切り替え先のパートを実行する
         await currentPart.Execute();
     }
+
+    /// <summary>
+    /// パートの切り替え
+    /// 使用デッキIDを入力
+    /// </summary>
+    /// <param name="nextPart">切り替え先のパート</param>
+    /// <param name="state">使用デッキID</param>
+    /// <returns>切り替え処理のUniTask</returns>
+    public async UniTask TransitionPart(GamePart nextPart, int id) {
+        // パートの管理配列が初期化されていなければ抜ける
+        if (partList == null) return;
+
+        // パートの列挙値が有効な範囲か確認する
+        int nextPartIndex = (int)nextPart;
+        if (nextPartIndex < 0 || nextPartIndex >= partList.Length) return;
+
+        // 現在のパートが存在する場合は終了処理を実行する
+        if (currentPart != null) {
+            await currentPart.Teardown();
+        }
+
+        // 切り替え先のパートを取得する
+        currentPart = partList[nextPartIndex];
+
+        // 切り替え先のパートが存在しなければ抜ける
+        if (currentPart == null) return;
+
+        // 切り替え先がPrivateMatchingPartか確認する
+        if (currentPart is MainGamePart mainGamePart) {
+            // 切り替え先がMainGamePartであれば、使用デッキのIDを登録
+            mainGamePart.SetDeckID(id);
+        }
+
+        // 切り替え先のパートのセットアップを行う
+        await currentPart.Setup();
+
+        // 切り替え先のパートを実行する
+        await currentPart.Execute();
+    }
 }
 

@@ -82,7 +82,10 @@ public class MatchingPart : PartBase {
             if (isRandomMatch) {
                 // ランダムマッチパートに遷移
                 Debug.Log("ランダムマッチを選択");
-                await PartManager.Instance.TransitionPart(GamePart.MainGame);
+
+
+
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
                 return;
             }
 
@@ -153,7 +156,7 @@ public class MatchingPart : PartBase {
         // ボタンイベントを解除して重複登録を防ぐ
         randomButton.onClick.RemoveListener(OnClickRandomButton);
         privateButton.onClick.RemoveListener(OnClickMatchingButton);
-        returnButton.onClick.RemoveListener(OnClickReturnButton); 
+        returnButton.onClick.RemoveListener(OnClickReturnButton);
         // フラグを初期化する
         isPrivateMatch = false;
         isRandomMatch = false;

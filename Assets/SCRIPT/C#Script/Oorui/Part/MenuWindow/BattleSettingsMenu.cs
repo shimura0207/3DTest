@@ -27,14 +27,14 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// ウィンドウ表示時の処理
     /// </summary>
     /// <returns></returns>
-    public override async UniTask Open() {
+    public async UniTask Open(int id) {
         // 基底側でメニューウィンドウを表示
         await base.Open();
         // 先行プレイヤー
         PlayerType firstPlayer = DecideFirstPlayer();
 
         // バトルで使用するデッキを取得する
-        List<int> useDeckList = GetUseDeckList();
+        List<int> useDeckList = GetUseDeckList(id);
 
         // バトル開始前の準備をする
         BattleSystemManager.instance.BattleSetup(useDeckList, firstPlayer);
@@ -66,10 +66,12 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// デッキを登録
     /// </summary>
     /// <returns></returns>
-    private List<int> GetUseDeckList() {
-        return new List<int>() {
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-        };
+    private List<int> GetUseDeckList(int id) {
+        // デッキデータを取得
+        List<int> deck = DeckDataMasterUtility.GetDeckMaster(1);
+
+        // 使用デッキを返す
+        return deck;
     }
 
     /// <summary>

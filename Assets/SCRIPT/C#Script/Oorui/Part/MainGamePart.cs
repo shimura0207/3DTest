@@ -40,6 +40,9 @@ public class MainGamePart : PartBase {
     private GameObject patisuro = null;
     // 生成したPrefabを保持する
     private GameObject pachisuroInstance = null;
+
+    //使用デッキのID
+    public static int deckID { get; private set; } = 0;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -78,7 +81,8 @@ public class MainGamePart : PartBase {
         pachisuroInstance.SetActive(true);
 
         // バトル準備を行う
-        await buttleSettings.Open();
+        // 使用デッキIDを渡す
+        await buttleSettings.Open(deckID);
 
         // ループ
         while (battleSystemManager.battleState == BattleState.InProgress) {
@@ -152,5 +156,13 @@ public class MainGamePart : PartBase {
             // カード管理を初期化
             cardObjectManager.Initialize();
         }
+    }
+
+    /// <summary>
+    /// 使用デッキの登録
+    /// </summary>
+    /// <param name="id"></param>
+    public void SetDeckID(int id) {
+        deckID = id;
     }
 }
