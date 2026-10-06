@@ -12,13 +12,22 @@ public class PrivateMatchingPart : PartBase {
 
     // 接続した時の状態
     private ConnectionState conect = ConnectionState.None;
-    
+
+    private const string _MENUWINDOW_HOST = "Prefab/Part/MenuWindow/HostMenu";
+    // ホストメニュー
+    private HostMenu hostMenu = null;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
-        await base .Initialize();
+        await base.Initialize();
+        // ホストメニューを取得
+        hostMenu = MenuWindowManager.instance.Get<HostMenu>(_MENUWINDOW_HOST);
+
+        // メニューを初期化
+        await hostMenu.Initialize();
     }
 
     /// <summary>
@@ -28,25 +37,29 @@ public class PrivateMatchingPart : PartBase {
     public override async UniTask Setup() {
         await base.Setup();
         // 接続状況を初期化
-        conect = ConnectionState.None;
+        //conect = ConnectionState.None;
     }
-    
+
     /// <summary>
     /// 更新処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        await UniTask.CompletedTask;
 
         // 接続状態によって処理を変える
-        if(conect == ConnectionState.Host) {
-            // 部屋を立てる
+        if (conect == ConnectionState.Host) {
+            await hostMenu.Open();
+            // 処理を抜けたら遷移
+            await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
+        }
+        else if (conect == ConnectionState.Client) {
+            // ホスト側で提示された番号を入力する
 
-        }else if(conect == ConnectionState.Client) {
-            // 部屋を走査して、可能なら部屋に参加する
 
+            // クライアントとして部屋に参加する
         }
 
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -63,6 +76,6 @@ public class PrivateMatchingPart : PartBase {
     /// </summary>
     /// <param name="state"></param>
     public void SetConnectState(ConnectionState state) {
-        conect = state;    
+        conect = state;
     }
 }
