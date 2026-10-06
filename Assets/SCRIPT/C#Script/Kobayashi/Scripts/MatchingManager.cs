@@ -460,14 +460,19 @@ public class MatchingManager : MonoBehaviour {
     // =========================================================
     // Client開始
     // =========================================================
-
     private void StartClient(string hostIP, ushort hostPort) {
+        Debug.Log("StartClient() に入りました。");
+
+        if (NetworkManager.Singleton == null) {
+            Debug.LogError("NetworkManager.Singleton が null です。");
+            return;
+        }
+
         if (NetworkManager.Singleton.IsListening) {
             Debug.LogWarning("すでにNetworkManagerはListening状態です。");
             return;
         }
 
-        Debug.Log("Matching Client処理を開始します。");
         Debug.Log($"接続先: {hostIP}:{hostPort}");
 
         if (transport == null) {
@@ -475,12 +480,12 @@ public class MatchingManager : MonoBehaviour {
             return;
         }
 
-        // 接続先を設定
+        Debug.Log("UnityTransportがあります。");
+
         transport.SetConnectionData(hostIP, hostPort);
 
         Debug.Log($"UnityTransport設定完了: {hostIP}:{hostPort}");
 
-        // Client開始
         bool success = NetworkManager.Singleton.StartClient();
 
         Debug.Log($"StartClient() 結果: {success}");
@@ -492,7 +497,6 @@ public class MatchingManager : MonoBehaviour {
             Debug.LogError("Matching Client開始失敗");
         }
     }
-
 
     // =========================================================
     // Broadcast送信
