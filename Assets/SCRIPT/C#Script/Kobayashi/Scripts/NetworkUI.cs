@@ -53,6 +53,14 @@ public class NetworkUI : MonoBehaviour {
         NetworkManager.Singleton
             .OnClientDisconnectCallback +=
             OnClientDisconnected;
+
+        NetworkManager.Singleton
+            .OnServerStarted +=
+            OnServerStarted;
+
+        Debug.Log(
+            "[NetworkUI] NetworkManagerイベント登録完了"
+        );
     }
 
 
@@ -62,8 +70,9 @@ public class NetworkUI : MonoBehaviour {
 
     public void StartHost() {
         if (NetworkManager.Singleton == null) {
-            statusText.text =
-                "Network Manager Missing";
+            SetStatus(
+                "Network Manager Missing"
+            );
 
             return;
         }
@@ -72,8 +81,9 @@ public class NetworkUI : MonoBehaviour {
             NetWorkSystemManager.Instance == null
             ||
             NetWorkSystemManager.Instance.UnityTransport == null) {
-            statusText.text =
-                "Network System Missing";
+            SetStatus(
+                "Network System Missing"
+            );
 
             return;
         }
@@ -86,8 +96,17 @@ public class NetworkUI : MonoBehaviour {
             port
         );
 
+        Debug.Log(
+            $"[NetworkUI] StartHost開始: " +
+            $"0.0.0.0:{port}"
+        );
+
         bool success =
             NetworkManager.Singleton.StartHost();
+
+        Debug.Log(
+            $"[NetworkUI] StartHost結果: {success}"
+        );
 
         if (success) {
             if (broadcaster != null) {
@@ -95,17 +114,20 @@ public class NetworkUI : MonoBehaviour {
                     port
                 );
 
-                statusText.text =
-                    $"{broadcaster.RoomCode}";
+                SetStatus(
+                    $"{broadcaster.RoomCode}"
+                );
             }
             else {
-                statusText.text =
-                    "Host";
+                SetStatus(
+                    "Host Started"
+                );
             }
         }
         else {
-            statusText.text =
-                "Host Failed";
+            SetStatus(
+                "Host Failed"
+            );
         }
     }
 
@@ -115,26 +137,37 @@ public class NetworkUI : MonoBehaviour {
     // =========================================================
 
     public void StartClient() {
-        string code =
-            roomCodeInput.text.Trim();
-
-        if (string.IsNullOrEmpty(code)) {
-            statusText.text =
-                "Enter Code";
+        if (NetworkManager.Singleton == null) {
+            SetStatus(
+                "Network Manager Missing"
+            );
 
             return;
         }
 
-        statusText.text =
-            "Searching...";
+        string code =
+            roomCodeInput.text.Trim();
+
+        if (string.IsNullOrEmpty(code)) {
+            SetStatus(
+                "Enter Code"
+            );
+
+            return;
+        }
+
+        SetStatus(
+            "Searching..."
+        );
 
         if (finder == null) {
             Debug.LogError(
-                "RoomFinderが設定されていません。"
+                "[NetworkUI] RoomFinderが設定されていません。"
             );
 
-            statusText.text =
-                "Room Finder Missing";
+            SetStatus(
+                "Room Finder Missing"
+            );
 
             return;
         }
@@ -150,63 +183,164 @@ public class NetworkUI : MonoBehaviour {
     public void StartMatching() {
         if (matchingManager == null) {
             Debug.LogError(
-                "NetworkUI : " +
+                "[NetworkUI] " +
                 "MatchingManagerが設定されていません。"
             );
 
-            statusText.text =
-                "Matching Manager Missing";
+            SetStatus(
+                "Matching Manager Missing"
+            );
 
             return;
         }
 
-        statusText.text =
-            "Matching...";
+        if (NetworkManager.Singleton == null) {
+            Debug.LogError(
+                "[NetworkUI] " +
+                "NetworkManagerがありません。"
+            );
+
+            SetStatus(
+                "Network Manager Missing"
+            );
+
+            return;
+        }
+
+        SetStatus(
+            "Matching..."
+        );
+
+        Debug.Log(
+            "[NetworkUI] Matching開始"
+        );
 
         matchingManager.StartMatching();
     }
 
 
     // =========================================================
-    // Netcode接続成功
+    // Server開始完了
+    // =========================================================
+
+    private void OnServerStarted() {
+        Debug.Log(
+            "[NetworkUI] OnServerStarted"
+        );
+    }
+
+
+    // =========================================================
+    // Client接続成功
     // =========================================================
 
     private void OnClientConnected(
         ulong clientId) {
         Debug.Log(
+            $"[NetworkUI] " +
             $"Client Connected : {clientId}"
         );
 
-        if (
-            NetworkManager.Singleton.LocalClientId
-            == clientId) {
-            statusText.text =
-                "Connection";
+        if (NetworkManager.Singleton == null)
+            return;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        Debug.Log(
+            $"[NetworkUI] " +
+            $"LocalClientId : {localClientId}"
+        );
+
+        // 自分自身の接続完了
+        if (localClientId == clientId) {
+            SetStatus(
+                "Connection"
+            );
 
             Debug.Log(
-                "自分のNetcode接続が完了しました。"
+                "[NetworkUI] " +
+                "★★★ Connection完了 ★★★"
             );
         }
     }
 
 
     // =========================================================
-    // Netcode接続切断
+    // Client切断
     // =========================================================
 
     private void OnClientDisconnected(
         ulong clientId) {
-        Debug.Log(
+        Debug.LogWarning(
+            $"[NetworkUI] " +
             $"Client Disconnected : {clientId}"
         );
 
-        if (
-            NetworkManager.Singleton != null
+        if (NetworkManager.Singleton == null)
+            return;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        Debug.LogWarning(
+            $"[NetworkUI] " +
+            $"LocalClientId : {localClientId}"
+        );
+
+        // -----------------------------------------------------
+        // Client側の場合
+        // -----------------------------------------------------
+
+        if (NetworkManager.Singleton.IsClient
             &&
-            NetworkManager.Singleton.LocalClientId
-            == clientId) {
+            !NetworkManager.Singleton.IsServer) {
+            string reason =
+                NetworkManager.Singleton.DisconnectReason;
+
+            if (string.IsNullOrEmpty(reason)) {
+                reason =
+                    "理由不明";
+            }
+
+            Debug.LogError(
+                $"[NetworkUI] " +
+                $"Client接続失敗 / 切断理由: {reason}"
+            );
+
+            SetStatus(
+                $"Disconnected\n{reason}"
+            );
+
+            return;
+        }
+
+        // -----------------------------------------------------
+        // Host側
+        // -----------------------------------------------------
+
+        if (NetworkManager.Singleton.IsServer) {
+            Debug.LogWarning(
+                "[NetworkUI] " +
+                "Host側でClientが切断しました。"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // UI表示
+    // =========================================================
+
+    private void SetStatus(
+        string message) {
+        Debug.Log(
+            $"[NetworkUI] Status: {message}"
+        );
+
+        if (statusText != null) {
             statusText.text =
-                "Disconnected";
+                message;
         }
     }
 
@@ -226,5 +360,9 @@ public class NetworkUI : MonoBehaviour {
         NetworkManager.Singleton
             .OnClientDisconnectCallback -=
             OnClientDisconnected;
+
+        NetworkManager.Singleton
+            .OnServerStarted -=
+            OnServerStarted;
     }
 }
