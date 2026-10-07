@@ -50,7 +50,7 @@ public class PrivateMatchingPart : PartBase {
         if (conect == ConnectionState.Host) {
             await hostMenu.Open();
             // 処理を抜けたら遷移
-            await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
+            //await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
         }
         else if (conect == ConnectionState.Client) {
             // ホスト側で提示された番号を入力する

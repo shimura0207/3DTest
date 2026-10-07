@@ -8,8 +8,7 @@ using Unity.Netcode;                    // Netcode for GameObjects を使用す�
 using Unity.Netcode.Transports.UTP;     // Unity Transport を使用するためのもの
 using UnityEngine;
 
-public class NetworkUI : MonoBehaviour
-{
+public class NetworkUI : MonoBehaviour {
     [Header("UI")]
     // 現在のネットワーク状態を表示するテキスト
     [SerializeField]
@@ -38,16 +37,13 @@ public class NetworkUI : MonoBehaviour
     [SerializeField]
     private MatchingManager matchingManager;
 
-    private void Start()
-    {
+    private void Start() {
         // ゲームで使用しているNetworkManagerを取得する
-        transport =
-            NetworkManager.Singleton
-            .GetComponent<UnityTransport>();
+        transport = NetWorkSystemManager.Instance.UnityTransport;
 
         // 画面に「Waiting...」と表示する
         statusText.text =
-            "Waiting...";
+            "Waiting";
 
         // Clientが接続した時に OnClientConnected を呼ぶ
         NetworkManager.Singleton
@@ -63,8 +59,9 @@ public class NetworkUI : MonoBehaviour
     /// <summary>
     /// Hostとしてゲームを開始するための関数
     /// </summary>
-    public void StartHost()
-    {
+    public void StartHost() {
+
+        if (transport == null) return;
         // どのアドレス・ポートで通信するか
         transport.SetConnectionData(
             "0.0.0.0",
@@ -75,10 +72,9 @@ public class NetworkUI : MonoBehaviour
         bool success =
             NetworkManager.Singleton
             .StartHost();
-        
+
         // Host開始に成功したら
-        if (success)
-        {
+        if (success) {
             broadcaster.StartBroadcast(
                 port
             );
@@ -87,8 +83,7 @@ public class NetworkUI : MonoBehaviour
             statusText.text = $"Room Code : {broadcaster.RoomCode}";
         }
         // Host開始に失敗したら
-        else
-        {
+        else {
             // 失敗したテキストを表示
             statusText.text = "Host Failed";
         }
@@ -97,14 +92,12 @@ public class NetworkUI : MonoBehaviour
     /// <summary>
     /// Clientとしてゲームに参加するための関数
     /// </summary>
-    public void StartClient()
-    {
+    public void StartClient() {
         // InputFieldから文字を取得
         string code = roomCodeInput.text.Trim();
 
         // ルームコードが空かどうかチェック
-        if (string.IsNullOrEmpty(code))
-        {
+        if (string.IsNullOrEmpty(code)) {
             // 空という事をテキストで表示
             statusText.text = "Enter Code";
 
@@ -140,8 +133,7 @@ public class NetworkUI : MonoBehaviour
     /// 誰かがネットワークに接続した時に呼ばれる関数
     /// </summary>
     /// <param name="clientId"></param>
-    private void OnClientConnected(ulong clientId)
-    {
+    private void OnClientConnected(ulong clientId) {
         statusText.text = "Connection";
 
         Debug.Log($"Client Connected : {clientId}");
@@ -151,8 +143,7 @@ public class NetworkUI : MonoBehaviour
     /// Clientが切断された時に呼ばれる関数
     /// </summary>
     /// <param name="clientId"></param>
-    private void OnClientDisconnected(ulong clientId)
-    {
+    private void OnClientDisconnected(ulong clientId) {
         // 切断された事をテキストで表示
         statusText.text = "Disconnected";
     }
@@ -160,8 +151,7 @@ public class NetworkUI : MonoBehaviour
     /// <summary>
     /// Unityのオブジェクトが破棄された時に呼ばれる関数
     /// </summary>
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         // NetworkManagerが存在しないなら
         if (NetworkManager.Singleton == null)
             // 何もしない
