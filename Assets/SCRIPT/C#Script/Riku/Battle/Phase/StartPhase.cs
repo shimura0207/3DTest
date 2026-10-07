@@ -34,6 +34,7 @@ public class StartPhase : PhaseBase {
         nextPhase = true;
 
         CardObjectManager.instance.UseCardObject(1);
+        CardObjectManager.instance.ArrangeHand(PlayerType.Self);
 
         await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
