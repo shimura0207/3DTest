@@ -175,7 +175,7 @@ public class CardObjectManager : MonoBehaviour {
     /// 手札の整列
     /// </summary>
     public void ArrangeHand(PlayerType player) {
-        int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;    
+        int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;
         // 手札が1枚以下なら整列の必要なし
         if (handCount <= 1) return;
 
