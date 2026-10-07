@@ -29,7 +29,10 @@ public class EfectManager : MonoBehaviour {
 
     [SerializeField] private PngAnimation CutinAnim;
 
-
+    [SerializeField] private RGRushIntro rushIntro;
+    [SerializeField] private Image image2;
+    [SerializeField] private Image image3;
+    [SerializeField] private Image image4;
     // =========================================================
     // トランプ
     // 0 = 左
@@ -124,6 +127,9 @@ public class EfectManager : MonoBehaviour {
                 trumpImages[i].gameObject.SetActive(false);
             }
         }
+        image2.gameObject.SetActive(false);
+        image3.gameObject.SetActive(false);
+        image4.gameObject.SetActive(false);
     }
 
 
@@ -277,5 +283,14 @@ public class EfectManager : MonoBehaviour {
     public void STOP_S() {
         start.SetActive(false);
         CutinAnim.Stop();
+        
+        
+    }
+
+    public void hack() {
+        image2.gameObject.SetActive(true);
+        image3.gameObject.SetActive(true);
+        image4.gameObject.SetActive(true);
+        rushIntro.Play();
     }
 }
