@@ -266,6 +266,7 @@ public class SlotReelController : MonoBehaviour {
 
         if (IsAnyReelRotating() == false && slotIndex == SLOT_TEARN_MAX_G) {
             efectManager.HideTrumps();
+            
         }
     }
 
