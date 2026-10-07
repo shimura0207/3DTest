@@ -50,12 +50,18 @@ public class MatchingManager : MonoBehaviour {
         }
 
         if (NetworkManager.Singleton == null) {
-            Debug.LogError("NetworkManagerが見つかりません。");
+            Debug.LogError(
+                "NetworkManagerが見つかりません。"
+            );
+
             return;
         }
 
         if (NetworkManager.Singleton.IsListening) {
-            Debug.LogWarning("すでにNetwork接続中です。");
+            Debug.LogWarning(
+                "すでにNetwork接続中です。"
+            );
+
             return;
         }
 
@@ -80,7 +86,8 @@ public class MatchingManager : MonoBehaviour {
             );
 
             Debug.Log(
-                $"Matching開始 ID={playerId}"
+                $"[Matching] Matching開始 " +
+                $"ID={playerId}"
             );
 
             InvokeRepeating(
@@ -91,7 +98,7 @@ public class MatchingManager : MonoBehaviour {
         }
         catch (Exception e) {
             Debug.LogError(
-                $"Matching開始エラー: {e}"
+                $"[Matching] Matching開始エラー: {e}"
             );
 
             StopMatching();
@@ -104,7 +111,10 @@ public class MatchingManager : MonoBehaviour {
     // =========================================================
 
     private void SendMatchingWait() {
-        if (!matching || matched)
+        if (!matching)
+            return;
+
+        if (matched)
             return;
 
         string localIP =
@@ -132,7 +142,7 @@ public class MatchingManager : MonoBehaviour {
         if (subnetBroadcast != null) {
             Debug.Log(
                 $"[Matching] Subnet Broadcast送信: " +
-                $"{subnetBroadcast}"
+                $"{subnetBroadcast}:{matchingPort}"
             );
 
             SendTo(
@@ -147,7 +157,8 @@ public class MatchingManager : MonoBehaviour {
     // UDP受信
     // =========================================================
 
-    private void Receive(IAsyncResult result) {
+    private void Receive(
+        IAsyncResult result) {
         if (udp == null)
             return;
 
@@ -197,13 +208,23 @@ public class MatchingManager : MonoBehaviour {
                 );
             }
 
+            // -------------------------------------------------
+            // 重要
+            //
+            // matched == true でも受信を続ける。
+            //
+            // Client側は
+            // MATCHING_JOINを送信したあと、
+            // MATCHING_FOUNDを受信する必要がある。
+            // -------------------------------------------------
+
             BeginReceiveAgain();
         }
         catch (ObjectDisposedException) {
         }
         catch (Exception e) {
             Debug.LogError(
-                $"Matching受信エラー: {e}"
+                $"[Matching] UDP受信エラー: {e}"
             );
 
             BeginReceiveAgain();
@@ -218,7 +239,10 @@ public class MatchingManager : MonoBehaviour {
     private void ReceiveMatchingWait(
         string[] split,
         IPEndPoint sender) {
-        if (!matching || matched)
+        if (!matching)
+            return;
+
+        if (matched)
             return;
 
         if (split.Length < 5)
@@ -233,17 +257,32 @@ public class MatchingManager : MonoBehaviour {
         if (!ushort.TryParse(
             split[3],
             out ushort otherPort)) {
+            Debug.LogWarning(
+                "[Matching] 相手のポート番号が不正です。"
+            );
+
             return;
         }
 
         if (!long.TryParse(
             split[4],
             out long otherStartTime)) {
+            Debug.LogWarning(
+                "[Matching] 相手の開始時間が不正です。"
+            );
+
             return;
         }
 
         if (otherPlayerId == playerId)
             return;
+
+        Debug.Log(
+            $"[Matching] 相手発見 " +
+            $"ID={otherPlayerId} " +
+            $"IP={otherIP} " +
+            $"Port={otherPort}"
+        );
 
         bool otherIsEarlier =
             otherStartTime < matchingStartTime
@@ -257,47 +296,70 @@ public class MatchingManager : MonoBehaviour {
                 ) < 0
             );
 
-        if (otherIsEarlier) {
+        if (!otherIsEarlier) {
             Debug.Log(
-                "先にMatchingしていたプレイヤーを発見。" +
-                "自分はClientになります。"
+                "[Matching] 相手より自分のほうが先です。"
             );
 
-            matched = true;
+            return;
+        }
 
-            string hostId =
-                otherPlayerId;
+        // -----------------------------------------------------
+        // 自分はClientになる
+        // -----------------------------------------------------
 
-            string clientId =
-                playerId;
+        Debug.Log(
+            "[Matching] 先にMatchingしていたプレイヤーを発見。" +
+            "自分はClientになります。"
+        );
 
-            string joinMessage =
-                $"{MatchingJoin}|" +
-                $"{hostId}|" +
-                $"{clientId}";
+        matched = true;
 
-            byte[] data =
-                Encoding.UTF8.GetBytes(
-                    joinMessage
+        string hostId =
+            otherPlayerId;
+
+        string clientId =
+            playerId;
+
+        string joinMessage =
+            $"{MatchingJoin}|" +
+            $"{hostId}|" +
+            $"{clientId}";
+
+        byte[] data =
+            Encoding.UTF8.GetBytes(
+                joinMessage
+            );
+
+        // 相手のIPへMATCHING_JOINを送信
+        SendTo(
+            data,
+            IPAddress.Parse(otherIP)
+        );
+
+        Debug.Log(
+            $"[Matching] MATCHING_JOIN送信: " +
+            $"{otherIP}:{matchingPort}"
+        );
+
+        MainThreadDispatcher.Instance.Enqueue(
+            () => {
+                CancelInvoke(
+                    nameof(SendMatchingWait)
                 );
 
-            SendTo(
-                data,
-                IPAddress.Parse(otherIP)
-            );
+                Debug.Log(
+                    "[Matching] Clientとして待機中..."
+                );
+            }
+        );
 
-            MainThreadDispatcher.Instance.Enqueue(
-                () => {
-                    CancelInvoke(
-                        nameof(SendMatchingWait)
-                    );
-
-                    Debug.Log(
-                        "Matching Client処理を開始します。"
-                    );
-                }
-            );
-        }
+        // -----------------------------------------------------
+        // ここではUDP受信を停止しない
+        //
+        // HostからMATCHING_FOUNDが届くまで
+        // UDP受信を続ける。
+        // -----------------------------------------------------
     }
 
 
@@ -308,7 +370,7 @@ public class MatchingManager : MonoBehaviour {
     private void ReceiveMatchingJoin(
         string[] split,
         IPEndPoint sender) {
-        if (!matching || matched)
+        if (!matching)
             return;
 
         if (split.Length < 3)
@@ -327,14 +389,19 @@ public class MatchingManager : MonoBehaviour {
             return;
 
         Debug.Log(
-            "相手が見つかりました。" +
+            "[Matching] 相手が見つかりました。" +
             "自分はHostになります。"
         );
 
         matched = true;
 
+        // JOINを送ってきたPCのIPを使用
         IPAddress clientIP =
             sender.Address;
+
+        Debug.Log(
+            $"[Matching] Client IP: {clientIP}"
+        );
 
         MainThreadDispatcher.Instance.Enqueue(
             () => {
@@ -358,20 +425,35 @@ public class MatchingManager : MonoBehaviour {
     private void StartHost(
         string clientId,
         IPAddress clientIP) {
-        if (NetworkManager.Singleton == null)
-            return;
+        if (NetworkManager.Singleton == null) {
+            Debug.LogError(
+                "[Matching] NetworkManagerがありません。"
+            );
 
-        if (NetworkManager.Singleton.IsListening)
             return;
+        }
+
+        if (NetworkManager.Singleton.IsListening) {
+            Debug.LogWarning(
+                "[Matching] すでにNetworkManagerが起動しています。"
+            );
+
+            return;
+        }
 
         if (transport == null) {
             Debug.LogError(
-                "UnityTransportが設定されていません。"
+                "[Matching] UnityTransportが設定されていません。"
             );
 
             StopMatching();
+
             return;
         }
+
+        // -----------------------------------------------------
+        // Hostは全てのNICから7777番ポートで待ち受ける
+        // -----------------------------------------------------
 
         transport.SetConnectionData(
             "0.0.0.0",
@@ -379,7 +461,8 @@ public class MatchingManager : MonoBehaviour {
         );
 
         Debug.Log(
-            $"Host開始: 0.0.0.0:{gamePort}"
+            $"[Matching] Host開始: " +
+            $"0.0.0.0:{gamePort}"
         );
 
         bool success =
@@ -387,16 +470,21 @@ public class MatchingManager : MonoBehaviour {
 
         if (!success) {
             Debug.LogError(
-                "Matching Host開始失敗"
+                "[Matching] Host開始失敗"
             );
 
             StopMatching();
+
             return;
         }
 
         Debug.Log(
-            "Matching Host開始成功"
+            "[Matching] Host開始成功"
         );
+
+        // -----------------------------------------------------
+        // HostのIPをClientへ通知
+        // -----------------------------------------------------
 
         string hostIP =
             GetLocalIP();
@@ -416,8 +504,8 @@ public class MatchingManager : MonoBehaviour {
         );
 
         Debug.Log(
-            $"MATCHING_FOUND送信: " +
-            $"{clientIP}:{gamePort}"
+            $"[Matching] MATCHING_FOUND送信: " +
+            $"{clientIP}:{matchingPort}"
         );
     }
 
@@ -428,7 +516,7 @@ public class MatchingManager : MonoBehaviour {
 
     private void ReceiveMatchingFound(
         string[] split) {
-        if (!matching || !matched)
+        if (!matching)
             return;
 
         if (split.Length < 4)
@@ -443,14 +531,23 @@ public class MatchingManager : MonoBehaviour {
         if (!ushort.TryParse(
             split[3],
             out ushort hostPort)) {
+            Debug.LogWarning(
+                "[Matching] Hostのポート番号が不正です。"
+            );
+
             return;
         }
 
-        if (targetClientId != playerId)
+        if (targetClientId != playerId) {
+            Debug.Log(
+                "[Matching] 自分宛てのMATCHING_FOUNDではありません。"
+            );
+
             return;
+        }
 
         Debug.Log(
-            $"Hostを発見: " +
+            $"[Matching] Hostを発見: " +
             $"{hostIP}:{hostPort}"
         );
 
@@ -477,12 +574,12 @@ public class MatchingManager : MonoBehaviour {
         string hostIP,
         ushort hostPort) {
         Debug.Log(
-            "StartClient() に入りました。"
+            "[Matching] StartClient() に入りました。"
         );
 
         if (NetworkManager.Singleton == null) {
             Debug.LogError(
-                "NetworkManager.Singletonがnullです。"
+                "[Matching] NetworkManager.Singletonがnullです。"
             );
 
             return;
@@ -490,7 +587,7 @@ public class MatchingManager : MonoBehaviour {
 
         if (NetworkManager.Singleton.IsListening) {
             Debug.LogWarning(
-                "すでにNetworkManagerはListening状態です。"
+                "[Matching] すでにNetworkManagerはListening状態です。"
             );
 
             return;
@@ -498,14 +595,14 @@ public class MatchingManager : MonoBehaviour {
 
         if (transport == null) {
             Debug.LogError(
-                "UnityTransportが設定されていません。"
+                "[Matching] UnityTransportが設定されていません。"
             );
 
             return;
         }
 
         Debug.Log(
-            $"接続先: {hostIP}:{hostPort}"
+            $"[Matching] 接続先: {hostIP}:{hostPort}"
         );
 
         transport.SetConnectionData(
@@ -514,24 +611,25 @@ public class MatchingManager : MonoBehaviour {
         );
 
         Debug.Log(
-            "UnityTransport設定完了"
+            $"[Matching] UnityTransport設定完了: " +
+            $"{hostIP}:{hostPort}"
         );
 
         bool success =
             NetworkManager.Singleton.StartClient();
 
         Debug.Log(
-            $"StartClient() 結果: {success}"
+            $"[Matching] StartClient() 結果: {success}"
         );
 
         if (success) {
             Debug.Log(
-                "Matching Client開始成功"
+                "[Matching] Client開始成功"
             );
         }
         else {
             Debug.LogError(
-                "Matching Client開始失敗"
+                "[Matching] Client開始失敗"
             );
         }
     }
@@ -558,7 +656,7 @@ public class MatchingManager : MonoBehaviour {
         }
         catch (Exception e) {
             Debug.LogError(
-                $"Matching Broadcast送信エラー: " +
+                $"[Matching] Broadcast送信エラー: " +
                 $"{e.Message}"
             );
         }
@@ -587,7 +685,7 @@ public class MatchingManager : MonoBehaviour {
         }
         catch (Exception e) {
             Debug.LogError(
-                $"Matching UDP送信エラー: " +
+                $"[Matching] UDP送信エラー: " +
                 $"{e.Message}"
             );
         }
@@ -602,10 +700,10 @@ public class MatchingManager : MonoBehaviour {
         if (udp == null)
             return;
 
-        if (!matching)
-            return;
+        // matched == trueでも受信する
+        // ClientはMATCHING_FOUNDを待つ必要がある
 
-        if (matched)
+        if (!matching)
             return;
 
         try {
@@ -618,7 +716,7 @@ public class MatchingManager : MonoBehaviour {
         }
         catch (Exception e) {
             Debug.LogError(
-                $"UDP受信再開エラー: {e}"
+                $"[Matching] UDP受信再開エラー: {e}"
             );
         }
     }
@@ -744,7 +842,7 @@ public class MatchingManager : MonoBehaviour {
         }
 
         Debug.Log(
-            "Matching停止"
+            "[Matching] Matching停止"
         );
     }
 
