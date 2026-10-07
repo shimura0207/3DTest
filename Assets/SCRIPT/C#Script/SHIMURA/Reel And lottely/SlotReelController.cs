@@ -216,6 +216,8 @@ public class SlotReelController : MonoBehaviour {
     private int stoppedReelCount = 0;
 
     private const string NoiseStrengthProperty = "_NoiseStrength";
+
+    [SerializeField] private RGRushIntro rushIntro;
     //============================================================
     // Unityイベント
     //============================================================
@@ -260,6 +262,10 @@ public class SlotReelController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space)) {
             HideStopEffectImage();
+        }
+
+        if (IsAnyReelRotating() == false && slotIndex == SLOT_TEARN_MAX_G) {
+            efectManager.HideTrumps();
         }
     }
 
@@ -502,25 +508,25 @@ public class SlotReelController : MonoBehaviour {
 
             //レア役
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.WeakCherry
-                ||currentSlotSymbolRole==PachisuroSymbolKoyakuEnum.Watermelon
-                ||currentSlotSymbolRole==PachisuroSymbolKoyakuEnum.StrongCherry
-                ||currentSlotSymbolRole==PachisuroSymbolKoyakuEnum.Chance) {
+                || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Watermelon
+                || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.StrongCherry
+                || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Chance) {
                 StartCoroutine(ReelLockCoroutine());
 
 
             }
 
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
-            efectManager.ShowCutinStart();
+                efectManager.ShowCutinStart();
 
             }
 
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Bell) {
-            efectManager.ShowTrumps();
-                
+                efectManager.ShowTrumps();
+
             }
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
-            ShowNoiseImage();
+                ShowNoiseImage();
 
             }
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
@@ -657,31 +663,35 @@ public class SlotReelController : MonoBehaviour {
             reelSpeed = -320;
             if (stoppedReelCount == 1) {
                 // 第一停止
-                if(currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
-                ShowNoiseImage();
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
+                    ShowNoiseImage();
 
                 }
 
-                
+
             }
             else if (stoppedReelCount == 2) {
                 // 第二停止
-                if(currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
-                ShowNoiseImage();
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
+                    ShowNoiseImage();
 
                 }
 
-                
+
             }
             else if (stoppedReelCount == 3) {
                 // 第三停止
-                if(currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
-                ShowCleanImage();
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
+                    ShowCleanImage();
 
                 }
 
-                
+
                 efectManager.STOP_S();
+
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
+                    efectManager.hack();
+                }
             }
 
             return;
@@ -1055,5 +1065,5 @@ public class SlotReelController : MonoBehaviour {
     }
 
 
-    
+
 }
