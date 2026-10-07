@@ -64,7 +64,7 @@ public class MainGamePart : PartBase {
     /// <returns></returns>
     public override async UniTask Setup() {
         await base.Setup();
-        Vector3 pos = new Vector3(0, 0, -7.5f);
+        Vector3 pos = new Vector3(0, 0, 0);
         // パチスロを出す
         pachisuroInstance = Instantiate(patisuro, pos, Quaternion.identity, transform);
         // 生成したオブジェクトを非表示にする
