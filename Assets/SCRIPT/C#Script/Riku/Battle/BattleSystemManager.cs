@@ -43,9 +43,9 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// フェイズの実行
+    /// 実行処理
     /// </summary>
-    public async UniTask PhaseExecute() {
+    public async UniTask Execute() {
         // 各フェイズのターン処理
         switch (turnPlayer) {
             case PlayerType.Self:
