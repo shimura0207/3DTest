@@ -31,11 +31,9 @@ public class MatchingManager : MonoBehaviour {
     private const string MatchingJoin = "MATCHING_JOIN";
     private const string MatchingFound = "MATCHING_FOUND";
 
-
     // =========================================================
     // Matching開始
     // =========================================================
-
     public void StartMatching() {
         if (matching) {
             Debug.Log("すでにMatching中です。");
@@ -91,11 +89,9 @@ public class MatchingManager : MonoBehaviour {
         }
     }
 
-
     // =========================================================
     // MATCHING_WAIT送信
     // =========================================================
-
     private void SendMatchingWait() {
         if (!matching || matched)
             return;
@@ -140,11 +136,9 @@ public class MatchingManager : MonoBehaviour {
         }
     }
 
-
     // =========================================================
     // UDP受信
     // =========================================================
-
     private void Receive(IAsyncResult result) {
         if (udp == null)
             return;
@@ -209,11 +203,9 @@ public class MatchingManager : MonoBehaviour {
         }
     }
 
-
     // =========================================================
     // MATCHING_WAIT受信
     // =========================================================
-
     private void ReceiveMatchingWait(
         string[] split,
         IPEndPoint sender) {
@@ -301,11 +293,9 @@ public class MatchingManager : MonoBehaviour {
         }
     }
 
-
     // =========================================================
     // MATCHING_JOIN受信
     // =========================================================
-
     private void ReceiveMatchingJoin(
         string[] split,
         IPEndPoint sender) {
@@ -350,11 +340,9 @@ public class MatchingManager : MonoBehaviour {
         );
     }
 
-
     // =========================================================
     // Host開始
     // =========================================================
-
     private void StartHost(
         string clientId,
         IPAddress clientIP) {
@@ -409,11 +397,9 @@ public class MatchingManager : MonoBehaviour {
         );
     }
 
-
     // =========================================================
     // MATCHING_FOUND受信
     // =========================================================
-
     private void ReceiveMatchingFound(
         string[] split) {
         if (!matching || !matched)
@@ -455,7 +441,6 @@ public class MatchingManager : MonoBehaviour {
             }
         );
     }
-
 
     // =========================================================
     // Client開始

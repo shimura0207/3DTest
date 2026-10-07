@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 
@@ -38,6 +39,16 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     public void Initialize() {
         instance = this;
+
+        deckCards = new List<int>();
+        outDeckCards = new Dictionary<PlayerType, OutDeckCards>();
+        for (PlayerType i = 0; i < PlayerType.Max; i++) {
+            outDeckCards[i] = new OutDeckCards() {
+                handCards = new List<int>(),
+                fieldCards = new List<int>(),
+                graveCards = new List<int>()
+            };
+        }
     }
 
     /// <summary>

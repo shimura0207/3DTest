@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -49,6 +50,8 @@ public class CardObjectManager : MonoBehaviour {
 
     // ある程度の生成数
     private const int CARD_OBJECT_MAX = 30;
+    // 手札間隔
+    private const float HAND_CARD_DISTANCE = 0.1f;
 
     /// <summary>
     /// 初期化
@@ -173,6 +176,31 @@ public class CardObjectManager : MonoBehaviour {
     /// </summary>
     public void ArrangeHand(PlayerType player) {
         int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;
+        // 手札が1枚以下なら整列の必要なし
+        if (handCount <= 1) return;
 
+        // カード配置位置
+        float setPos = 0.0f;
+        // 手札の枚数が奇数なら
+        if (handCount % 2 == 1) {
+            // 中央の一枚分を抜いて手札の半分の枚数計算
+            handCount = (handCount - 1) / 2;
+            // 手札の半分枚数分左に寄せた位置をスタートにする
+            setPos -= handCount * HAND_CARD_DISTANCE;  
+        }
+        // 手札の枚数が偶数なら
+        else {
+            // 手札の半分の枚数計算
+            handCount = handCount / 2;
+            // 手札の半分枚数から1引いた数分プラス半分の間隔分左に寄せた位置をスタートにする
+            setPos -= ((handCount - 1) * HAND_CARD_DISTANCE) + (HAND_CARD_DISTANCE / 2);
+        }
+
+        // 決定された左端の位置から手札の枚数分右にずらしながら配置する
+        foreach (var card in useObjectList) {
+            card.transform.position = new Vector3(setPos, 0.0f, 0.0f);
+            // 配置位置を一つ右にずらす
+            setPos += HAND_CARD_DISTANCE;
+        }
     }
 }
