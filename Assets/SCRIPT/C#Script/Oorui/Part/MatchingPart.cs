@@ -32,7 +32,9 @@ public class MatchingPart : PartBase {
 
     // メニュー
     private const string _HOSTORCLIENT_MENU = "Prefab/Part/MenuWindow/HostORClientMenu";
+    private const string _CLIENT_CONECTION_MENU = "Prefab/Part/MenuWindow/ClientConectionMenu";
     private HostORClientMenu hostORClientMenu;
+    private ClientConectionMenu clientConectionMenu;
 
     // 接続状況
     private ConnectionState conection = ConnectionState.None;
@@ -53,9 +55,12 @@ public class MatchingPart : PartBase {
 
         // メニューの取得
         hostORClientMenu = MenuWindowManager.instance.Get<HostORClientMenu>(_HOSTORCLIENT_MENU);
+        clientConectionMenu = MenuWindowManager.instance.Get<ClientConectionMenu>(_CLIENT_CONECTION_MENU);
         // メニューの初期化
         await hostORClientMenu.Initialize();
         await hostORClientMenu.Setup();
+        await clientConectionMenu.Initialize();
+
         // ランダムボタンが押された時の処理を登録する
         randomButton.onClick.AddListener(OnClickRandomButton);
         // マッチングボタンが押された時の処理を登録する
@@ -106,6 +111,12 @@ public class MatchingPart : PartBase {
 
                     // 再度ボタン選択を待つ
                     continue;
+                }
+                // クライアントで接続された場合
+                else if (conection == ConnectionState.Client) {
+                    // ClientConnectionMenuを開く
+                    await clientConectionMenu.Open();
+                    break;
                 }
 
                 // ホストまたはクライアントが選択された場合

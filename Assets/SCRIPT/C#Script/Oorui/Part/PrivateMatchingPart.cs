@@ -54,7 +54,7 @@ public class PrivateMatchingPart : PartBase {
         }
         else if (conect == ConnectionState.Client) {
             // ホスト側で提示された番号を入力する
-
+            
 
             // クライアントとして部屋に参加する
         }
