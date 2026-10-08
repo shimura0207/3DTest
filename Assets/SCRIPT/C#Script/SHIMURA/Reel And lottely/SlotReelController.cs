@@ -1,8 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using static grassFlash;
 
 /// <summary>
 /// リール全体を管理するメインクラス。
@@ -66,6 +67,9 @@ public class SlotReelController : MonoBehaviour {
     [Header("Lottery")]
     [SerializeField] public int currentTable = 1;
 
+    [SerializeField] private grassFlash glassFlash;
+
+
     /// <summary>
     /// レバーON時に抽選された現在の役。
     /// 停止角度を決めるときに使います。
@@ -77,7 +81,8 @@ public class SlotReelController : MonoBehaviour {
     //============================================================
 
     /// <summary>
-    /// リールの回転速度。
+    /// 全リール共通の通常速度（初期値）。
+    /// 実際の回転速度は reelSpeeds でリールごとに管理します。
     /// 
     /// 【ここをいじるとどうなる？】
     /// 数値の絶対値を大きくすると速く回ります。
@@ -88,6 +93,12 @@ public class SlotReelController : MonoBehaviour {
     /// </summary>
     [Header("Reel Settings")]
     [SerializeField] private float reelSpeed = -320f;
+
+    /// <summary>
+    /// 各リールの現在の回転速度。
+    /// 0:左、1:中、2:右。停止時の加速・速度リセットは対象の要素だけ変更します。
+    /// </summary>
+    private float[] reelSpeeds;
 
     /// <summary>
     /// リールの回転軸。
@@ -266,7 +277,7 @@ public class SlotReelController : MonoBehaviour {
 
         if (IsAnyReelRotating() == false && slotIndex == SLOT_TEARN_MAX_G) {
             efectManager.HideTrumps();
-            
+
         }
     }
 
@@ -303,6 +314,10 @@ public class SlotReelController : MonoBehaviour {
     private void InitializeReels() {
         int reelCount = reels.Length;
         state = new SlotReelState(reelCount);
+
+        // リールの本数に合わせて速度を確保し、通常速度で初期化します。
+        reelSpeeds = new float[reelCount];
+        SetAllReelSpeeds(reelSpeed);
 
         for (int i = 0; i < reelCount; i++) {
             if (reels[i] == null) {
@@ -461,7 +476,6 @@ public class SlotReelController : MonoBehaviour {
     /// </summary>
     public bool TryStartSpin() {
 
-        reelSpeed = -320;
         if (PachisuroPhase.Instance == null) {
             return false;
         }
@@ -475,12 +489,20 @@ public class SlotReelController : MonoBehaviour {
                 return false;
             }
 
-            maxBet = false;
+            // 開始が可能なときだけ通常速度へ戻します。
+            // 通常側のリールロック演出を開始する前に実行してください。
+            SetAllReelSpeeds(reelSpeed);
 
+            maxBet = false;
+            glassFlash.ResetAllGlass();
             currentSlotSymbolRole = roleLottery.RUSHDrawRole(currentTable);
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
 
+            if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
+                efectManager.ShowCutinStart();
+
+            }
             for (int i = 0; i < reels.Length; i++) {
                 if (reels[i] == null) {
                     continue;
@@ -500,9 +522,13 @@ public class SlotReelController : MonoBehaviour {
             if (state.IsAnyReelRotating()) {
                 return false;
             }
+
+            // 開始が可能なときだけ通常速度へ戻します。
+            // 通常側のリールロック演出を開始する前に実行してください。
+            SetAllReelSpeeds(reelSpeed);
             maxBet = false;
             stoppedReelCount = 0;
-
+            glassFlash.ResetAllGlass();
             efectManager.HideTrumps();
             HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
@@ -519,7 +545,12 @@ public class SlotReelController : MonoBehaviour {
 
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
                 efectManager.ShowCutinStart();
-
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterTop, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
             }
 
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Bell) {
@@ -550,9 +581,6 @@ public class SlotReelController : MonoBehaviour {
     /// reelIndex は 0=左, 1=中, 2=右。
     /// </summary>
     public bool TryReserveStop(int reelIndex) {
-        if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
-            reelSpeed = -800;
-        }
         if (state == null) {
             return false;
         }
@@ -567,6 +595,12 @@ public class SlotReelController : MonoBehaviour {
 
         if (!state.RotationNow[reelIndex] || state.StoppingNow[reelIndex]) {
             return false;
+        }
+
+        // 有効な停止入力を受けたリールだけ加速します。
+        // 他のリールの速度には影響しません。
+        if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
+            reelSpeeds[reelIndex] = -800f;
         }
 
         float nextStopAngle = GetNextStopAngle(
@@ -613,7 +647,7 @@ public class SlotReelController : MonoBehaviour {
     /// 停止ボタンがまだ押されていない間はこの処理で回ります。
     /// </summary>
     private void RotateNormally(int reelIndex) {
-        state.ReelAngles[reelIndex] += reelSpeed * Time.deltaTime;
+        state.ReelAngles[reelIndex] += reelSpeeds[reelIndex] * Time.deltaTime;
         state.ReelAngles[reelIndex] = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
 
         ApplyReelRotation(reelIndex);
@@ -624,19 +658,19 @@ public class SlotReelController : MonoBehaviour {
     /// 
     /// 【重要】
     /// ここでは絶対に逆方向へ戻しません。
-    /// reelSpeed がマイナスならマイナス方向、プラスならプラス方向にだけ進みます。
+    /// 対象リールの速度がマイナスならマイナス方向、プラスならプラス方向にだけ進みます。
     /// </summary>
     private void MoveToStopAngle(int reelIndex) {
         float currentAngle = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
         float targetAngle = AngleNormalizer.NormalizeAngle(state.StopTargetAngles[reelIndex]);
 
         // 1フレームで進む角度。
-        float moveAmount = Mathf.Abs(reelSpeed) * Time.deltaTime;
+        float moveAmount = Mathf.Abs(reelSpeeds[reelIndex]) * Time.deltaTime;
 
         // 現在角度から目標角度まで、回転方向に進んだ場合の距離。
         float distanceToTarget;
 
-        if (reelSpeed < 0f) {
+        if (reelSpeeds[reelIndex] < 0f) {
             // マイナス方向に回転している場合。
             distanceToTarget = AngleNormalizer.NormalizeAngle(currentAngle - targetAngle);
         }
@@ -661,7 +695,9 @@ public class SlotReelController : MonoBehaviour {
                 + stoppedReelCount
                 + "停止目"
             );
-            reelSpeed = -320;
+            // 停止したリールだけ通常速度へ戻します。
+            // 他のリールが停止角度へ向かって加速中でも、その速度を維持できます。
+            reelSpeeds[reelIndex] = reelSpeed;
             if (stoppedReelCount == 1) {
                 // 第一停止
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
@@ -685,21 +721,34 @@ public class SlotReelController : MonoBehaviour {
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
                     ShowCleanImage();
 
-                }
 
+
+                    
+                }
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Bell) {
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Center, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Left, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
+                    glassFlash.StartCoroutine(glassFlash.FlashTopRow(Color.white, 5, 0.15f));
+                }
 
                 efectManager.STOP_S();
 
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
                     efectManager.hack();
                 }
+
+
             }
 
             return;
         }
 
         // まだ目標角度まで届かない場合は、回転方向にだけ進めます。
-        if (reelSpeed < 0f) {
+        if (reelSpeeds[reelIndex] < 0f) {
             state.ReelAngles[reelIndex] -= moveAmount;
         }
         else {
@@ -743,7 +792,7 @@ public class SlotReelController : MonoBehaviour {
             float stopAngle = AngleNormalizer.NormalizeAngle(angles[i]);
             float distance;
 
-            if (reelSpeed < 0f) {
+            if (reelSpeeds[reelIndex] < 0f) {
                 distance = AngleNormalizer.NormalizeAngle(currentAngle - stopAngle);
             }
             else {
@@ -1055,16 +1104,33 @@ public class SlotReelController : MonoBehaviour {
     }
 
 
-    private IEnumerator ReelLockCoroutine() {
-
-        reelSpeed = 1000;
-
-        yield return new WaitForSeconds(0.2f);
-        reelSpeed = 0;
-        yield return new WaitForSeconds(1f);
-        reelSpeed = -320;
+    /// <summary>
+    /// 全リールの現在速度をまとめて変更します。
+    /// 初期化・回転開始・全体演出で使用します。
+    /// 個別の停止加速には reelSpeeds[reelIndex] を使用してください。
+    /// </summary>
+    private void SetAllReelSpeeds(float speed) {
+        for (int i = 0; i < reelSpeeds.Length; i++) {
+            reelSpeeds[i] = speed;
+        }
     }
 
+    /// <summary>
+    /// レア役時のリールロック演出。
+    /// 全リールを0.2秒逆回転 → 1秒停止 → 通常速度へ戻します。
+    /// </summary>
+    private IEnumerator ReelLockCoroutine() {
+        SetAllReelSpeeds(1000f);
 
+        yield return new WaitForSeconds(0.2f);
+
+        SetAllReelSpeeds(0f);
+
+        yield return new WaitForSeconds(1f);
+
+        SetAllReelSpeeds(reelSpeed);
+    }
+
+    
 
 }
