@@ -4,49 +4,40 @@
  */
 
 using TMPro;
-using Unity.Netcode;                    // Netcode for GameObjects を使用するためのもの
-using Unity.Netcode.Transports.UTP;     // Unity Transport を使用するためのもの
+using Unity.Netcode;
 using UnityEngine;
 
 public class NetworkUI : MonoBehaviour {
     [Header("UI")]
 
-    // 現在のネットワーク状態を表示するテキスト
     [SerializeField]
     private TMP_Text statusText;
 
-    // Clientがルームコードを入力するInputField
     [SerializeField]
     private TMP_InputField roomCodeInput;
 
 
     [Header("Network")]
 
-    // ネットワーク通信に使用するポート番号
     [SerializeField]
     private ushort port = 7777;
 
-    // Hostが部屋を通知するためのクラス
     [SerializeField]
     private RoomBroadcaster broadcaster;
 
-    // Clientが部屋を探すためのクラス
     [SerializeField]
     private RoomFinder finder;
 
-    // マッチングを管理するクラス
     [SerializeField]
     private MatchingManager matchingManager;
 
 
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
+    // =========================================================
+    // 初期化
+    // =========================================================
+
     private void Start() {
-
-        // NetworkManagerが存在するか確認
         if (NetworkManager.Singleton == null) {
-
             Debug.LogError(
                 "NetworkUI : " +
                 "NetworkManagerが存在しません。"
@@ -55,167 +46,323 @@ public class NetworkUI : MonoBehaviour {
             return;
         }
 
-        // Client接続イベントを登録
         NetworkManager.Singleton
             .OnClientConnectedCallback +=
             OnClientConnected;
 
-        // Client切断イベントを登録
         NetworkManager.Singleton
             .OnClientDisconnectCallback +=
             OnClientDisconnected;
+
+        NetworkManager.Singleton
+            .OnServerStarted +=
+            OnServerStarted;
+
+        Debug.Log(
+            "[NetworkUI] NetworkManagerイベント登録完了"
+        );
     }
 
 
-    /// <summary>
-    /// Hostとしてゲームを開始する
-    /// </summary>
+    // =========================================================
+    // Host開始
+    // =========================================================
+
     public void StartHost() {
-
-        // NetworkManagerが存在するか確認
         if (NetworkManager.Singleton == null) {
-            statusText.text = "Network Manager Missing";
+            SetStatus(
+                "Network Manager Missing"
+            );
+
             return;
         }
 
-        // UnityTransportが取得できているか確認
-        if (NetWorkSystemManager.Instance == null || NetWorkSystemManager.Instance.UnityTransport == null) {
-            statusText.text = "Network System Missing";
+        if (
+            NetWorkSystemManager.Instance == null
+            ||
+            NetWorkSystemManager.Instance.UnityTransport == null) {
+            SetStatus(
+                "Network System Missing"
+            );
+
             return;
         }
 
-        // UnityTransportを取得
-        var transport = NetWorkSystemManager.Instance.UnityTransport;
+        var transport =
+            NetWorkSystemManager.Instance.UnityTransport;
 
-        // 使用するアドレスとポートを設定
         transport.SetConnectionData(
             "0.0.0.0",
             port
         );
 
-        // Hostを開始
-        bool success = NetworkManager.Singleton.StartHost();
+        Debug.Log(
+            $"[NetworkUI] StartHost開始: " +
+            $"0.0.0.0:{port}"
+        );
 
-        // Host開始に成功した場合
+        bool success =
+            NetworkManager.Singleton.StartHost();
+
+        Debug.Log(
+            $"[NetworkUI] StartHost結果: {success}"
+        );
+
         if (success) {
+            if (broadcaster != null) {
+                broadcaster.StartBroadcast(
+                    port
+                );
 
-            // 部屋情報の通知を開始
-            broadcaster.StartBroadcast(
-                port
-            );
-
-            // ルームコードを表示
-            statusText.text = $"{broadcaster.RoomCode}";
+                SetStatus(
+                    $"{broadcaster.RoomCode}"
+                );
+            }
+            else {
+                SetStatus(
+                    "Host Started"
+                );
+            }
         }
         else {
-
-            // Host開始失敗
-            statusText.text =
-                "Host Failed";
+            SetStatus(
+                "Host Failed"
+            );
         }
     }
 
 
-    /// <summary>
-    /// Clientとしてゲームに参加する
-    /// </summary>
+    // =========================================================
+    // Client開始
+    // =========================================================
+
     public void StartClient() {
-
-        // ルームコードを取得
-        string code =
-            roomCodeInput.text.Trim();
-
-        // ルームコードが空の場合
-        if (string.IsNullOrEmpty(code)) {
-
-            statusText.text =
-                "Enter Code";
+        if (NetworkManager.Singleton == null) {
+            SetStatus(
+                "Network Manager Missing"
+            );
 
             return;
         }
 
-        // 部屋を検索中であることを表示
-        statusText.text =
-            "Searching...";
+        string code =
+            roomCodeInput.text.Trim();
 
-        // 部屋を検索
+        if (string.IsNullOrEmpty(code)) {
+            SetStatus(
+                "Enter Code"
+            );
+
+            return;
+        }
+
+        SetStatus(
+            "Searching..."
+        );
+
+        if (finder == null) {
+            Debug.LogError(
+                "[NetworkUI] RoomFinderが設定されていません。"
+            );
+
+            SetStatus(
+                "Room Finder Missing"
+            );
+
+            return;
+        }
+
         finder.SearchRoom(code);
     }
 
 
-    /// <summary>
-    /// マッチングを開始する
-    /// </summary>
+    // =========================================================
+    // Matching開始
+    // =========================================================
+
     public void StartMatching() {
-
-        // MatchingManagerが設定されているか確認
         if (matchingManager == null) {
-
             Debug.LogError(
-                "NetworkUI : " +
+                "[NetworkUI] " +
                 "MatchingManagerが設定されていません。"
             );
 
-            statusText.text =
-                "Matching Manager Missing";
+            SetStatus(
+                "Matching Manager Missing"
+            );
 
             return;
         }
 
-        // マッチング中であることを表示
-        statusText.text =
-            "Matching...";
+        if (NetworkManager.Singleton == null) {
+            Debug.LogError(
+                "[NetworkUI] " +
+                "NetworkManagerがありません。"
+            );
 
-        // マッチングを開始
+            SetStatus(
+                "Network Manager Missing"
+            );
+
+            return;
+        }
+
+        SetStatus(
+            "Matching..."
+        );
+
+        Debug.Log(
+            "[NetworkUI] Matching開始"
+        );
+
         matchingManager.StartMatching();
     }
 
 
-    /// <summary>
-    /// Clientが接続した時に呼ばれる
-    /// </summary>
-    /// <param name="clientId">接続したClientのID</param>
-    private void OnClientConnected(
-        ulong clientId) {
+    // =========================================================
+    // Server開始完了
+    // =========================================================
 
-        statusText.text =
-            "Connection";
-
+    private void OnServerStarted() {
         Debug.Log(
-            $"Client Connected : {clientId}"
+            "[NetworkUI] OnServerStarted"
         );
     }
 
 
-    /// <summary>
-    /// Clientが切断した時に呼ばれる
-    /// </summary>
-    /// <param name="clientId">切断したClientのID</param>
-    private void OnClientDisconnected(
+    // =========================================================
+    // Client接続成功
+    // =========================================================
+
+    private void OnClientConnected(
         ulong clientId) {
+        Debug.Log(
+            $"[NetworkUI] " +
+            $"Client Connected : {clientId}"
+        );
 
-        statusText.text =
-            "Disconnected";
-    }
-
-
-    /// <summary>
-    /// オブジェクト破棄時の処理
-    /// </summary>
-    private void OnDestroy() {
-
-        // NetworkManagerが存在しない場合は終了
         if (NetworkManager.Singleton == null)
             return;
 
-        // 接続イベントを解除
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        Debug.Log(
+            $"[NetworkUI] " +
+            $"LocalClientId : {localClientId}"
+        );
+
+        // 自分自身の接続完了
+        if (localClientId == clientId) {
+            SetStatus(
+                "Connection"
+            );
+
+            Debug.Log(
+                "[NetworkUI] " +
+                "★★★ Connection完了 ★★★"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // Client切断
+    // =========================================================
+
+    private void OnClientDisconnected(
+        ulong clientId) {
+        Debug.LogWarning(
+            $"[NetworkUI] " +
+            $"Client Disconnected : {clientId}"
+        );
+
+        if (NetworkManager.Singleton == null)
+            return;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        Debug.LogWarning(
+            $"[NetworkUI] " +
+            $"LocalClientId : {localClientId}"
+        );
+
+        // -----------------------------------------------------
+        // Client側の場合
+        // -----------------------------------------------------
+
+        if (NetworkManager.Singleton.IsClient
+            &&
+            !NetworkManager.Singleton.IsServer) {
+            string reason =
+                NetworkManager.Singleton.DisconnectReason;
+
+            if (string.IsNullOrEmpty(reason)) {
+                reason =
+                    "理由不明";
+            }
+
+            Debug.LogError(
+                $"[NetworkUI] " +
+                $"Client接続失敗 / 切断理由: {reason}"
+            );
+
+            SetStatus(
+                $"Disconnected\n{reason}"
+            );
+
+            return;
+        }
+
+        // -----------------------------------------------------
+        // Host側
+        // -----------------------------------------------------
+
+        if (NetworkManager.Singleton.IsServer) {
+            Debug.LogWarning(
+                "[NetworkUI] " +
+                "Host側でClientが切断しました。"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // UI表示
+    // =========================================================
+
+    private void SetStatus(
+        string message) {
+        Debug.Log(
+            $"[NetworkUI] Status: {message}"
+        );
+
+        if (statusText != null) {
+            statusText.text =
+                message;
+        }
+    }
+
+
+    // =========================================================
+    // Destroy
+    // =========================================================
+
+    private void OnDestroy() {
+        if (NetworkManager.Singleton == null)
+            return;
+
         NetworkManager.Singleton
             .OnClientConnectedCallback -=
             OnClientConnected;
 
-        // 切断イベントを解除
         NetworkManager.Singleton
             .OnClientDisconnectCallback -=
             OnClientDisconnected;
+
+        NetworkManager.Singleton
+            .OnServerStarted -=
+            OnServerStarted;
     }
 }
