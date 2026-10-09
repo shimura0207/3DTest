@@ -58,7 +58,8 @@ public class CardData_importer : AssetPostprocessor {
 					cell = row.GetCell(8); p.size = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(9); p.atk = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(10); p.hp = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(11); p.ability = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(12); p.Type = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(13); p.ability = (cell == null ? "" : cell.StringCellValue);
 						s.list.Add (p);
 					}
 					data.sheets.Add(s);
