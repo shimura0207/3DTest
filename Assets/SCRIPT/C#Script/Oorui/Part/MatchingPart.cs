@@ -60,6 +60,7 @@ public class MatchingPart : PartBase {
         await hostORClientMenu.Initialize();
         await hostORClientMenu.Setup();
         await clientConectionMenu.Initialize();
+        await clientConectionMenu.Setup();
 
         // ランダムボタンが押された時の処理を登録する
         randomButton.onClick.AddListener(OnClickRandomButton);
@@ -114,9 +115,23 @@ public class MatchingPart : PartBase {
                 }
                 // クライアントで接続された場合
                 else if (conection == ConnectionState.Client) {
-                    // ClientConnectionMenuを開く
+                    // クライアント接続の確認メニューを開く
                     await clientConectionMenu.Open();
-                    break;
+
+                    // 「いいえ」が選択された場合
+                    if (!clientConectionMenu.IsAccepted) {
+                        // 接続状態を初期化
+                        conection = ConnectionState.None;
+
+                        // プライベートマッチの選択状態を解除
+                        isPrivateMatch = false;
+
+                        // ランダムマッチの選択状態も初期化
+                        isRandomMatch = false;
+
+                        // 最初の選択画面に戻り、再度ボタン入力を待つ
+                        continue;
+                    }
                 }
 
                 // ホストまたはクライアントが選択された場合

@@ -11,12 +11,8 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
-public class RoomFinder : MonoBehaviour
-{
+public class RoomFinder : MonoBehaviour {
     [Header("Network")]
-    // ゲーム接続に使用するUnity Transport
-    [SerializeField]
-    private UnityTransport transport;
 
     [Header("Search")]
     // ルーム検索用のポート番号
@@ -33,11 +29,9 @@ public class RoomFinder : MonoBehaviour
     /// ルーム検索を開始するメソッド
     /// </summary>
     /// <param name="code"></param>
-    public void SearchRoom(string code)
-    {
+    public void SearchRoom(string code) {
         // 既に検索済みかどうか
-        if (foundRoom)
-        {
+        if (foundRoom) {
             // ログを表示
             Debug.Log(
                 "すでに検索済みです"
@@ -56,8 +50,7 @@ public class RoomFinder : MonoBehaviour
         );
 
         // 通信処理中にエラーが起きても、ゲーム全体が止まらないようにする
-        try
-        {
+        try {
             // UDP通信の準備
             udp =
                 new UdpClient(
@@ -78,8 +71,7 @@ public class RoomFinder : MonoBehaviour
         }
 
         // もしエラーが発生したら
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // エラーログを表示
             Debug.LogError(
                 e.Message
@@ -185,11 +177,16 @@ public class RoomFinder : MonoBehaviour
     /// </summary>
     /// <param name="ip"></param>
     /// <param name="port"></param>
-    private void Connect(string ip,ushort port)
-    {
+    private void Connect(string ip, ushort port) {
+        // NetworkManagerのシングルトンがあるか
+        if (NetworkManager.Singleton == null) return;
+        // NetworkManagerがUnityTransporterを所持しているか
+        if (NetWorkSystemManager.Instance == null || NetWorkSystemManager.Instance.UnityTransport) return;
+        // UnityTransportの取得
+        var transport = NetWorkSystemManager.Instance.UnityTransport;
+
         // Unity Transportがあるかどうか確認
-        if (transport == null)
-        {
+        if (transport == null) {
             // エラーログを表示
             Debug.LogError(
                 "UnityTransportが設定されていません"
@@ -212,16 +209,14 @@ public class RoomFinder : MonoBehaviour
             .StartClient();
 
         // 接続が成功していれば
-        if (result)
-        {
+        if (result) {
             // ログを表示
             Debug.Log(
                 "Client開始"
             );
         }
         // 接続が失敗していれば
-        else
-        {
+        else {
             // ログを表示
             Debug.LogError(
                 "Client開始失敗"
@@ -232,8 +227,7 @@ public class RoomFinder : MonoBehaviour
     /// <summary>
     /// 5秒探しても目的の部屋が見つからなかった場合
     /// </summary>
-    private void SearchTimeout()
-    {
+    private void SearchTimeout() {
         // 既に目的の部屋を見つけていれば
         if (foundRoom)
             // 処理を終える
@@ -254,8 +248,7 @@ public class RoomFinder : MonoBehaviour
     /// <summary>
     /// GameObjectが破棄されるときに呼ばれる関数
     /// </summary>
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         // SearchTimeout() などのInvokeを停止
         CancelInvoke();
 

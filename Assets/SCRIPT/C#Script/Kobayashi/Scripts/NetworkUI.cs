@@ -70,26 +70,17 @@ public class NetworkUI : MonoBehaviour {
 
     public void StartHost() {
         if (NetworkManager.Singleton == null) {
-            SetStatus(
-                "Network Manager Missing"
-            );
+            SetStatus("Network Manager Missing");
 
             return;
         }
 
-        if (
-            NetWorkSystemManager.Instance == null
-            ||
-            NetWorkSystemManager.Instance.UnityTransport == null) {
-            SetStatus(
-                "Network System Missing"
-            );
-
+        if (NetWorkSystemManager.Instance == null || NetWorkSystemManager.Instance.UnityTransport == null) {
+            SetStatus("Network System Missing");
             return;
         }
 
-        var transport =
-            NetWorkSystemManager.Instance.UnityTransport;
+        var transport = NetWorkSystemManager.Instance.UnityTransport;
 
         transport.SetConnectionData(
             "0.0.0.0",
