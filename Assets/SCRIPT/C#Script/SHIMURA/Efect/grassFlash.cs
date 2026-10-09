@@ -244,4 +244,50 @@ public class grassFlash : MonoBehaviour {
             yield return wait;
         }
     }
+
+
+    public IEnumerator FlashStrongChary(
+    Color flashColor,
+    int flashCount = 5,
+    float interval = 0.15f,
+    float opacity = 1f) {
+
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        // 左上から時計回りに進む順番（中央は含めない）。
+        GlassPosition[] positions = {
+        GlassPosition.LeftTop,
+        GlassPosition.CenterTop,
+        GlassPosition.RightTop,
+        GlassPosition.Right,
+        GlassPosition.RightBottom,
+        GlassPosition.CenterBottom,
+        GlassPosition.LeftBottom,
+        GlassPosition.Left
+    };
+
+        // 外周を一周だけ点滅。
+        foreach (GlassPosition position in positions) {
+            // 現在の位置を指定した色・透明度にする。
+            SetGlassColor(position, flashColor, opacity);
+
+            yield return wait;
+
+            // 元に戻してから次の位置へ進む。
+            ResetGlass(position);
+
+            yield return wait;
+        }
+
+        // 一周後、中央を含めた全ガラスを同時に点滅。
+        for (int i = 0; i < flashCount; i++) {
+            SetAllGlassColor(flashColor, opacity);
+
+            yield return wait;
+
+            ResetAllGlass();
+
+            yield return wait;
+        }
+    }
 }

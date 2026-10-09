@@ -754,6 +754,19 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.StartCoroutine(glassFlash.FlashChary(Color.white, 5, 0.15f));
                 }
 
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.StrongCherry) {
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Center, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Left, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(GlassPosition.CenterTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
+                    glassFlash.StartCoroutine(glassFlash.FlashStrongChary(Color.white, 5, 0.15f,0.9f));
+                }
+
 
             }
 
