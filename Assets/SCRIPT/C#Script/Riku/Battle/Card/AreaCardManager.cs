@@ -60,18 +60,19 @@ public class AreaCardManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// 任意の枚数山札からドロー(自分側)
+    /// 山札からドロー(自分側)
     /// </summary>
-    /// <param name="drawCount">ドロー枚数</param>
-    public void DrawCard(int drawCount) {
-        if (IsEmpty(deckCards)) return;
+    /// <returns></returns>
+    public int DrawCard() {
+        if (IsEmpty(deckCards)) return -1;
 
-        for (int i = 0; i < drawCount; i++) {
-            // 山札の一番上のカードを自分の手札に追加
-            outDeckCards[PlayerType.Self].handCards.Add(deckCards[0]);
-            // 山札の一番上のカードを削除
-            deckCards.RemoveAt(0);
-        }
+        // 山札の一番上のカードを自分の手札に追加
+        int card = deckCards[0];
+        outDeckCards[PlayerType.Self].handCards.Add(card);
+        // 山札の一番上のカードを削除
+        deckCards.RemoveAt(0);
+
+        return card;
     }
 
     /// <summary>
