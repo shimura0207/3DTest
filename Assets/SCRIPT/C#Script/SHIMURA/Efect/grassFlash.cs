@@ -221,6 +221,32 @@ public class grassFlash : MonoBehaviour {
 
             yield return wait;
         }
+        ResetAllGlass();
+    }
+
+    public IEnumerator FlashSUIKA(
+    Color flashColor,
+    int flashCount = 5,
+    float interval = 0.15f,
+    float opacity = 1f) {
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        for (int i = 0; i < flashCount; i++) {
+            // 上段3か所を同時に点灯。
+            SetGlassColor(GlassPosition.LeftTop, Color.black, 0.9f);
+            SetGlassColor(GlassPosition.Center, Color.black, 0.9f);
+            SetGlassColor(GlassPosition.RightBottom, Color.black, 0.9f);
+
+            yield return wait;
+
+            // 元の色・透明度に戻して消灯。
+            ResetGlass(GlassPosition.LeftTop);
+            ResetGlass(GlassPosition.Center);
+            ResetGlass(GlassPosition.RightBottom);
+
+            yield return wait;
+        }
+        ResetAllGlass();
     }
 
     public IEnumerator FlashChary(
@@ -243,6 +269,7 @@ public class grassFlash : MonoBehaviour {
 
             yield return wait;
         }
+        ResetAllGlass();
     }
 
 
@@ -250,7 +277,8 @@ public class grassFlash : MonoBehaviour {
     Color flashColor,
     int flashCount = 5,
     float interval = 0.15f,
-    float opacity = 1f) {
+    float opacity = 0.9f) {
+
 
         WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
 
@@ -289,5 +317,44 @@ public class grassFlash : MonoBehaviour {
 
             yield return wait;
         }
+    }
+
+
+
+    public IEnumerator FlashChance(
+    Color flashColor,
+    int flashCount = 6,
+    float interval = 0.03f,
+    float opacity = 0.9f) {
+
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        ResetAllGlass();
+
+        for (int i = 0; i < flashCount; i++) {
+            // 左列を点灯。
+            SetGlassColor(GlassPosition.LeftTop, flashColor, opacity);
+            SetGlassColor(GlassPosition.Left, flashColor, opacity);
+            SetGlassColor(GlassPosition.LeftBottom, flashColor, opacity);
+
+            yield return wait;
+
+            ResetAllGlass();
+
+            // 右列を点灯。
+            SetGlassColor(GlassPosition.RightTop, flashColor, opacity);
+            SetGlassColor(GlassPosition.Right, flashColor, opacity);
+            SetGlassColor(GlassPosition.RightBottom, flashColor, opacity);
+
+            yield return wait;
+
+            ResetAllGlass();
+        }
+
+        // 最後に全体フラッシュ。
+        SetAllGlassColor(flashColor, opacity);
+        yield return wait;
+
+        ResetAllGlass();
     }
 }
