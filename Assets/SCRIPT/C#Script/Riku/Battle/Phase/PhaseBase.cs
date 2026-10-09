@@ -17,7 +17,7 @@ public class PhaseBase : MonoBehaviour{
     public bool nextPhase { get; protected set; } = false;
 
     /// <summary>
-    /// 自身のターン処理
+    /// 自身のターン実行処理
     /// </summary>
     /// <returns></returns>
     public virtual async UniTask SelfExecute() {
@@ -25,12 +25,17 @@ public class PhaseBase : MonoBehaviour{
     }
 
     /// <summary>
-    /// 相手のターン処理
+    /// 相手のターン実行処理
     /// </summary>
     /// <returns></returns>
     public virtual async UniTask OpponentExecute() {
         await UniTask.CompletedTask;
     }
+
+    /// <summary>
+    /// 実行処理が呼ばれる前の準備
+    /// </summary>
+    public virtual void Setup() {}
 
     /// <summary>
     /// 片付け処理

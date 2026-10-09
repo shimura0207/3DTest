@@ -171,7 +171,15 @@ public enum CardRearity {
 public enum CardTheme {
 
 }
-
+/// <summary>
+/// カードのタイプ
+/// モンスター
+/// スペル
+/// </summary>
+public enum CardType {
+    Monster = 0,
+    Spell = 1
+}
 /// <summary>
 /// カードの子役
 /// </summary>

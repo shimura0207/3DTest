@@ -25,6 +25,7 @@ public class Entity_CardData : ScriptableObject
 		public int size;
 		public int atk;
 		public int hp;
+		public int Type;
 		public string ability;
 	}
 }
