@@ -15,8 +15,12 @@ public class PachisuroPhase :PhaseBase
     public static PachisuroPhase Instance { get; private set; }
 
     public override void Setup() {
-
+        SlotReelController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
         
+        slot.SOUND.Play();
+
         base.Setup();
     }
 
