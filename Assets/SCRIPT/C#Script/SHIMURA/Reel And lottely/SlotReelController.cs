@@ -30,7 +30,7 @@ using static grassFlash;
 /// </summary>
 public class SlotReelController : MonoBehaviour {
 
-
+    public static PachisuroPhase Instance { get; private set; }
 
     public bool rush;
     public bool nrush;
@@ -69,7 +69,7 @@ public class SlotReelController : MonoBehaviour {
 
     [SerializeField] private grassFlash glassFlash;
 
-
+    public AudioSource SOUND;
     /// <summary>
     /// レバーON時に抽選された現在の役。
     /// 停止角度を決めるときに使います。

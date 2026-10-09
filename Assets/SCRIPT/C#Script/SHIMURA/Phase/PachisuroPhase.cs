@@ -13,8 +13,12 @@ public class PachisuroPhase :PhaseBase
 
 
     public static PachisuroPhase Instance { get; private set; }
-    
 
+    public override void Setup() {
+
+        
+        base.Setup();
+    }
 
    
     /// <summary>
