@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections;
 using System.Net;
@@ -12,7 +11,9 @@ using Unity.Netcode.Transports.UTP;
 
 public class LanMatchmaker : MonoBehaviour {
     [Header("UI")]
+    // マッチングボタン
     [SerializeField] private Button matchingButton;
+    // 接続中などに表示するテキスト
     [SerializeField] private TMP_Text statusText;
 
     [Header("Network")]
@@ -23,27 +24,31 @@ public class LanMatchmaker : MonoBehaviour {
     private UnityTransport transport;
     private UdpClient hostDiscoverySocket;
 
+    // 検索中かどうか
     private bool isSearching;
 
     private void Start() {
         networkManager = NetworkManager.Singleton;
 
+        // NetworkManagerがなければ
         if (networkManager == null) {
             SetStatus("NetworkManager not found.");
             enabled = false;
+
+            // 処理を終える
             return;
         }
 
-        transport =
-            networkManager.GetComponent<UnityTransport>();
+        transport = networkManager.GetComponent<UnityTransport>();
 
         if (transport == null) {
             SetStatus("UnityTransport not found.");
             enabled = false;
+
+            // 処理を終える
             return;
         }
 
-        // Clientの接続を承認制にする。
         networkManager.NetworkConfig.ConnectionApproval = true;
         networkManager.ConnectionApprovalCallback += ApprovalCheck;
 
@@ -52,6 +57,7 @@ public class LanMatchmaker : MonoBehaviour {
 
         matchingButton.onClick.AddListener(OnMatchingClicked);
 
+        // テキストの変更
         SetStatus("Ready");
     }
 
