@@ -79,7 +79,7 @@ public class MainPhase : PhaseBase {
             //}
             //
             nextPhase = RGDeckController.i;
-        //nextPhase = Input.GetKeyDown(KeyCode.Space);
+        nextPhase = Input.GetKeyDown(KeyCode.Space);
         await UniTask.CompletedTask;
     }
 
