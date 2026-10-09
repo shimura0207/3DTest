@@ -222,4 +222,26 @@ public class grassFlash : MonoBehaviour {
             yield return wait;
         }
     }
+
+    public IEnumerator FlashChary(
+   Color flashColor,
+   int flashCount = 5,
+   float interval = 0.15f,
+   float opacity = 1f) {
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        for (int i = 0; i < flashCount; i++) {
+            // 上段3か所を同時に点灯。
+            SetGlassColor(GlassPosition.LeftBottom, Color.black, 0.9f);
+            
+
+            yield return wait;
+
+            // 元の色・透明度に戻して消灯。
+            ResetGlass(GlassPosition.LeftBottom);
+            
+
+            yield return wait;
+        }
+    }
 }

@@ -208,16 +208,6 @@ public class MatchingManager : MonoBehaviour {
                 );
             }
 
-            // -------------------------------------------------
-            // 重要
-            //
-            // matched == true でも受信を続ける。
-            //
-            // Client側は
-            // MATCHING_JOINを送信したあと、
-            // MATCHING_FOUNDを受信する必要がある。
-            // -------------------------------------------------
-
             BeginReceiveAgain();
         }
         catch (ObjectDisposedException) {
@@ -353,13 +343,6 @@ public class MatchingManager : MonoBehaviour {
                 );
             }
         );
-
-        // -----------------------------------------------------
-        // ここではUDP受信を停止しない
-        //
-        // HostからMATCHING_FOUNDが届くまで
-        // UDP受信を続ける。
-        // -----------------------------------------------------
     }
 
 
@@ -699,9 +682,6 @@ public class MatchingManager : MonoBehaviour {
     private void BeginReceiveAgain() {
         if (udp == null)
             return;
-
-        // matched == trueでも受信する
-        // ClientはMATCHING_FOUNDを待つ必要がある
 
         if (!matching)
             return;
