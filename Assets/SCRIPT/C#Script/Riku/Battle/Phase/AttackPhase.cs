@@ -12,6 +12,9 @@ using UnityEngine;
 /// アタックフェイズ
 /// </summary>
 public class AttackPhase : PhaseBase {
+    // 液晶に寄ったカメラの位置
+    private readonly Vector3 CAMERA_POSITION = new Vector3(0, 1.27f, -0.8f);
+
     /// <summary>
     /// 自身のターン処理
     /// </summary>
@@ -115,5 +118,14 @@ public class AttackPhase : PhaseBase {
 
         await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 実行処理が呼ばれる前の準備
+    /// </summary>
+    public override void Setup() {
+        // カメラを液晶の方に寄せる
+        Camera.main.transform.position = CAMERA_POSITION;
+        Camera.main.transform.eulerAngles = Vector3.zero;
     }
 }

@@ -33,8 +33,9 @@ public class StartPhase : PhaseBase {
         // 次のフェイズへ
         nextPhase = true;
 
-        CardObjectManager.instance.UseCardObject(1);
-        CardObjectManager.instance.ArrangeHand(PlayerType.Self);
+        int card = AreaCardManager.instance.DrawCard();
+        CardObject cardObject = CardObjectManager.instance.UseCardObject(card);
+        CardObjectManager.instance.MoveToHand(PlayerType.Self, cardObject.objectID);
 
         await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;

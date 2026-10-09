@@ -91,7 +91,7 @@ public class CardObjectManager : MonoBehaviour {
             useObjectList.Add(useCard);
         }
         // 使用中親オブジェクトへ親を変更
-        useCard.transform.SetParent(useObjectRoot);
+        useCard.transform.SetParent(useObjectRoot, false);
         // オブジェクトの準備
         useCard.Setup(useID, cardID);
         return useCard;
@@ -112,7 +112,7 @@ public class CardObjectManager : MonoBehaviour {
         // 未使用リストに追加
         unuseObjectList.Add(unuseObject);
         // 未使用親オブジェクトへ親を変更
-        unuseObject.transform.SetParent(unuseObjectRoot);
+        unuseObject.transform.SetParent(unuseObjectRoot, false);
     }
 
     /// <summary>
@@ -136,14 +136,14 @@ public class CardObjectManager : MonoBehaviour {
     public void MoveToHand(PlayerType player, int objectID) {
         // 座標を初期化
         Transform objectTransform = useObjectList[objectID].transform;
-        objectTransform.position = Vector3.zero;
+        objectTransform.localPosition = Vector3.zero;
         // 手札を親にする
         switch (player) {
             case PlayerType.Self:
-                objectTransform.SetParent(selfHandRoot);
+                objectTransform.SetParent(selfHandRoot, false);
                 break;
             case PlayerType.Opponent:
-                objectTransform.SetParent(opponentHandRoot);
+                objectTransform.SetParent(opponentHandRoot, false);
                 break;
         }
         // 手札の整列
@@ -159,14 +159,14 @@ public class CardObjectManager : MonoBehaviour {
     public void MoveToField(PlayerType player, int objectID, FieldLane setLane) {
         // 座標を初期化
         Transform objectTransform = useObjectList[objectID].transform;
-        objectTransform.position = Vector3.zero;
+        objectTransform.localPosition = Vector3.zero;
         // 指定したレーンを親にする
         switch (player) {
             case PlayerType.Self:
-                objectTransform.SetParent(selfFieldLaneRoot[(int)setLane]);
+                objectTransform.SetParent(selfFieldLaneRoot[(int)setLane], false);
                 break;
             case PlayerType.Opponent:
-                objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane]);
+                objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane], false);
                 break;
         }
     }
@@ -198,7 +198,7 @@ public class CardObjectManager : MonoBehaviour {
 
         // 決定された左端の位置から手札の枚数分右にずらしながら配置する
         foreach (var card in useObjectList) {
-            card.transform.position = new Vector3(setPos, 0.0f, 0.0f);
+            card.transform.localPosition = new Vector3(setPos, 0.0f, 0.0f);
             // 配置位置を一つ右にずらす
             setPos += HAND_CARD_DISTANCE;
         }
