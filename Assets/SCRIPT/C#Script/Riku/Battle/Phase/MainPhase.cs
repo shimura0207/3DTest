@@ -20,7 +20,7 @@ public class MainPhase : PhaseBase {
 
     // レイキャストの最大距離
     private const float RAY_RANGE_MAX = 10.0f;
-
+    
     /// <summary>
     /// 自身のターン処理
     /// </summary>
@@ -45,6 +45,8 @@ public class MainPhase : PhaseBase {
                 catchObject = hit.collider.gameObject;
             }
         }
+
+        Debug.DrawRay(ray.origin, ray.direction * RAY_RANGE_MAX, Color.red);
 
         // 掴んでいる時の処理
         if (catchObject) {
@@ -91,5 +93,5 @@ public class MainPhase : PhaseBase {
 
         await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
-    } 
+    }
 }

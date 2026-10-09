@@ -102,6 +102,8 @@ public class BattleSystemManager : MonoBehaviour {
                     break;
             }
         }
+        // フェイズの準備
+        phaseList[(int)currentPhase].Setup();
     }
 
     /// <summary>
