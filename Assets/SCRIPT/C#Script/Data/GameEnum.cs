@@ -177,6 +177,7 @@ public enum CardTheme {
 /// スペル
 /// </summary>
 public enum CardType {
+    None = -1,
     Monster = 0,
     Spell = 1
 }
@@ -184,7 +185,9 @@ public enum CardType {
 /// カードの子役
 /// </summary>
 public enum CardKoyaku {
-    None = 1,
+    None = -1,
+    
+    Out = 1,
     Replay = 2,
     Cherry = 3,
     Bell = 4,
@@ -213,6 +216,7 @@ public enum VFXType {
 
 /// <summary>
 /// フィールドのレーン番号
+/// @author Riku
 /// </summary>
 public enum FieldLane {
     None = -1,

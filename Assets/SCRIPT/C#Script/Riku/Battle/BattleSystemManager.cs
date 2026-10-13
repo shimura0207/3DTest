@@ -197,4 +197,34 @@ public class BattleSystemManager : MonoBehaviour {
         // オブジェクトを手札の位置に移動
         CardObjectManager.instance.MoveToHand(PlayerType.Self, cardObject.objectID);
     }
+
+    /// <summary>
+    /// モンスター召喚
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">召喚するカードのオブジェクト</param>
+    public void SummonMonster(PlayerType player, CardObject card) {
+        // レーン設置ウィンドウを出す(今後実装予定)
+        FieldLane lane = FieldLane.Lane3; // (仮)
+        // 手札から指定されたレーンにカードを移動
+        AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        // 指定されたレーンにカードを設置
+        CardObjectManager.instance.MoveToField(player, card.objectID, lane);
+        // 効果発動確認(今後実装予定)
+
+    }
+
+    /// <summary>
+    /// スペルを唱える
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">唱えるカードのオブジェクト</param>
+    public void CastSpell(PlayerType player, CardObject card) {
+        // 効果発動(今後実装予定)
+
+        // カードを手札から墓地に移動
+        AreaCardManager.instance.HandToGrave(player, card.handID);
+        // カードオブジェクトを未使用状態に
+        CardObjectManager.instance.UnuseCardObject(card);
+    }
 }

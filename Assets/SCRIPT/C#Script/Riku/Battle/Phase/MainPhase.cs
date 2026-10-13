@@ -6,6 +6,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -17,6 +18,8 @@ using UnityEngine.InputSystem;
 public class MainPhase : PhaseBase {
     // つかんだオブジェクトを保持
     private GameObject catchObject = null;
+    // オブジェクトのクラス
+    private CardObject cardObject = null;
 
     // レイキャストの最大距離
     private const float RAY_RANGE_MAX = 10.0f;
@@ -43,10 +46,10 @@ public class MainPhase : PhaseBase {
                 if (!hit.collider) return;
                 // 触れているオブジェクトを保存
                 catchObject = hit.collider.gameObject;
+                // オブジェクトのクラス取得
+                cardObject = catchObject.GetComponent<CardObject>();
             }
         }
-
-        Debug.DrawRay(ray.origin, ray.direction * RAY_RANGE_MAX, Color.red);
 
         // 掴んでいる時の処理
         if (catchObject) {
@@ -65,25 +68,28 @@ public class MainPhase : PhaseBase {
 
             // 掴んでいるオブジェクトを離す
             if (Input.GetMouseButtonUp(0)) {
-                // 座標を初期化
-                catchObject.transform.localPosition = Vector3.zero;
-                // 手札整列
-                CardObjectManager.instance.ArrangeHand(PlayerType.Self);
-                
+                // フィールドレイヤー取得
+                int fieldLayer = LayerMask.GetMask("Field");
+                // フィールドとのレイキャスト
+                if (Physics.Raycast(
+                    ray,
+                    RAY_RANGE_MAX,
+                    fieldLayer)) {
+                    // フィールド上で離したらカードを使用
+                    PlayCard(PlayerType.Self);
+                }
+                // フィールド外で離したら手札の位置に戻る
+                else {
+                    // 座標を初期化
+                    catchObject.transform.localPosition = Vector3.zero;
+                    // 手札整列
+                    CardObjectManager.instance.ArrangeHand(PlayerType.Self);
+                }
                 catchObject = null;
+                cardObject = null;
             }
         }
-            //await UniTask.DelayFrame(30);
-            //GameObject hand = GameObject.Find("HANDCanvas"); //Mangerっていうオブジェクトを探す
-            //GameObject deck = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
-            //
-            //if (hand != null && deck != null) {
-            //    hand.SetActive(true);
-            //    deck.SetActive(true);
-            //}
-            //
-            nextPhase = RGDeckController.i;
-        //nextPhase = Input.GetKeyDown(KeyCode.Space);
+        nextPhase = Input.GetKeyDown(KeyCode.Space);
         await UniTask.CompletedTask;
     }
 
@@ -97,5 +103,25 @@ public class MainPhase : PhaseBase {
 
         await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// カードの使用
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    private void PlayCard(PlayerType player) {
+        if (!cardObject) return;
+        switch (cardObject.cardType) {
+            case CardType.Monster:
+                // モンスター召喚
+                BattleSystemManager.instance.SummonMonster(player, cardObject);
+                Debug.Log("モンスター召喚！！");
+                break;
+            case CardType.Spell:
+                // スペルを唱える
+                BattleSystemManager.instance.CastSpell(player, cardObject);
+                Debug.Log("スペル発動！！");
+                break;
+        }
     }
 }
