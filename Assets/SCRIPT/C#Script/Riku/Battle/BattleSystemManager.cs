@@ -114,6 +114,8 @@ public class BattleSystemManager : MonoBehaviour {
     public void BattleSetup(List<int> setUseDeckList, PlayerType setFirsetPlayer) {
         // 自身の使用デッキ登録
         AreaCardManager.instance.SetDeck(setUseDeckList);
+        // デッキのシャッフル
+        AreaCardManager.instance.ShuffleDeck();
         // 先攻プレイヤー登録
         firstPlayer = setFirsetPlayer;
         // 現在のターンプレイヤーを先攻プレイヤーに

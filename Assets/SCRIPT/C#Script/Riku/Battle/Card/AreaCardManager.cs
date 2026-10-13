@@ -60,6 +60,23 @@ public class AreaCardManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// デッキシャッフル
+    /// </summary>
+    public void ShuffleDeck() {
+        // Fisher-Yatesシャッフル
+        // リストの上から順にランダムな位置のカードと入れ替えていく
+        int listMax = deckCards.Count;
+        for (int i = 0; i < listMax - 1; i++) {
+            // 順番で選ばれたカード以降の範囲から抽選
+            int randomIndex = Random.Range(i, listMax);
+            // 入れ替え
+            int cardID = deckCards[i];
+            deckCards[i] = deckCards[randomIndex];
+            deckCards[randomIndex] = cardID;
+        }
+    }
+
+    /// <summary>
     /// 山札からドロー(自分側)
     /// </summary>
     /// <returns></returns>
