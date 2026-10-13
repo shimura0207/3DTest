@@ -130,11 +130,9 @@ public class BattleSystemManager : MonoBehaviour {
         }
 
         // 手札5枚用意
-        RGDeckController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
-        slot.Initialize();
-        slot.DrawCardsToHand(5);
+        for (int i = 0; i < START_HAND_COUNT; i++) {
+            DrawCard();
+        }
 
         // ログ
         switch (turnPlayer) {
@@ -186,5 +184,17 @@ public class BattleSystemManager : MonoBehaviour {
                 battleState = BattleState.Win;
                 break;
         }
+    }
+
+    /// <summary>
+    /// カードのドロー(オブジェクト操作含め)
+    /// </summary>
+    public void DrawCard() {
+        // 山札からIDを抜く
+        int card = AreaCardManager.instance.DrawCard();
+        // オブジェクトの使用化
+        CardObject cardObject = CardObjectManager.instance.UseCardObject(card);
+        // オブジェクトを手札の位置に移動
+        CardObjectManager.instance.MoveToHand(PlayerType.Self, cardObject.objectID);
     }
 }

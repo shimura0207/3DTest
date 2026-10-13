@@ -65,7 +65,11 @@ public class MainPhase : PhaseBase {
 
             // 掴んでいるオブジェクトを離す
             if (Input.GetMouseButtonUp(0)) {
+                // 座標を初期化
                 catchObject.transform.localPosition = Vector3.zero;
+                // 手札整列
+                CardObjectManager.instance.ArrangeHand(PlayerType.Self);
+                
                 catchObject = null;
             }
         }

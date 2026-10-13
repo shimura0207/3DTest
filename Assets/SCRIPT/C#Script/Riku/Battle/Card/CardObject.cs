@@ -30,6 +30,8 @@ public class CardObject : MonoBehaviour {
     private CardStates defaultStatus;
     // 現在のステータス
     private CardStates currentStatus;
+    // 対応役
+    private CardKoyaku suportRole;
 
     // カードのイラストデータ
     [SerializeField]
@@ -55,8 +57,12 @@ public class CardObject : MonoBehaviour {
         // IDのセット
         objectID = setObjectID;
         cardID = setCardID;
-        // IDからステータスを取得(今後実装予定)
-
+        // IDからステータスを取得
+        var data = CardDataMasterUtility.GetCardMaster(cardID);
+        // データから各情報を保存
+        defaultStatus = new CardStates() { HP = data.hp, ATK = data.atk, SIZE = data.size };
+        currentStatus = defaultStatus;
+        suportRole = (CardKoyaku)data.KoyakuID;
         // IDからイラストを取得
         spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
     }
