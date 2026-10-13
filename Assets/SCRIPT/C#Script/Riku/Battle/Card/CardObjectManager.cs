@@ -51,7 +51,7 @@ public class CardObjectManager : MonoBehaviour {
     // ある程度の生成数
     private const int CARD_OBJECT_MAX = 30;
     // 手札間隔
-    private const float HAND_CARD_DISTANCE = 0.1f;
+    private const float HAND_CARD_DISTANCE = 0.05f;
 
     /// <summary>
     /// 初期化
@@ -146,6 +146,8 @@ public class CardObjectManager : MonoBehaviour {
                 objectTransform.SetParent(opponentHandRoot, false);
                 break;
         }
+        // 手札IDを仮で振り分け
+        useObjectList[objectID].SetHandID(0);
         // 手札の整列
         ArrangeHand(player);
     }
@@ -157,6 +159,8 @@ public class CardObjectManager : MonoBehaviour {
     /// <param name="objectID">オブジェクトの識別ID</param>
     /// <param name="setLane">置かれるレーン</param>
     public void MoveToField(PlayerType player, int objectID, FieldLane setLane) {
+        // 手札IDを初期化
+        useObjectList[objectID].SetHandID(-1);
         // 座標を初期化
         Transform objectTransform = useObjectList[objectID].transform;
         objectTransform.localPosition = Vector3.zero;
@@ -169,6 +173,8 @@ public class CardObjectManager : MonoBehaviour {
                 objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane], false);
                 break;
         }
+        // 手札の整列
+        ArrangeHand(player);
     }
 
     /// <summary>
@@ -176,29 +182,37 @@ public class CardObjectManager : MonoBehaviour {
     /// </summary>
     public void ArrangeHand(PlayerType player) {
         int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;
-        // 手札が1枚以下なら整列の必要なし
-        if (handCount <= 1) return;
-
+        // 手札が0枚以下なら整列の必要なし
+        if (handCount <= 0) return;
+        
         // カード配置位置
         float setPos = 0.0f;
         // 手札の枚数が奇数なら
         if (handCount % 2 == 1) {
             // 中央の一枚分を抜いて手札の半分の枚数計算
-            handCount = (handCount - 1) / 2;
+            int halfHand = (handCount - 1) / 2;
             // 手札の半分枚数分左に寄せた位置をスタートにする
-            setPos -= handCount * HAND_CARD_DISTANCE;  
+            setPos -= halfHand * HAND_CARD_DISTANCE;  
         }
         // 手札の枚数が偶数なら
         else {
             // 手札の半分の枚数計算
-            handCount = handCount / 2;
+            int halfHand = handCount / 2;
             // 手札の半分枚数から1引いた数分プラス半分の間隔分左に寄せた位置をスタートにする
-            setPos -= ((handCount - 1) * HAND_CARD_DISTANCE) + (HAND_CARD_DISTANCE / 2);
+            setPos -= ((halfHand - 1) * HAND_CARD_DISTANCE) + (HAND_CARD_DISTANCE / 2);
         }
 
         // 決定された左端の位置から手札の枚数分右にずらしながら配置する
+        int handID = 0;
         foreach (var card in useObjectList) {
+            // 手札IDがないやつは手札じゃないのでスキップ
+            if (card.handID < 0) continue;
+            // 配置
             card.transform.localPosition = new Vector3(setPos, 0.0f, 0.0f);
+            // 手札IDをセット
+            card.SetHandID(handID);
+            // 手札IDカウントアップ
+            handID++;
             // 配置位置を一つ右にずらす
             setPos += HAND_CARD_DISTANCE;
         }

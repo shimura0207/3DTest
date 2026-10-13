@@ -130,11 +130,9 @@ public class BattleSystemManager : MonoBehaviour {
         }
 
         // 手札5枚用意
-        RGDeckController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("DeckContlol"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<RGDeckController>(); //付いているスクリプトを取得
-        slot.Initialize();
-        slot.DrawCardsToHand(5);
+        for (int i = 0; i < START_HAND_COUNT; i++) {
+            DrawCard();
+        }
 
         // ログ
         switch (turnPlayer) {
@@ -186,5 +184,47 @@ public class BattleSystemManager : MonoBehaviour {
                 battleState = BattleState.Win;
                 break;
         }
+    }
+
+    /// <summary>
+    /// カードのドロー(オブジェクト操作含め)
+    /// </summary>
+    public void DrawCard() {
+        // 山札からIDを抜く
+        int card = AreaCardManager.instance.DrawCard();
+        // オブジェクトの使用化
+        CardObject cardObject = CardObjectManager.instance.UseCardObject(card);
+        // オブジェクトを手札の位置に移動
+        CardObjectManager.instance.MoveToHand(PlayerType.Self, cardObject.objectID);
+    }
+
+    /// <summary>
+    /// モンスター召喚
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">召喚するカードのオブジェクト</param>
+    public void SummonMonster(PlayerType player, CardObject card) {
+        // レーン設置ウィンドウを出す(今後実装予定)
+        FieldLane lane = FieldLane.Lane3; // (仮)
+        // 手札から指定されたレーンにカードを移動
+        AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        // 指定されたレーンにカードを設置
+        CardObjectManager.instance.MoveToField(player, card.objectID, lane);
+        // 効果発動確認(今後実装予定)
+
+    }
+
+    /// <summary>
+    /// スペルを唱える
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">唱えるカードのオブジェクト</param>
+    public void CastSpell(PlayerType player, CardObject card) {
+        // 効果発動(今後実装予定)
+
+        // カードを手札から墓地に移動
+        AreaCardManager.instance.HandToGrave(player, card.handID);
+        // カードオブジェクトを未使用状態に
+        CardObjectManager.instance.UnuseCardObject(card);
     }
 }
