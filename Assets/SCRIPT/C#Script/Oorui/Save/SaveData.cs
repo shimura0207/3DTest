@@ -14,7 +14,7 @@ using UnityEngine;
 [Serializable]
 public class SaveData {
     // プレイヤー名
-    public string playerName = "Player";
+    public string playerName = "";
 
     // 所持カードのID一覧
     public List<int> ownedCardIDs = new List<int>();

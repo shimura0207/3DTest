@@ -16,10 +16,14 @@ public class SaveManager : MonoBehaviour {
     public static SaveManager Instance { get; private set; }
 
     // セーブファイル名
-    private const string SAVE_FILE_NAME = "SaveData.json";
+    private const string SAVE_FILE_NAME = "PlayerData.json";
 
-    // セーブファイルの保存先
-    private string SaveFilePath => Path.Combine(Application.persistentDataPath, SAVE_FILE_NAME);
+    // CドライブのProgram Files内にある保存先
+    private string SaveFilePath =>
+        Path.Combine(
+            @"D:\RG_SaveData",
+            SAVE_FILE_NAME
+        );
 
     // 同じシーンに複数のSaveManagerが存在しないようにする
     private void Awake() {
@@ -38,23 +42,37 @@ public class SaveManager : MonoBehaviour {
     /// セーブデータをJSON形式でファイルに保存する
     /// </summary>
     public void Save(SaveData saveData) {
+        // 保存するデータが存在しない場合は処理を終了する
         if (saveData == null) {
             Debug.LogError("保存するセーブデータがありません");
             return;
         }
 
         try {
-            // SaveDataをJSON文字列に変換する
+            // セーブファイルを保存するフォルダのパスを取得する
+            string directoryPath = Path.GetDirectoryName(SaveFilePath);
+
+            // フォルダが存在しない場合は作成する
+            // すでに存在していても問題ない
+            Directory.CreateDirectory(directoryPath);
+
+            // SaveDataをJSON形式の文字列に変換する
             string json = JsonUtility.ToJson(saveData, true);
 
-            // JSON文字列をファイルに書き込む
+            // JSONファイルにデータを書き込む
+            // ファイルが存在しない場合は新しく作成される
             File.WriteAllText(SaveFilePath, json);
 
-            Debug.Log("セーブが完了しました");
+            // 保存先のパスを含めて成功ログを表示する
+            Debug.Log($"セーブが完了しました: {SaveFilePath}");
         }
         catch (Exception e) {
-            // 保存に失敗した原因をコンソールに表示する
-            Debug.LogError($"セーブに失敗しました: {e.Message}");
+            // 保存に失敗した原因と保存先を表示する
+            Debug.LogError(
+                $"セーブに失敗しました。\n" +
+                $"保存先: {SaveFilePath}\n" +
+                $"原因: {e}"
+            );
         }
     }
 

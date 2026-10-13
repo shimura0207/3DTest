@@ -6,17 +6,27 @@ using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// メインメニューパート
 /// </summary>
 public class MainMenuPart : PartBase {
 
-    [SerializeField] private Button matching;   // マッチングボタン
-    [SerializeField] private Button option;     // 設定ボタン
-    [SerializeField] private Button gacha;      // ガチャボタン
-    [SerializeField] private Button card;       // カード関連ボタン
+    /// <summary>
+    /// 各種ボタン
+    /// </summary>
+    // マッチング画面遷移ボタン
+    [SerializeField] private Button matching;
+    // 設定画面遷移ボタン
+    [SerializeField] private Button option;
+    // ガチャ画面遷移ボタン
+    [SerializeField] private Button gacha;
+    // カード関連画面遷移ボタン
+    [SerializeField] private Button card;
 
+    // プレイヤー名を表示するテキスト
+    [SerializeField] private TMP_Text playerNameText;
 
     // 選択された遷移先
     private MainMenuSelect selectMenu = MainMenuSelect.None;
@@ -35,12 +45,25 @@ public class MainMenuPart : PartBase {
     /// <returns></returns>
     public override async UniTask Setup() {
         await base.Setup();
+        // 保存済みのプレイヤー名を表示する
+        LoadPlayerName();
         // フェードから開ける
-        await FadeManager.Instance.FadeIn(FadeType.Black,0.5f);
+        await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
         // 選択状態を初期化する
         selectMenu = MainMenuSelect.None;
         // メニューイベントを登録
         RegisterMenuEvent();
+    }
+
+    /// <summary>
+    /// 保存済みのプレイヤー名を読み込んで表示する
+    /// </summary>
+    private void LoadPlayerName() {
+        // セーブデータを読み込む
+        SaveData saveData = SaveManager.Instance.Load();
+
+        // 読み込んだ名前を画面に表示する
+        playerNameText.text = saveData.playerName;
     }
 
     /// <summary>
