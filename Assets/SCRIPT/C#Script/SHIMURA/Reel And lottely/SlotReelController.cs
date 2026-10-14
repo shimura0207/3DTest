@@ -30,7 +30,7 @@ using static grassFlash;
 /// </summary>
 public class SlotReelController : MonoBehaviour {
 
-
+    public static PachisuroPhase Instance { get; private set; }
 
     public bool rush;
     public bool nrush;
@@ -69,7 +69,7 @@ public class SlotReelController : MonoBehaviour {
 
     [SerializeField] private grassFlash glassFlash;
 
-
+    public AudioSource SOUND;
     /// <summary>
     /// レバーON時に抽選された現在の役。
     /// 停止角度を決めるときに使います。
@@ -754,6 +754,44 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.StartCoroutine(glassFlash.FlashChary(Color.white, 5, 0.15f));
                 }
 
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.StrongCherry) {
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Center, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Left, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(GlassPosition.CenterTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
+                    glassFlash.StartCoroutine(glassFlash.FlashStrongChary(Color.black, 5, 0.03f,0.9f));
+                }
+
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Chance) {
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Center, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Left, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(GlassPosition.CenterTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
+                    glassFlash.StartCoroutine(glassFlash.FlashChance(Color.black, 5, 0.03f, 0.9f));
+                }
+
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Watermelon) {
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Center, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.Left, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(GlassPosition.CenterTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+                    glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
+                    glassFlash.StartCoroutine(glassFlash.FlashSUIKA(Color.black, 5, 0.03f, 0.9f));
+                }
 
             }
 
