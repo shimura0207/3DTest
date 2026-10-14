@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb46c0ba9ed6ff4fae381d7fbf5b8b4, type: 3}
   m_Name: ErrorWord
   m_EditorClassIdentifier: 
-  sheets: []
+  sheets:
+  - name: ErrorWord
+    list:
+    - ErrorWord: Fuck

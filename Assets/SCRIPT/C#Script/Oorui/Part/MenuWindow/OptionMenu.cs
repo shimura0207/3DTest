@@ -31,7 +31,7 @@ public class OptionMenu : MenuWindowBase {
         await base.Initialize();
 
         // 現在保存されているプレイヤー名を入力欄に表示する
-        SaveData saveData = SaveManager.Instance.Load();
+        PlayerSaveData saveData = SaveManager.Instance.Load();
         playerNameInputField.text = saveData.playerName;
 
         // ボタンのイベントを登録する
@@ -111,7 +111,7 @@ public class OptionMenu : MenuWindowBase {
         }
 
         // 現在のセーブデータを取得する
-        SaveData saveData = SaveManager.Instance.Load();
+        PlayerSaveData saveData = SaveManager.Instance.Load();
 
         // プレイヤー名だけを更新する
         saveData.playerName = playerName;
