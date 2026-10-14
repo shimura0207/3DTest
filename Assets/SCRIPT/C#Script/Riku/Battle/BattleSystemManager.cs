@@ -5,8 +5,10 @@
 
 using Cysharp.Threading.Tasks;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Transactions;
+using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
@@ -32,6 +34,10 @@ public class BattleSystemManager : MonoBehaviour {
     public BattleState battleState { get; private set; } = BattleState.None;
     // プレイヤーの体力
     public Dictionary<PlayerType, int> playerHP { get; private set; } = null;
+    // プレイヤーのサイズ上限
+    private Dictionary <PlayerType, int> playerSizeLimit = null;
+    // 現在のターン
+    private int currentTurn = -1;
 
     /// <summary>
     /// 初期化処理
@@ -40,6 +46,7 @@ public class BattleSystemManager : MonoBehaviour {
         instance = this;
 
         playerHP = new Dictionary<PlayerType, int>();
+        playerSizeLimit = new Dictionary<PlayerType, int>();
     }
 
     /// <summary>
@@ -124,11 +131,15 @@ public class BattleSystemManager : MonoBehaviour {
         currentPhase = BattlePhase.StartPhase;
         // 対戦中状態に切り替え
         battleState = BattleState.InProgress;
-        // HPの初期化
+        // 現在のターンを1に
+        currentTurn = 1;
+        
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
+            // HPの初期化
             playerHP[i] = PLAYER_HP;
+            // サイズ上限を最小値に
+            playerSizeLimit[i] = SIZE_LIMIT_MIN;
         }
-
         // 手札5枚用意
         for (int i = 0; i < START_HAND_COUNT; i++) {
             DrawCard();
@@ -158,6 +169,17 @@ public class BattleSystemManager : MonoBehaviour {
                 turnPlayer = PlayerType.Self;
                 Debug.Log("自分のターン");
                 break;
+        }
+        // 交代したプレイヤーが先攻プレイヤーならターンを進める
+        if (firstPlayer == turnPlayer) {
+            currentTurn++;
+        }
+        // プレイヤーのサイズ上限を上げる
+        if (playerSizeLimit[turnPlayer] + SIZE_LIMIT_UP >= SIZE_LIMIT_MAX) {
+            currentTurn = SIZE_LIMIT_MAX;
+        }
+        else {
+            playerSizeLimit[turnPlayer] += SIZE_LIMIT_UP;
         }
     }
 
@@ -228,5 +250,23 @@ public class BattleSystemManager : MonoBehaviour {
         CardObjectManager.instance.UnuseCardObject(card);
         // 手札の整列
         CardObjectManager.instance.ArrangeHand(player);
+    }
+
+
+    /// <summary>
+    /// 残りのサイズ取得
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <returns></returns>
+    public int GetRemainingSize(PlayerType player) {
+        var fieldObject = CardObjectManager.instance.fieldObjectList[player];
+        int size = 0;
+        // フィールドの合計サイズ計算
+        foreach (var obj in fieldObject) {
+            if (!obj.Value) continue;
+            size += obj.Value.currentStatus.SIZE;
+        }
+        // サイズ上限から合計サイズを引いた値を返す
+        return playerSizeLimit[player] - size;
     }
 }
