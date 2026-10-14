@@ -48,6 +48,10 @@ public class AreaCardManager : MonoBehaviour {
                 fieldCards = new List<int>(),
                 graveCards = new List<int>()
             };
+            // フィールドは5つ固定なのであらかじめ無効数を入れておく
+            for (int j = 0; j < (int)FieldLane.Max; j++) {
+                outDeckCards[i].fieldCards.Add((int)FieldLane.None);
+            }
         }
     }
 
@@ -57,6 +61,23 @@ public class AreaCardManager : MonoBehaviour {
     /// <param name="setDeck">デッキのIDリスト</param>
     public void SetDeck(List<int> setDeck) {
         deckCards = setDeck;
+    }
+
+    /// <summary>
+    /// デッキシャッフル
+    /// </summary>
+    public void ShuffleDeck() {
+        // Fisher-Yatesシャッフル
+        // リストの上から順にランダムな位置のカードと入れ替えていく
+        int listMax = deckCards.Count;
+        for (int i = 0; i < listMax - 1; i++) {
+            // 順番で選ばれたカード以降の範囲から抽選
+            int randomIndex = Random.Range(i, listMax);
+            // 入れ替え
+            int cardID = deckCards[i];
+            deckCards[i] = deckCards[randomIndex];
+            deckCards[randomIndex] = cardID;
+        }
     }
 
     /// <summary>
@@ -80,10 +101,10 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">自分か相手か</param>
     /// <param name="handNumber">手札の番号</param>
-    /// <param name="fieldNumber">フィールドのレーン番号</param>
-    public void HandToField(PlayerType player, int handNumber, int fieldNumber) {
+    /// <param name="laneNumber">フィールドのレーン番号</param>
+    public void HandToField(PlayerType player, int handNumber, int laneNumber) {
         // 指定されたレーンに指定されたカードを追加
-        outDeckCards[player].fieldCards.Insert(fieldNumber, outDeckCards[player].handCards[handNumber]);
+        outDeckCards[player].fieldCards[laneNumber] = outDeckCards[player].handCards[handNumber];
         // 指定されたカードを手札から削除
         outDeckCards[player].handCards.RemoveAt(handNumber);
     }
@@ -120,6 +141,6 @@ public class AreaCardManager : MonoBehaviour {
     /// <param name="fieldID">フィールドのレーン番号</param>
     public void OutGameToField(PlayerType player, int cardID, int fieldID) {
         // 指定されたレーンに指定されたカードを追加
-        outDeckCards[player].fieldCards.Insert(fieldID, cardID);
+        outDeckCards[player].fieldCards[fieldID] = cardID;
     }
 }
