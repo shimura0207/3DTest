@@ -205,6 +205,7 @@ public class CardObjectManager : MonoBehaviour {
         // 決定された左端の位置から手札の枚数分右にずらしながら配置する
         int handID = 0;
         foreach (var card in useObjectList) {
+            if (!card) continue;
             // 手札IDがないやつは手札じゃないのでスキップ
             if (card.handID < 0) continue;
             // 配置
