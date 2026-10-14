@@ -13,13 +13,15 @@ public class MasterDataManager {
     // 読み込んだマスターデータ
     public static List<List<Entity_CardData.Param>> cardData = null;    // カードデータ
     public static List<List<Entity_RentalDeck.Param>> rentalDeck = null;// デッキデータ
+    public static List<List<Entity_ErrorWord.Param>> errorWord = null;  // 禁止ワード
 
     /// <summary>
     /// すべてのマスターデータを読み込む
     /// </summary>
     public static void LoadAllData() {
-        cardData = Load<Entity_CardData, Entity_CardData.Sheet, Entity_CardData.Param>("CardData");             // カードデータ
+        cardData = Load<Entity_CardData, Entity_CardData.Sheet, Entity_CardData.Param>("CardData");                 // カードデータ
         rentalDeck = Load<Entity_RentalDeck, Entity_RentalDeck.Sheet, Entity_RentalDeck.Param>("DeckDataRental");   // レンタルデッキ
+        errorWord = Load<Entity_ErrorWord, Entity_ErrorWord.Sheet, Entity_ErrorWord.Param>("ErrorWord");            // 禁止ワード
     }
 
     /// <summary>
