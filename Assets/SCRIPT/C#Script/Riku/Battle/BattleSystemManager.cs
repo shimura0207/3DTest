@@ -226,5 +226,7 @@ public class BattleSystemManager : MonoBehaviour {
         AreaCardManager.instance.HandToGrave(player, card.handID);
         // カードオブジェクトを未使用状態に
         CardObjectManager.instance.UnuseCardObject(card);
+        // 手札の整列
+        CardObjectManager.instance.ArrangeHand(player);
     }
 }
