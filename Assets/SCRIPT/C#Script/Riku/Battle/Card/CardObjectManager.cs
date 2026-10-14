@@ -71,6 +71,7 @@ public class CardObjectManager : MonoBehaviour {
         }
 
         // フィールドのカードのコピーリストはあらかじめnullを積んでおく
+        fieldObjectList = new Dictionary<PlayerType, Dictionary<FieldLane, CardObject>>();
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             fieldObjectList[i] = new Dictionary<FieldLane, CardObject>();
             for (FieldLane j = 0; j < FieldLane.Max; j++) {

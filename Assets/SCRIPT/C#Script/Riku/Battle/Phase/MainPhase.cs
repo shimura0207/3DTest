@@ -76,7 +76,7 @@ public class MainPhase : PhaseBase {
                     ray,RAY_RANGE_MAX,fieldLayer) 
                     &&
                     // サイズが上限超過しないか
-                    cardObject.currentStatus.SIZE > remainingSize
+                    cardObject.currentStatus.SIZE <= remainingSize
                     ) {
                     // フィールド上で離したらカードを使用
                     PlayCard(PlayerType.Self);
@@ -87,6 +87,10 @@ public class MainPhase : PhaseBase {
                     catchObject.transform.localPosition = Vector3.zero;
                     // 手札整列
                     CardObjectManager.instance.ArrangeHand(PlayerType.Self);
+
+                    if (cardObject.currentStatus.SIZE > remainingSize) {
+                        Debug.Log("サイズが超過しています");
+                    }
                 }
                 catchObject = null;
                 cardObject = null;
