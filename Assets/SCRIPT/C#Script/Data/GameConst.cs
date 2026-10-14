@@ -14,4 +14,11 @@ public class GameConst {
 
     // 初手札枚数
     public static readonly int START_HAND_COUNT = 5;
+
+    // 最小サイズ上限
+    public static readonly int SIZE_LIMIT_MIN = 2;
+    // 最大サイズ上限
+    public static readonly int SIZE_LIMIT_MAX = 10;
+    // サイズ上限上昇値
+    public static readonly int SIZE_LIMIT_UP = 2;
 }
