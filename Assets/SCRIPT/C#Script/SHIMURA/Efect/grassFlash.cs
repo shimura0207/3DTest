@@ -221,6 +221,32 @@ public class grassFlash : MonoBehaviour {
 
             yield return wait;
         }
+        ResetAllGlass();
+    }
+
+    public IEnumerator FlashSUIKA(
+    Color flashColor,
+    int flashCount = 5,
+    float interval = 0.15f,
+    float opacity = 1f) {
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        for (int i = 0; i < flashCount; i++) {
+            // 上段3か所を同時に点灯。
+            SetGlassColor(GlassPosition.LeftTop, Color.black, 0.9f);
+            SetGlassColor(GlassPosition.Center, Color.black, 0.9f);
+            SetGlassColor(GlassPosition.RightBottom, Color.black, 0.9f);
+
+            yield return wait;
+
+            // 元の色・透明度に戻して消灯。
+            ResetGlass(GlassPosition.LeftTop);
+            ResetGlass(GlassPosition.Center);
+            ResetGlass(GlassPosition.RightBottom);
+
+            yield return wait;
+        }
+        ResetAllGlass();
     }
 
     public IEnumerator FlashChary(
@@ -243,5 +269,92 @@ public class grassFlash : MonoBehaviour {
 
             yield return wait;
         }
+        ResetAllGlass();
+    }
+
+
+    public IEnumerator FlashStrongChary(
+    Color flashColor,
+    int flashCount = 5,
+    float interval = 0.15f,
+    float opacity = 0.9f) {
+
+
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        // 左上から時計回りに進む順番（中央は含めない）。
+        GlassPosition[] positions = {
+        GlassPosition.LeftTop,
+        GlassPosition.CenterTop,
+        GlassPosition.RightTop,
+        GlassPosition.Right,
+        GlassPosition.RightBottom,
+        GlassPosition.CenterBottom,
+        GlassPosition.LeftBottom,
+        GlassPosition.Left
+    };
+
+        // 外周を一周だけ点滅。
+        foreach (GlassPosition position in positions) {
+            // 現在の位置を指定した色・透明度にする。
+            SetGlassColor(position, flashColor, opacity);
+
+            yield return wait;
+
+            // 元に戻してから次の位置へ進む。
+            ResetGlass(position);
+
+            yield return wait;
+        }
+
+        // 一周後、中央を含めた全ガラスを同時に点滅。
+        for (int i = 0; i < flashCount; i++) {
+            SetAllGlassColor(flashColor, opacity);
+
+            yield return wait;
+
+            ResetAllGlass();
+
+            yield return wait;
+        }
+    }
+
+
+
+    public IEnumerator FlashChance(
+    Color flashColor,
+    int flashCount = 6,
+    float interval = 0.03f,
+    float opacity = 0.9f) {
+
+        WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0f, interval));
+
+        ResetAllGlass();
+
+        for (int i = 0; i < flashCount; i++) {
+            // 左列を点灯。
+            SetGlassColor(GlassPosition.LeftTop, flashColor, opacity);
+            SetGlassColor(GlassPosition.Left, flashColor, opacity);
+            SetGlassColor(GlassPosition.LeftBottom, flashColor, opacity);
+
+            yield return wait;
+
+            ResetAllGlass();
+
+            // 右列を点灯。
+            SetGlassColor(GlassPosition.RightTop, flashColor, opacity);
+            SetGlassColor(GlassPosition.Right, flashColor, opacity);
+            SetGlassColor(GlassPosition.RightBottom, flashColor, opacity);
+
+            yield return wait;
+
+            ResetAllGlass();
+        }
+
+        // 最後に全体フラッシュ。
+        SetAllGlassColor(flashColor, opacity);
+        yield return wait;
+
+        ResetAllGlass();
     }
 }
