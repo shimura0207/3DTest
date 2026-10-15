@@ -57,7 +57,8 @@ public class RoomMenu : MenuWindowBase {
     /// </summary>
     public override async UniTask Open() {
         await base.Open();
-
+        // プレイヤーの名前を取得
+        LoadPlayerName();
         // 接続状況によってメニュー表示を切り替える
         ConnectionSwitch();
     }
