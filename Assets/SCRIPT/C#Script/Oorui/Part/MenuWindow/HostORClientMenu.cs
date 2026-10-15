@@ -27,15 +27,14 @@ public class HostORClientMenu : MenuWindowBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-        await UniTask.CompletedTask;
-    }
-
-    public async UniTask Setup() {
         // ボタンの処理登録
         hostButton.onClick.AddListener(OnClickHostButton);
         clientButton.onClick.AddListener(OnClickClientButton);
         canccelButton.onClick.AddListener(OnCanccelButton);
         await UniTask.CompletedTask;
+    }
+
+    public async UniTask Setup() {
     }
 
     /// <summary>

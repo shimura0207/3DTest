@@ -225,9 +225,9 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="card">召喚するカードのオブジェクト</param>
-    public void SummonMonster(PlayerType player, CardObject card) {
+    public async UniTask SummonMonster(PlayerType player, CardObject card) {
         // レーン設置ウィンドウを出す(今後実装予定)
-        FieldLane lane = FieldLane.Lane3; // (仮)
+        FieldLane lane = await MenuWindowManager.Instance.LaneMenuOpen();
         // 手札から指定されたレーンにカードを移動
         AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
         // 指定されたレーンにカードを設置

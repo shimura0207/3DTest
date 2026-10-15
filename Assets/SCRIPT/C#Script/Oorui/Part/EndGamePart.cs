@@ -6,6 +6,8 @@
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// リザルト画面
@@ -14,25 +16,15 @@ public class EndGamePart : PartBase {
     // 自分視点の対戦結果を保持する
     private BattleState battleResult = BattleState.None;
 
-    // リザルト画面の階層パス
-    private const string _MENUWINDOW_ENDGAME = "Prefab/Part/MenuWindow/EndGameMenu";
-
-    // リザルトメニュー
-    private EndGameMenu endGame;
-
     // 選択された遷移先
     private MainMenuSelect selectMenu = MainMenuSelect.EndGame;
+
+    // スタートボタン
+    [SerializeField] private Button endButton;
 
     public override async UniTask Initialize() {
         // 基底側の処理を呼ぶ
         await base.Initialize();
-        // リザルトメニューを取得
-        endGame = MenuWindowManager.instance.Get<EndGameMenu>(_MENUWINDOW_ENDGAME);
-        // リザルトメニューを初期化
-        await endGame.Initialize();
-
-        // リザルトメニューの選択イベントを登録する
-        RegisterMenuEvent();
     }
 
     /// <summary>
@@ -42,21 +34,14 @@ public class EndGamePart : PartBase {
     public override async UniTask Setup() {
         // 基底側の処理を呼ぶ
         await base.Setup();
-    }
-
-    /// <summary>
-    /// メニューイベントを登録する
-    /// </summary>
-    private void RegisterMenuEvent() {
-        // タイトルメニューが選択された時の処理を登録
-        endGame.OnSelected += OnEndGameSelected;
+        endButton.onClick.AddListener(OnEndGameSelected);
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// マッチングメニューが選択された時の処理
     /// </summary>
-    private void OnEndGameSelected(MenuWindowBase menu) {
-
+    private void OnEndGameSelected() {
         // 遷移先をタイトルに設定する
         selectMenu = MainMenuSelect.EndGame;
     }
@@ -65,20 +50,14 @@ public class EndGamePart : PartBase {
         // 選択状態を初期化する
         selectMenu = MainMenuSelect.None;
 
-        // 保存した対戦結果をリザルトメニューに設定する
-        endGame.SetBattleResult(battleResult);
-
-        // リザルトメニューを表示する
-        await endGame.Open();
+        // リザルト結果に応じて変更
+        BattleResult(battleResult);
 
         // メニューが選択されるまで待機する
         while (selectMenu == MainMenuSelect.None) {
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
         }
-
-        // リザルトメニューを閉じる
-        await endGame.Close();
 
         // メインメニュー画面に遷移する
         await PartManager.Instance.TransitionPart(GamePart.MainMenu);
@@ -91,5 +70,24 @@ public class EndGamePart : PartBase {
     public void SetBattleResult(BattleState result) {
         // 受け取った対戦結果を保存する
         battleResult = result;
+    }
+
+    /// <summary>
+    /// 対戦結果を設定する
+    /// </summary>
+    /// <param name="result">対戦結果</param>
+    public void BattleResult(BattleState result) {
+        // 対戦結果に応じて表示内容を切り替える
+        switch (result) {
+            case BattleState.Win:
+                // 勝利画像表示
+                Debug.Log("Win");
+                break;
+
+            case BattleState.Lose:
+                // 敗北画像表示
+                Debug.Log("Lose");
+                break;
+        }
     }
 }
