@@ -12,12 +12,9 @@ using UnityEngine;
 /// セーブファイルに保存するデータをまとめるクラス
 /// </summary>
 [Serializable]
-public class SaveData {
+public class PlayerSaveData {
     // プレイヤー名
     public string playerName = "";
-
-    // 所持カードのID一覧
-    public List<int> ownedCardIDs = new List<int>();
 
     // 所持ジェム
     public int ownedGem = 0;

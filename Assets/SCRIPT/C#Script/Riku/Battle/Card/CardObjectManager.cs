@@ -35,6 +35,9 @@ public class CardObjectManager : MonoBehaviour {
     // 未使用のカードオブジェクトリスト
     private List<CardObject> unuseObjectList = null;
 
+    // フィールドのカードオブジェクトのコピーリスト
+    public Dictionary<PlayerType, Dictionary<FieldLane, CardObject>> fieldObjectList { get; private set; } = null;
+
     // 自身の手札の親オブジェクト
     [SerializeField]
     private Transform selfHandRoot = null;
@@ -65,6 +68,15 @@ public class CardObjectManager : MonoBehaviour {
         for (int i = 0; i < CARD_OBJECT_MAX; i++) {
             unuseObjectList.Add(Instantiate(originObject, unuseObjectRoot));
             unuseObjectList[i].Initialize();
+        }
+
+        // フィールドのカードのコピーリストはあらかじめnullを積んでおく
+        fieldObjectList = new Dictionary<PlayerType, Dictionary<FieldLane, CardObject>>();
+        for (PlayerType i = 0; i < PlayerType.Max; i++) {
+            fieldObjectList[i] = new Dictionary<FieldLane, CardObject>();
+            for (FieldLane j = 0; j < FieldLane.Max; j++) {
+                fieldObjectList[i][j] = null;
+            }
         }
     }
 
@@ -159,10 +171,13 @@ public class CardObjectManager : MonoBehaviour {
     /// <param name="objectID">オブジェクトの識別ID</param>
     /// <param name="setLane">置かれるレーン</param>
     public void MoveToField(PlayerType player, int objectID, FieldLane setLane) {
+        CardObject card = useObjectList[objectID];
         // 手札IDを初期化
-        useObjectList[objectID].SetHandID(-1);
+        card.SetHandID(-1);
+        // フィールドのリストに追加
+        fieldObjectList[player][setLane] = card;
         // 座標を初期化
-        Transform objectTransform = useObjectList[objectID].transform;
+        Transform objectTransform = card.transform;
         objectTransform.localPosition = Vector3.zero;
         // 指定したレーンを親にする
         switch (player) {
@@ -173,6 +188,8 @@ public class CardObjectManager : MonoBehaviour {
                 objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane], false);
                 break;
         }
+        // レーンIDセット
+        card.SetLaneID((int)setLane);
         // 手札の整列
         ArrangeHand(player);
     }
@@ -217,5 +234,15 @@ public class CardObjectManager : MonoBehaviour {
             // 配置位置を一つ右にずらす
             setPos += HAND_CARD_DISTANCE;
         }
+    }
+
+    /// <summary>
+    /// フィールドを離れる時に呼ぶ処理
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="lane"></param>
+    public void LeaveFieldSetup(PlayerType player, FieldLane lane) {
+        fieldObjectList[player][lane].SetLaneID(-1);
+        fieldObjectList[player][lane] = null;
     }
 }

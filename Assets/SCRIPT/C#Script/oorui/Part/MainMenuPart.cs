@@ -60,7 +60,7 @@ public class MainMenuPart : PartBase {
     /// </summary>
     private void LoadPlayerName() {
         // セーブデータを読み込む
-        SaveData saveData = SaveManager.Instance.Load();
+        PlayerSaveData saveData = SaveManager.Instance.Load();
 
         // 読み込んだ名前を画面に表示する
         playerNameText.text = saveData.playerName;

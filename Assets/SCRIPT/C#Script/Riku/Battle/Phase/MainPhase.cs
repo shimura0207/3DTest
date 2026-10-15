@@ -39,10 +39,9 @@ public class MainPhase : PhaseBase {
             int cardLayer = LayerMask.GetMask("CardObject");
             // レイキャストでカードを触れているか判定
             if (Physics.Raycast(
-                ray,
-                out RaycastHit hit,
-                RAY_RANGE_MAX,
-                cardLayer)) {
+                ray, out RaycastHit hit,
+                RAY_RANGE_MAX, cardLayer)
+                ) {
                 if (!hit.collider) return;
                 // 触れているオブジェクトを保存
                 catchObject = hit.collider.gameObject;
@@ -70,11 +69,15 @@ public class MainPhase : PhaseBase {
             if (Input.GetMouseButtonUp(0)) {
                 // フィールドレイヤー取得
                 int fieldLayer = LayerMask.GetMask("Field");
+                // 残りのサイズ取得
+                int remainingSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
                 // フィールドとのレイキャスト
                 if (Physics.Raycast(
-                    ray,
-                    RAY_RANGE_MAX,
-                    fieldLayer)) {
+                    ray,RAY_RANGE_MAX,fieldLayer) 
+                    &&
+                    // サイズが上限超過しないか
+                    cardObject.currentStatus.SIZE <= remainingSize
+                    ) {
                     // フィールド上で離したらカードを使用
                     PlayCard(PlayerType.Self);
                 }
@@ -84,6 +87,10 @@ public class MainPhase : PhaseBase {
                     catchObject.transform.localPosition = Vector3.zero;
                     // 手札整列
                     CardObjectManager.instance.ArrangeHand(PlayerType.Self);
+
+                    if (cardObject.currentStatus.SIZE > remainingSize) {
+                        Debug.Log("サイズが超過しています");
+                    }
                 }
                 catchObject = null;
                 cardObject = null;
