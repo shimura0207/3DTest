@@ -269,4 +269,26 @@ public class BattleSystemManager : MonoBehaviour {
         // サイズ上限から合計サイズを引いた値を返す
         return playerSizeLimit[player] - size;
     }
+
+    /// <summary>
+    /// パチスロフェイズへ以降(メインフェイズのみ有効)
+    /// </summary>
+    public void GoPachisuro() {
+        if (currentPhase != BattlePhase.MainPhase) return;
+        // メインフェイズを次のフェイズへ
+        phaseList[(int)currentPhase].NextPhase();
+    }
+
+    /// <summary>
+    /// ターンエンド(メインフェイズのみ有効)
+    /// </summary>
+    public void TurnEnd() {
+        if (currentPhase != BattlePhase.MainPhase) return;
+        // フェイズの片付け
+        phaseList[(int)currentPhase].Teardown();
+        // フェイズをエンドフェイズに
+        currentPhase = BattlePhase.EndPhase;
+        // フェイズの準備
+        phaseList[(int)currentPhase].Setup();
+    }
 }

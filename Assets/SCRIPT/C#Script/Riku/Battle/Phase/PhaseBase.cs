@@ -43,4 +43,11 @@ public class PhaseBase : MonoBehaviour{
     public virtual void Teardown() {
         nextPhase = false;
     }
+
+    /// <summary>
+    /// 次のフェイズへ進む
+    /// </summary>
+    public void NextPhase() {
+        nextPhase = true;
+    }
 }
