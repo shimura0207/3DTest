@@ -17,6 +17,8 @@ public class CardObject : MonoBehaviour {
     public int cardID { get; private set; } = -1;
     // 手札ID(手札以外の場所にある場合は使わない)
     public int handID { get; private set; } = -1;
+    // レーンID(フィールド以外の場所にある場合は使わない)
+    public int laneID { get; private set;  } = -1;
 
     // カードのステータス
     public struct CardStates {
@@ -79,6 +81,7 @@ public class CardObject : MonoBehaviour {
         objectID = -1;
         cardID = -1;
         handID = -1;
+        laneID = -1;
         defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         suportRole = CardKoyaku.None;
@@ -92,5 +95,13 @@ public class CardObject : MonoBehaviour {
     /// <param name="setID">セットするID</param>
     public void SetHandID(int setID) {
         handID = setID;
+    }
+
+    /// <summary>
+    /// レーンIDのセット
+    /// </summary>
+    /// <param name="setID">セットするID</param>
+    public void SetLaneID(int setID) {
+        laneID = setID;
     }
 }
