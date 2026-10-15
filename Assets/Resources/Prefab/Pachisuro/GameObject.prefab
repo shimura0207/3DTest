@@ -1671,6 +1671,7 @@ GameObject:
   - component: {fileID: 1015615785568623418}
   - component: {fileID: 847780843071971175}
   - component: {fileID: 1256887780118205657}
+  - component: {fileID: 6405369387557176152}
   m_Layer: 5
   m_Name: NextPhaseButton
   m_TagString: Untagged
@@ -1762,6 +1763,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &6405369387557176152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065162597329013422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11defae2783a6964e8f411d75f7deb52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1127477066377607914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3206,7 +3219,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5365911776826332307}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6405369387557176152}
+        m_TargetAssemblyTypeName: NextPhaseButton, Assembly-CSharp
+        m_MethodName: TURNEND
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2381230418047662502
 GameObject:
   m_ObjectHideFlags: 0
@@ -7916,7 +7941,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3173019148773327881}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6405369387557176152}
+        m_TargetAssemblyTypeName: NextPhaseButton, Assembly-CSharp
+        m_MethodName: PACHISUROGO
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5538426461416840734
 GameObject:
   m_ObjectHideFlags: 0
