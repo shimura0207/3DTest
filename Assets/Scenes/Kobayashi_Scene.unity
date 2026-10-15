@@ -285,9 +285,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52cafff8ede41a445944ab28b6ba910a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkManager: {fileID: 0}
   transport: {fileID: 6919015188187648317}
+  applicationKey: RG_LAN_V2
   matchingPort: 9001
   gamePort: 7777
+  retryInterval: 1
+  searchTimeout: 60
+  connectionTimeout: 20
+  onMatchConnected:
+    m_PersistentCalls:
+      m_Calls: []
+  onMatchFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  verboseLog: 1
+  state: 0
 --- !u!4 &622903042
 Transform:
   m_ObjectHideFlags: 0
@@ -463,6 +476,22 @@ PrefabInstance:
     - target: {fileID: 6421186391582525818, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2039481614
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670134122454707709, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
+      propertyPath: m_text
+      value: "\u3042\u3042\u3042"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7670134122454707709, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 7059bdd2d803bf642b505bed59009b3d, type: 2}
+    - target: {fileID: 7670134122454707709, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5188951547334976472, guid: 7059bdd2d803bf642b505bed59009b3d, type: 2}
+    - target: {fileID: 7670134122454707709, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8881840441784902945, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
       propertyPath: m_Name
