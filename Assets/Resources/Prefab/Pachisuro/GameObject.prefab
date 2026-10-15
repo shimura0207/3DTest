@@ -3222,7 +3222,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6405369387557176152}
         m_TargetAssemblyTypeName: NextPhaseButton, Assembly-CSharp
-        m_MethodName: TURNEND
+        m_MethodName: OnClickTURNEND
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7944,7 +7944,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6405369387557176152}
         m_TargetAssemblyTypeName: NextPhaseButton, Assembly-CSharp
-        m_MethodName: PACHISUROGO
+        m_MethodName: OnClickPACHISUROGO
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
