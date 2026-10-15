@@ -245,4 +245,57 @@ public class CardObjectManager : MonoBehaviour {
         fieldObjectList[player][lane].SetLaneID(-1);
         fieldObjectList[player][lane] = null;
     }
+
+    /// <summary>
+    /// 指定したものと同じレーンの番号を取得(自身のレーン)
+    /// </summary>
+    /// <param name="getTransform"></param>
+    /// <returns></returns>
+    public FieldLane GetObjectLane(Transform getTransform) {
+        // 同じレーンを走査
+        for (FieldLane i = 0; i < FieldLane.Max; i++) {
+            if (selfFieldLaneRoot[(int)i] != getTransform) continue;
+            return i;
+        }
+        return FieldLane.None;
+    }
+
+    /// <summary>
+    /// レーン交換
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="laneA"></param>
+    /// <param name="laneB"></param>
+    public void LaneChange(PlayerType player, FieldLane laneA, FieldLane laneB) {
+        CardObject cardA = fieldObjectList[player][laneA];
+        CardObject cardB = fieldObjectList[player][laneB];
+        // 座標を初期化
+        if (cardA)
+            cardA.transform.localPosition = Vector3.zero;
+        if (cardB)
+            cardB.transform.localPosition = Vector3.zero;
+        // レーンの親を交換
+        switch (player) {
+            case PlayerType.Self:
+                if (cardA)
+                    cardA.transform.SetParent(selfFieldLaneRoot[(int)laneB], false);
+                if (cardB)
+                    cardB.transform.SetParent(opponentFieldLaneRoot[(int)laneA], false);
+                break;
+            case PlayerType.Opponent:
+                if (cardA)
+                    cardA.transform.SetParent(selfFieldLaneRoot[(int)laneB], false);
+                if (cardB)
+                    cardB.transform.SetParent(opponentFieldLaneRoot[(int)laneA], false);
+                break;
+        }
+        // フィールドのリストを交換
+        fieldObjectList[player][laneA] = cardB;
+        fieldObjectList[player][laneB] = cardA;
+        // レーンIDを交換
+        if (cardA)
+            cardA.SetLaneID((int)laneB);
+        if (cardB)
+            cardB.SetLaneID((int)laneA);
+    }
 }

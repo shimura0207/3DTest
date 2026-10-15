@@ -11,6 +11,7 @@ using Unity.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// メインフェイズ
@@ -20,6 +21,10 @@ public class MainPhase : PhaseBase {
     private GameObject catchObject = null;
     // オブジェクトのクラス
     private CardObject cardObject = null;
+    // 掴んだ時の位置
+    private Vector3 catchStartPos = Vector3.zero;
+    // 座標の初期化フラグ
+    private bool resetPos = false;
 
     // レイキャストの最大距離
     private const float RAY_RANGE_MAX = 10.0f;
@@ -35,35 +40,14 @@ public class MainPhase : PhaseBase {
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         // 左クリックでカードを掴む
         if (Input.GetMouseButtonDown(0)) {
-            // カードオブジェクトレイヤー取得
-            int cardLayer = LayerMask.GetMask("CardObject");
-            // レイキャストでカードを触れているか判定
-            if (Physics.Raycast(
-                ray, out RaycastHit hit,
-                RAY_RANGE_MAX, cardLayer)
-                ) {
-                if (!hit.collider) return;
-                // 触れているオブジェクトを保存
-                catchObject = hit.collider.gameObject;
-                // オブジェクトのクラス取得
-                cardObject = catchObject.GetComponent<CardObject>();
-            }
+            // 掴む
+            CardCatch(ray);
         }
 
         // 掴んでいる時の処理
         if (catchObject) {
             // 掴んでいるオブジェクトをマウスに追従
-            // カードのある位置にXY平面の仮想板を作る
-            Plane plane = new Plane(
-                Vector3.forward,
-                catchObject.transform.position);
-            // 仮想板とレイの判定
-            if (plane.Raycast(ray, out float distance)) {
-                // 衝突した位置を取得
-                Vector3 target = ray.GetPoint(distance);
-                // カードの位置を変更
-                catchObject.transform.position = target;
-            }
+            CardChaseMouse(ray);
 
             // 掴んでいるオブジェクトを離す
             if (Input.GetMouseButtonUp(0)) {
@@ -73,27 +57,53 @@ public class MainPhase : PhaseBase {
                 int remainingSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
                 // フィールドとのレイキャスト
                 if (Physics.Raycast(
-                    ray,RAY_RANGE_MAX,fieldLayer) 
-                    &&
-                    // サイズが上限超過しないか
-                    cardObject.currentStatus.SIZE <= remainingSize
-                    ) {
-                    // フィールド上で離したらカードを使用
-                    PlayCard(PlayerType.Self);
-                }
-                // フィールド外で離したら手札の位置に戻る
-                else {
-                    // 座標を初期化
-                    catchObject.transform.localPosition = Vector3.zero;
-                    // 手札整列
-                    CardObjectManager.instance.ArrangeHand(PlayerType.Self);
+                    ray,RAY_RANGE_MAX,fieldLayer)) {
 
-                    if (cardObject.currentStatus.SIZE > remainingSize) {
-                        Debug.Log("サイズが超過しています");
+                    // カードがレーン上のものかどうか判定
+                    if (cardObject.laneID > -1) {
+                        // レーンレイヤー取得
+                        int laneLayer = LayerMask.GetMask("Lane");
+                        // レーンのレイキャスト
+                        if (Physics.Raycast(
+                        ray, out RaycastHit hit,
+                        RAY_RANGE_MAX, laneLayer)) {
+                            // レーン番号の取得
+                            FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
+                            // レーンの位置変更
+                            BattleSystemManager.instance.LaneChange(PlayerType.Self, (FieldLane)cardObject.laneID, lane);
+                        }
+                        else {
+                            resetPos = true;
+                        }
+                    }
+                    // カードが手札のものだった場合の処理
+                    else if (cardObject.handID > -1){
+                        // サイズが上限超過しないか
+                        if (cardObject.currentStatus.SIZE <= remainingSize) {
+                            // カードを使用
+                            UniTask task = PlayCard(PlayerType.Self);
+                        }
+                        else {
+                            resetPos = true;
+                            Debug.Log("サイズが超過しています");
+                        }
                     }
                 }
+                // フィールド外で離したら元の位置に戻る
+                else {
+                    resetPos = true;
+                }
+
+                // 座標を初期化
+                if (resetPos) {
+                    catchObject.transform.position = catchStartPos;
+                    resetPos = false;
+                }
+
+                // 掴んだ時の情報をリセット
                 catchObject = null;
                 cardObject = null;
+                catchStartPos = Vector3.zero;
             }
         }
         nextPhase = Input.GetKeyDown(KeyCode.Space);
@@ -116,12 +126,12 @@ public class MainPhase : PhaseBase {
     /// カードの使用
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
-    private void PlayCard(PlayerType player) {
+    private async UniTask PlayCard(PlayerType player) {
         if (!cardObject) return;
         switch (cardObject.cardType) {
             case CardType.Monster:
                 // モンスター召喚
-                BattleSystemManager.instance.SummonMonster(player, cardObject);
+                await BattleSystemManager.instance.SummonMonster(player, cardObject);
                 Debug.Log("モンスター召喚！！");
                 break;
             case CardType.Spell:
@@ -129,6 +139,46 @@ public class MainPhase : PhaseBase {
                 BattleSystemManager.instance.CastSpell(player, cardObject);
                 Debug.Log("スペル発動！！");
                 break;
+        }
+    }
+
+    /// <summary>
+    /// カードを掴む
+    /// </summary>
+    /// <param name="ray"></param>
+    private void CardCatch(Ray ray) {
+        // カードオブジェクトレイヤー取得
+        int cardLayer = LayerMask.GetMask("CardObject");
+        // レイキャストでカードを触れているか判定
+        if (Physics.Raycast(
+            ray, out RaycastHit hit,
+            RAY_RANGE_MAX, cardLayer)
+            ) {
+            if (!hit.collider) return;
+            // 触れているオブジェクトを保存
+            catchObject = hit.collider.gameObject;
+            // オブジェクトのクラス取得
+            cardObject = catchObject.GetComponent<CardObject>();
+            // 位置を保存
+            catchStartPos = catchObject.transform.position;
+        }
+    }
+
+    /// <summary>
+    /// カードがマウスを追う
+    /// </summary>
+    /// <param name="ray"></param>
+    private void CardChaseMouse(Ray ray) {
+        // カードのある位置にXY平面の仮想板を作る
+        Plane plane = new Plane(
+            Vector3.forward,
+            catchObject.transform.position);
+        // 仮想板とレイの判定
+        if (plane.Raycast(ray, out float distance)) {
+            // 衝突した位置を取得
+            Vector3 target = ray.GetPoint(distance);
+            // カードの位置を変更
+            catchObject.transform.position = target;
         }
     }
 }

@@ -138,7 +138,8 @@ public class BattleSystemManager : MonoBehaviour {
             // HPの初期化
             playerHP[i] = PLAYER_HP;
             // サイズ上限を最小値に
-            playerSizeLimit[i] = SIZE_LIMIT_MIN;
+            //playerSizeLimit[i] = SIZE_LIMIT_MIN;
+            playerSizeLimit[i] = 10;// デバッグ用仮
         }
         // 手札5枚用意
         for (int i = 0; i < START_HAND_COUNT; i++) {
@@ -290,5 +291,18 @@ public class BattleSystemManager : MonoBehaviour {
         currentPhase = BattlePhase.EndPhase;
         // フェイズの準備
         phaseList[(int)currentPhase].Setup();
+    }
+
+    /// <summary>
+    /// レーン交換
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="laneA"></param>
+    /// <param name="laneB"></param>
+    public void LaneChange(PlayerType player, FieldLane laneA, FieldLane laneB) {
+        // IDリストを交換
+        AreaCardManager.instance.LaneChange(player, (int)laneA, (int)laneB);
+        // オブジェクトを交換
+        CardObjectManager.instance.LaneChange(player, laneA, laneB);
     }
 }
