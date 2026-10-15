@@ -66,9 +66,9 @@ public class CardObject : MonoBehaviour {
         // IDからステータスを取得
         var data = CardDataMasterUtility.GetCardMaster(cardID);
         // データから各情報を保存
-        defaultStatus = new CardStates() { HP = data.hp, ATK = data.atk, SIZE = data.size };
+        defaultStatus = new CardStates() { HP = data.HP, ATK = data.ATK, SIZE = data.SIZE };
         currentStatus = defaultStatus;
-        suportRole = (CardKoyaku)data.KoyakuID;
+        suportRole = (CardKoyaku)data.suportRoleID;
         cardType = (CardType)data.Type;
         // IDからイラストを取得
         spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
