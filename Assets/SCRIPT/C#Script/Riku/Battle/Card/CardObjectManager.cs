@@ -171,12 +171,13 @@ public class CardObjectManager : MonoBehaviour {
     /// <param name="objectID">オブジェクトの識別ID</param>
     /// <param name="setLane">置かれるレーン</param>
     public void MoveToField(PlayerType player, int objectID, FieldLane setLane) {
+        CardObject card = useObjectList[objectID];
         // 手札IDを初期化
-        useObjectList[objectID].SetHandID(-1);
+        card.SetHandID(-1);
         // フィールドのリストに追加
-        fieldObjectList[player][setLane] = useObjectList[objectID];
+        fieldObjectList[player][setLane] = card;
         // 座標を初期化
-        Transform objectTransform = useObjectList[objectID].transform;
+        Transform objectTransform = card.transform;
         objectTransform.localPosition = Vector3.zero;
         // 指定したレーンを親にする
         switch (player) {
@@ -187,6 +188,8 @@ public class CardObjectManager : MonoBehaviour {
                 objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane], false);
                 break;
         }
+        // レーンIDセット
+        card.SetLaneID((int)setLane);
         // 手札の整列
         ArrangeHand(player);
     }
@@ -239,6 +242,7 @@ public class CardObjectManager : MonoBehaviour {
     /// <param name="player"></param>
     /// <param name="lane"></param>
     public void LeaveFieldSetup(PlayerType player, FieldLane lane) {
+        fieldObjectList[player][lane].SetLaneID(-1);
         fieldObjectList[player][lane] = null;
     }
 }
