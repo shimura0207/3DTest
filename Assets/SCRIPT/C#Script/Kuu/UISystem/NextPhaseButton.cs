@@ -19,14 +19,14 @@ public class NextPhaseButton : MonoBehaviour
     /// パチスロフェイズ移行処理呼び出し
     /// </summary>
     public void OnClickPACHISUROGO() {
-        PACHISUROGO();
+        UniTask task = PACHISUROGO();
     }
 
     /// <summary>
     /// エンドフェイズ移行処理呼び出し
     /// </summary>
     public void OnClickTURNEND() {
-        TURNEND();
+        UniTask task = TURNEND();
     }
 
     /// <summary>
