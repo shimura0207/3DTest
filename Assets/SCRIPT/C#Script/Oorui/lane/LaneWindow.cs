@@ -29,6 +29,11 @@ public class LaneWindow : MenuWindowBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
+        Lane1Button.onClick.AddListener(OnClickLane1Button);
+        Lane2Button.onClick.AddListener(OnClickLane2Button);
+        Lane3Button.onClick.AddListener(OnClickLane3Button);
+        Lane4Button.onClick.AddListener(OnClickLane4Button);
+        Lane5Button.onClick.AddListener(OnClickLane5Button);
     }
 
     /// <summary>
@@ -36,11 +41,6 @@ public class LaneWindow : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public async UniTask Setup() {
-        Lane1Button.onClick.AddListener(OnClickLane1Button);
-        Lane2Button.onClick.AddListener(OnClickLane2Button);
-        Lane3Button.onClick.AddListener(OnClickLane3Button);
-        Lane4Button.onClick.AddListener(OnClickLane4Button);
-        Lane5Button.onClick.AddListener(OnClickLane5Button);
 
         await UniTask.CompletedTask;
     }
