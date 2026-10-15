@@ -752,6 +752,7 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(GlassPosition.CenterTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashChary(Color.white, 5, 0.15f));
+                    AudioManager.Instance.PlaySE("チェリー");
                 }
 
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.StrongCherry) {
@@ -765,6 +766,7 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashStrongChary(Color.black, 5, 0.03f,0.9f));
+                    AudioManager.Instance.PlaySE("チェリー");
                 }
 
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Chance) {
@@ -778,6 +780,7 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashChance(Color.black, 5, 0.03f, 0.9f));
+                    AudioManager.Instance.PlaySE("チャンス");
                 }
 
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Watermelon) {
