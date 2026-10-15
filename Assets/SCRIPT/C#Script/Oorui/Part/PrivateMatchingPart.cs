@@ -13,21 +13,12 @@ public class PrivateMatchingPart : PartBase {
     // 接続した時の状態
     private ConnectionState conect = ConnectionState.None;
 
-    private const string _MENUWINDOW_HOST = "Prefab/Part/MenuWindow/HostMenu";
-    // ホストメニュー
-    private HostMenu hostMenu = null;
-
     /// <summary>
     /// 初期化処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-        // ホストメニューを取得
-        hostMenu = MenuWindowManager.instance.Get<HostMenu>(_MENUWINDOW_HOST);
-
-        // メニューを初期化
-        await hostMenu.Initialize();
     }
 
     /// <summary>
@@ -48,7 +39,7 @@ public class PrivateMatchingPart : PartBase {
 
         // 接続状態によって処理を変える
         if (conect == ConnectionState.Host) {
-            await hostMenu.Open();
+            await MenuWindowManager.Instance.Open<HostMenu>();
             // 処理を抜けたら遷移
             //await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
         }

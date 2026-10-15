@@ -19,15 +19,8 @@ public class OptionPart : PartBase {
 
     // 選択された遷移先
     private OptionMenuSelect selectMenu = OptionMenuSelect.None;
-
-    // 確認画面のメニュー
-    private GenericCheckMenu menu;
     // 確認画面のメッセージ
     private const string _GAME_END_MESSAGE = "ゲームを終了しますか？";
-
-    // 設定メニュー
-    private OptionMenu optionMenu;
-
 
     // ゲーム終了ボタン
     [SerializeField] private Button gameEnd;
@@ -46,13 +39,6 @@ public class OptionPart : PartBase {
     public override async UniTask Setup() {
         await base.Setup();
         Debug.Log("設定画面表示中");
-        // 確認画面の取得
-        menu = MenuWindowManager.instance.Get<GenericCheckMenu>("Prefab/Part/MenuWindow/GenericCheckMenu");
-        optionMenu = MenuWindowManager.instance.Get<OptionMenu>("Prefab/Part/MenuWindow/OptionMenu");
-        // メニューの初期化
-        await menu.Initialize();
-        await menu.Setup();
-        await optionMenu.Initialize();
 
         // 選択状態を初期化する
         selectMenu = OptionMenuSelect.None;
@@ -85,7 +71,8 @@ public class OptionPart : PartBase {
     public override async UniTask Execute() {
         // ボタンが選択されるまで繰り返し待機
         while (true) {
-            await optionMenu.Open();
+            // 設定メニューを開く
+            await MenuWindowManager.Instance.Open<OptionMenu>();
             // いずれかのボタンが押されるまで待機
             await UniTask.WaitUntil(() => selectMenu != OptionMenuSelect.None);
 
@@ -93,7 +80,7 @@ public class OptionPart : PartBase {
             switch (selectMenu) {
                 case OptionMenuSelect.GameEnd: {
                         // ゲーム終了の確認画面を表示
-                        bool isGameEnd = await menu.Open(_GAME_END_MESSAGE);
+                        bool isGameEnd = await MenuWindowManager.Instance.Confirm(_GAME_END_MESSAGE);
 
                         // 「はい」が選択された場合
                         if (isGameEnd) {
@@ -128,6 +115,7 @@ public class OptionPart : PartBase {
         await base.Teardown();
         // 選択状態を初期化する
         selectMenu = OptionMenuSelect.None;
-        await optionMenu.Close();
+        // 設定メニューを閉じる
+        await MenuWindowManager.Instance.Close<OptionMenu>();
     }
 }

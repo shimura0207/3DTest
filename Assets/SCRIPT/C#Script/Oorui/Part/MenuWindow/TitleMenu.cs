@@ -6,10 +6,14 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 /// <summary>
 /// タイトルで表示するメニューウィンドウ
 /// </summary>
 public class TitleMenu : MenuWindowBase {
+
+    // スタートボタン
+    [SerializeField] private Button start;
 
     /// <summary>
     /// 初期化処理　

@@ -8,8 +8,7 @@ using UnityEngine;
 /// <summary>
 /// PartManagerが使用する設定データ
 /// </summary>
-[CreateAssetMenu(
-    fileName = "PartManagerConfig", menuName = "Game/PartManagerConfig")]
+[CreateAssetMenu(fileName = "PartManagerConfig", menuName = "Game/PartManagerConfig")]
 public class PartManagerConfig : ScriptableObject {
 
     /// <summary>

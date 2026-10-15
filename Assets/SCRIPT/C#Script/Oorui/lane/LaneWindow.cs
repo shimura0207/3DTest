@@ -49,16 +49,19 @@ public class LaneWindow : MenuWindowBase {
     /// 押された位置を返す
     /// </summary>
     /// <returns></returns>
-    public async UniTask<FieldLane> Open() {
+    public async UniTask<FieldLane> OpenAndWaitForSelection() {
         // ボタン選択結果を受け取るための待機処理を作成
         completionSource = new UniTaskCompletionSource<FieldLane>();
-        // ウィンドウを表示
+
+        // 基底クラスの処理でウィンドウを表示
         await base.Open();
-        // 受け取った結果を変数に入れる
+
+        // ボタンが押されるまで待機
         FieldLane result = await completionSource.Task;
-        // ウィンドウを閉じる
-        await Close();
-        // 返すy
+
+        // 選択後にウィンドウを閉じる
+        await base.Close();
+
         return result;
     }
 

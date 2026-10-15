@@ -31,18 +31,10 @@ public class GenericCheckMenu : MenuWindowBase {
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-    }
-
-    /// <summary>
-    /// 準備処理
-    /// </summary>
-    /// <returns></returns>
-    public async UniTask Setup() {
         // いいえボタンが押された時の処理を登録
         noButton.onClick.AddListener(OnClickNoButton);
         // はいボタンが押された時
         yesButton.onClick.AddListener(OnClickYesButton);
-        await UniTask.CompletedTask;
     }
 
     /// <summary>

@@ -30,12 +30,6 @@ public class MatchingPart : PartBase {
     // Inspectorからメニューに戻るボタンを設定する
     [SerializeField] private Button returnButton;
 
-    // メニュー
-    private const string _HOSTORCLIENT_MENU = "Prefab/Part/MenuWindow/HostORClientMenu";
-    private const string _CLIENT_CONECTION_MENU = "Prefab/Part/MenuWindow/ClientConectionMenu";
-    private HostORClientMenu hostORClientMenu;
-    private ClientConectionMenu clientConectionMenu;
-
     // 接続状況
     private ConnectionState conection = ConnectionState.None;
     /// <summary>
@@ -51,16 +45,6 @@ public class MatchingPart : PartBase {
         Debug.Log("マッチング画面表示中");
         // 接続状況の初期化
         conection = ConnectionState.None;
-
-
-        // メニューの取得
-        hostORClientMenu = MenuWindowManager.instance.Get<HostORClientMenu>(_HOSTORCLIENT_MENU);
-        clientConectionMenu = MenuWindowManager.instance.Get<ClientConectionMenu>(_CLIENT_CONECTION_MENU);
-        // メニューの初期化
-        await hostORClientMenu.Initialize();
-        await hostORClientMenu.Setup();
-        await clientConectionMenu.Initialize();
-        await clientConectionMenu.Setup();
 
         // ランダムボタンが押された時の処理を登録する
         randomButton.onClick.AddListener(OnClickRandomButton);
@@ -100,7 +84,7 @@ public class MatchingPart : PartBase {
             if (isPrivateMatch) {
                 // ホストまたはクライアントを選択するメニューを開く
                 Debug.Log("プライベートマッチを選択");
-                conection = await hostORClientMenu.Open(conection);
+                conection = await MenuWindowManager.Instance.ConnectMenuOpen(conection);
 
                 // キャンセルされた場合
                 if (conection == ConnectionState.None) {
@@ -115,11 +99,12 @@ public class MatchingPart : PartBase {
                 }
                 // クライアントで接続された場合
                 else if (conection == ConnectionState.Client) {
-                    // クライアント接続の確認メニューを開く
-                    await clientConectionMenu.Open();
+                    // クライアント接続の確認画面を表示し、選択結果を取得
+                    bool isAccepted = await MenuWindowManager.Instance.ClientConnectionConfirm();
 
                     // 「いいえ」が選択された場合
-                    if (!clientConectionMenu.IsAccepted) {
+                    if (!isAccepted) {
+
                         // 接続状態を初期化
                         conection = ConnectionState.None;
 
