@@ -27,7 +27,7 @@ public class ScriptableObjectManager : SystemObject {
     /// <returns></returns>
     public override async UniTask Initialize() {
         instance = this;
-
+        await UniTask.CompletedTask;
     }
 
 
