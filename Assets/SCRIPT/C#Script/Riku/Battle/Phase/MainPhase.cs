@@ -93,7 +93,7 @@ public class MainPhase : PhaseBase {
                 catchStartPos = Vector3.zero;
             }
         }
-        nextPhase = Input.GetKeyDown(KeyCode.Space);
+        //nextPhase = Input.GetKeyDown(KeyCode.Space);
         await UniTask.CompletedTask;
     }
 

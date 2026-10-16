@@ -14,12 +14,19 @@ public class PachisuroPhase :PhaseBase
 
     public static PachisuroPhase Instance { get; private set; }
 
+    private readonly Vector3 CAMERA_POSITION = new Vector3(0, 1.16f, -1.27f);
+    private readonly Vector3 CAMERA_EULER_ANGLES = new Vector3(3.0f, 0.0f, 0.0f);
+
     public override void Setup() {
         SlotReelController slot; //呼ぶスクリプトにあだなつける
         GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
         slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
         
         slot.SOUND.Play();
+
+        // カメラを液晶の方に寄せる
+        Camera.main.transform.position = CAMERA_POSITION;
+        Camera.main.transform.eulerAngles = CAMERA_EULER_ANGLES;
 
         base.Setup();
     }
