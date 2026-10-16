@@ -142,7 +142,7 @@ public class SlotRoleDrawer
             case PachisuroSymbolKoyakuEnum.WeakCherry:
                 return "弱チェリー";
 
-            case PachisuroSymbolKoyakuEnum.Watermelon:
+            case PachisuroSymbolKoyakuEnum.Suika:
                 return "スイカ";
 
             case PachisuroSymbolKoyakuEnum.Chance:

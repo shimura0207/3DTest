@@ -170,7 +170,7 @@ public class MainPhase : PhaseBase {
     }
 
     /// <summary>
-    /// レイヤー交換
+    /// レーン交換
     /// </summary>
     /// <param name="ray"></param>
     private bool LaneChange(Ray ray) {
