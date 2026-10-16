@@ -280,11 +280,11 @@ public class CardObjectManager : MonoBehaviour {
                 if (cardA)
                     cardA.transform.SetParent(selfFieldLaneRoot[(int)laneB], false);
                 if (cardB)
-                    cardB.transform.SetParent(opponentFieldLaneRoot[(int)laneA], false);
+                    cardB.transform.SetParent(selfFieldLaneRoot[(int)laneA], false);
                 break;
             case PlayerType.Opponent:
                 if (cardA)
-                    cardA.transform.SetParent(selfFieldLaneRoot[(int)laneB], false);
+                    cardA.transform.SetParent(opponentFieldLaneRoot[(int)laneB], false);
                 if (cardB)
                     cardB.transform.SetParent(opponentFieldLaneRoot[(int)laneA], false);
                 break;

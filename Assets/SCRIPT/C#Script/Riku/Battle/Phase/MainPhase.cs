@@ -58,23 +58,10 @@ public class MainPhase : PhaseBase {
                 // フィールドとのレイキャスト
                 if (Physics.Raycast(
                     ray,RAY_RANGE_MAX,fieldLayer)) {
-
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
-                        // レーンレイヤー取得
-                        int laneLayer = LayerMask.GetMask("Lane");
-                        // レーンのレイキャスト
-                        if (Physics.Raycast(
-                        ray, out RaycastHit hit,
-                        RAY_RANGE_MAX, laneLayer)) {
-                            // レーン番号の取得
-                            FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
-                            // レーンの位置変更
-                            BattleSystemManager.instance.LaneChange(PlayerType.Self, (FieldLane)cardObject.laneID, lane);
-                        }
-                        else {
-                            resetPos = true;
-                        }
+                        // レーン交換
+                        if (!LaneChange(ray)) resetPos = true;
                     }
                     // カードが手札のものだった場合の処理
                     else if (cardObject.handID > -1){
@@ -180,5 +167,25 @@ public class MainPhase : PhaseBase {
             // カードの位置を変更
             catchObject.transform.position = target;
         }
+    }
+
+    /// <summary>
+    /// レイヤー交換
+    /// </summary>
+    /// <param name="ray"></param>
+    private bool LaneChange(Ray ray) {
+        // レーンレイヤー取得
+        int laneLayer = LayerMask.GetMask("Lane");
+        // レーンのレイキャスト
+        if (Physics.Raycast(
+        ray, out RaycastHit hit,
+        RAY_RANGE_MAX, laneLayer)) {
+            // レーン番号の取得
+            FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
+            // レーンの位置変更
+            BattleSystemManager.instance.LaneChange(PlayerType.Self, (FieldLane)cardObject.laneID, lane);
+            return true;
+        }
+        return false;
     }
 }
