@@ -81,7 +81,6 @@ public class RoomMenu : MenuWindowBase {
                 break;
 
             case ConnectionState.Client:
-                Debug.Log("クライアント用ルーム画面を表示");
                 break;
 
             default:

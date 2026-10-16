@@ -34,8 +34,6 @@ public class HostORClientMenu : MenuWindowBase {
         await UniTask.CompletedTask;
     }
 
-    public async UniTask Setup() {
-    }
 
     /// <summary>
     /// ウィンドウ表示時の処理
