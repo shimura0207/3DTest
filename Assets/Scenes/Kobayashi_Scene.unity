@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52cafff8ede41a445944ab28b6ba910a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 0}
+  networkManager: {fileID: 6919015188187648320}
   transport: {fileID: 6919015188187648317}
   applicationKey: RG_LAN_V2
   matchingPort: 9001
@@ -498,6 +498,10 @@ PrefabInstance:
       value: NetworkObject
       objectReference: {fileID: 0}
     - target: {fileID: 8972062349945686057, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
+      propertyPath: port
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8972062349945686057, guid: 3215b3be014a14f48b0d7ed553dbd5df, type: 3}
       propertyPath: finder
       value: 
       objectReference: {fileID: 3696308131752553105}
@@ -679,6 +683,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6919015188187648320 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8955743973806470382, guid: 167f735a56176e84083782fa23958d80, type: 3}
+  m_PrefabInstance: {fileID: 1798531038180254350}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 593a2fe42fa9d37498c96f9a383b6521, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
