@@ -186,7 +186,7 @@ public enum CardType {
 /// </summary>
 public enum CardSuportRole {
     None = -1,
-    
+
     NULL = 0,
     Miss = 1,
     Replay = 2,
@@ -196,6 +196,19 @@ public enum CardSuportRole {
     ALL = 6,
     Cherry_Suika = 7,
 
+}
+
+/// <summary>
+/// カードの種族
+/// @author oorui
+/// </summary>
+public enum CardRaceID {
+    None = -1,
+    Robo = 1,
+    Warrior = 2,
+    Human = 3,
+
+    Max
 }
 
 /// <summary>
