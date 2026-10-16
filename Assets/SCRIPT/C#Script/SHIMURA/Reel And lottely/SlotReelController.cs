@@ -149,7 +149,7 @@ public class SlotReelController : MonoBehaviour {
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.Bell),
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.Replay),
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.WeakCherry),
-        new RoleAngleRule(PachisuroSymbolKoyakuEnum.Watermelon),
+        new RoleAngleRule(PachisuroSymbolKoyakuEnum.Suika),
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.Chance),
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.StrongCherry),
         new RoleAngleRule(PachisuroSymbolKoyakuEnum.Seven)
@@ -536,7 +536,7 @@ public class SlotReelController : MonoBehaviour {
 
             //レア役
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.WeakCherry
-                || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Watermelon
+                || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Suika
                 || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.StrongCherry
                 || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Chance) {
                 StartCoroutine(ReelLockCoroutine());
@@ -780,7 +780,7 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.StartCoroutine(glassFlash.FlashChance(Color.black, 5, 0.03f, 0.9f));
                 }
 
-                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Watermelon) {
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Suika) {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.Center, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.Left, Color.black, 0.9f);
