@@ -75,6 +75,8 @@ public class UDPBroadcaster : MonoBehaviour {
                 JsonUtility.ToJson(message));
 
             client.Send(bytes, bytes.Length, destination);
+            // 追加：確認後は削除してください
+            Debug.Log($"[UDP送信] 宛先={destination} JSON={JsonUtility.ToJson(message)}");
         }
         catch (SocketException exception) {
             if (exception.SocketErrorCode == SocketError.WouldBlock ||

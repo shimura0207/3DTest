@@ -129,7 +129,8 @@ public class UDPListener : MonoBehaviour {
 
         try {
             string json = StrictUtf8.GetString(bytes).Trim();
-
+            // 追加：フィルターで除外する前の受信内容を確認
+            Debug.Log($"[UDP受信] 送信元={sender} JSON={json}");
             if (!json.StartsWith("{") || !json.EndsWith("}"))
                 return false;
 
