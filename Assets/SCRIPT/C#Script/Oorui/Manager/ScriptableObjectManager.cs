@@ -1,3 +1,8 @@
+/*
+ *  @file   ScriptableObjectManager
+ *  @author oorui
+ */
+
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,9 +31,14 @@ public class ScriptableObjectManager : SystemObject {
     }
 
 
+    /// <summary>
+    /// ID毎のカードの画像を取得
+    /// </summary>
+    /// <param name="cardID"></param>
+    /// <returns></returns>
     public Sprite GetCardImage(int cardID) {
-        cardImageDatabase.GetCardImage(cardID);
-        return null;
+        return cardImageDatabase.GetCardImage(cardID);
+
     }
 
 
