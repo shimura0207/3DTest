@@ -101,11 +101,30 @@ public class CustomNetworkManager : NetworkManager {
         readyPlayers.Clear();
         matchStarted = false;
 
-        // サーバー起動後に、実際のTransportポートを配信する
-        if (broadcaster != null) {
-            broadcaster.SetGamePlaying(false);
-            broadcaster.StartSendIP(((KcpTransport)transport).Port);
+        Debug.Log("[HOST] サーバー起動完了");
+
+        if (broadcaster == null) {
+            Debug.LogError(
+                "[HOST] Broadcasterが未設定です。" +
+                "CustomNetworkManagerのBroadcaster欄に設定してください。");
+            return;
         }
+
+        Debug.Log(
+            $"[HOST] 配信オブジェクト={broadcaster.name} " +
+            $"activeInHierarchy={broadcaster.gameObject.activeInHierarchy} " +
+            $"enabled={broadcaster.enabled}");
+
+        if (!(transport is KcpTransport kcp)) {
+            Debug.LogError("[HOST] TransportがKcpTransportではありません。");
+            return;
+        }
+
+        broadcaster.SetGamePlaying(false);
+
+        bool started = broadcaster.StartSendIP(kcp.Port);
+
+        Debug.Log($"[HOST] 配信開始結果={started}");
     }
 
     public override void OnStartClient() {
