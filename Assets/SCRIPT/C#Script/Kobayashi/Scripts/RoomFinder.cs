@@ -181,7 +181,7 @@ public class RoomFinder : MonoBehaviour {
         // NetworkManagerのシングルトンがあるか
         if (NetworkManager.Singleton == null) return;
         // NetworkManagerがUnityTransporterを所持しているか
-        if (NetWorkSystemManager.Instance == null || NetWorkSystemManager.Instance.UnityTransport) return;
+        if (NetWorkSystemManager.Instance == null || NetWorkSystemManager.Instance.UnityTransport == null) return;
         // UnityTransportの取得
         var transport = NetWorkSystemManager.Instance.UnityTransport;
 

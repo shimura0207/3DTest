@@ -39,15 +39,13 @@ public class PrivateMatchingPart : PartBase {
 
         // 接続状態によって処理を変える
         if (conect == ConnectionState.Host) {
-            await MenuWindowManager.Instance.Open<HostMenu>();
             // 処理を抜けたら遷移
-            //await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
+            await MenuWindowManager.Instance.RoomMenuOpen(conect);
         }
         else if (conect == ConnectionState.Client) {
-            // ホスト側で提示された番号を入力する
-            
-
             // クライアントとして部屋に参加する
+            await MenuWindowManager.Instance.RoomMenuOpen(conect);
+
         }
 
         await UniTask.CompletedTask;

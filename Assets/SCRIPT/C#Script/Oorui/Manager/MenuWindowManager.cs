@@ -197,4 +197,21 @@ public class MenuWindowManager : SystemObject {
         // 確認画面を開き、選択結果を返す
         return await menu.OpenAndWaitForSelection();
     }
+
+    /// <summary>
+    /// 接続役割を設定して共通のルーム画面を開く
+    /// </summary>
+    public async UniTask RoomMenuOpen(ConnectionState state) {
+        // 管理中のルーム画面を取得する
+        RoomMenu menu = Get<RoomMenu>();
+
+        // ルーム画面が存在しない場合は終了する
+        if (menu == null) return;
+
+        // 表示する前にホスト・クライアントの役割を渡す
+        menu.SetConnectionState(state);
+
+        // 共通のルーム画面を表示する
+        await menu.Open();
+    }
 }
