@@ -101,10 +101,10 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">自分か相手か</param>
     /// <param name="handNumber">手札の番号</param>
-    /// <param name="laneNumber">フィールドのレーン番号</param>
-    public void HandToField(PlayerType player, int handNumber, int laneNumber) {
+    /// <param name="laneID">フィールドのレーン番号</param>
+    public void HandToField(PlayerType player, int handNumber, int laneID) {
         // 指定されたレーンに指定されたカードを追加
-        outDeckCards[player].fieldCards[laneNumber] = outDeckCards[player].handCards[handNumber];
+        outDeckCards[player].fieldCards[laneID] = outDeckCards[player].handCards[handNumber];
         // 指定されたカードを手札から削除
         outDeckCards[player].handCards.RemoveAt(handNumber);
     }
@@ -125,12 +125,12 @@ public class AreaCardManager : MonoBehaviour {
     /// 任意のカードをフィールドから墓地へ送る
     /// </summary>
     /// <param name="player">自分か相手か</param>
-    /// <param name="fieldNumber">フィールドのレーン番号</param>
-    public void FieldToGrave(PlayerType player, int fieldNumber) {
+    /// <param name="laneID">フィールドのレーン番号</param>
+    public void FieldToGrave(PlayerType player, int laneID) {
         // 墓地に指定されたカードを追加
-        outDeckCards[player].graveCards.Add(outDeckCards[player].fieldCards[fieldNumber]);
+        outDeckCards[player].graveCards.Add(outDeckCards[player].fieldCards[laneID]);
         // 指定されたカードをフィールドから削除
-        outDeckCards[player].fieldCards.RemoveAt(fieldNumber);
+        outDeckCards[player].fieldCards.RemoveAt(laneID);
     }
 
     /// <summary>
@@ -138,9 +138,24 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">自分か相手か</param>
     /// <param name="cardID">カードID</param>
-    /// <param name="fieldID">フィールドのレーン番号</param>
-    public void OutGameToField(PlayerType player, int cardID, int fieldID) {
+    /// <param name="laneID">フィールドのレーン番号</param>
+    public void OutGameToField(PlayerType player, int cardID, int laneID) {
         // 指定されたレーンに指定されたカードを追加
-        outDeckCards[player].fieldCards[fieldID] = cardID;
+        outDeckCards[player].fieldCards[laneID] = cardID;
+    }
+
+    /// <summary>
+    /// レーンの交換
+    /// </summary>
+    /// <param name="player">自分か相手か</param>
+    /// <param name="aLaneID">レーンを交換するカードA</param>
+    /// <param name="bLaneID">レーンを交換するカードB</param>
+    public void LaneChange(PlayerType player, int aLaneID, int bLaneID) {
+        // 指定されたレーンのカードを保持
+        int a = outDeckCards[player].fieldCards[aLaneID];
+        // aをbに置き換え
+        outDeckCards[player].fieldCards[aLaneID] = outDeckCards[player].fieldCards[bLaneID];
+        // bを保持したaに置き換え
+        outDeckCards[player].fieldCards[bLaneID] = a;
     }
 }

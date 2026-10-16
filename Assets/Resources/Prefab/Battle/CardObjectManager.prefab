@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7953337798411324367}
-  m_Layer: 0
+  - component: {fileID: 6314342557131980971}
+  m_Layer: 7
   m_Name: Lane4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,6 +32,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2573847214915414616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6314342557131980971
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58406778267701245}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.08, y: 0.1, z: 0.001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &382041902785328003
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,7 +62,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7752665967969201523}
-  m_Layer: 0
+  - component: {fileID: 4649412705119590184}
+  m_Layer: 7
   m_Name: Lane1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,6 +85,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2573847214915414616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4649412705119590184
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382041902785328003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.08, y: 0.1, z: 0.001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &467207316065352183
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,7 +146,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2001387783583062270}
-  m_Layer: 0
+  - component: {fileID: 4799244299145749250}
+  m_Layer: 7
   m_Name: Lane5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,6 +169,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2573847214915414616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4799244299145749250
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2633322980244567588}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.08, y: 0.1, z: 0.001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3423664401490680947
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,7 +383,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3259836220372064269}
-  m_Layer: 0
+  - component: {fileID: 1576106164142433499}
+  m_Layer: 7
   m_Name: Lane2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -339,6 +406,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2573847214915414616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1576106164142433499
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5147809503731788805}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.08, y: 0.1, z: 0.001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5337347091418579874
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,7 +693,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8612141628257803526}
-  m_Layer: 0
+  - component: {fileID: 6261820873748988047}
+  m_Layer: 7
   m_Name: Lane3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -627,3 +716,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2573847214915414616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6261820873748988047
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977031133945179239}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.08, y: 0.1, z: 0.001}
+  m_Center: {x: 0, y: 0, z: 0}
