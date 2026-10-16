@@ -93,7 +93,7 @@ public class MainPhase : PhaseBase {
                 catchStartPos = Vector3.zero;
             }
         }
-        nextPhase = Input.GetKeyDown(KeyCode.Space);
+        //nextPhase = Input.GetKeyDown(KeyCode.Space);
         await UniTask.CompletedTask;
     }
 
@@ -170,7 +170,7 @@ public class MainPhase : PhaseBase {
     }
 
     /// <summary>
-    /// レイヤー交換
+    /// レーン交換
     /// </summary>
     /// <param name="ray"></param>
     private bool LaneChange(Ray ray) {

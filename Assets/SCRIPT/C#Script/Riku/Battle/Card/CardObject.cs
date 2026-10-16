@@ -35,7 +35,7 @@ public class CardObject : MonoBehaviour {
     // 現在のステータス
     public CardStates currentStatus { get; private set; }
     // 対応役
-    public CardKoyaku suportRole { get; private set; } = CardKoyaku.None;
+    public CardSuportRole suportRole { get; private set; } = CardSuportRole.None;
     // カードタイプ
     public CardType cardType { get; private set; } = CardType.None;
 
@@ -68,7 +68,7 @@ public class CardObject : MonoBehaviour {
         // データから各情報を保存
         defaultStatus = new CardStates() { HP = data.HP, ATK = data.ATK, SIZE = data.SIZE };
         currentStatus = defaultStatus;
-        suportRole = (CardKoyaku)data.suportRoleID;
+        suportRole = (CardSuportRole)data.suportRoleID;
         cardType = (CardType)data.Type;
         // IDからイラストを取得
         spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
@@ -84,7 +84,7 @@ public class CardObject : MonoBehaviour {
         laneID = -1;
         defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
-        suportRole = CardKoyaku.None;
+        suportRole = CardSuportRole.None;
         cardType = CardType.None;
         spriteRenderer.sprite = null;
     }
@@ -103,5 +103,46 @@ public class CardObject : MonoBehaviour {
     /// <param name="setID">セットするID</param>
     public void SetLaneID(int setID) {
         laneID = setID;
+    }
+
+    /// <summary>
+    /// 対応役列挙体を子役列挙体のリストに変換する
+    /// </summary>
+    /// <returns></returns>
+    public List<PachisuroSymbolKoyakuEnum> SuportRoleToKoyaku() {
+        // 変換した対応役を保存
+        List<PachisuroSymbolKoyakuEnum> suportRoleList = new List<PachisuroSymbolKoyakuEnum>();
+        switch (suportRole) {
+            case CardSuportRole.None:
+            case CardSuportRole.NULL:
+                return null;
+                // 全対応は変換の必要がないのでNONEを入れておく
+            case CardSuportRole.ALL:
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.NONE);
+                break;
+            case CardSuportRole.Miss:
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.Miss);
+                break;
+            case CardSuportRole.Replay:
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.Replay);
+                break;
+            case CardSuportRole.Cherry:
+                // チェリーは強チェリーと弱チェリーの両対応として登録
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.WeakCherry);
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.StrongCherry);
+                break;
+            case CardSuportRole.Bell:
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.Bell);
+                break;
+            case CardSuportRole.Suika:
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.Suika);
+                break;
+            case CardSuportRole.Cherry_Suika:
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.WeakCherry);
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.StrongCherry);
+                suportRoleList.Add(PachisuroSymbolKoyakuEnum.Suika);
+                break;
+        }
+        return suportRoleList;
     }
 }

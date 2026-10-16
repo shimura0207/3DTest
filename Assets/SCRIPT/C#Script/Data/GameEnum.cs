@@ -7,10 +7,10 @@ public enum PachisuroSymbolKoyakuEnum {
     Bell,          // ベル
     Replay,        // リプレイ
     WeakCherry,    // 弱チェリー
-    Watermelon,    // スイカ
+    Suika,         // スイカ
     Chance,        // チャンス目
     StrongCherry,  // 強チェリー
-    Seven,          // 7揃い
+    Seven,         // 7揃い
 
     NONE,
 }
@@ -182,19 +182,19 @@ public enum CardType {
     Spell = 1
 }
 /// <summary>
-/// カードの子役
+/// カードの対応役
 /// </summary>
-public enum CardKoyaku {
+public enum CardSuportRole {
     None = -1,
     
-    Out = 1,
+    NULL = 0,
+    Miss = 1,
     Replay = 2,
     Cherry = 3,
     Bell = 4,
     Suika = 5,
-    OLL = 6,
-    NULL = 7,
-    Cherry_Suika = 8,
+    ALL = 6,
+    Cherry_Suika = 7,
 
 }
 
