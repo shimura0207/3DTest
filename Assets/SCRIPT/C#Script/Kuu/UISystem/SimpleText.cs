@@ -2,6 +2,7 @@
  * @file    SimpleText.cs
  * @autor   Kuu
  */
+using Mirror.Examples.CCU;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -26,6 +27,9 @@ public class SimpleText : MonoBehaviour {
     // 効果テキスト
     [SerializeField] private TMP_Text abilityText = null;
 
+    // カードタイプテキスト保存用
+    private string type = null;
+
     // Start is called before the first frame update
     void Start() {
         cardInfo.enabled = false;
@@ -43,6 +47,20 @@ public class SimpleText : MonoBehaviour {
         // 各データをテキストにする
         cardInfo.enabled = true;
         nameText.text = data.name;
-        
+        //cardTypeText.text = TypeIDChangeText(data.GetType());
     }
+
+    /// <summary>
+    /// タイプIDをテキストに変換
+    /// </summary>
+    //private string TypeIDChangeText(System.Type cardType) {
+    //    int getType = cardType;
+    //    if (cardType == ) {
+    //        type = "モンスター";
+    //    }
+    //    else if (cardType == 1) {
+    //        type = "スペル";
+    //    }
+    //    return type;
+    //}
 }
