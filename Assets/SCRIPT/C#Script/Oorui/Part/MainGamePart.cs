@@ -43,6 +43,9 @@ public class MainGamePart : PartBase {
 
     //使用デッキのID
     public static int deckID { get; private set; } = 0;
+
+    BattleState result = BattleState.None;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -80,8 +83,10 @@ public class MainGamePart : PartBase {
         // 使用デッキIDを渡す
         await MenuWindowManager.Instance.BattleSettingsMenuOpen(deckID);
 
+        UIExecute();
         // ループ
         while (battleSystemManager.battleState == BattleState.InProgress) {
+
             // フェイズの進行
             await battleSystemManager.Execute();
             // フレーム待機
@@ -89,8 +94,7 @@ public class MainGamePart : PartBase {
         }
 
         // バトル終了後の結果を取得する
-        BattleState result = battleSystemManager.battleState;
-
+        result = battleSystemManager.battleState;
         // 勝敗が決まったらリザルトパートに遷移
         Debug.Log("試合終了");
         // 勝敗を渡して、リザルトパートに遷移
@@ -160,5 +164,14 @@ public class MainGamePart : PartBase {
     /// <param name="id"></param>
     public void SetDeckID(int id) {
         deckID = id;
+    }
+
+    /// <summary>
+    /// UIManagerの更新処理を回す
+    /// </summary>
+    private void UIExecute() {
+        while (result != BattleState.None) {
+            UIManager.instance.Execute();
+        }
     }
 }

@@ -405,6 +405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   returnButton: {fileID: 6982282913600336923}
+  deckBuildButton: {fileID: 2894126754210457399}
 --- !u!1 &6537814924093979365
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,13 +17,14 @@ public class DeckBuildMenu : MenuWindowBase {
     // デッキパートに戻る
     [SerializeField] private Button returnDeckPartButton;
     // 選択された遷移先
-    private GamePart selectMenu = GamePart.Invalid;
+    private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
     /// <summary>
     /// 初期化処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
+        selectMenu = DeckBuildMenuSelect.None;
         // ボタンイベント登録
         returnDeckPartButton.onClick.AddListener(OnReturnButton);
         await UniTask.CompletedTask;
@@ -36,7 +37,7 @@ public class DeckBuildMenu : MenuWindowBase {
     public override async UniTask Open() {
         await base.Open();
         // ボタンが選択されるまで待機する
-        await UniTask.WaitUntil(() => selectMenu != GamePart.Invalid);
+        await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
 
         await Close();
 
@@ -49,6 +50,7 @@ public class DeckBuildMenu : MenuWindowBase {
     /// <returns></returns>
     public override async UniTask Close() {
         await base.Close();
+        selectMenu = DeckBuildMenuSelect.None;
         await UniTask.CompletedTask;
     }
 
@@ -57,6 +59,6 @@ public class DeckBuildMenu : MenuWindowBase {
     /// </summary>
     private void OnReturnButton() {
         // 遷移先を設定
-        selectMenu = GamePart.DeckBuild;
+        selectMenu = DeckBuildMenuSelect.DeckBuild;
     }
 }

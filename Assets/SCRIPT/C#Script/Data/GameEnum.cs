@@ -52,6 +52,15 @@ public enum MainMenuSelect {
 }
 
 /// <summary>
+/// デッキ作成から選択される遷移先
+/// </summary>
+public enum DeckBuildMenuSelect {
+    None,
+    DeckBuild,
+    MainMenu
+}
+
+/// <summary>
 /// カード関連パートから選択する遷移先
 /// </summary>
 public enum CardRelationMenuSelect {
