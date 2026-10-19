@@ -11,9 +11,9 @@ using UnityEngine;
 public class NextPhaseButton : MonoBehaviour
 {
     // パチスロフェイズ移行確認メッセージ
-    private const string _PACHISURO_CONFIRM = "パチスロを回しますか？";
+    private const string PACHISURO_CONFIRM = "パチスロを回しますか？";
     // ターンエンド移行確認メッセージ
-    private const string _TURNEND_CONFIRM = "ターンを終了しますか？";
+    private const string TURNEND_CONFIRM = "ターンを終了しますか？";
 
     /// <summary>
     /// パチスロフェイズ移行処理呼び出し
@@ -35,7 +35,7 @@ public class NextPhaseButton : MonoBehaviour
     /// <returns></returns>
     public async UniTask PACHISUROGO() {
         // 確認ウィンドウ表示
-        bool confirmation = await MenuWindowManager.Instance.Confirm(_PACHISURO_CONFIRM);
+        bool confirmation = await MenuWindowManager.Instance.Confirm(PACHISURO_CONFIRM);
 
         // "はい"ならパチスロフェイズ
         if (confirmation) {
@@ -54,7 +54,7 @@ public class NextPhaseButton : MonoBehaviour
     /// <returns></returns>
     public async UniTask TURNEND() {
         // 確認ウィンドウ表示
-        bool confirmation = await MenuWindowManager.Instance.Confirm(_TURNEND_CONFIRM);
+        bool confirmation = await MenuWindowManager.Instance.Confirm(TURNEND_CONFIRM);
 
         // "はい"ならターンエンドフェイズ
         if (confirmation) {
