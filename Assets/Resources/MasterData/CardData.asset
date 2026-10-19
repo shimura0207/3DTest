@@ -20,6 +20,9 @@ MonoBehaviour:
       rarityID: 4
       themeID: 1
       suportRoleID: 5
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 4
       HP: 11
@@ -30,6 +33,9 @@ MonoBehaviour:
       rarityID: -1
       themeID: 1
       suportRoleID: 5
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 6
       HP: 14
@@ -40,6 +46,9 @@ MonoBehaviour:
       rarityID: -1
       themeID: 1
       suportRoleID: 5
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 8
       HP: 17
@@ -50,6 +59,9 @@ MonoBehaviour:
       rarityID: 4
       themeID: 1
       suportRoleID: 3
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 5
       HP: 10
@@ -60,6 +72,9 @@ MonoBehaviour:
       rarityID: -1
       themeID: 1
       suportRoleID: 3
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 8
       HP: 12
@@ -70,6 +85,9 @@ MonoBehaviour:
       rarityID: -1
       themeID: 1
       suportRoleID: 3
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 10
       HP: 15
@@ -80,6 +98,9 @@ MonoBehaviour:
       rarityID: 1
       themeID: 1
       suportRoleID: 4
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 2
       HP: 4
@@ -90,6 +111,9 @@ MonoBehaviour:
       rarityID: 1
       themeID: 1
       suportRoleID: 2
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 6
       HP: 10
@@ -100,6 +124,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 1
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 2
       ATK: 4
       HP: 10
@@ -110,6 +137,9 @@ MonoBehaviour:
       rarityID: 3
       themeID: 1
       suportRoleID: 1
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 1
       ATK: 3
       HP: 8
@@ -120,6 +150,9 @@ MonoBehaviour:
       rarityID: -1
       themeID: 1
       suportRoleID: 7
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 4
       ATK: 10
       HP: 30
@@ -130,6 +163,9 @@ MonoBehaviour:
       rarityID: -1
       themeID: 1
       suportRoleID: 6
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 6
       ATK: 20
       HP: 0
@@ -140,6 +176,9 @@ MonoBehaviour:
       rarityID: 3
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -150,6 +189,9 @@ MonoBehaviour:
       rarityID: 3
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -160,6 +202,9 @@ MonoBehaviour:
       rarityID: 3
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -170,6 +215,9 @@ MonoBehaviour:
       rarityID: 3
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -180,6 +228,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -190,6 +241,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -200,6 +254,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -210,6 +267,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -220,6 +280,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -230,6 +293,9 @@ MonoBehaviour:
       rarityID: 2
       themeID: 1
       suportRoleID: 0
+      FirstRaceID: 1
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: -1
       ATK: -1
       HP: -1
@@ -240,6 +306,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0
@@ -250,6 +319,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0
@@ -260,6 +332,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0
@@ -270,6 +345,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0
@@ -280,6 +358,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0
@@ -290,6 +371,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0
@@ -300,6 +384,9 @@ MonoBehaviour:
       rarityID: 0
       themeID: 3
       suportRoleID: 0
+      FirstRaceID: 0
+      SecondRaceID: 0
+      ThildRaceID: 0
       SIZE: 0
       ATK: 0
       HP: 0

@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000091552734}
+  m_AnchoredPosition: {x: -0.00024414062, y: 0}
   m_SizeDelta: {x: -723, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &7789234190952537969
@@ -58,7 +58,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 180, y: 260}
-  m_Spacing: {x: 20, y: 20}
+  m_Spacing: {x: 30, y: 55}
   m_Constraint: 1
   m_ConstraintCount: 6
 --- !u!114 &8806539275385178142
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 3827180607867703719}
-  cardPrefab: {fileID: 1276212920757966013, guid: 3bea6aeab6da37a4487d2303710e1617, type: 3}
+  cardPrefab: {fileID: 1819846692414181974, guid: 3bea6aeab6da37a4487d2303710e1617, type: 3}
 --- !u!1 &2650760852578232877
 GameObject:
   m_ObjectHideFlags: 0

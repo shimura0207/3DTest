@@ -16,56 +16,51 @@ public class PossessionCardListView : MonoBehaviour {
     [SerializeField]
     private RectTransform content = null;
 
-    // カード1枚分の表示用Prefab
+    // カード1種類分の表示用Prefab
     [SerializeField]
-    private Image cardPrefab = null;
+    private PossessionCardItem cardPrefab = null;
 
-    // 生成したカードのImageを管理するリスト
-    private readonly List<Image> cardImages = new List<Image>();
+    // 生成したカード表示を管理するリスト
+    private readonly List<PossessionCardItem> cardItems = new List<PossessionCardItem>();
 
     /// <summary>
     /// 所持カード一覧を更新する
     /// </summary>
     public void RefreshCards() {
-        // nullチェックを行う
-        CheckInstance();
+        // 必要なオブジェクトが設定されているか確認する
+        if (!CheckInstance()) return;
 
-        // 所持カードをセーブデータから取得
+        // 所持カードをセーブデータから取得する
         PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
 
-        // セーブデータが取得できなければ処理を終了する
-        if (saveData == null || saveData.cardID == null) return;
-
-        // 前回生成したカードをすべて削除する
-        foreach (Image cardImage in cardImages) {
-            if (cardImage != null) {
-                Destroy(cardImage.gameObject);
-            }
+        // セーブデータが存在しない場合は一覧を空にする
+        if (saveData == null || saveData.cardID == null) {
+            ClearCards();
+            return;
         }
 
-        // 管理リストを空にする
-        cardImages.Clear();
+        // 前回生成したカードを削除する
+        ClearCards();
 
-        // 所持カードIDを1つずつ処理する
-        foreach (int cardID in saveData.cardID) {
+        // カードIDごとの所持枚数を集計する
+        Dictionary<int, int> cardCounts = OwnedCardUtility.GetCardCounts(saveData.cardID);
 
+        // カードIDごとに1つずつ表示を生成する
+        foreach (KeyValuePair<int, int> entry in cardCounts) {
             // カードIDに対応するスプライトを取得する
-            Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(cardID);
+            Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(entry.Key);
 
-            // 画像を取得できなければ、このカードの生成をスキップする
+            // 画像が取得できなければ、このカードをスキップする
             if (cardSprite == null) continue;
 
-            // カードPrefabを生成
-            Image cardImage = Instantiate(cardPrefab, content);
+            // カード表示Prefabを生成する
+            PossessionCardItem cardItem = Instantiate(cardPrefab, content);
 
-            // 取得したスプライトを設定する
-            cardImage.sprite = cardSprite;
-
-            // スプライトの縦横比を維持して表示する
-            cardImage.preserveAspect = true;
+            // カード画像と所持枚数を設定する
+            cardItem.SetCard(cardSprite, entry.Value);
 
             // 生成したカードを管理リストに登録する
-            cardImages.Add(cardImage);
+            cardItems.Add(cardItem);
         }
 
         // Contentのレイアウトを即時更新する
@@ -83,12 +78,37 @@ public class PossessionCardListView : MonoBehaviour {
     /// <summary>
     /// nullチェックをまとめて行う
     /// </summary>
-    private void CheckInstance() {
-        // SaveManagerが初期化されているか
-        if (SaveManager.Instance == null) return;
-        // ScriptableObjectManagerが初期化されているか
-        if (ScriptableObjectManager.instance == null) return;
+    private bool CheckInstance() {
+        // セーブ管理クラスが初期化されているか確認する
+        if (SaveManager.Instance == null) return false;
+        // マスターデータ管理クラスが初期化されているか確認する
+        if (ScriptableObjectManager.instance == null) return false;
         // Inspectorで必要なオブジェクトが設定されているか確認する
-        if (content == null || cardPrefab == null) return;
+        if (content == null || cardPrefab == null) return false;
+
+        // 必要な参照がすべて存在する
+        return true;
+    }
+
+    /// <summary>
+    /// 生成済みのカード表示をすべて削除する
+    /// </summary>
+    private void ClearCards() {
+        // 生成済みのカードを削除する
+        foreach (PossessionCardItem cardItem in cardItems) {
+            if (cardItem != null) {
+                Destroy(cardItem.gameObject);
+            }
+        }
+
+        // 管理リストを空にする
+        cardItems.Clear();
+    }
+
+    /// <summary>
+    /// カードのレアリティ順に並べ替える
+    /// </summary>
+    public void RealitySort() {
+
     }
 }
