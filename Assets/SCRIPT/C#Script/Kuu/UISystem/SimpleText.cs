@@ -27,8 +27,13 @@ public class SimpleText : MonoBehaviour {
     // 効果テキスト
     [SerializeField] private TMP_Text abilityText = null;
 
+    // 種族
+    private CardRaceID cardRaceID = CardRaceID.None;
+
     // カードタイプテキスト保存用
     private string type = null;
+
+
 
     // Start is called before the first frame update
     void Start() {
@@ -47,20 +52,26 @@ public class SimpleText : MonoBehaviour {
         // 各データをテキストにする
         cardInfo.enabled = true;
         nameText.text = data.name;
-        //cardTypeText.text = TypeIDChangeText(data.GetType());
+        cardTypeText.text = TypeIDChangeText(data.cardType);
+        groupText.text = 
     }
 
     /// <summary>
     /// タイプIDをテキストに変換
     /// </summary>
-    //private string TypeIDChangeText(System.Type cardType) {
-    //    int getType = cardType;
-    //    if (cardType == ) {
-    //        type = "モンスター";
-    //    }
-    //    else if (cardType == 1) {
-    //        type = "スペル";
-    //    }
-    //    return type;
-    //}
+    private string TypeIDChangeText(int cardType) {
+        if (cardType == 0) {
+            type = "モンスター";
+        }
+        else if (cardType == 1) {
+            type = "スペル";
+        }
+        return type;
+    }
+
+    private string RaceIDChangeText(int cardRace) {
+        switch(cardRaceID) {
+
+        }
+    }
 }
