@@ -79,27 +79,20 @@ public class MainGamePart : PartBase {
         // オブジェクトを表示する
         pachisuroInstance.SetActive(true);
 
-        // バトル準備を行う
-        // 使用デッキIDを渡す
+        // バトル開始前の準備を行う
         await MenuWindowManager.Instance.BattleSettingsMenuOpen(deckID);
 
-        UIExecute();
-        // ループ
-        while (battleSystemManager.battleState == BattleState.InProgress) {
-
-            // フェイズの進行
-            await battleSystemManager.Execute();
-            // フレーム待機
-            await UniTask.Yield();
-        }
+        // バトル進行とUI更新を並行して実行
+        await UniTask.WhenAll(
+            BattleExecute(),
+            UIExecute()
+        );
 
         // バトル終了後の結果を取得する
         result = battleSystemManager.battleState;
-        // 勝敗が決まったらリザルトパートに遷移
-        Debug.Log("試合終了");
-        // 勝敗を渡して、リザルトパートに遷移
+
+        // リザルトパートに遷移する
         await PartManager.Instance.TransitionPart(GamePart.EndGame, result);
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -167,11 +160,29 @@ public class MainGamePart : PartBase {
     }
 
     /// <summary>
+    /// バトルの進行処理
+    /// </summary>
+    private async UniTask BattleExecute() {
+        // バトルが進行中の間、フェイズを進行する
+        while (battleSystemManager.battleState == BattleState.InProgress) {
+            await battleSystemManager.Execute();
+
+            // 次のフレームまで待機する
+            await UniTask.Yield();
+        }
+    }
+
+    /// <summary>
     /// UIManagerの更新処理を回す
     /// </summary>
-    private void UIExecute() {
-        while (result != BattleState.None) {
+    private async UniTask UIExecute() {
+        // バトルが進行中の間、UIを更新する
+        while (battleSystemManager.battleState == BattleState.InProgress) {
+            // UIの入力判定と更新を行う
             UIManager.instance.Execute();
+
+            // 次のフレームまで待機する
+            await UniTask.Yield();
         }
     }
 }

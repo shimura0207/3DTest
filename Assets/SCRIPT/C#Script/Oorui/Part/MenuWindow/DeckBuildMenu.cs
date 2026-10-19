@@ -13,52 +13,55 @@ using UnityEngine.UI;
 /// 新規デッキ編成を行う画面
 /// </summary>
 public class DeckBuildMenu : MenuWindowBase {
-
-    // デッキパートに戻る
+    // デッキパートに戻るボタン
     [SerializeField] private Button returnDeckPartButton;
-    // 選択された遷移先
+
+    // 選択された操作
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
-    /// <returns></returns>
     public override async UniTask Initialize() {
         await base.Initialize();
-        selectMenu = DeckBuildMenuSelect.None;
-        // ボタンイベント登録
+
+        // ボタンイベントの二重登録を防止する
+        returnDeckPartButton.onClick.RemoveListener(OnReturnButton);
         returnDeckPartButton.onClick.AddListener(OnReturnButton);
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
-    /// メニューが開かれた時の処理
+    /// メニューを開いたときの処理
     /// </summary>
-    /// <returns></returns>
     public override async UniTask Open() {
+        // メニューを表示する
         await base.Open();
-        // ボタンが選択されるまで待機する
+
+        // 前回の選択状態をリセットする
+        selectMenu = DeckBuildMenuSelect.None;
+
+        // ボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
 
+        // 選択後にメニューを閉じる
         await Close();
-
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
-    /// ウィンドウ非表示時の処理
+    /// メニューを閉じたときの処理
     /// </summary>
-    /// <returns></returns>
     public override async UniTask Close() {
         await base.Close();
+
+        // 次回の入力待ちに備えて初期化する
         selectMenu = DeckBuildMenuSelect.None;
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
-    /// デッキパートに戻るボタン
+    /// デッキパートに戻るボタンが押されたときの処理
     /// </summary>
     private void OnReturnButton() {
-        // 遷移先を設定
+        // 戻る操作を設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;
     }
 }

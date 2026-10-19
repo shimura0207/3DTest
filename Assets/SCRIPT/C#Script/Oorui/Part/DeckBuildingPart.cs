@@ -42,7 +42,12 @@ public class DeckBuildingPart : PartBase {
         await base.Setup();
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
+        // ボタンイベントを登録する
+        // Setupが複数回実行されても二重登録されないようにする
+        returnButton.onClick.RemoveListener(OnReturnMenuSelected);
         returnButton.onClick.AddListener(OnReturnMenuSelected);
+
+        deckBuildButton.onClick.RemoveListener(OnDeckBuildSelected);
         deckBuildButton.onClick.AddListener(OnDeckBuildSelected);
 
         Debug.Log("デッキ構築画面表示中");
