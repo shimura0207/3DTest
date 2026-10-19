@@ -33,6 +33,9 @@ public class SimpleText : MonoBehaviour {
     // カードタイプテキスト保存用
     private string type = null;
 
+    // 種族テキスト保存用
+    private string race = null;
+
 
 
     // Start is called before the first frame update
@@ -52,8 +55,8 @@ public class SimpleText : MonoBehaviour {
         // 各データをテキストにする
         cardInfo.enabled = true;
         nameText.text = data.name;
-        cardTypeText.text = TypeIDChangeText(data.cardType);
-        groupText.text = 
+        cardTypeText.text = TypeIDChangeText(data.CardType);
+        //groupText.text =
     }
 
     /// <summary>
@@ -69,9 +72,25 @@ public class SimpleText : MonoBehaviour {
         return type;
     }
 
+    /// <summary>
+    /// 種族IDをテキストに変換
+    /// </summary>
+    /// <param name="cardRace"></param>
+    /// <returns></returns>
     private string RaceIDChangeText(int cardRace) {
-        switch(cardRaceID) {
+        cardRaceID = (CardRaceID)cardRace;
+        switch (cardRaceID) {
+            case CardRaceID.Robo:
+                race = "ロボ";
+                break;
+            case CardRaceID.Warrior:
+                race = "戦士";
+                break;
+            case CardRaceID.Human:
+                race = "人";
+                break;
 
         }
+        return race;
     }
 }
