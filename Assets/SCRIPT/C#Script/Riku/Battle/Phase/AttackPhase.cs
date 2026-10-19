@@ -6,6 +6,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -21,85 +22,36 @@ public class AttackPhase : PhaseBase {
     /// <returns></returns>
     public override async UniTask SelfExecute() {
         // 当選役取得
-        {
-            // 当選役を保存
-            SlotReelController slot; //呼ぶスクリプトにあだなつける
-            GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-            slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-            List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
+        SlotReelController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
 
-            // フィールドのカード取得
-            RGCardData[] fieldCards = new RGCardData[5];
-            // ひとつずつオブジェクトを走査してデータを保存していく
-            RGFieldCard card;
-            obj = GameObject.Find("PlayerField/PlayerPanel1/FieldCard_");
-            if (obj) {
-                card = obj.GetComponent<RGFieldCard>();
-                fieldCards[0] = card.GetCardDate();
-            }
-            else {
-                fieldCards[0] = null;
-            }
-            obj = GameObject.Find("PlayerField/PlayerPanel2/FieldCard_");
-            if (obj) {
-                card = obj.GetComponent<RGFieldCard>();
-                fieldCards[1] = card.GetCardDate();
-            }
-            else {
-                fieldCards[1] = null;
-            }
-            obj = GameObject.Find("PlayerField/PlayerPanel3/FieldCard_");
-            if (obj) {
-                card = obj.GetComponent<RGFieldCard>();
-                fieldCards[2] = card.GetCardDate();
-            }
-            else {
-                fieldCards[2] = null;
-            }
-            obj = GameObject.Find("PlayerField/PlayerPanel4/FieldCard_");
-            if (obj) {
-                card = obj.GetComponent<RGFieldCard>();
-                fieldCards[3] = card.GetCardDate();
-            }
-            else {
-                fieldCards[3] = null;
-            }
-            obj = GameObject.Find("PlayerField/PlayerPanel5/FieldCard_");
-            if (obj) {
-                card = obj.GetComponent<RGFieldCard>();
-                fieldCards[4] = card.GetCardDate();
-            }
-            else {
-                fieldCards[4] = null;
-            }
+        // フィールドのカード取得
+        var fieldCards = CardObjectManager.instance.fieldObjectList[PlayerType.Self];
 
-            // 当選役の数分の対応役チェック
-            for (int i = 0; i < koyakuList.Count; i++) {
-                // フィールドのカードをひとつずつチェック
-                for (int j = 0; j < fieldCards.Length; j++) {
-                    // フィールドにカードがなければスキップ
-                    if (!fieldCards[j]) continue;
-                    // 対応役が成立していれば攻撃
-                    if (koyakuList[i] != fieldCards[j].SupportRole) continue;
-                    
-                    // カードの攻撃力分のダメージを与える
-                    BattleSystemManager.instance.PlayerGiveDamage(PlayerType.Opponent, fieldCards[j].Atk);
+        // 当選役の数分の対応役チェック
+        foreach (var koyaku in koyakuList) {
+            // フィールドのカードをひとつずつチェック
+            foreach (var card in fieldCards) {
+                // フィールドにカードがなければスキップ
+                if (!card.Value) continue;
+                // 対応役によって攻撃
+                CardAttack(koyaku, card.Value, slot.rush);
+                
+                // UIに反映
+                PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
+                GameObject player = GameObject.Find("Player2HP");
+                hp = player.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
+                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
 
-                    // UIに反映
-                    PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
-                    GameObject player = GameObject.Find("Player2HP");
-                    hp = player.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
-                    hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
-                    
-                    Debug.Log("相手プレイヤーに" + fieldCards[j].Atk + "のダメージ");
-
-                    await UniTask.DelayFrame(10);
-                }
+                await UniTask.DelayFrame(10);
             }
-
-            // 次のフェイズへ
-            nextPhase = true;
         }
+
+
+        // 次のフェイズへ
+        nextPhase = true;
         await UniTask.CompletedTask;
     }
 
@@ -127,5 +79,39 @@ public class AttackPhase : PhaseBase {
         // カメラを液晶の方に寄せる
         Camera.main.transform.position = CAMERA_POSITION;
         Camera.main.transform.eulerAngles = Vector3.zero;
+    }
+
+    /// <summary>
+    /// カードの攻撃処理
+    /// </summary>
+    /// <param name="koyaku">当選役</param>
+    /// <param name="card">確認するカード</param>
+    /// <param name="rush">ラッシュ中か否か</param>
+    private void CardAttack(PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush) {
+        // カードの対応役の型を変換
+        List<PachisuroSymbolKoyakuEnum> suportRole = card.SuportRoleToKoyaku();
+        if (suportRole == null) return; 
+        // 子役をチェックしてダメージ設定
+        int damage = 0;
+        // ラッシュ中の7当選もしくは全対応なら確定攻撃
+        if (rush && koyaku == PachisuroSymbolKoyakuEnum.Seven ||
+            card.suportRole == CardSuportRole.ALL) {
+            damage = card.currentStatus.ATK;
+        }
+        else {
+            // 対応役をすべてチェックしてダメージ設定
+            foreach (var role in suportRole) {
+                if (koyaku == role) {
+                    damage = card.currentStatus.ATK;
+                }
+            }
+        }
+        // 強チェリーが当選している場合はダメージ2倍
+        if (koyaku == PachisuroSymbolKoyakuEnum.StrongCherry) {
+            damage *= 2;
+        }
+        // ダメージを与える
+        BattleSystemManager.instance.PlayerGiveDamage(PlayerType.Opponent, damage);
+        Debug.Log("相手プレイヤーに" + damage + "のダメージ");
     }
 }
