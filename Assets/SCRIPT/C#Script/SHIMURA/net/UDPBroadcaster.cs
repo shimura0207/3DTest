@@ -53,8 +53,7 @@ public class UDPBroadcaster : MonoBehaviour {
 
             // 原因切り分け用：クライアントPCに直接送信
             destination = new IPEndPoint(
-     IPAddress.Parse("10.204.210.187"),
-     discoveryPort);
+     IPAddress.Broadcast, discoveryPort);
 
             nextSendTime = 0f;
             return true;
