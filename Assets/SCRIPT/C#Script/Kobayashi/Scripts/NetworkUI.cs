@@ -1,359 +1,294 @@
 /*
- * @brief  NetworkUI
- * @author Kobayashi
+ * @brief NetworkUI：ルーム作成・コード参加・自動マッチングのUI
+ * 元コード作者：Kobayashi
+ *
+ * 【前提】
+ * ・先ほどの完全版MatchingManager（State / IsMatching / IsMatched / LastErrorあり）を使用。
+ * ・RoomBroadcaster.StartBroadcast(port)、RoomCode、RoomFinder.SearchRoom(code)は既存を使用。
+ * ・RoomBroadcaster / RoomFinderの内部実装は未確認。そこでの通信処理は変更しない。
+ * ・NetworkManagerの実際のNetworkTransportを使うためNetWorkSystemManagerへの依存を除去。
+ *
+ * 【設置】
+ * 1. このファイルで既存のNetworkUI.csを置き換える。
+ * 2. Inspectorの各参照を設定。使わないルーム機能の参照は空欄でもよい。
+ * 3. ボタンのOnClickはStartHost / StartClient / StartMatchingを引き続き使用できる。
+ * 4. NetworkUIの表示を隠す場合、MatchingManagerやNetworkManagerまで無効化しない。
+ * 5. UIを非表示にしても、このコードは通信をShutdownしない。
+ *
+ * 【役割】
+ * このファイルは操作入口と状態表示。ゲーム用通信のタイムアウト原因そのものを
+ * 必ず解消するものではない。MatchingManagerの接続診断は引き続き必要。
  */
 
+using System;
 using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class NetworkUI : MonoBehaviour {
     [Header("UI")]
-
-    [SerializeField]
-    private TMP_Text statusText;
-
-    [SerializeField]
-    private TMP_InputField roomCodeInput;
-
+    [SerializeField] private TMP_Text statusText;
+    [SerializeField] private TMP_InputField roomCodeInput;
 
     [Header("Network")]
+    [Tooltip("ルーム作成時のゲーム用ポート。自動マッチング時はMatchingManager側の設定を使用。")]
+    [SerializeField] private ushort port = 7777;
+    [SerializeField] private RoomBroadcaster broadcaster;
+    [SerializeField] private RoomFinder finder;
+    [SerializeField] private MatchingManager matchingManager;
 
-    [SerializeField]
-    private ushort port = 7777;
+    [Header("Debug")]
+    [SerializeField] private bool verboseLog = true;
 
-    [SerializeField]
-    private RoomBroadcaster broadcaster;
+    // 登録先を保持し、Singletonが変更・破棄されても同じ相手からイベントを解除する。
+    private NetworkManager registeredManager;
 
-    [SerializeField]
-    private RoomFinder finder;
+    // 自動マッチング時はMatchingManager.Stateを表示の正とする。
+    // Netcodeのイベント通知順序に左右されず、失敗理由もUIに反映できる。
+    private bool showMatchingState;
+    private bool hasShownMatchingState;
+    private MatchingManager.MatchState lastMatchingState;
+    private string lastMatchingError;
 
-    [SerializeField]
-    private MatchingManager matchingManager;
+    // RoomFinderのAPIに検索完了/キャンセルがないため、連打を短時間だけ抑止する。
+    // これは検索タイムアウトではない。検索の重複防止・停止はRoomFinder側にも必要。
+    private float nextRoomSearchAllowedAt;
+    private const float RoomSearchClickInterval = 1f;
+    private string lastStatus;
 
+    // OnEnableはStartより早い。Singletonが未生成ならStart/Updateで登録を再試行する。
+    private void OnEnable() { RefreshEventRegistration(); }
+    private void Start() { RefreshEventRegistration(); }
 
-    // =========================================================
-    // 初期化
-    // =========================================================
-
-    private void Start() {
-        if (NetworkManager.Singleton == null) {
-            Debug.LogError(
-                "NetworkUI : " +
-                "NetworkManagerが存在しません。"
-            );
-
-            return;
-        }
-
-        NetworkManager.Singleton
-            .OnClientConnectedCallback +=
-            OnClientConnected;
-
-        NetworkManager.Singleton
-            .OnClientDisconnectCallback +=
-            OnClientDisconnected;
-
-        NetworkManager.Singleton
-            .OnServerStarted +=
-            OnServerStarted;
-
-        Debug.Log(
-            "[NetworkUI] NetworkManagerイベント登録完了"
-        );
+    private void Update() {
+        RefreshEventRegistration();
+        if (showMatchingState) RefreshMatchingStatus();
     }
 
+    private void RefreshEventRegistration() {
+        NetworkManager current = NetworkManager.Singleton;
+        if (registeredManager == current) return;
+
+        UnregisterEvents();
+        if (current == null) return;
+        registeredManager = current;
+        current.OnClientConnectedCallback += OnClientConnected;
+        current.OnClientDisconnectCallback += OnClientDisconnected;
+        current.OnServerStarted += OnServerStarted;
+        Log("NetworkManagerイベント登録完了");
+    }
+
+    private void UnregisterEvents() {
+        if (registeredManager != null) {
+            registeredManager.OnClientConnectedCallback -= OnClientConnected;
+            registeredManager.OnClientDisconnectCallback -= OnClientDisconnected;
+            registeredManager.OnServerStarted -= OnServerStarted;
+        }
+        registeredManager = null;
+    }
+
+    /// <summary>3種類の開始ボタンに共通するチェック。二重起動を防ぐ。</summary>
+    private bool CanStartNetwork() {
+        if (!isActiveAndEnabled) return false;
+        RefreshEventRegistration();
+        if (registeredManager == null) {
+            SetStatus("NetworkManagerがありません");
+            return false;
+        }
+        if (matchingManager != null && (matchingManager.IsMatching || matchingManager.IsMatched)) {
+            Log("自動マッチング中または接続済みのため、新しい開始操作を無視しました。");
+            return false;
+        }
+        if (registeredManager.IsListening || registeredManager.ShutdownInProgress) {
+            Log("通信中または終了処理中のため、新しい開始操作を無視しました。");
+            return false;
+        }
+        return true;
+    }
 
     // =========================================================
-    // Host開始
+    // 手動ルーム作成：ホスト起動後、既存のRoomBroadcasterで部屋を公開
     // =========================================================
-
     public void StartHost() {
-        if (NetworkManager.Singleton == null) {
-            SetStatus("Network Manager Missing");
+        if (!CanStartNetwork()) return;
+        showMatchingState = false;
 
+        // NetWorkSystemManagerの別参照ではなく、Netcodeが実際に使うTransportを取得。
+        UnityTransport transport = registeredManager.NetworkConfig.NetworkTransport as UnityTransport;
+        if (transport == null || port == 0) {
+            SetStatus("UnityTransportまたはポート設定を確認してください");
             return;
         }
 
-        if (NetWorkSystemManager.Instance == null || NetWorkSystemManager.Instance.UnityTransport == null) {
-            SetStatus("Network System Missing");
+        try {
+            // 第1引数はホスト自身用。第3引数でLANを含む全IPv4 NICから待ち受ける。
+            transport.SetConnectionData("127.0.0.1", port, "0.0.0.0");
+            SetStatus("ホスト起動中...");
+            bool success = registeredManager.StartHost();
+            Log("StartHost結果=" + success + " / 待受=0.0.0.0:" + port);
+            if (!success) {
+                SetStatus("ホスト起動失敗。Consoleを確認してください");
+                return;
+            }
+        }
+        catch (Exception ex) {
+            SetStatus("ホスト起動エラー。Consoleを確認してください");
+            Debug.LogException(ex, this);
             return;
         }
 
-        var transport = NetWorkSystemManager.Instance.UnityTransport;
-
-        transport.SetConnectionData(
-            "0.0.0.0",
-            port
-        );
-
-        Debug.Log(
-            $"[NetworkUI] StartHost開始: " +
-            $"0.0.0.0:{port}"
-        );
-
-        bool success =
-            NetworkManager.Singleton.StartHost();
-
-        Debug.Log(
-            $"[NetworkUI] StartHost結果: {success}"
-        );
-
-        if (success) {
-            if (broadcaster != null) {
-                broadcaster.StartBroadcast(
-                    port
-                );
-
-                SetStatus(
-                    $"{broadcaster.RoomCode}"
-                );
-            }
-            else {
-                SetStatus(
-                    "Host Started"
-                );
-            }
+        // ホストの起動成功は対戦相手の接続成功ではない。
+        if (broadcaster == null) {
+            SetStatus("ホスト起動済み・相手の接続待ち（ルーム公開なし）");
+            return;
         }
-        else {
-            SetStatus(
-                "Host Failed"
-            );
+        try {
+            broadcaster.StartBroadcast(port);
+            SetStatus("ルームコード：" + broadcaster.RoomCode + "\n相手の接続待ち...");
+        }
+        catch (Exception ex) {
+            // ホストはすでに起動しているため、起動失敗とは表示しない。
+            SetStatus("ホスト起動済み・ルーム公開に失敗。Consoleを確認してください");
+            Debug.LogException(ex, this);
         }
     }
 
-
     // =========================================================
-    // Client開始
+    // コード参加：部屋の探索と接続は既存のRoomFinderへ委譲
     // =========================================================
-
     public void StartClient() {
-        if (NetworkManager.Singleton == null) {
-            SetStatus(
-                "Network Manager Missing"
-            );
-
+        if (!CanStartNetwork()) return;
+        if (Time.realtimeSinceStartup < nextRoomSearchAllowedAt) return;
+        showMatchingState = false;
+        if (roomCodeInput == null) {
+            SetStatus("ルームコード入力欄が未設定です");
             return;
         }
-
-        string code =
-            roomCodeInput.text.Trim();
-
+        string code = roomCodeInput.text.Trim();
         if (string.IsNullOrEmpty(code)) {
-            SetStatus(
-                "Enter Code"
-            );
-
+            SetStatus("ルームコードを入力してください");
             return;
         }
-
-        SetStatus(
-            "Searching..."
-        );
-
         if (finder == null) {
-            Debug.LogError(
-                "[NetworkUI] RoomFinderが設定されていません。"
-            );
-
-            SetStatus(
-                "Room Finder Missing"
-            );
-
+            SetStatus("RoomFinderが未設定です");
             return;
         }
 
-        finder.SearchRoom(code);
+        nextRoomSearchAllowedAt = Time.realtimeSinceStartup + RoomSearchClickInterval;
+        SetStatus("ルーム検索中...");
+        try { finder.SearchRoom(code); }
+        catch (Exception ex) {
+            SetStatus("ルーム検索エラー。Consoleを確認してください");
+            Debug.LogException(ex, this);
+        }
     }
 
-
     // =========================================================
-    // Matching開始
+    // 自動マッチング：開始・停止・接続管理はMatchingManagerに任せる
     // =========================================================
-
     public void StartMatching() {
-        if (matchingManager == null) {
-            Debug.LogError(
-                "[NetworkUI] " +
-                "MatchingManagerが設定されていません。"
-            );
-
-            SetStatus(
-                "Matching Manager Missing"
-            );
-
+        if (!CanStartNetwork()) return;
+        if (matchingManager == null || !matchingManager.isActiveAndEnabled) {
+            SetStatus("有効なMatchingManagerを設定してください");
             return;
         }
-
-        if (NetworkManager.Singleton == null) {
-            Debug.LogError(
-                "[NetworkUI] " +
-                "NetworkManagerがありません。"
-            );
-
-            SetStatus(
-                "Network Manager Missing"
-            );
-
-            return;
-        }
-
-        SetStatus(
-            "Matching..."
-        );
-
-        Debug.Log(
-            "[NetworkUI] Matching開始"
-        );
-
+        showMatchingState = true;
+        hasShownMatchingState = false;
+        Log("自動マッチング開始");
         matchingManager.StartMatching();
+        RefreshMatchingStatus(); // 同期的な設定エラーもすぐに画面へ表示する。
     }
 
+    /// <summary>自動マッチングのキャンセルボタン用。接続済みの対戦は切断しない。</summary>
+    public void StopMatching() {
+        if (matchingManager == null) return;
+        matchingManager.StopMatching();
+        showMatchingState = true;
+        hasShownMatchingState = false;
+        RefreshMatchingStatus();
+    }
 
-    // =========================================================
-    // Server開始完了
-    // =========================================================
+    private void RefreshMatchingStatus() {
+        if (matchingManager == null) return;
+        MatchingManager.MatchState current = matchingManager.State;
+        string error = matchingManager.LastError;
+        // 毎フレーム同じ文字列を代入・ログ出力しない。
+        if (hasShownMatchingState && current == lastMatchingState && error == lastMatchingError) return;
+        hasShownMatchingState = true;
+        lastMatchingState = current;
+        lastMatchingError = error;
+
+        switch (current) {
+            case MatchingManager.MatchState.Idle: SetStatus("待機中"); break;
+            case MatchingManager.MatchState.Searching: SetStatus("対戦相手を探しています..."); break;
+            case MatchingManager.MatchState.WaitingForHost: SetStatus("相手発見・ホスト起動待ち..."); break;
+            case MatchingManager.MatchState.WaitingForClient: SetStatus("ホスト起動中／相手の接続待ち..."); break;
+            case MatchingManager.MatchState.Connecting: SetStatus("ホストに接続中..."); break;
+            case MatchingManager.MatchState.Connected: SetStatus("対戦相手との接続完了！"); break;
+            case MatchingManager.MatchState.Failed: SetStatus("接続失敗／切断\n" + error); break;
+        }
+    }
 
     private void OnServerStarted() {
-        Debug.Log(
-            "[NetworkUI] OnServerStarted"
-        );
+        // ここはサーバーの起動通知。画面遷移・対戦開始は行わない。
+        Log("OnServerStarted：サーバー起動。対戦相手の接続完了とは別です。");
     }
 
+    private void OnClientConnected(ulong clientId) {
+        if (registeredManager == null) return;
+        Log("Client Connected=" + clientId + " / LocalClientId="
+            + registeredManager.LocalClientId + " / IsHost=" + registeredManager.IsHost);
 
-    // =========================================================
-    // Client接続成功
-    // =========================================================
+        // 自動マッチングの表示はStateに一本化する。
+        // この通知時点でMatchingManagerのイベントがまだ実行されていなくても問題ない。
+        if (showMatchingState) return;
 
-    private void OnClientConnected(
-        ulong clientId) {
-        Debug.Log(
-            $"[NetworkUI] " +
-            $"Client Connected : {clientId}"
-        );
-
-        if (NetworkManager.Singleton == null)
-            return;
-
-        ulong localClientId =
-            NetworkManager.Singleton.LocalClientId;
-
-        Debug.Log(
-            $"[NetworkUI] " +
-            $"LocalClientId : {localClientId}"
-        );
-
-        // 自分自身の接続完了
-        if (localClientId == clientId) {
-            SetStatus(
-                "Connection"
-            );
-
-            Debug.Log(
-                "[NetworkUI] " +
-                "★★★ Connection完了 ★★★"
-            );
-        }
-    }
-
-
-    // =========================================================
-    // Client切断
-    // =========================================================
-
-    private void OnClientDisconnected(
-        ulong clientId) {
-        Debug.LogWarning(
-            $"[NetworkUI] " +
-            $"Client Disconnected : {clientId}"
-        );
-
-        if (NetworkManager.Singleton == null)
-            return;
-
-        ulong localClientId =
-            NetworkManager.Singleton.LocalClientId;
-
-        Debug.LogWarning(
-            $"[NetworkUI] " +
-            $"LocalClientId : {localClientId}"
-        );
-
-        // -----------------------------------------------------
-        // Client側の場合
-        // -----------------------------------------------------
-
-        if (NetworkManager.Singleton.IsClient
-            &&
-            !NetworkManager.Singleton.IsServer) {
-            string reason =
-                NetworkManager.Singleton.DisconnectReason;
-
-            if (string.IsNullOrEmpty(reason)) {
-                reason =
-                    "理由不明";
+        if (registeredManager.IsServer) {
+            // ホスト自身が接続しただけなら、相手はまだいない。
+            if (clientId == NetworkManager.ServerClientId) {
+                Log("ホスト自身の接続通知。対戦成立とは判定しません。");
+                return;
             }
-
-            Debug.LogError(
-                $"[NetworkUI] " +
-                $"Client接続失敗 / 切断理由: {reason}"
-            );
-
-            SetStatus(
-                $"Disconnected\n{reason}"
-            );
-
-            return;
+            SetStatus("対戦相手が接続しました！");
         }
-
-        // -----------------------------------------------------
-        // Host側
-        // -----------------------------------------------------
-
-        if (NetworkManager.Singleton.IsServer) {
-            Debug.LogWarning(
-                "[NetworkUI] " +
-                "Host側でClientが切断しました。"
-            );
+        else if (clientId == registeredManager.LocalClientId) {
+            SetStatus("ホストへの接続完了！");
         }
     }
 
+    private void OnClientDisconnected(ulong clientId) {
+        if (registeredManager == null) return;
+        string reason = registeredManager.DisconnectReason;
+        if (string.IsNullOrEmpty(reason)) reason = "詳細通知なし。相手側Consoleも確認してください。";
+        Debug.LogWarning(Prefix + "Client Disconnected=" + clientId + " / 理由=" + reason, this);
+        if (showMatchingState) return; // MatchingManagerが失敗理由を確定し、Updateで表示。
 
-    // =========================================================
-    // UI表示
-    // =========================================================
-
-    private void SetStatus(
-        string message) {
-        Debug.Log(
-            $"[NetworkUI] Status: {message}"
-        );
-
-        if (statusText != null) {
-            statusText.text =
-                message;
-        }
+        if (registeredManager.IsServer && clientId != NetworkManager.ServerClientId)
+            SetStatus("クライアントが切断されました");
+        else
+            SetStatus("接続終了／接続失敗\n" + reason);
     }
 
-
-    // =========================================================
-    // Destroy
-    // =========================================================
-
-    private void OnDestroy() {
-        if (NetworkManager.Singleton == null)
-            return;
-
-        NetworkManager.Singleton
-            .OnClientConnectedCallback -=
-            OnClientConnected;
-
-        NetworkManager.Singleton
-            .OnClientDisconnectCallback -=
-            OnClientDisconnected;
-
-        NetworkManager.Singleton
-            .OnServerStarted -=
-            OnServerStarted;
+    private void SetStatus(string message) {
+        if (lastStatus != message) Log("Status: " + message);
+        lastStatus = message;
+        if (statusText != null && statusText.text != message) statusText.text = message;
     }
+
+    // 異なるUIが2つ存在する場合、名前とInstanceIDで見分けられる。
+    // DisallowMultipleComponentは同じGameObject内のみ。別GameObjectの重複は別途確認する。
+    private string Prefix => "[NetworkUI " + gameObject.name + " #" + GetInstanceID() + "] ";
+    private void Log(string message) {
+        if (verboseLog) Debug.Log(Prefix + message, this);
+    }
+
+    private void OnDisable() {
+        UnregisterEvents();
+        hasShownMatchingState = false;
+        // UI非表示は通信終了ではない。ここではShutdownしない。
+    }
+
+    private void OnDestroy() { UnregisterEvents(); }
 }
