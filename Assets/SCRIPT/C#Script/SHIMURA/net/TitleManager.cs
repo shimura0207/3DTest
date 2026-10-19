@@ -290,4 +290,131 @@ public class TitleManager : MonoBehaviour {
         if (instance == this)
             instance = null;
     }
+
+
+    /// <summary>
+    /// ランダムマッチボタンから呼ぶ。
+    ///
+    /// 1. ホストを検索する
+    /// 2. 参加可能なホストがいればランダムに参加する
+    /// 3. 見つからなければ自分がホストになる
+    /// </summary>
+    public void OnRandomMatchButton() {
+        // 連打や、通信中の再開始を防ぐ
+        if (state != ScreenState.Menu)
+            return;
+
+        if (networkManager == null || receiver == null) {
+            SetStatus("NetworkManagerまたはReceiverが未設定です");
+            return;
+        }
+
+        StopSearch();
+        ResetRole();
+
+        if (hostsDisplayUI != null)
+            hostsDisplayUI.ResetPanel();
+
+        // 一覧選択画面は使わず、待機画面で検索する。
+        // Connectingにはしないので、接続タイムアウト判定はまだ始まらない。
+        ShowScreen(ScreenState.Waiting, "対戦相手を探しています...");
+
+        if (!receiver.StartReceiveIP()) {
+            // 受信処理の失敗を「ホストがいない」と扱わない
+            ShowScreen(
+                ScreenState.Menu,
+                "検索を開始できません。Consoleを確認してください");
+            return;
+        }
+
+        searchCoroutine = StartCoroutine(RandomMatchRoutine());
+    }
+
+    /// <summary>
+    /// 自動検索と参加先の決定。
+    /// キャンセル時は既存のStopSearchで停止できる。
+    /// </summary>
+    private IEnumerator RandomMatchRoutine() {
+        // 同時に押したPCが、全く同じタイミングで
+        // 検索を終了しないよう、待ち時間をランダムにずらす。
+        float searchDuration =
+            Mathf.Max(0.5f, searchSeconds) +
+            UnityEngine.Random.Range(1f, 3f);
+
+        yield return new WaitForSecondsRealtime(searchDuration);
+
+        // 検索中に受信エラーなどで停止した場合
+        if (!receiver.IsReceiving) {
+            searchCoroutine = null;
+
+            ShowScreen(
+                ScreenState.Menu,
+                "検索が停止しました。もう一度お試しください");
+            yield break;
+        }
+
+        // 参加できるホストだけを候補にする
+        var availableHosts =
+            new System.Collections.Generic.List<UDPListener.UdpMessage>();
+
+        foreach (UDPListener.UdpMessage host in receiver.discoveredHosts) {
+            if (host.gamePlaying)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(host.ip))
+                continue;
+
+            if (host.port < 1 || host.port > 65535)
+                continue;
+
+            availableHosts.Add(host);
+        }
+
+        // 検索結果を確定したので、受信を停止する
+        receiver.StopReceiveIP();
+        searchCoroutine = null;
+
+        if (availableHosts.Count > 0) {
+            // ----------------------------------------
+            // 参加できる部屋あり → クライアントになる
+            // ----------------------------------------
+
+            int index = UnityEngine.Random.Range(0, availableHosts.Count);
+            UDPListener.UdpMessage selected = availableHosts[index];
+
+            ipAddress = selected.ip;
+            isHost = false;
+            isClient = true;
+
+            Debug.Log(
+                $"[RandomMatch] 部屋を選択: {selected.hostName} " +
+                $"({selected.ip}:{selected.port})");
+
+            // ここから接続タイムアウトの計測を開始する
+            BeginConnecting("対戦相手に接続しています...");
+
+            if (!networkManager.BeginClient(selected.ip, selected.port)) {
+                LeaveRoom("接続を開始できませんでした");
+            }
+
+            yield break;
+        }
+
+        // ----------------------------------------
+        // 参加できる部屋なし → 自分がホストになる
+        // ----------------------------------------
+
+        ipAddress = "";
+        isHost = true;
+        isClient = false;
+
+        Debug.Log("[RandomMatch] 部屋がないためホストとして待機します。");
+
+        BeginConnecting("部屋を作成しています...");
+
+        // ホスト情報の配信はCustomNetworkManagerが開始する
+        if (!networkManager.BeginHost()) {
+            LeaveRoom("ホストを起動できませんでした");
+        }
+    }
 }
