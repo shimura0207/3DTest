@@ -34,13 +34,14 @@ public class DeckBuildMenu : MenuWindowBase {
     /// メニューを開いたときの処理
     /// </summary>
     public override async UniTask Open() {
+
         // メニューを表示する
         await base.Open();
 
-        // 前回の選択状態をリセットする
+        // 前回の選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
 
-        // ボタンが押されるまで待機する
+        // ボタンが選択されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
 
         // 選択後にメニューを閉じる
