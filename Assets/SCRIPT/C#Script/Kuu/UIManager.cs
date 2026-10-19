@@ -5,6 +5,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 using static CommonModule;
@@ -14,7 +15,7 @@ using static CommonModule;
 /// </summary>
 public class UIManager : SystemObject {
     // 自身への参照
-    public static UIManager Instance { get; private set; }
+    public static UIManager instance { get; private set; }
 
     // つかんだオブジェクトを保持
     private GameObject catchObject = null;
@@ -29,6 +30,8 @@ public class UIManager : SystemObject {
     private const float RAY_RANGE_MAX = 10.0f;
 
     public override async UniTask Initialize() {
+        instance = this;
+
         await UniTask.CompletedTask;
     }
 
@@ -56,6 +59,9 @@ public class UIManager : SystemObject {
                 cardObject = catchObject.GetComponent<CardObject>();
                 // IDからステータスを取得
                 cardData = CardDataMasterUtility.GetCardMaster(cardObject.cardID);
+            }
+            else {
+                cardData = null;
             }
         }
     }

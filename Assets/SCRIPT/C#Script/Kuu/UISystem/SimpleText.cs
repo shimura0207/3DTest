@@ -4,25 +4,45 @@
  */
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SimpleText : MonoBehaviour
-{
+public class SimpleText : MonoBehaviour {
     [SerializeField] private Canvas cardInfo = null;
+
+    // 名前テキスト
+    [SerializeField] private TMP_Text nameText = null;
+
+    // カードタイプテキスト
+    [SerializeField] private TMP_Text cardTypeText = null;
+
+    // 種族テキスト
+    [SerializeField] private TMP_Text groupText = null;
+
+    // ステータステキスト
+    [SerializeField] private TMP_Text statusText = null;
+
+    // 効果テキスト
+    [SerializeField] private TMP_Text abilityText = null;
+
     // Start is called before the first frame update
-    void Start()
-    {
-        // IDからステータスを取得
-        var data = CardDataMasterUtility.GetCardMaster(101);
+    void Start() {
         cardInfo.enabled = false;
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) {
-            cardInfo.enabled = true;
+    void Update() {
+        var data = UIManager.instance.cardData;
+        // データがなければ非表示
+        if (data == null) {
+            cardInfo.enabled = false;
+            return;
         }
+
+        // 各データをテキストにする
+        cardInfo.enabled = true;
+        nameText.text = data.name;
+        
     }
 }

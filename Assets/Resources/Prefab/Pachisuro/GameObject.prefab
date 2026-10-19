@@ -6529,7 +6529,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22a1e7590c2c7649a48006cc58648e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  window: {fileID: 4705965882280716068}
+  cardInfo: {fileID: 4705965882280716068}
+  nameText: {fileID: 2278701837826760176}
+  cardTypeText: {fileID: 1237911697140856078}
+  groupText: {fileID: 1892977758703962662}
+  statusText: {fileID: 8584714767591187314}
+  abilityText: {fileID: 8366352476057622023}
 --- !u!1 &4324208967206437753
 GameObject:
   m_ObjectHideFlags: 0
