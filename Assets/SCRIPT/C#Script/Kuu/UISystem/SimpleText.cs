@@ -35,7 +35,7 @@ public class SimpleText : MonoBehaviour {
     // 効果テキスト
     [SerializeField] private TMP_Text abilityText = null;
 
-    // 種族
+    // 種族enum
     private CardRaceID cardRaceID = CardRaceID.None;
 
     // カードタイプテキスト保存用
@@ -44,7 +44,7 @@ public class SimpleText : MonoBehaviour {
     // 種族テキスト保存用
     private string races = null;
 
-
+    private DisplayKoyaku instance = null;
 
     // Start is called before the first frame update
     void Start() {
@@ -76,6 +76,7 @@ public class SimpleText : MonoBehaviour {
             status.enabled = false;
         }
         abilityText.text = data.ability;
+        DisplayKoyaku.instance.KoyakuDisplayer(data.suportRoleID);
     }
 
     /// <summary>
