@@ -47,7 +47,12 @@ public class CustomNetworkManager : NetworkManager {
     // ============================================================
     // Inspector設定
     // ============================================================
-
+    /// <summary>
+    /// Mirrorが管理するNetworkManagerを、自作クラスとして取得する。
+    /// Findによる検索やInspectorへの参照登録は不要。
+    /// </summary>
+    public static CustomNetworkManager instance
+        => singleton as CustomNetworkManager;
     [Header("カードゲーム用の参照")]
 
     [Tooltip("画面切り替えを担当するTitleManager")]
@@ -265,9 +270,19 @@ public class CustomNetworkManager : NetworkManager {
         readyPlayers.Clear();
         matchStarted = false;
 
-        // クライアントから送られてくる整数の受信処理を登録
+        // 整数
         NetworkServer.RegisterHandler<SendValueRequest>(
             OnServerValueReceived);
+
+        // bool
+        NetworkServer.RegisterHandler<SendBoolRequest>(
+            OnServerBoolReceived);
+
+        // string
+        NetworkServer.RegisterHandler<SendStringRequest>(
+            OnServerStringReceived);
+
+
 
         // ホスト起動後に部屋情報を配信する
         if (broadcaster != null && transport is KcpTransport kcp) {
@@ -295,13 +310,21 @@ public class CustomNetworkManager : NetworkManager {
 
         ResetLocalMatchState();
 
-        // 対戦開始・待機状態の受信処理
+        // 部屋の状態
         NetworkClient.RegisterHandler<CardRoomStateMessage>(
             OnRoomStateReceived);
 
-        // 相手から転送された整数の受信処理
+        // 整数
         NetworkClient.RegisterHandler<OpponentValueMessage>(
             OnOpponentValueMessage);
+
+        // bool
+        NetworkClient.RegisterHandler<OpponentBoolMessage>(
+            OnOpponentBoolMessage);
+
+        // string
+        NetworkClient.RegisterHandler<OpponentStringMessage>(
+            OnOpponentStringMessage);
     }
 
     /// <summary>
@@ -582,7 +605,8 @@ public class CustomNetworkManager : NetworkManager {
         // 独自メッセージの受信登録を解除
         NetworkClient.UnregisterHandler<CardRoomStateMessage>();
         NetworkClient.UnregisterHandler<OpponentValueMessage>();
-
+        NetworkClient.UnregisterHandler<OpponentBoolMessage>();
+        NetworkClient.UnregisterHandler<OpponentStringMessage>();
         base.OnStopClient();
 
         if (title != null)
@@ -603,7 +627,8 @@ public class CustomNetworkManager : NetworkManager {
             broadcaster.StopBroadcast();
 
         NetworkServer.UnregisterHandler<SendValueRequest>();
-
+        NetworkServer.UnregisterHandler<SendBoolRequest>();
+        NetworkServer.UnregisterHandler<SendStringRequest>();
         base.OnStopServer();
     }
 
@@ -615,8 +640,272 @@ public class CustomNetworkManager : NetworkManager {
         ResetReceivedValue();
     }
 
+    /// <summary>
+    /// 新しい対戦や切断時に、受信済みデータを初期化する。
+    /// </summary>
     private void ResetReceivedValue() {
+        // 整数
         receivedValue = 0;
         HasReceivedValue = false;
+
+        // bool
+        receivedBool = false;
+        HasReceivedBool = false;
+
+        // string
+        receivedString = "";
+        HasReceivedString = false;
     }
+
+
+    // ============================================================
+    // bool・stringの受信結果
+    // ============================================================
+
+    /// <summary>
+    /// 最後に相手から受け取ったbool。
+    /// </summary>
+    public bool receivedBool { get; private set; }
+
+    /// <summary>
+    /// 最後に相手から受け取ったstring。
+    /// </summary>
+    public string receivedString { get; private set; } = "";
+
+    /// <summary>
+    /// この対戦でboolを受信したことがあるか。
+    /// 未受信とfalseを区別するために使用する。
+    /// </summary>
+    public bool HasReceivedBool { get; private set; }
+
+    /// <summary>
+    /// この対戦でstringを受信したことがあるか。
+    /// </summary>
+    public bool HasReceivedString { get; private set; }
+
+    /// <summary>
+    /// 相手からboolを受信した瞬間に呼ばれるイベント。
+    /// </summary>
+    public event Action<bool> OnOpponentBoolReceived;
+
+    /// <summary>
+    /// 相手からstringを受信した瞬間に呼ばれるイベント。
+    /// </summary>
+    public event Action<string> OnOpponentStringReceived;
+
+    // テスト用の文字列サイズ上限。
+    // ネットワーク自体の上限ではなく、このゲームで設ける制限。
+    private const int MaxStringCharacters = 1000;
+
+    // ============================================================
+    // 共通の送信確認
+    // ============================================================
+
+    /// <summary>
+    /// このPCからデータを送信できるか。
+    /// </summary>
+    private bool CanSendOpponentData() {
+        if (!NetworkClient.isConnected || !NetworkClient.ready) {
+            Debug.LogWarning(
+                "[送信] まだ接続準備が完了していません。",
+                this);
+            return false;
+        }
+
+        if (!IsMatchStarted) {
+            Debug.LogWarning(
+                "[送信] 対戦開始後に送信してください。",
+                this);
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// サーバー側で、送信者が有効な対戦参加者か確認する。
+    /// </summary>
+    private bool CanRelayOpponentData(NetworkConnectionToClient sender) {
+        return !stopping &&
+               matchStarted &&
+               sender != null &&
+               sender.isAuthenticated &&
+               sender.isReady &&
+               readyPlayers.Contains(sender.connectionId);
+    }
+
+    /// <summary>
+    /// 送信者以外の、有効な対戦相手を取得する。
+    /// サーバー側だけで使用する。
+    /// </summary>
+    private NetworkConnectionToClient FindOpponent(
+        NetworkConnectionToClient sender) {
+        foreach (NetworkConnectionToClient target
+                 in NetworkServer.connections.Values) {
+            if (target.connectionId == sender.connectionId)
+                continue;
+
+            if (!target.isAuthenticated ||
+                !target.isReady ||
+                !readyPlayers.Contains(target.connectionId)) {
+                continue;
+            }
+
+            return target;
+        }
+
+        return null;
+    }
+
+    // ============================================================
+    // bool送信
+    // ============================================================
+
+    /// <summary>
+    /// 引数のboolを相手へ送る。
+    /// trueという戻り値は送信要求を出したことを示し、
+    /// 相手への到達確認ではない。
+    /// </summary>
+    public bool SendBoolToOpponent(bool value) {
+        if (!CanSendOpponentData())
+            return false;
+
+        NetworkClient.Send(new SendBoolRequest {
+            value = value
+        });
+
+        Debug.Log($"[bool送信] {value}", this);
+        return true;
+    }
+
+    /// <summary>
+    /// サーバーがboolを受け取り、相手へ転送する。
+    /// </summary>
+    private void OnServerBoolReceived(
+        NetworkConnectionToClient sender,
+        SendBoolRequest message) {
+        if (!CanRelayOpponentData(sender))
+            return;
+
+        NetworkConnectionToClient opponent = FindOpponent(sender);
+
+        if (opponent == null)
+            return;
+
+        opponent.Send(new OpponentBoolMessage {
+            value = message.value
+        });
+    }
+
+    /// <summary>
+    /// 相手からのboolを、このPCで受け取る。
+    /// </summary>
+    private void OnOpponentBoolMessage(OpponentBoolMessage message) {
+        if (!IsMatchStarted)
+            return;
+
+        receivedBool = message.value;
+        HasReceivedBool = true;
+
+        Debug.Log($"[bool受信] {receivedBool}", this);
+
+        OnOpponentBoolReceived?.Invoke(receivedBool);
+    }
+
+    // ============================================================
+    // string送信
+    // ============================================================
+
+    /// <summary>
+    /// 引数のstringを相手へ送る。
+    /// nullは空文字に変換する。
+    /// </summary>
+    public bool SendStringToOpponent(string value) {
+        if (!CanSendOpponentData())
+            return false;
+
+        string text = value ?? "";
+
+        if (text.Length > MaxStringCharacters) {
+            Debug.LogWarning(
+                $"[string送信] 文字列は{MaxStringCharacters}文字以内にしてください。",
+                this);
+            return false;
+        }
+
+        NetworkClient.Send(new SendStringRequest {
+            value = text
+        });
+
+        Debug.Log($"[string送信] {text}", this);
+        return true;
+    }
+
+    /// <summary>
+    /// サーバーがstringを受け取り、相手へ転送する。
+    /// </summary>
+    private void OnServerStringReceived(
+        NetworkConnectionToClient sender,
+        SendStringRequest message) {
+        if (!CanRelayOpponentData(sender))
+            return;
+
+        string text = message.value ?? "";
+
+        // 送信側だけでなく、サーバーでも検証する
+        if (text.Length > MaxStringCharacters)
+            return;
+
+        NetworkConnectionToClient opponent = FindOpponent(sender);
+
+        if (opponent == null)
+            return;
+
+        opponent.Send(new OpponentStringMessage {
+            value = text
+        });
+    }
+
+    /// <summary>
+    /// 相手からのstringを、このPCで受け取る。
+    /// </summary>
+    private void OnOpponentStringMessage(OpponentStringMessage message) {
+        if (!IsMatchStarted)
+            return;
+
+        receivedString = message.value ?? "";
+        HasReceivedString = true;
+
+        Debug.Log($"[string受信] {receivedString}", this);
+
+        OnOpponentStringReceived?.Invoke(receivedString);
+    }
+}
+
+/// <summary>
+/// boolの送信要求：送信者 → サーバー
+/// </summary>
+public struct SendBoolRequest : NetworkMessage {
+    public bool value;
+}
+
+/// <summary>
+/// boolの転送：サーバー → 対戦相手
+/// </summary>
+public struct OpponentBoolMessage : NetworkMessage {
+    public bool value;
+}
+
+/// <summary>
+/// stringの送信要求：送信者 → サーバー
+/// </summary>
+public struct SendStringRequest : NetworkMessage {
+    public string value;
+}
+
+/// <summary>
+/// stringの転送：サーバー → 対戦相手
+/// </summary>
+public struct OpponentStringMessage : NetworkMessage {
+    public string value;
 }
