@@ -7,8 +7,8 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using static CardImageDatabase;
 
 /// <summary>
 /// カード効果データベース
@@ -21,7 +21,7 @@ public class CardAbilityDatabase : ScriptableObject {
         public List<Func<UniTask>> abilityList;
     }
 
-    // カードの能力リスト
+    // カードの効果リスト
     [SerializeField]
     private List<CardAbilityData> cardAbilityDataList = new List<CardAbilityData>();
     // リストの読み取り専用プロパティ
@@ -48,29 +48,46 @@ public class CardAbilityDatabase : ScriptableObject {
             }
             // 効果番号の位置に効果が設定される
             data.abilityList.Add(abilityFunc);
-
+            // 追加
             cardAbilityDataList.Add(data);
             return;
         }
 
+        // 同じカードIDに他の効果が入っている場合
+        foreach (var card in cardAbilityDataList) {
+            if (card.cardID != addID) continue;
 
+            // 追加したい効果番号がなかったらその番号までnullを詰めて追加
+            if (card.abilityList.Count <= abilityID) {
+                // nullの敷き詰め
+                for (int i = 0; i < abilityID - card.abilityList.Count; i++) {
+                    card.abilityList.Add(null);
+                }
+                // 効果番号の位置に効果が設定される
+                card.abilityList.Add(abilityFunc);
+            }
+            else {
+                // 追加したい効果番号に追加
+                card.abilityList[abilityID] = abilityFunc;
+            }
+            return;
+        }
 
+        // 同じカードIDに他の効果がない場合
         int insertIndex = 0;
         // 追加データのIDより大きいIDが出てくるまでカウント
         while (cardAbilityDataList.Count > insertIndex &&
                cardAbilityDataList[insertIndex].cardID < addID) {
             insertIndex++;
         }
-
-        // IDが被っていなければ追加
-        if (cardAbilityDataList.Count > insertIndex &&
-            cardAbilityDataList[insertIndex].cardID == addID) {
-            // ID被りなので警告
-            Debug.LogWarning("このIDはすでに登録されています。");
+        // 効果の番号より小さい番号にはnullを入れておく
+        for (int i = 0; i < abilityID; i++) {
+            data.abilityList.Add(null);
         }
-        else {
-            // 適正な位置に追加
-            cardAbilityDataList.Insert(insertIndex, data);
-        }
+        // 効果番号の位置に効果が設定される
+        data.abilityList.Add(abilityFunc);
+        // 適正な位置に追加
+        cardAbilityDataList.Insert(insertIndex, data);
+        return;
     }
 }
