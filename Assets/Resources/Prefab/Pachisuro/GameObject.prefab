@@ -913,7 +913,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3121323101460920601
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1987,7 +1987,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6862884290304151853
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3869,7 +3869,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3579066050968928090
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5789,7 +5789,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8621664416180340850
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6546,7 +6546,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5909850649967917994
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7156,6 +7156,7 @@ MonoBehaviour:
   ATKText: {fileID: 8584714767591187314}
   SIZEText: {fileID: 11027939864857433}
   abilityText: {fileID: 8366352476057622023}
+  displayKoyaku: {fileID: 8660353710008629365}
 --- !u!1 &4324208967206437753
 GameObject:
   m_ObjectHideFlags: 0
@@ -10695,7 +10696,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1945298447629460077
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12324,7 +12325,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5994726701070435351
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13461,7 +13462,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3874553488283875470
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14220,7 +14221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1612776895610562880
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15657,7 +15658,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6182618831444744345
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16273,7 +16274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4337803538866512066
 RectTransform:
   m_ObjectHideFlags: 0
