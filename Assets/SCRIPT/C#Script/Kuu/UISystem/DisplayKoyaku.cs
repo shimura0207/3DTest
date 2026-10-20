@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class DisplayKoyaku : MonoBehaviour {
     // 通常5種の役
@@ -15,25 +16,25 @@ public class DisplayKoyaku : MonoBehaviour {
     [SerializeField] private Canvas shadow = null;
 
     // ハズレ
-    [SerializeField] private Image miss = null;
+    [SerializeField] private UnityEngine.UI.Image miss = null;
 
     // リプレイ
-    [SerializeField] private Image replay = null;
+    [SerializeField] private UnityEngine.UI.Image replay = null;
 
     // ベル
-    [SerializeField] private Image bell = null;
+    [SerializeField] private UnityEngine.UI.Image bell = null;
 
     // スイカ
-    [SerializeField] private Image suika = null;
+    [SerializeField] private UnityEngine.UI.Image suika = null;
 
     // チェリー
-    [SerializeField] private Image cherry = null;
+    [SerializeField] private UnityEngine.UI.Image cherry = null;
 
     // 全て
-    [SerializeField] private Image all = null;
+    [SerializeField] private UnityEngine.UI.Image all = null;
 
     // スペル
-    [SerializeField] private Image spell = null;
+    [SerializeField] private UnityEngine.UI.Image spell = null;
 
     // カードの対応役enum
     private CardSuportRole cardSuportRole;
@@ -54,6 +55,11 @@ public class DisplayKoyaku : MonoBehaviour {
         // 表示リセット
         normalKoyaku.enabled = false;
         shadow.enabled = false;
+        miss.enabled = false;
+        replay.enabled = false;
+        bell.enabled = false;
+        suika.enabled = false;
+        cherry.enabled = false;
         all.enabled = false;
         spell.enabled = false;
 
