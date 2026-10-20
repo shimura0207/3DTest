@@ -81,13 +81,8 @@ public class MainGamePart : PartBase {
 
         // バトル開始前の準備を行う
         await MenuWindowManager.Instance.BattleSettingsMenuOpen(deckID);
-
-        // バトル進行とUI更新を並行して実行
-        await UniTask.WhenAll(
-            BattleExecute(),
-            UIExecute()
-        );
-
+        UniTask task = UIExecute();
+        await BattleExecute();
         // バトル終了後の結果を取得する
         result = battleSystemManager.battleState;
 
