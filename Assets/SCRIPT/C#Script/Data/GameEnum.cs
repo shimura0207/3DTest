@@ -251,3 +251,136 @@ public enum FieldLane {
 
     Max,
 }
+
+/// <summary>
+/// 効果の種類
+/// @author Riku
+/// </summary>
+public enum AbilityType {
+    None = -1,
+
+    // 組み合わせで作れる通常効果
+    Normal,
+    // 組み合わせでは作れない複雑な特殊効果
+    Special,
+    // キーワード効果
+    Keyword,
+
+    Max,
+}
+
+/// <summary>
+/// 特殊効果
+/// @author Riku
+/// </summary>
+public enum SpecialAbility {
+    None = -1,
+
+    // イスカの1番目の効果(仮)
+    Isuka1,
+    // イスカの2番目の効果(仮)
+    Isuka2,
+
+    Max,
+}
+
+/// <summary>
+/// キーワード効果
+/// @author Riku
+/// </summary>
+public enum KeywordAbility {
+    None = -1,
+    
+    // アスリート(疲労しない)
+    Athlete,
+    // ターゲット集中(相手の攻撃を全て受ける)
+    TargetFocus,
+
+    Max,
+}
+
+/// <summary>
+/// 効果の発動タイミング
+/// @author Riku
+/// </summary>
+public enum AbilityTiming {
+    None = -1,
+
+    // ターン開始時
+    TurnStart,
+    // カード使用時
+    Play,
+    // 攻撃時
+    Attack,
+    // ターン終了時
+    TurnEnd,
+
+    Max,
+}
+
+/// <summary>
+/// 効果の発動対象
+/// @author Riku
+/// </summary>
+public enum AbilityTarget {
+    None = -1,
+
+    // 自身
+    SelfPlayer,
+    // 相手
+    OpponentPlayer,
+    // ランダム
+    Random,
+    // 選択
+    Select,
+
+    Max,
+}
+
+/// <summary>
+/// 効果の発動条件
+/// @author Riku
+/// </summary>
+public enum AbilityCondition {
+    None = -1,
+
+    // 無条件
+    Free,
+    // 現在のサイズによって
+    CurrentSize,
+
+    Max,
+}
+
+/// <summary>
+/// 効果の発動内容
+/// @author Riku
+/// </summary>
+public enum AbilityProcess {
+    None = -1,
+
+    // カードのドロー
+    Draw,
+    // カードのサーチ
+    Search,
+    // ダメージ付与
+    GiveDamage,
+    // HP回復
+    HeelHP,
+    // 手札を捨てる
+    DiscardHand,
+    // ATK上昇
+    UpATK,
+    // ATK減少
+    DownATK,
+    // モンスターを出す
+    SummonMonster,
+    // モンスター変化
+    TransformationMonster,
+    // 状態付与
+    GiveState,
+    // モンスター破壊
+    DeleteMonster,
+
+    Max,
+}
