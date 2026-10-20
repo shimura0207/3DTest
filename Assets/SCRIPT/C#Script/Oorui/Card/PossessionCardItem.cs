@@ -19,10 +19,15 @@ public class PossessionCardItem : MonoBehaviour {
     [SerializeField]
     private TMP_Text countText = null;
 
+    // カードのID
+    public int CardID { get; private set; }
+
     /// <summary>
     /// カード画像と所持枚数を設定する
     /// </summary>
-    public void SetCard(Sprite cardSprite, int count) {
+    public void SetCard(int cardID,Sprite cardSprite, int count) {   
+        // ソート時に使用するカードIDを保存する
+        CardID = cardID;
         // カード画像を設定する
         if (cardImage != null) {
             cardImage.sprite = cardSprite;

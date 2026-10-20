@@ -20,6 +20,7 @@ public class PossessionCardListView : MonoBehaviour {
     [SerializeField]
     private PossessionCardItem cardPrefab = null;
 
+
     // 生成したカード表示を管理するリスト
     private readonly List<PossessionCardItem> cardItems = new List<PossessionCardItem>();
 
@@ -57,7 +58,7 @@ public class PossessionCardListView : MonoBehaviour {
             PossessionCardItem cardItem = Instantiate(cardPrefab, content);
 
             // カード画像と所持枚数を設定する
-            cardItem.SetCard(cardSprite, entry.Value);
+            cardItem.SetCard(entry.Key, cardSprite, entry.Value);
 
             // 生成したカードを管理リストに登録する
             cardItems.Add(cardItem);
@@ -109,6 +110,50 @@ public class PossessionCardListView : MonoBehaviour {
     /// カードのレアリティ順に並べ替える
     /// </summary>
     public void RealitySort() {
+        // レアリティが高い順にカードを並べ替える
+        cardItems.Sort((a, b) => {
+            // カードIDからマスターデータを取得する
+            var masterA = CardDataMasterUtility.GetCardMaster(a.CardID);
+            var masterB = CardDataMasterUtility.GetCardMaster(b.CardID);
+
+            // マスターデータがないカードは最後に配置する
+            if (masterA == null && masterB == null) return 0;
+            if (masterA == null) return 1;
+            if (masterB == null) return -1;
+
+            // Enumの値を比較し、高いレアリティを先にする
+            return ((int)masterB.rarityID).CompareTo((int)masterA.rarityID);
+        });
+
+        // 並べ替えた順番をContentの表示に反映する
+        for (int i = 0; i < cardItems.Count; i++) {
+            cardItems[i].transform.SetSiblingIndex(i);
+        }
+
+        // レイアウトを即時更新する
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+    }
+
+    /// <summary>
+    /// 並び替えの初期化
+    /// </summary>
+    public void ResetSort() {
+        // カードIDが小さい順に並べ替える
+        cardItems.Sort((a, b) => a.CardID.CompareTo(b.CardID));
+
+        // 並べ替えた順番をContentの表示に反映する
+        for (int i = 0; i < cardItems.Count; i++) {
+            cardItems[i].transform.SetSiblingIndex(i);
+        }
+
+        // レイアウトを即時更新する
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+
+        // スクロール位置を一覧の先頭に戻す
+        ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>();
+        if (scrollRect != null) {
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
 
     }
 }
