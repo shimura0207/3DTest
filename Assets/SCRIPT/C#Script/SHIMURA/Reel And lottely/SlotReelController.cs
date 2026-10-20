@@ -491,17 +491,25 @@ public class SlotReelController : MonoBehaviour {
 
             // 開始が可能なときだけ通常速度へ戻します。
             // 通常側のリールロック演出を開始する前に実行してください。
+            stoppedReelCount = 0;
             SetAllReelSpeeds(reelSpeed);
 
             maxBet = false;
             glassFlash.ResetAllGlass();
+            efectManager.HideTrumps();
+            HideStopEffectImage();
             currentSlotSymbolRole = roleLottery.RUSHDrawRole(currentTable);
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
 
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
                 efectManager.ShowCutinStart();
-
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterTop, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
             }
             for (int i = 0; i < reels.Length; i++) {
                 if (reels[i] == null) {
