@@ -76,7 +76,7 @@ public class SimpleText : MonoBehaviour {
             status.enabled = false;
         }
         abilityText.text = data.ability;
-        DisplayKoyaku.instance.KoyakuDisplayer(data.suportRoleID);
+        //DisplayKoyaku.instance.KoyakuDisplayer(data.suportRoleID);
     }
 
     /// <summary>
