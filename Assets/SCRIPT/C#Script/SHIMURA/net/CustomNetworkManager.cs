@@ -787,10 +787,13 @@ public class CustomNetworkManager : NetworkManager {
         if (!CanRelayOpponentData(sender))
             return;
 
+
         NetworkConnectionToClient opponent = FindOpponent(sender);
+
 
         if (opponent == null)
             return;
+
 
         opponent.Send(new OpponentBoolMessage {
             value = message.value
