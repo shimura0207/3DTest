@@ -6,7 +6,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using TMPro;
-using TMPro.EditorUtilities;
+//using TMPro.EditorUtilities;
 using UnityEngine;
 
 /// <summary>
@@ -16,9 +16,6 @@ public class RoomMenu : MenuWindowBase {
 
     // 現在の接続役割を保持する
     private ConnectionState connectionState = ConnectionState.None;
-
-    // 接続用クラス
-    [SerializeField] private NetworkUI networkUI;
 
     // ホスト専用のUI
     [SerializeField] private GameObject hostUI;
@@ -77,7 +74,7 @@ public class RoomMenu : MenuWindowBase {
         // ホストかクライアントかによって表示を切り替える
         switch (connectionState) {
             case ConnectionState.Host:
-                networkUI.StartHost();
+
                 break;
 
             case ConnectionState.Client:
