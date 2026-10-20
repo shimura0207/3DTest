@@ -11,10 +11,7 @@ using UnityEngine;
 /// クライアント側で表示するメニュー
 /// </summary>
 public class ClientMenu : MenuWindowBase {
-    // Clientとしてルームに参加するためのNetworkUI
-    [SerializeField]
-    private NetworkUI networkUI;
-
+    
     /// <summary>
     /// 初期化
     /// </summary>

@@ -71,8 +71,10 @@ public class MatchingPart : PartBase {
                 // ランダムマッチパートに遷移
                 Debug.Log("ランダムマッチを選択");
 
+                // メニューを開く
+                await MenuWindowManager.Instance.Open<RandomMatchingMenu>();
 
-
+                // 閉じたら遷移
                 await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
                 return;
             }
