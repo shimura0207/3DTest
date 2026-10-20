@@ -53,7 +53,7 @@ public class DeckBuildView : MonoBehaviour {
             PossessionCardItem cardItem = Instantiate(cardPrefab, content);
 
             // カード画像と所持枚数を設定する
-            cardItem.SetCard(cardSprite, entry.Value);
+            cardItem.SetCard(entry.Key,cardSprite, entry.Value);
 
             // 生成したカードを管理リストに登録する
             cardItems.Add(cardItem);

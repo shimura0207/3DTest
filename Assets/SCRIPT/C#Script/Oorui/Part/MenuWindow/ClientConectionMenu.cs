@@ -13,8 +13,6 @@ using UnityEngine.UI;
 /// </summary>
 public class ClientConectionMenu : MenuWindowBase {
 
-    // ネットワーク接続処理を担当するクラス
-    [SerializeField] private NetworkUI networkUI;
 
     // 接続先のルーム番号を入力する欄
     [SerializeField] private TMP_InputField roomCodeInput;
@@ -84,7 +82,7 @@ public class ClientConectionMenu : MenuWindowBase {
 
         // クライアント側の接続処理を開始
         if (result) {
-            networkUI.StartClient();
+            // networkUI.StartClient();
         }
 
         // 接続の仕方を返す

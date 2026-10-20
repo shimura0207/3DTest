@@ -28,7 +28,7 @@ public class MatchingPart : PartBase {
     [SerializeField] private Button returnButton;
 
     // 接続状況
-    private ConnectionState conection = ConnectionState.None;
+    // private ConnectionState conection = ConnectionState.None;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -41,7 +41,7 @@ public class MatchingPart : PartBase {
         await base.Setup();
         Debug.Log("マッチング画面表示中");
         // 接続状況の初期化
-        conection = ConnectionState.None;
+        //conection = ConnectionState.None;
 
         // ランダムボタンが押された時の処理を登録する
         randomButton.onClick.AddListener(OnClickRandomButton);
@@ -71,54 +71,57 @@ public class MatchingPart : PartBase {
                 // ランダムマッチパートに遷移
                 Debug.Log("ランダムマッチを選択");
 
+                // メニューを開く
+                await MenuWindowManager.Instance.Open<RandomMatchingMenu>();
 
-
+                // 閉じたら遷移
                 await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
                 return;
             }
 
             // プライベートマッチが選択された場合
             if (isPrivateMatch) {
-                // ホストまたはクライアントを選択するメニューを開く
-                Debug.Log("プライベートマッチを選択");
-                conection = await MenuWindowManager.Instance.ConnectMenuOpen(conection);
-
-                // キャンセルされた場合
-                if (conection == ConnectionState.None) {
-                    // プライベートマッチの選択状態を解除
-                    isPrivateMatch = false;
-
-                    // ランダムマッチの選択状態も初期化
-                    isRandomMatch = false;
-
-                    // 再度ボタン選択を待つ
-                    continue;
-                }
-                // クライアントで接続された場合
-                else if (conection == ConnectionState.Client) {
-                    // クライアント接続の確認画面を表示し、選択結果を取得
-                    bool isAccepted = await MenuWindowManager.Instance.ClientConnectionConfirm();
-
-                    // 「いいえ」が選択された場合
-                    if (!isAccepted) {
-
-                        // 接続状態を初期化
-                        conection = ConnectionState.None;
-
-                        // プライベートマッチの選択状態を解除
-                        isPrivateMatch = false;
-
-                        // ランダムマッチの選択状態も初期化
-                        isRandomMatch = false;
-
-                        // 最初の選択画面に戻り、再度ボタン入力を待つ
-                        continue;
-                    }
-                }
-
-                // ホストまたはクライアントが選択された場合
-                // プライベートマッチパートに遷移
-                await PartManager.Instance.TransitionPart(GamePart.PrivateMatch, conection);
+                // // ホストまたはクライアントを選択するメニューを開く
+                // Debug.Log("プライベートマッチを選択");
+                // conection = await MenuWindowManager.Instance.ConnectMenuOpen(conection);
+                // 
+                // // キャンセルされた場合
+                // if (conection == ConnectionState.None) {
+                //     // プライベートマッチの選択状態を解除
+                //     isPrivateMatch = false;
+                // 
+                //     // ランダムマッチの選択状態も初期化
+                //     isRandomMatch = false;
+                // 
+                //     // 再度ボタン選択を待つ
+                //     continue;
+                // }
+                // // クライアントで接続された場合
+                // else if (conection == ConnectionState.Client) {
+                //     // クライアント接続の確認画面を表示し、選択結果を取得
+                //     bool isAccepted = await MenuWindowManager.Instance.ClientConnectionConfirm();
+                // 
+                //     // 「いいえ」が選択された場合
+                //     if (!isAccepted) {
+                // 
+                //         // 接続状態を初期化
+                //         conection = ConnectionState.None;
+                // 
+                //         // プライベートマッチの選択状態を解除
+                //         isPrivateMatch = false;
+                // 
+                //         // ランダムマッチの選択状態も初期化
+                //         isRandomMatch = false;
+                // 
+                //         // 最初の選択画面に戻り、再度ボタン入力を待つ
+                //         continue;
+                //     }
+                // }
+                // 
+                // // ホストまたはクライアントが選択された場合
+                // // プライベートマッチパートに遷移
+                // await PartManager.Instance.TransitionPart(GamePart.PrivateMatch, conection);
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
                 return;
             }
 
