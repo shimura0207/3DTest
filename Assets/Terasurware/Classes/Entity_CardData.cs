@@ -22,10 +22,13 @@ public class Entity_CardData : ScriptableObject
 		public int rarityID;
 		public int themeID;
 		public int suportRoleID;
+		public int FirstRaceID;
+		public int SecondRaceID;
+		public int ThildRaceID;
 		public int SIZE;
 		public int ATK;
 		public int HP;
-		public int Type;
+		public int CardType;
 		public string ability;
 	}
 }

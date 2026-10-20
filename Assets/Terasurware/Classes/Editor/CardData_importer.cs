@@ -55,11 +55,14 @@ public class CardData_importer : AssetPostprocessor {
 					cell = row.GetCell(3); p.rarityID = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(5); p.themeID = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(7); p.suportRoleID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(8); p.SIZE = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(9); p.ATK = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(10); p.HP = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(12); p.Type = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(13); p.ability = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(9); p.FirstRaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(11); p.SecondRaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(13); p.ThildRaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(14); p.SIZE = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(15); p.ATK = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(16); p.HP = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(18); p.CardType = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(19); p.ability = (cell == null ? "" : cell.StringCellValue);
 						s.list.Add (p);
 					}
 					data.sheets.Add(s);

@@ -43,6 +43,9 @@ public class MainGamePart : PartBase {
 
     //使用デッキのID
     public static int deckID { get; private set; } = 0;
+
+    BattleState result = BattleState.None;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -76,26 +79,15 @@ public class MainGamePart : PartBase {
         // オブジェクトを表示する
         pachisuroInstance.SetActive(true);
 
-        // バトル準備を行う
-        // 使用デッキIDを渡す
+        // バトル開始前の準備を行う
         await MenuWindowManager.Instance.BattleSettingsMenuOpen(deckID);
-
-        // ループ
-        while (battleSystemManager.battleState == BattleState.InProgress) {
-            // フェイズの進行
-            await battleSystemManager.Execute();
-            // フレーム待機
-            await UniTask.Yield();
-        }
-
+        UniTask task = UIExecute();
+        await BattleExecute();
         // バトル終了後の結果を取得する
-        BattleState result = battleSystemManager.battleState;
+        result = battleSystemManager.battleState;
 
-        // 勝敗が決まったらリザルトパートに遷移
-        Debug.Log("試合終了");
-        // 勝敗を渡して、リザルトパートに遷移
+        // リザルトパートに遷移する
         await PartManager.Instance.TransitionPart(GamePart.EndGame, result);
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -160,5 +152,32 @@ public class MainGamePart : PartBase {
     /// <param name="id"></param>
     public void SetDeckID(int id) {
         deckID = id;
+    }
+
+    /// <summary>
+    /// バトルの進行処理
+    /// </summary>
+    private async UniTask BattleExecute() {
+        // バトルが進行中の間、フェイズを進行する
+        while (battleSystemManager.battleState == BattleState.InProgress) {
+            await battleSystemManager.Execute();
+
+            // 次のフレームまで待機する
+            await UniTask.Yield();
+        }
+    }
+
+    /// <summary>
+    /// UIManagerの更新処理を回す
+    /// </summary>
+    private async UniTask UIExecute() {
+        // バトルが進行中の間、UIを更新する
+        while (battleSystemManager.battleState == BattleState.InProgress) {
+            // UIの入力判定と更新を行う
+            UIManager.instance.Execute();
+
+            // 次のフレームまで待機する
+            await UniTask.Yield();
+        }
     }
 }
