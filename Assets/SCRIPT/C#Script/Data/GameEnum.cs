@@ -80,6 +80,15 @@ public enum OptionMenuSelect {
 }
 
 /// <summary>
+/// リザルト画面から遷移するパート
+/// </summary>
+public enum ResultSelectMenu {
+    None,
+    MainMenu,   //メインメニュー画面
+    Matching    // マッチング画面
+}
+
+/// <summary>
 /// RGカードの種族一覧
 /// </summary>
 public enum RGCardRace {
