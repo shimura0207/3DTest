@@ -32,7 +32,7 @@ MonoBehaviour:
   - cardID: 109
     cardImage: {fileID: 21300000, guid: 9c50f8effa2d6714593c01f8cf268ea7, type: 3}
   - cardID: 110
-    cardImage: {fileID: 21300000, guid: 7cbdebc2b1cc25a46865eda5c31387b1, type: 3}
+    cardImage: {fileID: 21300000, guid: 7164b3cb73d3d5b4393036a06dfcdb24, type: 3}
   - cardID: 111
     cardImage: {fileID: 21300000, guid: 80e9f63be80fba546a043c3d2d14519e, type: 3}
   - cardID: 112

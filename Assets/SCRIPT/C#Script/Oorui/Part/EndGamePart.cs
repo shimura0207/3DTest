@@ -17,14 +17,22 @@ public class EndGamePart : PartBase {
     private BattleState battleResult = BattleState.None;
 
     // 選択された遷移先
-    private MainMenuSelect selectMenu = MainMenuSelect.EndGame;
+    private ResultSelectMenu selectMenu = ResultSelectMenu.None;
 
-    // スタートボタン
-    [SerializeField] private Button endButton;
+    // 勝利時に表示する画像オブジェクト
+    [SerializeField] private GameObject winImage;
+    // 敗北時に表示する画像オブジェクト
+    [SerializeField] private GameObject loseImage;
+
+    // メニューに戻るボタン
+    [SerializeField] private Button returnMenuButton;
 
     public override async UniTask Initialize() {
         // 基底側の処理を呼ぶ
         await base.Initialize();
+        // オブジェクトを非表示
+        winImage.SetActive(false);
+        loseImage.SetActive(false);
     }
 
     /// <summary>
@@ -34,29 +42,38 @@ public class EndGamePart : PartBase {
     public override async UniTask Setup() {
         // 基底側の処理を呼ぶ
         await base.Setup();
-        endButton.onClick.AddListener(OnEndGameSelected);
+        // オブジェクトを非表示
+        winImage.SetActive(false);
+        loseImage.SetActive(false);
+        returnMenuButton.onClick.AddListener(OnReturnMenuSelected);
         await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// マッチングメニューが選択された時の処理
     /// </summary>
-    private void OnEndGameSelected() {
-        // 遷移先をタイトルに設定する
-        selectMenu = MainMenuSelect.EndGame;
+    private void OnReturnMenuSelected() {
+        // 遷移先をリザルトに設定する
+        selectMenu = ResultSelectMenu.MainMenu;
     }
 
     public override async UniTask Execute() {
         // 選択状態を初期化する
-        selectMenu = MainMenuSelect.None;
+        selectMenu = ResultSelectMenu.None;
 
         // リザルト結果に応じて変更
         BattleResult(battleResult);
 
         // メニューが選択されるまで待機する
-        while (selectMenu == MainMenuSelect.None) {
+        while (selectMenu == ResultSelectMenu.None) {
             // 次のフレームまで待機する
             await UniTask.DelayFrame(1);
+        }
+
+        // マッチング中であれば終了する
+        if(CustomNetworkManager.instance != null && CustomNetworkManager.instance.IsMatchStarted) {
+            // マッチング終了
+            CustomNetworkManager.instance.LeaveRoom();
         }
 
         // メインメニュー画面に遷移する
@@ -82,11 +99,13 @@ public class EndGamePart : PartBase {
             case BattleState.Win:
                 // 勝利画像表示
                 Debug.Log("Win");
+                winImage.SetActive(true);
                 break;
 
             case BattleState.Lose:
                 // 敗北画像表示
                 Debug.Log("Lose");
+                loseImage.SetActive(true);
                 break;
         }
     }
