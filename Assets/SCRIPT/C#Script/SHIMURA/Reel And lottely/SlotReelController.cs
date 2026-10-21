@@ -67,7 +67,7 @@ public class SlotReelController : MonoBehaviour {
     [Header("Lottery")]
     [SerializeField] public int currentTable = 1;
 
-    [SerializeField] private grassFlash glassFlash;
+    [SerializeField] public grassFlash glassFlash;
 
     public AudioSource SOUND;
     /// <summary>
@@ -156,7 +156,7 @@ public class SlotReelController : MonoBehaviour {
     };
 
 
-    [SerializeField] private EfectManager efectManager;
+    [SerializeField] public EfectManager efectManager;
     //============================================================
     // 入力設定
     //============================================================
@@ -224,7 +224,7 @@ public class SlotReelController : MonoBehaviour {
 
     private Coroutine noiseCoroutine;
 
-    private int stoppedReelCount = 0;
+    public int stoppedReelCount = 0;
 
     private const string NoiseStrengthProperty = "_NoiseStrength";
 

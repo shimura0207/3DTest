@@ -57,7 +57,7 @@ public class CustomNetworkManager : NetworkManager {
 
     [Tooltip("画面切り替えを担当するTitleManager")]
     [SerializeField]
-    private TitleManager title;
+    private MatchingNetMatch title;
 
     [Tooltip("LAN内にホスト情報を配信するコンポーネント")]
     [SerializeField]
