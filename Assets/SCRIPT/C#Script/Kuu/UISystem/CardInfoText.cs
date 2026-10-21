@@ -67,16 +67,16 @@ public class CardInfoText : MonoBehaviour {
             return;
         }
 
-        //bool mouseButton = UIManager.instance.mouseButton;
-        //// マウスボタン左右判定
-        //if (mouseButton) {
-        //    simpleText.enabled = true;
-        //    detaileText.enabled = false;
-        //}
-        //else {
-        //    simpleText.enabled = false;
-        //    detaileText.enabled = true;
-        //}
+        bool mouseButton = UIManager.instance.mouseButton;
+        // マウスボタン左右判定
+        if (mouseButton) {
+            simpleText.enabled = true;
+            detaileText.enabled = false;
+        }
+        else {
+            simpleText.enabled = false;
+            detaileText.enabled = true;
+        }
 
         // 各データをテキストにする
         nameText.text = data.name;
@@ -90,6 +90,11 @@ public class CardInfoText : MonoBehaviour {
             SIZEText.text = "SIZE:" + data.SIZE;
         }
         else {
+            //if (!mouseButton) {
+            //    HPText.text = "なし";
+            //    ATKText.enabled = false;
+            //    SIZEText.enabled = false;
+            //}
             status.enabled = false;
         }
         abilityText.text = data.ability;
