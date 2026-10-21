@@ -8643,8 +8643,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22a1e7590c2c7649a48006cc58648e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simpleText: {fileID: 0}
-  detaileText: {fileID: 0}
+  simpleText: {fileID: 4705965882280716068}
+  detaileText: {fileID: 6452500408314366699}
   status: {fileID: 3440038506031297421}
   nameText: {fileID: 2278701837826760176}
   cardTypeText: {fileID: 1237911697140856078}
@@ -18316,13 +18316,14 @@ GameObject:
   - component: {fileID: 6452500408314366699}
   - component: {fileID: 706209915221649871}
   - component: {fileID: 1963336401295675088}
+  - component: {fileID: 7682368129271910224}
   m_Layer: 5
   m_Name: DetailText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4863487609527235560
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18389,7 +18390,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1963336401295675088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18407,6 +18408,29 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7682368129271910224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8414235235651443614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b22a1e7590c2c7649a48006cc58648e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simpleText: {fileID: 4705965882280716068}
+  detaileText: {fileID: 6452500408314366699}
+  status: {fileID: 8757673362254315530}
+  nameText: {fileID: 4009824268645964436}
+  cardTypeText: {fileID: 857260341610317149}
+  raceText: {fileID: 7359906805366796181}
+  HPText: {fileID: 4291633327851122159}
+  ATKText: {fileID: 5597294414057183704}
+  SIZEText: {fileID: 4414077009098114073}
+  abilityText: {fileID: 4362111606608330438}
+  displayKoyaku: {fileID: 5086873363693772444}
 --- !u!1 &8416428560757029372
 GameObject:
   m_ObjectHideFlags: 0
