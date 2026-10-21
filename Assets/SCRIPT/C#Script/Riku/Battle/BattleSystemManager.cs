@@ -36,6 +36,8 @@ public class BattleSystemManager : MonoBehaviour {
     private bool pachisuroGo = false;
     // ターンエンドフラグ
     private bool turnEnd = false;
+    // 相手のプレイ待機カード
+    private Queue<int> opponentPlayCard = null;
 
     /// <summary>
     /// 初期化処理
@@ -45,6 +47,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         playerHP = new Dictionary<PlayerType, int>();
         playerSizeLimit = new Dictionary<PlayerType, int>();
+        opponentPlayCard = new Queue<int>();
     }
 
     /// <summary>
@@ -287,6 +290,19 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// レーン交換
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="laneA"></param>
+    /// <param name="laneB"></param>
+    public void LaneChange(PlayerType player, FieldLane laneA, FieldLane laneB) {
+        // IDリストを交換
+        AreaCardManager.instance.LaneChange(player, (int)laneA, (int)laneB);
+        // オブジェクトを交換
+        CardObjectManager.instance.LaneChange(player, laneA, laneB);
+    }
+
+    /// <summary>
     /// パチスロフェイズへ移行
     /// </summary>
     public void PachisuroGo() {
@@ -303,15 +319,18 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// レーン交換
+    /// 相手のプレイ待機カードセット
     /// </summary>
-    /// <param name="player"></param>
-    /// <param name="laneA"></param>
-    /// <param name="laneB"></param>
-    public void LaneChange(PlayerType player, FieldLane laneA, FieldLane laneB) {
-        // IDリストを交換
-        AreaCardManager.instance.LaneChange(player, (int)laneA, (int)laneB);
-        // オブジェクトを交換
-        CardObjectManager.instance.LaneChange(player, laneA, laneB);
+    /// <param name="cardID">カードの識別ID</param>
+    public void SetOpponentPlayCard(int cardID) {
+        opponentPlayCard.Enqueue(cardID);
+    }
+
+    /// <summary>
+    /// プレイ待機中の相手のカードを取得
+    /// </summary>
+    /// <returns></returns>
+    public int GetOpponentPlayCard() {
+        return opponentPlayCard.Dequeue();
     }
 }
