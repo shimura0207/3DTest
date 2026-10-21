@@ -1,5 +1,5 @@
 /*
- * @file    SimpleText.cs
+ * @file    CardInfo.cs
  * @autor   Kuu
  */
 using Mirror.Examples.CCU;
@@ -9,7 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SimpleText : MonoBehaviour {
+public class CardInfoText : MonoBehaviour {
     [SerializeField] private Canvas cardInfo = null;
 
     [SerializeField] private Canvas status = null;

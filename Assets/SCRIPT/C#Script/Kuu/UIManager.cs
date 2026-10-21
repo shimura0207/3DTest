@@ -26,6 +26,8 @@ public class UIManager : SystemObject {
     // 参照カードのデータを保存
     public Entity_CardData.Param cardData { get; private set; } = null;
 
+    public bool mouseButton { get; private set; } = true;
+
     // レイキャストの最大距離
     private const float RAY_RANGE_MAX = 10.0f;
 
