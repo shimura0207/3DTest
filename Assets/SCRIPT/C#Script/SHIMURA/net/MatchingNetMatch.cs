@@ -3,8 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TitleManager : MonoBehaviour {
-    public static TitleManager instance;
+public class MatchingNetMatch : MonoBehaviour {
+    public static MatchingNetMatch instance;
 
     [Header("管理コンポーネント")]
     [SerializeField] private CustomNetworkManager networkManager;

@@ -57,7 +57,7 @@ public class CustomNetworkManager : NetworkManager {
 
     [Tooltip("画面切り替えを担当するTitleManager")]
     [SerializeField]
-    private TitleManager title;
+    private MatchingNetMatch title;
 
     [Tooltip("LAN内にホスト情報を配信するコンポーネント")]
     [SerializeField]
@@ -787,10 +787,13 @@ public class CustomNetworkManager : NetworkManager {
         if (!CanRelayOpponentData(sender))
             return;
 
+
         NetworkConnectionToClient opponent = FindOpponent(sender);
+
 
         if (opponent == null)
             return;
+
 
         opponent.Send(new OpponentBoolMessage {
             value = message.value
