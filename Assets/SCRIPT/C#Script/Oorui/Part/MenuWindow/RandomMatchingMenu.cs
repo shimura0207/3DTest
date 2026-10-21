@@ -44,7 +44,7 @@ public class RandomMatchingMenu : MenuWindowBase {
         matchingText.text = "対戦相手を探しています...";
 
         // ランダムマッチを開始する
-        TitleManager.instance.OnRandomMatchButton();
+        MatchingNetMatch.instance.OnRandomMatchButton();
 
         // 対戦開始通知を受け取るまで待機する
         await UniTask.WaitUntil(() =>

@@ -28,7 +28,7 @@ public class MatchingPart : PartBase {
     [SerializeField] private Button returnButton;
 
     // 接続状況
-    private ConnectionState conection = ConnectionState.None;
+    // private ConnectionState conection = ConnectionState.None;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -41,7 +41,7 @@ public class MatchingPart : PartBase {
         await base.Setup();
         Debug.Log("マッチング画面表示中");
         // 接続状況の初期化
-        conection = ConnectionState.None;
+        //conection = ConnectionState.None;
 
         // ランダムボタンが押された時の処理を登録する
         randomButton.onClick.AddListener(OnClickRandomButton);

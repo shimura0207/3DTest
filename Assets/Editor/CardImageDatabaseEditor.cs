@@ -1,5 +1,5 @@
 /*
- *  @file   CardImageDetabaseEditor.cs
+ *  @file   CardImageDatabaseEditor.cs
  *  @author Riku
  */
 using UnityEngine;

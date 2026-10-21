@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad15c2b92d769d4aa92218f1c94ef0e, type: 3}
+  m_Name: CardAbilityDatabase
+  m_EditorClassIdentifier: 
+  cardAbilityDataList:
+  - cardID: 1
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityCondition: -1
+      abilityProcess: -1
+      specialAbility: -1
+      keywordAbility: -1
+    - abilityID: 1
+      abilityType: 2
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityCondition: -1
+      abilityProcess: -1
+      specialAbility: -1
+      keywordAbility: 0
+  - cardID: 2
+    abilityList:
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityCondition: -1
+      abilityProcess: -1
+      specialAbility: -1
+      keywordAbility: -1

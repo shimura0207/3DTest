@@ -19,10 +19,21 @@ public class PossessionCardItem : MonoBehaviour {
     [SerializeField]
     private TMP_Text countText = null;
 
+    // カードのID
+    public int CardID { get; private set; }
+
+    // 所持枚数を保持する変数
+    private int ownedCount = 0;
+
+    // 所持枚数を外部から取得するためのプロパティ
+    public int OwnedCount => ownedCount;
+
     /// <summary>
     /// カード画像と所持枚数を設定する
     /// </summary>
-    public void SetCard(Sprite cardSprite, int count) {
+    public void SetCard(int cardID,Sprite cardSprite, int count) {   
+        // ソート時に使用するカードIDを保存する
+        CardID = cardID;
         // カード画像を設定する
         if (cardImage != null) {
             cardImage.sprite = cardSprite;
@@ -36,6 +47,8 @@ public class PossessionCardItem : MonoBehaviour {
 
         // 所持枚数を設定する
         if (countText != null) {
+            // 所持カード枚数を登録
+            ownedCount = count;
             // カード枚数を表示
             countText.text = $"×{count}";
         }
