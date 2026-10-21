@@ -32,6 +32,10 @@ public class BattleSystemManager : MonoBehaviour {
     private Dictionary <PlayerType, int> playerSizeLimit = null;
     // 現在のターン
     private int currentTurn = -1;
+    // バチスロ移行フラグ
+    private bool pachisuroGo = false;
+    // ターンエンドフラグ
+    private bool turnEnd = false;
 
     /// <summary>
     /// 初期化処理
@@ -57,6 +61,23 @@ public class BattleSystemManager : MonoBehaviour {
                 // 相手のターン
                 await phaseList[(int)currentPhase].OpponentExecute();
                 break;
+        }
+
+        // パチスロフェイズへの移行
+        if (pachisuroGo) {
+            // メインフェイズを次のフェイズへ
+            phaseList[(int)currentPhase].NextPhase();
+            pachisuroGo = false;
+        }
+        // ターンエンド
+        if (turnEnd) {
+            // フェイズの片付け
+            phaseList[(int)currentPhase].Teardown();
+            // フェイズをエンドフェイズに
+            currentPhase = BattlePhase.EndPhase;
+            // フェイズの準備
+            phaseList[(int)currentPhase].Setup();
+            turnEnd = false;
         }
 
         // 次のフェイズへの移行
@@ -266,25 +287,19 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// パチスロフェイズへ以降(メインフェイズのみ有効)
+    /// パチスロフェイズへ移行
     /// </summary>
-    public void GoPachisuro() {
+    public void PachisuroGo() {
         if (currentPhase != BattlePhase.MainPhase) return;
-        // メインフェイズを次のフェイズへ
-        phaseList[(int)currentPhase].NextPhase();
+        pachisuroGo = true;
     }
 
     /// <summary>
-    /// ターンエンド(メインフェイズのみ有効)
+    /// ターンエンド
     /// </summary>
     public void TurnEnd() {
         if (currentPhase != BattlePhase.MainPhase) return;
-        // フェイズの片付け
-        phaseList[(int)currentPhase].Teardown();
-        // フェイズをエンドフェイズに
-        currentPhase = BattlePhase.EndPhase;
-        // フェイズの準備
-        phaseList[(int)currentPhase].Setup();
+        turnEnd = true;
     }
 
     /// <summary>
