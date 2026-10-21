@@ -46,7 +46,9 @@ public class UIManager : SystemObject {
         // スクリーン座標からレイを取得
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         // 左クリックでカードを掴む
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
+            // マウスボタンの判定を一旦左にする
+            mouseButton = true;
             // カードオブジェクトレイヤー取得
             int cardLayer = LayerMask.GetMask("CardObject");
             // レイキャストでカードを触れているか判定
@@ -64,6 +66,10 @@ public class UIManager : SystemObject {
             }
             else {
                 cardData = null;
+            }
+            // 右クリックだったら判定を右にする
+            if (Input.GetMouseButtonDown(1)) {
+                mouseButton = false;
             }
         }
     }

@@ -10,7 +10,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CardInfoText : MonoBehaviour {
-    [SerializeField] private Canvas cardInfo = null;
+    // 簡易カードテキスト
+    [SerializeField] private Canvas simpleText = null;
+
+    // 詳細カードテキスト
+    [SerializeField] private Canvas detaileText = null;
 
     [SerializeField] private Canvas status = null;
 
@@ -49,7 +53,8 @@ public class CardInfoText : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        cardInfo.enabled = false;
+        simpleText.enabled = false;
+        detaileText.enabled = false;
     }
 
     // Update is called once per frame
@@ -57,12 +62,23 @@ public class CardInfoText : MonoBehaviour {
         var data = UIManager.instance.cardData;
         // データがなければ非表示
         if (data == null) {
-            cardInfo.enabled = false;
+            simpleText.enabled = false;
+            detaileText.enabled = false;
             return;
         }
 
+        bool mouseButton = UIManager.instance.mouseButton;
+        // マウスボタン左右判定
+        if (mouseButton) {
+            simpleText.enabled = true;
+            detaileText.enabled = false;
+        }
+        else {
+            simpleText.enabled = false;
+            detaileText.enabled = true;
+        }
+
         // 各データをテキストにする
-        cardInfo.enabled = true;
         nameText.text = data.name;
         cardTypeText.text = TypeIDChangeText(data.CardType);
         raceText.text = RaceIDChangeText(data.FirstRaceID, data.SecondRaceID, data.ThildRaceID);
