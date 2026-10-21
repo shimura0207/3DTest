@@ -1482,7 +1482,6 @@ MonoBehaviour:
       - 323.5
     - stopAngles:
       - 70.6
-      - 161.9
       - 341.8
     - stopAngles:
       - 35
@@ -1514,6 +1513,7 @@ MonoBehaviour:
   centerCurrentAngle: 0
   rightCurrentAngle: 0
   stopEffectImage: {fileID: 6374059138539136467}
+  stoppedReelCount: 0
   rushIntro: {fileID: 0}
 --- !u!114 &1351310841687074303
 MonoBehaviour:
@@ -19637,7 +19637,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_TargetDisplay: 0
 --- !u!114 &4866511402433773269
 MonoBehaviour:
