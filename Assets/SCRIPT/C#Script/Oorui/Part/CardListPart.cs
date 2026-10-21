@@ -18,7 +18,10 @@ public class CardListPart : PartBase {
     private PossessionCardListView possessionCardListView = null;
     // レアリティ順に順番を変更するボタン
     [SerializeField] private Button sort_Rearity;
+    // 並び順を初期値に変更するボタン
     [SerializeField] private Button sort_Reset;
+    // 所持枚数順に順番を変更するボタン
+    [SerializeField] private Button sort_OwnerCard;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -53,6 +56,8 @@ public class CardListPart : PartBase {
         sort_Rearity.onClick.AddListener(possessionCardListView.RealitySort);
         sort_Reset.onClick.RemoveListener(possessionCardListView.ResetSort);
         sort_Reset.onClick.AddListener(possessionCardListView.ResetSort);
+        sort_OwnerCard.onClick.RemoveListener(possessionCardListView.OwnerCountSort);
+        sort_OwnerCard.onClick.AddListener(possessionCardListView.OwnerCountSort);
     }
 
     /// <summary>

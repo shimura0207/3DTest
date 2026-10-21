@@ -156,4 +156,26 @@ public class PossessionCardListView : MonoBehaviour {
         }
 
     }
+
+    /// <summary>
+    /// カードを所持枚数順に並べる
+    /// </summary>
+    public void OwnerCountSort() {
+        // 所持枚数が多い順にカードを並べ替える
+        cardItems.Sort((a, b) => b.OwnedCount.CompareTo(a.OwnedCount));
+
+        // 並べ替えた順番をContentの表示に反映する
+        for (int i = 0; i < cardItems.Count; i++) {
+            cardItems[i].transform.SetSiblingIndex(i);
+        }
+
+        // レイアウトを即時更新する
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+
+        // スクロール位置を一覧の先頭に戻す
+        ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>();
+        if (scrollRect != null) {
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
+    }
 }

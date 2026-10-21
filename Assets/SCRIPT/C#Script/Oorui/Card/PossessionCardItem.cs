@@ -22,6 +22,12 @@ public class PossessionCardItem : MonoBehaviour {
     // カードのID
     public int CardID { get; private set; }
 
+    // 所持枚数を保持する変数
+    private int ownedCount = 0;
+
+    // 所持枚数を外部から取得するためのプロパティ
+    public int OwnedCount => ownedCount;
+
     /// <summary>
     /// カード画像と所持枚数を設定する
     /// </summary>
@@ -41,6 +47,8 @@ public class PossessionCardItem : MonoBehaviour {
 
         // 所持枚数を設定する
         if (countText != null) {
+            // 所持カード枚数を登録
+            ownedCount = count;
             // カード枚数を表示
             countText.text = $"×{count}";
         }
