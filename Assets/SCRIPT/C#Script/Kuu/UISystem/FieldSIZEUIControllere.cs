@@ -10,8 +10,24 @@ using UnityEngine;
 
 public class FieldSIZEUIControllere : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI text;
-    public int fieldSize = 0;
+    // 自分のサイズテキスト
+    [SerializeField] private TextMeshProUGUI selfSizeText;
+
+    // 相手のサイズテキスト
+    [SerializeField] private TextMeshProUGUI opponentSizeText;
+
+    // 現在の最大サイズ
+    private int currentMaxSize = 0;
+
+    // 対戦相手の最大サイズ
+    private int opponentMaxSize = 0;
+
+    // 現在のサイズ
+    private int currentSize = 0;
+
+    // 対戦相手の現在サイズ
+    private int opponentCurrentSize = 0;
+
     // Start is called before the first frame update
     void Start() {
 
@@ -19,8 +35,19 @@ public class FieldSIZEUIControllere : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        text.text = fieldSize.ToString();
+        UpdateSizeText();
     }
 
-    
+    /// <summary>
+    /// サイズテキスト更新
+    /// </summary>
+    private void UpdateSizeText() {
+        currentMaxSize = UIManager.instance.currentMaxSize;
+        opponentMaxSize = UIManager.instance.opponentMaxSize;
+        currentSize = currentMaxSize - UIManager.instance.restSize;
+        opponentCurrentSize = opponentMaxSize - UIManager.instance.opponentRestSize;
+
+        selfSizeText.text = currentSize.ToString() + "/" + currentMaxSize.ToString();
+        opponentSizeText.text = opponentCurrentSize.ToString() + "/" + opponentMaxSize.ToString();
+    }
 }

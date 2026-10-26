@@ -5,6 +5,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -26,6 +27,19 @@ public class UIManager : SystemObject {
     // 参照カードのデータを保存
     public Entity_CardData.Param cardData { get; private set; } = null;
 
+    // 現在の最大サイズ
+    public int currentMaxSize = 0;
+
+    // 対戦相手の最大サイズ
+    public int opponentMaxSize = 0;
+
+    // 残りのサイズ
+    public int restSize = 0;
+
+    // 対戦相手の残りサイズ
+    public int opponentRestSize = 0;
+
+    // マウスの左右クリック判定
     public bool mouseButton { get; private set; } = true;
 
     // レイキャストの最大距離
@@ -72,6 +86,12 @@ public class UIManager : SystemObject {
                 mouseButton = false;
             }
         }
+
+        // 現在のサイズ状況更新
+        currentMaxSize = BattleSystemManager.instance.playerSizeLimit[PlayerType.Self];
+        opponentMaxSize = BattleSystemManager.instance.playerSizeLimit[PlayerType.Opponent];
+        restSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
+        opponentRestSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Opponent);
     }
 }
 
