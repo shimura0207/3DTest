@@ -1,86 +1,177 @@
-/*
- * @file    SlotPhase.cs
- * @author  Shimura
- */
-
 using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// パチスロフェイズ。
+///
+/// 自分：入力・抽選・送信。
+/// 相手：受信した役と停止角度で再生。
+///
+/// 先攻やゲーム全体のフェイズ同期は、このクラスでは行いません。
+/// </summary>
 public class PachisuroPhase : PhaseBase {
-
-
     public static PachisuroPhase Instance { get; private set; }
 
-    private readonly Vector3 CAMERA_POSITION = new Vector3(0, 1.16f, -1.27f);
-    private readonly Vector3 CAMERA_EULER_ANGLES = new Vector3(3.0f, 0.0f, 0.0f);
+    private readonly Vector3 CAMERA_POSITION =
+        new Vector3(0f, 1.16f, -1.27f);
+
+    private readonly Vector3 CAMERA_EULER_ANGLES =
+        new Vector3(3f, 0f, 0f);
+
+    private SlotReelController slot;
+
+    private Canvas handCanvas;
+    private bool originalHandCanvasEnabled;
+
+    private bool entered;
+    private bool finished;
+    private bool localTurn;
+    private bool connectionWarningShown;
 
     public override void Setup() {
-        SlotReelController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-
-        slot.SOUND.Play();
-
-        // カメラを液晶の方に寄せる
-        Camera.main.transform.position = CAMERA_POSITION;
-        Camera.main.transform.eulerAngles = CAMERA_EULER_ANGLES;
-
         base.Setup();
-    }
 
-
-    /// <summary>
-    /// 自身のターン処理
-    /// </summary>
-    /// <returns></returns>
-    public override async UniTask SelfExecute() {
         Instance = this;
+
+        nextPhase = false;
+        entered = false;
+        finished = false;
+        connectionWarningShown = false;
+
+        slot = SlotReelController.Instance;
+
+        if (slot != null && slot.SOUND != null) {
+            slot.SOUND.Play();
+        }
+
+        Camera camera = Camera.main;
+
+        if (camera != null) {
+            camera.transform.position = CAMERA_POSITION;
+            camera.transform.eulerAngles = CAMERA_EULER_ANGLES;
+        }
+
+        // 既存の手札表示処理を引き継ぐ。
+        // 毎フレームFindせず、Setup時に1回だけ取得する。
+        handCanvas = null;
 
         GameObject hand = GameObject.Find("HANDCanvas");
-        GameObject deck = GameObject.Find("DeckContlol");
 
-        Canvas rend = hand.GetComponent<Canvas>();
-        SlotReelController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-        Instance = this;
+        if (hand != null) {
+            handCanvas = hand.GetComponent<Canvas>();
 
-        //Canvas rend = hand.GetComponent<Canvas>();
-        rend.enabled = false;
+            if (handCanvas != null) {
+                originalHandCanvasEnabled = handCanvas.enabled;
+                handCanvas.enabled = false;
+            }
+        }
+    }
+
+    public override UniTask SelfExecute() {
+        if (finished || !CanExecute())
+            return UniTask.CompletedTask;
+
+        if (!entered) {
+            entered = true;
+            localTurn = true;
+
+            PachisuroNetworkSync.Instance.BeginLocalPhase();
+            slot.BeginLocalPlayback();
+        }
 
         slot.SlotUpdate();
-        if (slot.IsAnyReelRotating() == false && slot.slotIndex == slot.SLOT_TEARN_MAX_G) {
-            slot.stoppedReelCount = 0;
-            slot.glassFlash.ResetAllGlass();
-            slot.efectManager.HideTrumps();
-            slot.HideStopEffectImage();
-            slot.DebugAAA();
+
+        // 5Gを開始済み、かつ全リールの停止が完了した。
+        if (slot.slotIndex >= slot.SLOT_TEARN_MAX_G &&
+            !slot.IsAnyReelRotating() &&
+            !slot.NetworkReelLockRunning) {
+            // 相手へ終了を知らせてから自分の状態を更新する。
+            if (PachisuroNetworkSync.Instance.SendEnd(slot.slotIndex)) {
+                finished = true;
+
+                // 自分のRUSH・テーブル更新は既存処理を使用する。
+                slot.DebugAAA();
+
+                slot.EndNetworkPlayback();
+                nextPhase = true;
+            }
+        }
+
+        return UniTask.CompletedTask;
+    }
+
+    public override UniTask OpponentExecute() {
+        if (finished || !CanExecute())
+            return UniTask.CompletedTask;
+
+        if (!entered) {
+            entered = true;
+            localTurn = false;
+
+            slot.BeginRemotePlayback();
+            PachisuroNetworkSync.Instance.BeginRemotePhase();
+        }
+
+        // 受信処理とリール更新を毎フレーム行う。
+        slot.EnemySlotUpdate();
+
+        // END受信＋リール停止完了で次へ進む。
+        if (PachisuroNetworkSync.Instance.RemoteFinished) {
+            finished = true;
+
+            // 相手を表示するため一時的に上書きした状態を戻す。
+            // 自分のテーブルを進めないためDebugAAAは呼ばない。
+            slot.EndNetworkPlayback();
+
             nextPhase = true;
         }
 
-        await UniTask.CompletedTask;
-
+        return UniTask.CompletedTask;
     }
 
-
-
     /// <summary>
-    /// 相手のターン処理
+    /// 通信とリールの初期化状態を確認します。
+    /// 切断・通信エラー時はフェイズを勝手に進めません。
     /// </summary>
-    /// <returns></returns>
-    public override async UniTask OpponentExecute() {
-        //SlotReelController slot; //呼ぶスクリプトにあだなつける
-        //GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        //slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-        //
-        //
-        //slot.EnemySlotUpdate();
+    private bool CanExecute() {
+        if (slot == null) {
+            slot = SlotReelController.Instance;
+        }
 
-        nextPhase = true;
+        PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
 
-        await UniTask.DelayFrame(30);
-        await UniTask.CompletedTask;
+        if (sync == null || !sync.Connected || sync.HasError) {
+            if (!connectionWarningShown) {
+                connectionWarningShown = true;
+
+                Debug.LogWarning(
+                    "[パチスロ] 通信が利用できないため進行を停止しています。"
+                );
+            }
+
+            return false;
+        }
+
+        return slot != null && slot.NetworkReady;
+    }
+
+    public override void Teardown() {
+        if (entered && slot != null) {
+            slot.EndNetworkPlayback();
+        }
+
+        if (handCanvas != null) {
+            handCanvas.enabled = originalHandCanvasEnabled;
+        }
+
+        entered = false;
+        finished = false;
+        localTurn = false;
+
+        if (Instance == this) {
+            Instance = null;
+        }
+
+        base.Teardown();
     }
 }
