@@ -19,8 +19,7 @@ public class AreaCardManager : MonoBehaviour {
     public static AreaCardManager instance { get; private set; } = null;
 
     // 各エリアのリストにカードIDを積んで管理
-    // 山札(相手側の山札は管理しなくていいので個別)
-    private List<int> deckCards = null;
+    private Dictionary<PlayerType, List<int>> deckCards = null;
     // 山札外のカード
     public struct OutDeckCards { 
         // 手札
@@ -40,9 +39,10 @@ public class AreaCardManager : MonoBehaviour {
     public void Initialize() {
         instance = this;
 
-        deckCards = new List<int>();
+        deckCards = new Dictionary<PlayerType, List<int>>();
         outDeckCards = new Dictionary<PlayerType, OutDeckCards>();
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
+            deckCards[i] = new List<int>();
             outDeckCards[i] = new OutDeckCards() {
                 handCards = new List<int>(),
                 fieldCards = new List<int>(),
@@ -58,13 +58,14 @@ public class AreaCardManager : MonoBehaviour {
     /// <summary>
     /// デッキのセット
     /// </summary>
-    /// <param name="setDeck">デッキのIDリスト</param>
-    public void SetDeck(List<int> setDeck) {
-        deckCards = setDeck;
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="setDeck">デッキの中身</param>
+    public void SetDeck(PlayerType player, List<int> setDeck) {
+        deckCards[player] = setDeck;
     }
 
     /// <summary>
-    /// デッキシャッフル
+    /// デッキシャッフル(自分のデッキ)
     /// </summary>
     public void ShuffleDeck() {
         // Fisher-Yatesシャッフル
@@ -74,24 +75,25 @@ public class AreaCardManager : MonoBehaviour {
             // 順番で選ばれたカード以降の範囲から抽選
             int randomIndex = Random.Range(i, listMax);
             // 入れ替え
-            int cardID = deckCards[i];
-            deckCards[i] = deckCards[randomIndex];
-            deckCards[randomIndex] = cardID;
+            int cardID = deckCards[PlayerType.Self][i];
+            deckCards[PlayerType.Self][i] = deckCards[PlayerType.Self][randomIndex];
+            deckCards[PlayerType.Self][randomIndex] = cardID;
         }
     }
 
     /// <summary>
-    /// 山札からドロー(自分側)
+    /// 山札からのドロー
     /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
     /// <returns></returns>
-    public int DrawCard() {
-        if (IsEmpty(deckCards)) return -1;
+    public int DrawCard(PlayerType player) {
+        if (IsEmpty(deckCards[player])) return -1;
 
         // 山札の一番上のカードを自分の手札に追加
-        int card = deckCards[0];
-        outDeckCards[PlayerType.Self].handCards.Add(card);
+        int card = deckCards[player][0];
+        outDeckCards[player].handCards.Add(card);
         // 山札の一番上のカードを削除
-        deckCards.RemoveAt(0);
+        deckCards[player].RemoveAt(0);
 
         return card;
     }

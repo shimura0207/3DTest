@@ -136,11 +136,14 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <param name="setUseDeckList">使用デッキリスト</param>
     /// <param name="setFirsetPlayer">先攻プレイヤー</param>
-    public void BattleSetup(List<int> setUseDeckList, PlayerType setFirsetPlayer) {
+    /// <returns></returns>
+    public async UniTask BattleSetup(List<int> setUseDeckList, PlayerType setFirsetPlayer) {
         // 自身の使用デッキ登録
-        AreaCardManager.instance.SetDeck(setUseDeckList);
+        AreaCardManager.instance.SetDeck(PlayerType.Self, setUseDeckList);
         // デッキのシャッフル
         AreaCardManager.instance.ShuffleDeck();
+        // 相手にデッキの内容を送る
+
         // 先攻プレイヤー登録
         firstPlayer = setFirsetPlayer;
         // 現在のターンプレイヤーを先攻プレイヤーに
@@ -151,6 +154,10 @@ public class BattleSystemManager : MonoBehaviour {
         battleState = BattleState.InProgress;
         // 現在のターンを1に
         currentTurn = 1;
+
+        // 相手のデッキを受け取るまで待つ
+        
+
         
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             // HPの初期化
@@ -161,7 +168,7 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 手札5枚用意
         for (int i = 0; i < START_HAND_COUNT; i++) {
-            DrawCard();
+            DrawCard(PlayerType.Self);
         }
 
         // ログ
@@ -230,9 +237,10 @@ public class BattleSystemManager : MonoBehaviour {
     /// <summary>
     /// カードのドロー(オブジェクト操作含め)
     /// </summary>
-    public void DrawCard() {
+    /// <param name="player">どちらのプレイヤーか</param>
+    public void DrawCard(PlayerType player) {
         // 山札からIDを抜く
-        int card = AreaCardManager.instance.DrawCard();
+        int card = AreaCardManager.instance.DrawCard(player);
         // オブジェクトの使用化
         CardObject cardObject = CardObjectManager.instance.UseCardObject(card);
         // オブジェクトを手札の位置に移動
