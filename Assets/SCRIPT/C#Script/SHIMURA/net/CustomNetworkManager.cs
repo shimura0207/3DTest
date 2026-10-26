@@ -118,7 +118,12 @@ public class CustomNetworkManager : NetworkManager {
     /// 終了中の退出通知から、待機状態に戻さないために使う。
     /// </summary>
     private bool stopping;
-
+    private void Update() {
+        // Sキーを押した瞬間に1回だけATK情報を送信する
+        if (Input.GetKeyDown(KeyCode.S)) {
+            TestSendATK();
+        }
+    }
     // ============================================================
     // 通信開始
     // ============================================================
@@ -903,24 +908,40 @@ public class CustomNetworkManager : NetworkManager {
             Debug.LogWarning($"不明な通信ID：{values[0]}");
             return;
         }
+        switch (useID) { 
 
-        // 該当する外部関数だけを直接呼び出す。
-        switch (useID) {
-            case NetWorkUseID.atk:
-                
-                break;
+        case NetWorkUseID.atk:
+            NetworkReceiveProcessor.ReceiveAttack(values);
+            break;
 
-            case NetWorkUseID.hp:
-               
-                break;
+        case NetWorkUseID.hp:
+            NetworkReceiveProcessor.ReceiveHP(values);
+            break;
 
-            case NetWorkUseID.draw:
-                
-                break;
+        case NetWorkUseID.draw:
+            NetworkReceiveProcessor.ReceiveDraw(values);
+            break;
 
-            case NetWorkUseID.samon:
-                
-                break;
+        case NetWorkUseID.samon:
+            NetworkReceiveProcessor.ReceiveSummon(values);
+            break;
+        }
+    }
+    /// <summary>
+    /// テスト送信：カードID「02」の攻撃力に500加算する情報を送ります。
+    /// </summary>
+    public void TestSendATK() {
+        string message = NetworkValueConverter.Pack(
+            NetWorkUseID.atk, // 処理ID
+            "02",            // 対象カードID
+            500              // 加算値
+        );
+
+        if (SendStringToOpponent(message)) {
+            Debug.Log($"[ATK送信] {message}");
+        }
+        else {
+            Debug.LogWarning("[ATK送信失敗] マッチング状態を確認してください。");
         }
     }
 }
