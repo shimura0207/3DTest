@@ -903,28 +903,32 @@ public class CustomNetworkManager : NetworkManager {
             return;
 
         // 最初の項目を処理IDに変換する。
-        if (!NetworkValueConverter.TryGetEnum<NetWorkUseID>(
+        if (!NetworkValueConverter.TryGetEnum<NetworkUseID>(
             values[0], out var useID)) {
             Debug.LogWarning($"不明な通信ID：{values[0]}");
             return;
         }
         switch (useID) { 
 
-        case NetWorkUseID.atk:
+        case NetworkUseID.atk:
             NetworkReceiveProcessor.ReceiveAttack(values);
             break;
 
-        case NetWorkUseID.hp:
+        case NetworkUseID.hp:
             NetworkReceiveProcessor.ReceiveHP(values);
             break;
 
-        case NetWorkUseID.draw:
+        case NetworkUseID.draw:
             NetworkReceiveProcessor.ReceiveDraw(values);
             break;
 
-        case NetWorkUseID.samon:
+        case NetworkUseID.samon:
             NetworkReceiveProcessor.ReceiveSummon(values);
             break;
+
+            case NetworkUseID.deck:
+                AreaCardManager.instance.SetOpponentDeck(values);
+                break;
         }
     }
     /// <summary>
@@ -932,7 +936,7 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public void TestSendATK() {
         string message = NetworkValueConverter.Pack(
-            NetWorkUseID.atk, // 処理ID
+            NetworkUseID.atk, // 処理ID
             "02",            // 対象カードID
             500              // 加算値
         );

@@ -343,14 +343,4 @@ public class BattleSystemManager : MonoBehaviour {
         
         return opponentPlayCardObject.Dequeue();
     }
-
-    /// <summary>
-    /// 送信用にデッキをstringに纏める
-    /// </summary>
-    /// <returns></returns>
-    private string DeckPack() {
-        var deck = AreaCardManager.instance.deckCards[PlayerType.Self];
-
-       return NetworkValueConverter.Pack();
-    }
 }
