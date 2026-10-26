@@ -67,7 +67,8 @@ public enum CardRelationMenuSelect {
     None,           // 未選択
     CardList,       // カード一覧
     DeckBuilding,   // デッキ構築
-    MainMenu        // メインメニュー
+    MainMenu,       // メインメニュー
+    CardRelation    // カード一覧画面
 }
 /// <summary>
 /// 設定パートで選択する遷移先
