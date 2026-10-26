@@ -145,7 +145,7 @@ public class RandomMatchingMenu : MenuWindowBase {
     }
 
     private string DecideClientFirstPlayer() {
-        
+        NetworkValueConverter.Pack();
         return null;
     }
 
@@ -164,7 +164,7 @@ public class RandomMatchingMenu : MenuWindowBase {
             // 次の表示まで0.5秒待機する。
             await UniTask.Delay(500);
 
-            // ドットを1つずつ増やし、3つの次は0に戻す。
+            // 文字数管理
             dotCount = (dotCount + 1) % 4;
         }
     }
