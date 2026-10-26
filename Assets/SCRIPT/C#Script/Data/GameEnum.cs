@@ -412,5 +412,8 @@ public enum NetworkUseID {
     deck,
     // 先行プレイヤー
     FirstPlayer,
-
+    // パチスロGOボタン
+    PachisuroGoButton,
+    // ターンエンドボタン
+    TurnEndButton,
 }
