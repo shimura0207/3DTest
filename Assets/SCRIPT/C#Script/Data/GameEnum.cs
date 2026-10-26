@@ -394,3 +394,14 @@ public enum AbilityProcess {
 
     Max,
 }
+
+
+/// <summary>
+/// 通信メッセージの先頭に付ける処理ID。
+/// </summary>
+public enum NetWorkUseID {
+    atk = 0, // 攻撃力
+    hp = 1, // HP
+    draw = 2, // ドロー
+    samon = 3, // 召喚
+}

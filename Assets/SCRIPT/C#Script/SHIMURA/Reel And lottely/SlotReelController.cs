@@ -30,8 +30,148 @@ using static grassFlash;
 /// </summary>
 public class SlotReelController : MonoBehaviour {
 
-    public static PachisuroPhase Instance { get; private set; }
+    public static SlotReelController Instance { get; private set; }
 
+    private void Awake() {
+        Instance = this;
+    }
+
+    private void OnDestroy() {
+        if (Instance == this) {
+            Instance = null;
+        }
+    }
+    // 自分の操作を受け付けるか。
+    private bool networkLocalControl;
+
+    // 相手の操作を再生中か。
+    private bool networkRemoteControl;
+
+    // リールロック演出中は停止入力を受け付けない。
+    public bool NetworkReelLockRunning { get; private set; }
+
+    // Startによる初期化完了確認。
+    public bool NetworkReady => state != null && reelSpeeds != null;
+
+    // 相手の情報で上書きする前に、自分の状態を退避する。
+    private bool savedRush;
+    private bool savedNextRush;
+    private int savedTable;
+    private int savedSlotIndex;
+    private PachisuroSymbolKoyakuEnum savedRole;
+    private List<PachisuroSymbolKoyakuEnum> savedRoles;
+
+    /// <summary>
+    /// 自分のパチスロ操作を開始します。
+    /// </summary>
+    public void BeginLocalPlayback() {
+        networkLocalControl = true;
+        networkRemoteControl = false;
+        maxBet = false;
+
+        slotIndex = 0;
+        RolesDelete();
+    }
+
+    /// <summary>
+    /// 相手のパチスロ表示を開始します。
+    /// 自分の抽選状態は保存しておきます。
+    /// </summary>
+    public void BeginRemotePlayback() {
+        savedRush = rush;
+        savedNextRush = nrush;
+        savedTable = currentTable;
+        savedSlotIndex = slotIndex;
+        savedRole = currentSlotSymbolRole;
+        savedRoles = new List<PachisuroSymbolKoyakuEnum>(roles);
+
+        networkLocalControl = false;
+        networkRemoteControl = true;
+        maxBet = false;
+
+        slotIndex = 0;
+        RolesDelete();
+    }
+
+    /// <summary>
+    /// フェイズ終了時に操作を無効化します。
+    /// 相手を再生していた場合は、自分の状態へ戻します。
+    /// </summary>
+    public void EndNetworkPlayback() {
+        if (networkRemoteControl) {
+            rush = savedRush;
+            nrush = savedNextRush;
+            currentTable = savedTable;
+            slotIndex = savedSlotIndex;
+            currentSlotSymbolRole = savedRole;
+
+            roles.Clear();
+
+            if (savedRoles != null) {
+                roles.AddRange(savedRoles);
+            }
+
+            savedRoles = null;
+        }
+
+        networkLocalControl = false;
+        networkRemoteControl = false;
+        maxBet = false;
+    }
+
+    /// <summary>
+    /// 受信した役・状態を設定して回転します。
+    /// 役の再抽選と通信の送り返しは行いません。
+    /// </summary>
+    public bool StartRemoteSpin(
+        int spin,
+        PachisuroSymbolKoyakuEnum role,
+        bool remoteRush,
+        bool remoteNextRush,
+        int remoteTable) {
+        if (!networkRemoteControl || !NetworkReady ||
+            state.IsAnyReelRotating()) {
+            return false;
+        }
+
+        rush = remoteRush;
+        nrush = remoteNextRush;
+        currentTable = remoteTable;
+
+        // StartSpinCore内でslotIndex++するため、その直前の値にする。
+        slotIndex = spin - 1;
+
+        return StartSpinCore(role);
+    }
+
+    /// <summary>
+    /// 相手から届いた停止目標角度へ停止予約します。
+    /// GetNextStopAngleは呼びません。
+    /// </summary>
+    public bool ReserveRemoteStop(int reelIndex, float angle, float speed) {
+        if (!networkRemoteControl || !NetworkReady)
+            return false;
+
+        if (reelIndex < 0 || reelIndex >= reels.Length ||
+            reels[reelIndex] == null) {
+            return false;
+        }
+
+        // 同じリールの重複停止通知は、そのまま受け流す。
+        if (!state.RotationNow[reelIndex] ||
+            state.StoppingNow[reelIndex]) {
+            return true;
+        }
+
+        reelSpeeds[reelIndex] = speed;
+
+        state.ReserveStop(
+            reelIndex,
+            AngleNormalizer.NormalizeAngle(angle)
+        );
+
+        return true;
+    }
     public bool rush;
     public bool nrush;
 
@@ -271,7 +411,7 @@ public class SlotReelController : MonoBehaviour {
             //DebugRoles();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (networkLocalControl && Input.GetKeyDown(KeyCode.Space)) {
             HideStopEffectImage();
         }
 
@@ -293,23 +433,36 @@ public class SlotReelController : MonoBehaviour {
     /// </summary>
     /// 
 
+    /// <summary>
+    /// 自分のフェイズ：入力＋リール更新。
+    /// </summary>
     public void SlotUpdate() {
+        if (!NetworkReady || !networkLocalControl)
+            return;
+
         HandleMaxBetInput();
         HandleLeverInput();
         HandleStopInput();
+
         UpdateReelRotation();
         SyncInspectorAngles();
-        TableUp();
 
+        // 自分側だけデバッグキーによるテーブル変更を受け付ける。
+        TableUp();
     }
 
-
+    /// <summary>
+    /// 相手のフェイズ：受信内容の反映＋リール更新。
+    /// ローカルのキー入力は読みません。
+    /// </summary>
     public void EnemySlotUpdate() {
+        if (!NetworkReady || !networkRemoteControl)
+            return;
 
-        E_HandleStopInput();
+        PachisuroNetworkSync.Instance?.PumpRemote(this);
+
         UpdateReelRotation();
         SyncInspectorAngles();
-        TableUp();
     }
     private void InitializeReels() {
         int reelCount = reels.Length;
@@ -371,7 +524,36 @@ public class SlotReelController : MonoBehaviour {
 
         maxBet = true;
     }
+    /// <summary>
+    /// 自分の入力から呼ばれる回転開始処理。
+    /// 抽選・回転開始が成功した場合だけ、相手へ送ります。
+    /// </summary>
+    public bool TryStartSpin() {
+        PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
 
+        if (!networkLocalControl ||
+            sync == null ||
+            !sync.Connected ||
+            sync.HasError ||
+            NetworkReelLockRunning ||
+            slotIndex >= SLOT_TEARN_MAX_G) {
+            return false;
+        }
+
+        // 引数なしなので、自分側で役を抽選する。
+        if (!StartSpinCore())
+            return false;
+
+        sync.SendStart(
+            slotIndex,
+            currentSlotSymbolRole,
+            rush,
+            nrush,
+            currentTable
+        );
+
+        return true;
+    }
     /// <summary>
     /// レバーON入力。
     /// 
@@ -474,7 +656,9 @@ public class SlotReelController : MonoBehaviour {
     /// 1G分の回転を開始します。
     /// 手動のレバーONと同じ処理を外部から呼べるようにしたものです。
     /// </summary>
-    public bool TryStartSpin() {
+    // 変更後
+    private bool StartSpinCore(
+        PachisuroSymbolKoyakuEnum? receivedRole = null) { 
 
         if (PachisuroPhase.Instance == null) {
             return false;
@@ -498,7 +682,9 @@ public class SlotReelController : MonoBehaviour {
             glassFlash.ResetAllGlass();
             efectManager.HideTrumps();
             HideStopEffectImage();
-            currentSlotSymbolRole = roleLottery.RUSHDrawRole(currentTable);
+            // RUSH側：受信した役があれば、その役を採用する。
+            currentSlotSymbolRole =
+                receivedRole ?? roleLottery.RUSHDrawRole(currentTable);
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
 
@@ -540,7 +726,9 @@ public class SlotReelController : MonoBehaviour {
             glassFlash.ResetAllGlass();
             efectManager.HideTrumps();
             HideStopEffectImage();
-            currentSlotSymbolRole = roleLottery.DrawRole(currentTable);
+            // 通常側：受信した役があれば、その役を採用する。
+            currentSlotSymbolRole =
+                receivedRole ?? roleLottery.DrawRole(currentTable);
 
             //レア役
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.WeakCherry
@@ -589,36 +777,53 @@ public class SlotReelController : MonoBehaviour {
     /// 指定したリールに停止予約を入れます。
     /// reelIndex は 0=左, 1=中, 2=右。
     /// </summary>
+    /// <summary>
+    /// 自分の停止操作。
+    /// 停止目標角度を計算し、その角度と回転速度を相手へ送ります。
+    /// </summary>
     public bool TryReserveStop(int reelIndex) {
-        if (state == null) {
+        PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
+
+        if (!networkLocalControl ||
+            !NetworkReady ||
+            NetworkReelLockRunning ||
+            sync == null ||
+            !sync.Connected ||
+            sync.HasError) {
             return false;
         }
 
-        if (reels == null || reelIndex < 0 || reelIndex >= reels.Length) {
+        if (reelIndex < 0 || reelIndex >= reels.Length ||
+            reels[reelIndex] == null) {
             return false;
         }
 
-        if (reels[reelIndex] == null) {
+        if (!state.RotationNow[reelIndex] ||
+            state.StoppingNow[reelIndex]) {
             return false;
         }
 
-        if (!state.RotationNow[reelIndex] || state.StoppingNow[reelIndex]) {
-            return false;
-        }
-
-        // 有効な停止入力を受けたリールだけ加速します。
-        // 他のリールの速度には影響しません。
+        // 既存の7揃い時の停止加速。
         if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
             reelSpeeds[reelIndex] = -800f;
         }
 
-        float nextStopAngle = GetNextStopAngle(
+        // 停止角度は操作した側だけで決定する。
+        float targetAngle = GetNextStopAngle(
             reelIndex,
             state.ReelAngles[reelIndex],
             currentSlotSymbolRole
         );
 
-        state.ReserveStop(reelIndex, nextStopAngle);
+        state.ReserveStop(reelIndex, targetAngle);
+
+        // 現在角度ではなく、停止する予定の角度を送信する。
+        sync.SendStop(
+            slotIndex,
+            reelIndex,
+            targetAngle,
+            reelSpeeds[reelIndex]
+        );
 
         return true;
     }
@@ -1181,18 +1386,25 @@ public class SlotReelController : MonoBehaviour {
     /// レア役時のリールロック演出。
     /// 全リールを0.2秒逆回転 → 1秒停止 → 通常速度へ戻します。
     /// </summary>
+    /// <summary>
+    /// リールロック中は停止操作・停止通知の適用を待たせます。
+    /// </summary>
     private IEnumerator ReelLockCoroutine() {
-        SetAllReelSpeeds(1000f);
+        NetworkReelLockRunning = true;
 
-        yield return new WaitForSeconds(0.2f);
+        try {
+            SetAllReelSpeeds(1000f);
+            yield return new WaitForSeconds(0.2f);
 
-        SetAllReelSpeeds(0f);
-
-        yield return new WaitForSeconds(1f);
-
-        SetAllReelSpeeds(reelSpeed);
+            SetAllReelSpeeds(0f);
+            yield return new WaitForSeconds(1f);
+        }
+        finally {
+            SetAllReelSpeeds(reelSpeed);
+            NetworkReelLockRunning = false;
+        }
     }
 
-    
+
 
 }

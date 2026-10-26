@@ -122,6 +122,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &22792484 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7290154012591679377, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
+  m_PrefabInstance: {fileID: 1832649027}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d75b55c598733384f9a5305f5aaff399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,6 +364,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1311308024 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7247716200747152354, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
+  m_PrefabInstance: {fileID: 1832649027}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6facb9293635ab943ad6fa4ea971e94d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1358971114 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6941723976037913721, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
+  m_PrefabInstance: {fileID: 1832649027}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1358971117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1358971114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9ee19d56105934d83fd10d20d990c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkManager: {fileID: 22792484}
+  receiver: {fileID: 1311308024}
+  hostsDisplayUI: {fileID: 0}
+  menuPanel: {fileID: 0}
+  searchPanel: {fileID: 0}
+  waitingPanel: {fileID: 0}
+  battlePanel: {fileID: 0}
+  statusText: {fileID: 0}
+  searchSeconds: 3
+  connectTimeoutSeconds: 15
+  onBattleStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onBattleEnded:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1387760532
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,14 +608,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetWorkObj
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4021937553043914490, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
     m_RemovedGameObjects:
     - {fileID: 1092378100436989514, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
     - {fileID: 5565969286312525597, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
     - {fileID: 9182050713777490264, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
     - {fileID: 6025533461799196280, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6941723976037913721, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1358971117}
   m_SourcePrefab: {fileID: 100100000, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
