@@ -143,8 +143,8 @@ public class BattleSystemManager : MonoBehaviour {
         // デッキのシャッフル
         AreaCardManager.instance.ShuffleDeck();
         // 相手にデッキの内容を送る
-        var deck = AreaCardManager.instance.DeckPack();
-        CustomNetworkManager.instance.SendStringToOpponent(deck);
+        //var deck = AreaCardManager.instance.DeckPack();
+        //CustomNetworkManager.instance.SendStringToOpponent(deck);
         // 先攻プレイヤー登録
         firstPlayer = setFirsetPlayer;
         // 現在のターンプレイヤーを先攻プレイヤーに
@@ -157,9 +157,9 @@ public class BattleSystemManager : MonoBehaviour {
         currentTurn = 1;
 
         // 相手のデッキを受け取るまで待つ
-        while () {
-            await UniTask.Yield();
-        }
+        //while (catchOpponentDeck) {
+        //    await UniTask.Yield();
+        //}
         
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             // HPの初期化
