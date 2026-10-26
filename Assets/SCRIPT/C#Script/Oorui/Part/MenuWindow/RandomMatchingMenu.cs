@@ -56,7 +56,6 @@ public class RandomMatchingMenu : MenuWindowBase {
         // 対戦開始通知を受け取るまで待機する
         await UniTask.WaitUntil(() =>
             !isMenuOpen ||
-            !isCancel ||
             CustomNetworkManager.instance == null ||
             CustomNetworkManager.instance.IsMatchStarted
         );
