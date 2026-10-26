@@ -20,7 +20,7 @@ public class StartPhase : PhaseBase {
         // ターン開始時効果確認(今後実装予定)
 
         // ターン開始時ドロー
-        BattleSystemManager.instance.DrawCard();
+        BattleSystemManager.instance.DrawCard(PlayerType.Self);
 
         // 次のフェイズへ
         nextPhase = true;
@@ -36,7 +36,8 @@ public class StartPhase : PhaseBase {
     public override async UniTask OpponentExecute() {
         // ターン開始時効果確認(今後実装予定)
 
-        // ターン開始時ドロー(今後実装予定)
+        // ターン開始時ドロー
+        BattleSystemManager.instance.DrawCard(PlayerType.Opponent);
 
         // 次のフェイズへ
         nextPhase = true;

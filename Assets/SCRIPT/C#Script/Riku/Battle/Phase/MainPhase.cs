@@ -68,7 +68,7 @@ public class MainPhase : PhaseBase {
                         // サイズが上限超過しないか
                         if (cardObject.currentStatus.SIZE <= remainingSize) {
                             // カードを使用
-                            UniTask task = PlayCard(PlayerType.Self);
+                            UniTask task = PlayCard(PlayerType.Self, cardObject.objectID);
                         }
                         else {
                             resetPos = true;
@@ -93,7 +93,7 @@ public class MainPhase : PhaseBase {
                 catchStartPos = Vector3.zero;
             }
         }
-        //nextPhase = Input.GetKeyDown(KeyCode.Space);
+
         await UniTask.CompletedTask;
     }
 
@@ -102,10 +102,8 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
-        // 次のフェイズへ
-        nextPhase = true;
 
-        await UniTask.DelayFrame(30);
+
         await UniTask.CompletedTask;
     }
 
@@ -113,17 +111,22 @@ public class MainPhase : PhaseBase {
     /// カードの使用
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
-    private async UniTask PlayCard(PlayerType player) {
+    /// <param name="objectID">使用するオブジェクトのID</param>
+    /// <returns></returns>
+    private async UniTask PlayCard(PlayerType player, int objectID) {
         if (!cardObject) return;
+        // オブジェクトIDからオブジェクト取得
+        CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
+        // カードタイプによって分岐
         switch (cardObject.cardType) {
             case CardType.Monster:
                 // モンスター召喚
-                await BattleSystemManager.instance.SummonMonster(player, cardObject);
+                await BattleSystemManager.instance.SummonMonster(player, obj);
                 Debug.Log("モンスター召喚！！");
                 break;
             case CardType.Spell:
                 // スペルを唱える
-                BattleSystemManager.instance.CastSpell(player, cardObject);
+                BattleSystemManager.instance.CastSpell(player, obj);
                 Debug.Log("スペル発動！！");
                 break;
         }
