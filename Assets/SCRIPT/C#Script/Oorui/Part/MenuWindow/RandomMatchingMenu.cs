@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// ランダムマッチの開始と進行状況の表示を管理するメニュー
@@ -18,12 +19,16 @@ public class RandomMatchingMenu : MenuWindowBase {
     [SerializeField]
     private TMP_Text matchingText = null;
 
+    // マッチング中からキャンセルする処理
+    [SerializeField] private Button cancelButton;
+    private bool isCancel = false;
     /// <summary>
     /// 初期化処理
     /// </summary>
     public override async UniTask Initialize() {
         await base.Initialize();
-
+        cancelButton.onClick.RemoveListener(OnClickCancelButton);
+        cancelButton.onClick.AddListener(OnClickCancelButton);
         // 初期状態を設定する
         isMenuOpen = false;
         matchingText.text = "";
@@ -35,6 +40,8 @@ public class RandomMatchingMenu : MenuWindowBase {
     public override async UniTask Open() {
         // メニューウィンドウを表示する
         await base.Open();
+        // 新しいマッチングのキャンセル状態を初期化する。
+        isCancel = false;
         // 新しい対戦の先攻情報を初期化する。
         FirstPlayerManager.Reset();
         // メニューを開いている状態にする
@@ -49,9 +56,17 @@ public class RandomMatchingMenu : MenuWindowBase {
         // 対戦開始通知を受け取るまで待機する
         await UniTask.WaitUntil(() =>
             !isMenuOpen ||
+            !isCancel ||
             CustomNetworkManager.instance == null ||
             CustomNetworkManager.instance.IsMatchStarted
         );
+
+        // キャンセルされた場合はメニューを閉じて処理を終了する。
+        if (isCancel) {
+            // MatchingNetMatch.instance.
+            await Close();
+            return;
+        }
 
         // メニューが閉じられた場合は後続処理を行わない
         if (!isMenuOpen) return;
@@ -116,7 +131,18 @@ public class RandomMatchingMenu : MenuWindowBase {
         UnityEngine.Debug.Log($"[先攻決定] {firstPlayer}");
     }
 
-
-
+    /// <summary>
+    /// キャンセルボタンが押された時の処理
+    /// </summary>
+    private void OnClickCancelButton() {
+        SetIsCanncel(true);
+    }
+    /// <summary>
+    /// フラグの変更
+    /// </summary>
+    /// <param name="flag"></param>
+    public void SetIsCanncel(bool flag) {
+        isCancel = flag;
+    }
 
 }
