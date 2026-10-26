@@ -701,7 +701,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  title: {fileID: 7204673812389398641}
+  title: {fileID: 0}
   broadcaster: {fileID: 267201221956932105}
   testSendValue: 123
 --- !u!114 &9049401888599770297
@@ -1036,7 +1036,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7204673812389398641}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleManager, Assembly-CSharp
         m_MethodName: OnStartClientButton
         m_Mode: 1
@@ -1423,7 +1423,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 208688415613726842}
-  - component: {fileID: 7204673812389398641}
+  - component: {fileID: 7961667159319222554}
   m_Layer: 0
   m_Name: TitleManager
   m_TagString: Untagged
@@ -1446,7 +1446,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9029987434438658782}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7204673812389398641
+--- !u!114 &7961667159319222554
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1455,17 +1455,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 5873374737146756753}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66b479c144c8e014f8a9b0fe9b63b8b4, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c9ee19d56105934d83fd10d20d990c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 2454687681725404877}
   receiver: {fileID: 3737508927945624990}
-  hostsDisplayUI: {fileID: 7672330883389154216}
+  hostsDisplayUI: {fileID: 0}
   menuPanel: {fileID: 6554732474005547031}
   searchPanel: {fileID: 5872780036330332157}
   waitingPanel: {fileID: 5949664158398349790}
   battlePanel: {fileID: 7995812769261392624}
-  statusText: {fileID: 7135534893277217417}
+  statusText: {fileID: 0}
   searchSeconds: 3
   connectTimeoutSeconds: 15
   onBattleStarted:
@@ -1670,7 +1670,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7204673812389398641}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleManager, Assembly-CSharp
         m_MethodName: OnStartHostButton
         m_Mode: 1
