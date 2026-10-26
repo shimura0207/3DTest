@@ -93,7 +93,6 @@ public class MainPhase : PhaseBase {
                 catchStartPos = Vector3.zero;
             }
         }
-
         await UniTask.CompletedTask;
     }
 
@@ -102,7 +101,12 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
+        // 相手の使用したカード取得
+        int playCardObjectID = BattleSystemManager.instance.GetOpponentPlayCard();
 
+        if (playCardObjectID <= -1) return;
+        // 受け取ったカードの使用
+        UniTask task = PlayCard(PlayerType.Opponent, playCardObjectID);
 
         await UniTask.CompletedTask;
     }

@@ -19,7 +19,7 @@ public class AreaCardManager : MonoBehaviour {
     public static AreaCardManager instance { get; private set; } = null;
 
     // 各エリアのリストにカードIDを積んで管理
-    private Dictionary<PlayerType, List<int>> deckCards = null;
+    public Dictionary<PlayerType, List<int>> deckCards { get; private set; } = null;
     // 山札外のカード
     public struct OutDeckCards { 
         // 手札

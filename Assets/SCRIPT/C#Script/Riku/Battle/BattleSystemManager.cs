@@ -29,7 +29,7 @@ public class BattleSystemManager : MonoBehaviour {
     // プレイヤーの体力
     public Dictionary<PlayerType, int> playerHP { get; private set; } = null;
     // プレイヤーのサイズ上限
-    private Dictionary <PlayerType, int> playerSizeLimit = null;
+    public Dictionary <PlayerType, int> playerSizeLimit { get; private set; } = null;
     // 現在のターン
     private int currentTurn = -1;
     // バチスロ移行フラグ
@@ -37,7 +37,7 @@ public class BattleSystemManager : MonoBehaviour {
     // ターンエンドフラグ
     private bool turnEnd = false;
     // 相手のプレイ待機カード
-    private Queue<int> opponentPlayCard = null;
+    private Queue<int> opponentPlayCardObject = null;
 
     /// <summary>
     /// 初期化処理
@@ -47,7 +47,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         playerHP = new Dictionary<PlayerType, int>();
         playerSizeLimit = new Dictionary<PlayerType, int>();
-        opponentPlayCard = new Queue<int>();
+        opponentPlayCardObject = new Queue<int>();
     }
 
     /// <summary>
@@ -331,7 +331,7 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <param name="cardID">カードの識別ID</param>
     public void SetOpponentPlayCard(int cardID) {
-        opponentPlayCard.Enqueue(cardID);
+        opponentPlayCardObject.Enqueue(cardID);
     }
 
     /// <summary>
@@ -339,6 +339,18 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public int GetOpponentPlayCard() {
-        return opponentPlayCard.Dequeue();
+        if (opponentPlayCardObject.Count <= 0) return -1;
+        
+        return opponentPlayCardObject.Dequeue();
+    }
+
+    /// <summary>
+    /// 送信用にデッキをstringに纏める
+    /// </summary>
+    /// <returns></returns>
+    private string DeckPack() {
+        var deck = AreaCardManager.instance.deckCards[PlayerType.Self];
+
+       return NetworkValueConverter.Pack();
     }
 }
