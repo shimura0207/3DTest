@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: CardImageDatabase
   m_EditorClassIdentifier: 
   cardImageDataList:
-  - cardID: 0
-    cardImage: {fileID: 21300000, guid: aaa41a55e66e1b14db608e9ed1bb44fa, type: 3}
   - cardID: 101
     cardImage: {fileID: 21300000, guid: 43e3fe045415dfb438d35d1f6b8bf484, type: 3}
   - cardID: 102
@@ -22,7 +20,7 @@ MonoBehaviour:
   - cardID: 103
     cardImage: {fileID: 21300000, guid: a4770369b3039d64e8b52031b7ce96a4, type: 3}
   - cardID: 104
-    cardImage: {fileID: 21300000, guid: 262426b1040917441b9e7e4f44490a8a, type: 3}
+    cardImage: {fileID: 21300000, guid: 7d4b12f698ca22d49926d83e6f0d1856, type: 3}
   - cardID: 105
     cardImage: {fileID: 21300000, guid: 5138753a79a269a45870f0fe50b10900, type: 3}
   - cardID: 106
@@ -34,11 +32,11 @@ MonoBehaviour:
   - cardID: 109
     cardImage: {fileID: 21300000, guid: 9c50f8effa2d6714593c01f8cf268ea7, type: 3}
   - cardID: 110
-    cardImage: {fileID: 21300000, guid: 7164b3cb73d3d5b4393036a06dfcdb24, type: 3}
+    cardImage: {fileID: 21300000, guid: 7cbdebc2b1cc25a46865eda5c31387b1, type: 3}
   - cardID: 111
     cardImage: {fileID: 21300000, guid: 80e9f63be80fba546a043c3d2d14519e, type: 3}
   - cardID: 112
-    cardImage: {fileID: 21300000, guid: b42226ae44cafee4d90aba620634b342, type: 3}
+    cardImage: {fileID: 21300000, guid: 67e7a472807275a409c146baf8775fc3, type: 3}
   - cardID: 113
     cardImage: {fileID: 21300000, guid: ff946e2ba8d20724ea58f8d699e3ab21, type: 3}
   - cardID: 114
