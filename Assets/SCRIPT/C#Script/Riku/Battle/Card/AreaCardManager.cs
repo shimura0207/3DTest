@@ -179,6 +179,15 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="opponentDeck"></param>
     public void SetOpponentDeck(string[] opponentDeck) {
+        catchOpponentDeck = true;
 
+    }
+
+    /// <summary>
+    /// デッキ受け取りフラグのセット
+    /// </summary>
+    /// <param name="setFlag"></param>
+    public void SetCatchOpponentDeck(bool setFlag) {
+        catchOpponentDeck = setFlag;
     }
 }
