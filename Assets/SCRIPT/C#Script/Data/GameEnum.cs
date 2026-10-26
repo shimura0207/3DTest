@@ -410,4 +410,7 @@ public enum NetworkUseID {
     samon, 
     // デッキ
     deck,
+    // 先行プレイヤー
+    FirstPlayer,
+
 }
