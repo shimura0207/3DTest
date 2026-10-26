@@ -47,8 +47,8 @@ public class RandomMatchingMenu : MenuWindowBase {
         // メニューを開いている状態にする
         isMenuOpen = true;
 
-        // マッチング中の表示にする
-        matchingText.text = "対戦相手を探しています...";
+        // マッチング中のアニメーションを別タスクで開始する。
+        AnimateMatchingText().Forget();
 
         // ランダムマッチを開始する
         MatchingNetMatch.instance.OnRandomMatchButton();
@@ -142,6 +142,31 @@ public class RandomMatchingMenu : MenuWindowBase {
     /// <param name="flag"></param>
     public void SetIsCanncel(bool flag) {
         isCancel = flag;
+    }
+
+    private string DecideClientFirstPlayer() {
+        
+        return null;
+    }
+
+    /// <summary>
+    /// マッチング中の「...」を1つずつ表示する処理
+    /// </summary>
+    private async UniTask AnimateMatchingText() {
+        // 表示するドットの数を管理する。
+        int dotCount = 0;
+
+        // メニューが開いている間、アニメーションを繰り返す。
+        while (isMenuOpen) {
+            // ドットの数に応じて表示する文字列を変更する。
+            matchingText.text = "対戦相手を探しています" + new string('.', dotCount);
+
+            // 次の表示まで0.5秒待機する。
+            await UniTask.Delay(500);
+
+            // ドットを1つずつ増やし、3つの次は0に戻す。
+            dotCount = (dotCount + 1) % 4;
+        }
     }
 
 }
