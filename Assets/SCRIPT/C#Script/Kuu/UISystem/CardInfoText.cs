@@ -39,16 +39,32 @@ public class CardInfoText : MonoBehaviour {
     // 効果テキスト
     [SerializeField] private TMP_Text abilityText = null;
 
+    // 対応役テキスト
+    [SerializeField] private TMP_Text koyakuText = null;
+
+    // カード画像
+    [SerializeField] private Image cardImage = null;
+
+    // 対応役アイコン
     [SerializeField] private DisplayKoyaku displayKoyaku = null;
 
     // 種族enum
     private CardRaceID cardRaceID = CardRaceID.None;
+
+    // 対応役enum
+    private CardSuportRole koyakuID = CardSuportRole.None;
 
     // カードタイプテキスト保存用
     private string type = null;
 
     // 種族テキスト保存用
     private string races = null;
+
+    // 対応役テキスト保存用
+    private string suportRole = null;
+
+    // マウスの右クリックと左クリックを判別する用
+    private bool mouseButton = true;
 
 
     // Start is called before the first frame update
@@ -67,7 +83,7 @@ public class CardInfoText : MonoBehaviour {
             return;
         }
 
-        bool mouseButton = UIManager.instance.mouseButton;
+        mouseButton = UIManager.instance.mouseButton;
         // マウスボタン左右判定
         if (mouseButton) {
             simpleText.enabled = true;
@@ -90,15 +106,30 @@ public class CardInfoText : MonoBehaviour {
             SIZEText.text = "SIZE:" + data.SIZE;
         }
         else {
-            //if (!mouseButton) {
-            //    HPText.text = "なし";
-            //    ATKText.enabled = false;
-            //    SIZEText.enabled = false;
-            //}
-            status.enabled = false;
+            if (!mouseButton) {
+                status.enabled = true;
+                HPText.text = "なし";
+                ATKText.text = "";
+                SIZEText.text = "";
+            }
+            else {
+                status.enabled = false;
+            }
         }
         abilityText.text = data.ability;
         displayKoyaku.KoyakuDisplayer(data.suportRoleID);
+        // 詳細ウィンドウのみ表示
+        if (!mouseButton) {
+            // 対応役テキスト
+            koyakuText.enabled = true;
+            koyakuText.text = SuportRoleIDChangeText(data.suportRoleID);
+            // カード画像
+            cardImage.enabled = true;
+            cardImage.sprite = ScriptableObjectManager.instance.GetCardImage(data.cardID);
+        } else {
+            koyakuText.enabled = false;
+            cardImage.enabled = false;
+        }
     }
 
     /// <summary>
@@ -167,5 +198,47 @@ public class CardInfoText : MonoBehaviour {
             }
         }
         return races;
+    }
+
+    /// <summary>
+    /// 対応役IDをテキストに変換
+    /// </summary>
+    /// <param name="suportRoleID"></param>
+    /// <returns></returns>
+    private string SuportRoleIDChangeText(int suportRoleID) {
+            // IDに応じてenumを参照する
+            koyakuID = (CardSuportRole)suportRoleID;
+
+        // それぞれをテキストに変換する
+        switch (koyakuID) {
+            case CardSuportRole.NULL:
+                suportRole = "なし";
+                break;
+            case CardSuportRole.Miss:
+                suportRole = "ハズレ";
+                break;
+            case CardSuportRole.Replay:
+                suportRole = "リプレイ";
+                break;
+            case CardSuportRole.Cherry:
+                suportRole = "チェリー";
+                break;
+            case CardSuportRole.Bell:
+                suportRole = "ベル";
+                break;
+            case CardSuportRole.Suika:
+                suportRole = "スイカ";
+                break;
+            case CardSuportRole.ALL:
+                suportRole = "全て";
+                break;
+            case CardSuportRole.Cherry_Suika:
+                suportRole = "チェリー・スイカ";
+                break;
+            default:
+                suportRole = "";
+                break;
+        }
+        return suportRole;
     }
 }
