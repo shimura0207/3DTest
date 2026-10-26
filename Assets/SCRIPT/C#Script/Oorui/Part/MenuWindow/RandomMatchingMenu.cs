@@ -4,6 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
+using Mirror;
 using TMPro;
 using UnityEngine;
 
@@ -11,10 +12,8 @@ using UnityEngine;
 /// ランダムマッチの開始と進行状況の表示を管理するメニュー
 /// </summary>
 public class RandomMatchingMenu : MenuWindowBase {
-
     // メニューが開いているかどうか
     private bool isMenuOpen = false;
-
     // 接続中に表示するテキスト
     [SerializeField]
     private TMP_Text matchingText = null;
@@ -36,7 +35,8 @@ public class RandomMatchingMenu : MenuWindowBase {
     public override async UniTask Open() {
         // メニューウィンドウを表示する
         await base.Open();
-
+        // 新しい対戦の先攻情報を初期化する。
+        FirstPlayerManager.Reset();
         // メニューを開いている状態にする
         isMenuOpen = true;
 
@@ -65,8 +65,11 @@ public class RandomMatchingMenu : MenuWindowBase {
         // 対戦相手を確認したら表示を更新する
         matchingText.text = "対戦相手が見つかりました。";
 
+        // 先行プレイヤーを決定する
+        DecideFirstPlayer();
+
         // 少し表示してから閉じる処理
-         await UniTask.Delay(1000);
+        await UniTask.Delay(1000);
 
         // マッチング後にメニューを閉じる
         await Close();
@@ -85,4 +88,35 @@ public class RandomMatchingMenu : MenuWindowBase {
         // 表示内容を初期化する
         matchingText.text = "";
     }
+
+
+    /// <summary>
+    /// ホスト側で先攻プレイヤーをランダムに決定する
+    /// </summary>
+    private void DecideFirstPlayer() {
+        // すでに先攻が決まっている場合は再抽選しない。
+        if (FirstPlayerManager.isFirstPlayerDecided) return;
+
+        // MatchingNetMatchが存在しない場合は処理を行わない。
+        if (MatchingNetMatch.instance == null) return;
+
+        // ホスト以外では先攻を決定しない。
+        if (!MatchingNetMatch.instance.isHost) return;
+
+        // 0ならホスト自身、1なら対戦相手を先攻にする。
+        int result = UnityEngine.Random.Range(0, 2);
+
+        // firstPlayerに結果を入れる
+        PlayerType firstPlayer = result == 0 ? PlayerType.Self : PlayerType.Opponent;
+
+        // 先攻情報をメニューではなく管理クラスに保存する。
+        FirstPlayerManager.SetFirstPlayer(firstPlayer);
+
+        // 決定結果をログに出力する。
+        UnityEngine.Debug.Log($"[先攻決定] {firstPlayer}");
+    }
+
+
+
+
 }

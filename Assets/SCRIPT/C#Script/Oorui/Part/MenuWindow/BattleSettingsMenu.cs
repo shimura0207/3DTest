@@ -27,8 +27,18 @@ public class BattleSettingsMenu : MenuWindowBase {
     public async UniTask Open(int id) {
         // 基底側でメニューウィンドウを表示
         await base.Open();
-        // 先行プレイヤー
-        PlayerType firstPlayer = DecideFirstPlayer();
+        // 先攻プレイヤーを保持する変数。
+        PlayerType firstPlayer;
+
+        // 先攻が決定済みなら、管理クラスから取得する。
+        if (FirstPlayerManager.isFirstPlayerDecided) {
+            firstPlayer = FirstPlayerManager.firstPlayer;
+        }
+        else {
+            // 先攻情報がない場合は、従来のランダム決定を使用する。
+            // ※バグ対策、後で消す
+            firstPlayer = DecideFirstPlayer();
+        }
 
         // バトルで使用するデッキを取得する
         List<int> useDeckList = GetUseDeckList(id);
