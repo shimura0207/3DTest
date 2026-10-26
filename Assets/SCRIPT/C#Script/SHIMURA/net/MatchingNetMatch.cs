@@ -12,7 +12,7 @@ public class MatchingNetMatch : MonoBehaviour {
     [SerializeField] private HostSelectUI hostsDisplayUI;
 
     [Header("画面")]
-    [SerializeField] private GameObject menuPanel;
+   [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject searchPanel;
     [SerializeField] private GameObject waitingPanel;
     [SerializeField] private GameObject battlePanel;
