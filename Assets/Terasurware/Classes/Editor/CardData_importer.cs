@@ -10,7 +10,7 @@ using NPOI.SS.UserModel;
 public class CardData_importer : AssetPostprocessor {
 	private static readonly string filePath = "Assets/Resources/MasterData/CardData.xlsx";
 	private static readonly string exportPath = "Assets/Resources/MasterData/CardData.asset";
-	private static readonly string[] sheetNames = { "Data", };
+	private static readonly string[] sheetNames = { "Data","Type","Name","Rarity","Theme","Ability","Status","Race","Koyaku", };
 	
 	static void OnPostprocessAllAssets (string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
 	{
@@ -18,9 +18,9 @@ public class CardData_importer : AssetPostprocessor {
 			if (!filePath.Equals (asset))
 				continue;
 				
-			Entity_CardData data = (Entity_CardData)AssetDatabase.LoadAssetAtPath (exportPath, typeof(Entity_CardData));
+			Entity_Data data = (Entity_Data)AssetDatabase.LoadAssetAtPath (exportPath, typeof(Entity_Data));
 			if (data == null) {
-				data = ScriptableObject.CreateInstance<Entity_CardData> ();
+				data = ScriptableObject.CreateInstance<Entity_Data> ();
 				AssetDatabase.CreateAsset ((ScriptableObject)data, exportPath);
 				data.hideFlags = HideFlags.NotEditable;
 			}
@@ -41,28 +41,28 @@ public class CardData_importer : AssetPostprocessor {
 						continue;
 					}
 
-					Entity_CardData.Sheet s = new Entity_CardData.Sheet ();
+					Entity_Data.Sheet s = new Entity_Data.Sheet ();
 					s.name = sheetName;
 				
 					for (int i=1; i<= sheet.LastRowNum; i++) {
 						IRow row = sheet.GetRow (i);
 						ICell cell = null;
 						
-						Entity_CardData.Param p = new Entity_CardData.Param ();
+						Entity_Data.Param p = new Entity_Data.Param ();
 						
-					cell = row.GetCell(0); p.cardID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(1); p.name = (cell == null ? "" : cell.StringCellValue);
-					cell = row.GetCell(3); p.rarityID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(5); p.themeID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(7); p.suportRoleID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(9); p.FirstRaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(11); p.SecondRaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(13); p.ThildRaceID = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(14); p.SIZE = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(15); p.ATK = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(16); p.HP = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(18); p.CardType = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(19); p.ability = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(0); p.cardID = (cell == null ? 0.0 : cell.NumericCellValue);
+					cell = row.GetCell(1); p.name = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(3); p.rarityID = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(5); p.themeID = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(7); p.suportRoleID = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(9); p.FirstRaceID = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(11); p.SecondRaceID = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(13); p.ThildRaceID = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(14); p.SIZE = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(15); p.ATK = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(16); p.HP = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(18); p.CardType = (cell == null ? false : cell.BooleanCellValue);
+					cell = row.GetCell(19); p.ability = (cell == null ? false : cell.BooleanCellValue);
 						s.list.Add (p);
 					}
 					data.sheets.Add(s);
