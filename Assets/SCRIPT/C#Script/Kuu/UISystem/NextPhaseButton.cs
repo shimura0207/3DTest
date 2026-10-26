@@ -18,22 +18,22 @@ public class NextPhaseButton : MonoBehaviour
     /// <summary>
     /// パチスロフェイズ移行処理呼び出し
     /// </summary>
-    public void OnClickPACHISUROGO() {
-        UniTask task = PACHISUROGO();
+    public void OnClickPachisuroGo() {
+        UniTask task = PachisuroGo();
     }
 
     /// <summary>
     /// エンドフェイズ移行処理呼び出し
     /// </summary>
-    public void OnClickTURNEND() {
-        UniTask task = TURNEND();
+    public void OnClickTurnEnd() {
+        UniTask task = TurnEnd();
     }
 
     /// <summary>
     /// パチスロフェイズ移行処理
     /// </summary>
     /// <returns></returns>
-    public async UniTask PACHISUROGO() {
+    public async UniTask PachisuroGo() {
         // 確認ウィンドウ表示
         bool confirmation = await MenuWindowManager.Instance.Confirm(PACHISURO_CONFIRM);
 
@@ -41,6 +41,9 @@ public class NextPhaseButton : MonoBehaviour
         if (confirmation) {
             BattleSystemManager.instance.PachisuroGo();
 
+            // 相手に送信
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PachisuroGoButton);
+            CustomNetworkManager.instance.SendStringToOpponent(pack);
             return;
         }
 
@@ -52,7 +55,7 @@ public class NextPhaseButton : MonoBehaviour
     /// エンドフェイズ移行処理
     /// </summary>
     /// <returns></returns>
-    public async UniTask TURNEND() {
+    public async UniTask TurnEnd() {
         // 確認ウィンドウ表示
         bool confirmation = await MenuWindowManager.Instance.Confirm(TURNEND_CONFIRM);
 
@@ -60,6 +63,9 @@ public class NextPhaseButton : MonoBehaviour
         if (confirmation) {
             BattleSystemManager.instance.TurnEnd();
 
+            // 相手に送信
+            var pack = NetworkValueConverter.Pack(NetworkUseID.TurnEndButton);
+            CustomNetworkManager.instance.SendStringToOpponent(pack);
             return;
         }
 

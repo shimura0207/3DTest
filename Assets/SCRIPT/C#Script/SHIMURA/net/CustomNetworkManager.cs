@@ -118,7 +118,12 @@ public class CustomNetworkManager : NetworkManager {
     /// 終了中の退出通知から、待機状態に戻さないために使う。
     /// </summary>
     private bool stopping;
-
+    private void Update() {
+        // Sキーを押した瞬間に1回だけATK情報を送信する
+        if (Input.GetKeyDown(KeyCode.S)) {
+            TestSendATK();
+        }
+    }
     // ============================================================
     // 通信開始
     // ============================================================
@@ -898,29 +903,57 @@ public class CustomNetworkManager : NetworkManager {
             return;
 
         // 最初の項目を処理IDに変換する。
-        if (!NetworkValueConverter.TryGetEnum<NetWorkUseID>(
+        if (!NetworkValueConverter.TryGetEnum<NetworkUseID>(
             values[0], out var useID)) {
             Debug.LogWarning($"不明な通信ID：{values[0]}");
             return;
         }
-
-        // 該当する外部関数だけを直接呼び出す。
         switch (useID) {
-            case NetWorkUseID.atk:
-                
+
+            case NetworkUseID.atk:
+                NetworkReceiveProcessor.ReceiveAttack(values);
                 break;
 
-            case NetWorkUseID.hp:
-               
+            case NetworkUseID.hp:
+                NetworkReceiveProcessor.ReceiveHP(values);
                 break;
 
-            case NetWorkUseID.draw:
-                
+            case NetworkUseID.draw:
+                NetworkReceiveProcessor.ReceiveDraw(values);
                 break;
 
-            case NetWorkUseID.samon:
-                
+            case NetworkUseID.samon:
+                NetworkReceiveProcessor.ReceiveSummon(values);
                 break;
+
+            case NetworkUseID.deck:
+                AreaCardManager.instance.SetOpponentDeck(values);
+                break;
+
+            case NetworkUseID.PachisuroGoButton:
+                BattleSystemManager.instance.PachisuroGo();
+                break;
+
+            case NetworkUseID.TurnEndButton:
+                BattleSystemManager.instance.TurnEnd();
+                break;
+        }
+    }
+    /// <summary>
+    /// テスト送信：カードID「02」の攻撃力に500加算する情報を送ります。
+    /// </summary>
+    public void TestSendATK() {
+        string message = NetworkValueConverter.Pack(
+            NetworkUseID.atk, // 処理ID
+            "02",            // 対象カードID
+            500              // 加算値
+        );
+
+        if (SendStringToOpponent(message)) {
+            Debug.Log($"[ATK送信] {message}");
+        }
+        else {
+            Debug.LogWarning("[ATK送信失敗] マッチング状態を確認してください。");
         }
     }
 }

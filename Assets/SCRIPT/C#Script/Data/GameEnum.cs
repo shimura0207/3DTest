@@ -399,9 +399,21 @@ public enum AbilityProcess {
 /// <summary>
 /// 通信メッセージの先頭に付ける処理ID。
 /// </summary>
-public enum NetWorkUseID {
-    atk = 0, // 攻撃力
-    hp = 1, // HP
-    draw = 2, // ドロー
-    samon = 3, // 召喚
+public enum NetworkUseID {
+    // 攻撃力
+    atk, 
+    // HP
+    hp, 
+    // ドロー
+    draw, 
+    // 召喚
+    samon, 
+    // デッキ
+    deck,
+    // 先行プレイヤー
+    FirstPlayer,
+    // パチスロGOボタン
+    PachisuroGoButton,
+    // ターンエンドボタン
+    TurnEndButton,
 }

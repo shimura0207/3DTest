@@ -19,7 +19,7 @@ public class AreaCardManager : MonoBehaviour {
     public static AreaCardManager instance { get; private set; } = null;
 
     // 各エリアのリストにカードIDを積んで管理
-    public Dictionary<PlayerType, List<int>> deckCards { get; private set; } = null;
+    private Dictionary<PlayerType, List<int>> deckCards = null;
     // 山札外のカード
     public struct OutDeckCards { 
         // 手札
@@ -31,6 +31,9 @@ public class AreaCardManager : MonoBehaviour {
     }
     // プレイヤーごとの山札外カード
     public Dictionary<PlayerType, OutDeckCards> outDeckCards { get; private set; }
+
+    // 相手のデッキを受け取ったか
+    public bool catchOpponentDeck { get; private set; } = false;
 
     /// <summary>
     /// 初期化処理
@@ -159,5 +162,23 @@ public class AreaCardManager : MonoBehaviour {
         outDeckCards[player].fieldCards[aLaneID] = outDeckCards[player].fieldCards[bLaneID];
         // bを保持したaに置き換え
         outDeckCards[player].fieldCards[bLaneID] = a;
+    }
+
+    /// <summary>
+    /// 送信用にデッキをstringに纏める
+    /// </summary>
+    /// <returns></returns>
+    public string DeckPack() {
+        var deck = deckCards[PlayerType.Self];
+
+        return NetworkValueConverter.Pack(NetworkUseID.deck, deck);
+    }
+
+    /// <summary>
+    /// 相手のデッキを受け取る
+    /// </summary>
+    /// <param name="opponentDeck"></param>
+    public void SetOpponentDeck(string[] opponentDeck) {
+
     }
 }
