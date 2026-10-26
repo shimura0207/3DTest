@@ -39,7 +39,7 @@ public class NextPhaseButton : MonoBehaviour
 
         // "はい"ならパチスロフェイズ
         if (confirmation) {
-            BattleSystemManager.instance.GoPachisuro();
+            BattleSystemManager.instance.PachisuroGo();
 
             return;
         }

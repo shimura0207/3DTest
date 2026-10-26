@@ -881,7 +881,47 @@ public class CustomNetworkManager : NetworkManager {
 
         Debug.Log($"[string受信] {receivedString}", this);
 
-        OnOpponentStringReceived?.Invoke(receivedString);
+        // 先頭IDを確認し、対応する外部関数へ渡す。
+        DispatchReceivedString(receivedString);
+    }
+
+
+    /// <summary>
+    /// 受信メッセージの先頭IDを読み、対応する処理だけを呼び出します。
+    /// </summary>
+    private void DispatchReceivedString(string message) {
+        // カンマ区切りの文字列を分解する。
+        if (!NetworkValueConverter.TryUnpack(message, out string[] values))
+            return;
+
+        if (values.Length == 0)
+            return;
+
+        // 最初の項目を処理IDに変換する。
+        if (!NetworkValueConverter.TryGetEnum<NetWorkUseID>(
+            values[0], out var useID)) {
+            Debug.LogWarning($"不明な通信ID：{values[0]}");
+            return;
+        }
+
+        // 該当する外部関数だけを直接呼び出す。
+        switch (useID) {
+            case NetWorkUseID.atk:
+                
+                break;
+
+            case NetWorkUseID.hp:
+               
+                break;
+
+            case NetWorkUseID.draw:
+                
+                break;
+
+            case NetWorkUseID.samon:
+                
+                break;
+        }
     }
 }
 

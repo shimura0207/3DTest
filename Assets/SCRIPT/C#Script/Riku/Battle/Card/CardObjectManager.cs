@@ -128,6 +128,18 @@ public class CardObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// オブジェクトのIDからオブジェクト取得
+    /// </summary>
+    /// <param name="objectID">取得するオブジェクトのID</param>
+    /// <returns></returns>
+    public CardObject GetUseCardObject(int objectID) {
+        if (IsEmpty(useObjectList)) return null;
+        if (useObjectList.Count <= objectID) return null;
+
+        return useObjectList[objectID];
+    }
+
+    /// <summary>
     /// 未使用状態のカードオブジェクト取得
     /// </summary>
     /// <returns></returns>
