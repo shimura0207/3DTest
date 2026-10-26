@@ -47,7 +47,7 @@ public class FieldSIZEUIControllere : MonoBehaviour
         currentSize = currentMaxSize - UIManager.instance.restSize;
         opponentCurrentSize = opponentMaxSize - UIManager.instance.opponentRestSize;
 
-        selfSizeText.text = currentSize.ToString() + "/" + currentMaxSize.ToString();
-        opponentSizeText.text = opponentCurrentSize.ToString() + "/" + opponentMaxSize.ToString();
+        selfSizeText.text = "SIZE:" + currentSize.ToString() + "/" + currentMaxSize.ToString();
+        opponentSizeText.text = "SIZE:" + opponentCurrentSize.ToString() + "/" + opponentMaxSize.ToString();
     }
 }
