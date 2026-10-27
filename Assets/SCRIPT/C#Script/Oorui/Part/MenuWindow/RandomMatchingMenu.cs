@@ -123,11 +123,60 @@ public class RandomMatchingMenu : MenuWindowBase {
         // firstPlayerに結果を入れる
         PlayerType firstPlayer = result == 0 ? PlayerType.Self : PlayerType.Opponent;
 
-        // 先攻情報をメニューではなく管理クラスに保存する。
+        // 決定した先攻プレイヤーを保存する。
         FirstPlayerManager.SetFirstPlayer(firstPlayer);
 
         // 決定結果をログに出力する。
-        UnityEngine.Debug.Log($"[先攻決定] {firstPlayer}");
+        Debug.Log($"[先攻決定] {firstPlayer}");
+
+        // 決定した先攻情報をクライアントへ送信する。
+        SendFirstPlayerToClient();
+    }
+
+    /// <summary>
+    /// ホストが決定した先攻情報をクライアントへ送信する。
+    /// </summary>
+    private void SendFirstPlayerToClient() {
+        // MatchingNetMatchが存在しない場合は送信しない。
+        if (MatchingNetMatch.instance == null) return;
+
+        // ホスト以外からは送信しない。
+        if (!MatchingNetMatch.instance.isHost) return;
+
+        // 先攻情報が未決定なら送信しない。
+        if (!FirstPlayerManager.isFirstPlayerDecided) return;
+
+        // ホスト自身が先攻ならtrue、相手が先攻ならfalseにする。
+        bool hostIsFirst = FirstPlayerManager.firstPlayer == PlayerType.Self;
+
+        // 先攻情報を既存の通信形式に変換する。
+        string message = NetworkValueConverter.Pack(
+            NetworkUseID.FirstPlayer,
+            hostIsFirst
+        );
+
+        // 対戦相手のクライアントへ先攻情報を送信する。
+        if (CustomNetworkManager.instance == null ||
+            !CustomNetworkManager.instance.SendStringToOpponent(message)) {
+            Debug.LogWarning("[先攻情報] クライアントへの送信に失敗しました。");
+        }
+    }
+
+    /// <summary>
+    /// CustomNetworkManagerから呼ぶ、FirstPlayer選考処理
+    /// </summary>
+    public static void ReceiveFirstPlayer(string[] values) {
+        // 通信データの項目数が足りなければ抜ける。
+        if (values.Length != 2) return;
+
+        // ホストが先攻かどうかをboolに変換する
+        if (!bool.TryParse(values[1], out bool hostIsFirst)) return;
+
+        // クライアント自身の視点で先攻プレイヤーを決定する。
+        PlayerType clientFirstPlayer = hostIsFirst ? PlayerType.Opponent : PlayerType.Self;
+
+        // クライアント側に先攻情報を保存する。
+        FirstPlayerManager.SetFirstPlayer(clientFirstPlayer);
     }
 
     /// <summary>
@@ -142,11 +191,6 @@ public class RandomMatchingMenu : MenuWindowBase {
     /// <param name="flag"></param>
     public void SetIsCanncel(bool flag) {
         isCancel = flag;
-    }
-
-    private string DecideClientFirstPlayer() {
-        NetworkValueConverter.Pack();
-        return null;
     }
 
     /// <summary>
