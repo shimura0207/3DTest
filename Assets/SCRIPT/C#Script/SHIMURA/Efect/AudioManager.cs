@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,9 +18,9 @@ using UnityEngine;
 /// </summary>
 [DefaultExecutionOrder(-1000)]
 [DisallowMultipleComponent]
-public class AudioManager : MonoBehaviour {
-
-    public static AudioManager Instance { get; private set; }
+public class AudioManager : SystemObject {
+    // 自身への参照
+    public static AudioManager instance { get; private set; }
 
     [Serializable]
     public class SoundData {
@@ -34,16 +35,9 @@ public class AudioManager : MonoBehaviour {
         [Tooltip("この音声自体の音量")]
         public float volume = 1f;
     }
-
-    [Header("シーン設定")]
-    [Tooltip("シーンを切り替えても、このManagerと再生中の音を維持する")]
-    [SerializeField] private bool persistAcrossScenes = true;
-
-    [Header("BGM一覧")]
-    [SerializeField] private SoundData[] bgmList = new SoundData[0];
-
-    [Header("SE一覧")]
-    [SerializeField] private SoundData[] seList = new SoundData[0];
+    // AudioManagerが使用する設定データ
+    [Header("音声設定")]
+    [SerializeField] private AudioManagerConfig audioManagerConfig = null;
 
     [Header("全体音量")]
     [Range(0f, 1f)]
@@ -93,29 +87,24 @@ public class AudioManager : MonoBehaviour {
     // 初期化
     // =========================================================
 
-    private void Awake() {
-
-        // シーン移動先に別のAudioManagerがあっても重複させない。
-        if (Instance != null && Instance != this) {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-
-        if (persistAcrossScenes) {
-            // DontDestroyOnLoadを使えるように最上位へ移動する。
-            transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
-        }
-
+    public override async UniTask Initialize() {
+        // シングルトンを自身に設定
+        instance = this;
+        // BGMをコンポーネントに追加
         bgmSource = CreateAudioSource(true);
+        // SEをコンポーネントに追加
         seSource = CreateAudioSource(false);
 
+        // 音声一覧を辞書へ登録し直す
         RebuildSoundTables();
         ApplyVolumes();
     }
 
+    /// <summary>
+    /// ゲームオブジェクトにAudioSourceコンポーネントを追加
+    /// </summary>
+    /// <param name="loop"></param>
+    /// <returns></returns>
     private AudioSource CreateAudioSource(bool loop) {
         AudioSource source = gameObject.AddComponent<AudioSource>();
 
@@ -137,33 +126,50 @@ public class AudioManager : MonoBehaviour {
     /// </summary>
     [ContextMenu("音声一覧を再登録")]
     public void RebuildSoundTables() {
-        BuildSoundTable(bgmList, bgmTable, "BGM");
-        BuildSoundTable(seList, seTable, "SE");
+        // 設定データが登録されていなければ終了する
+        if (audioManagerConfig == null) {
+            // 古い音声データが残らないように辞書を空にする
+            bgmTable.Clear();
+            seTable.Clear();
+            return;
+        }
+
+        // ScriptableObjectからBGM一覧を取得して辞書を構築する
+        BuildSoundTable(audioManagerConfig.BGMList, bgmTable, "BGM");
+        // ScriptableObjectからSE一覧を取得して辞書を構築する
+        BuildSoundTable(audioManagerConfig.SEList, seTable, "SE");
     }
 
+    /// <summary>
+    /// 音声データを受け取り、音声名から検索できる辞書を作る
+    /// </summary>
+    /// <param name="sounds">登録する音声データの配列</param>
+    /// <param name="table">登録先の辞書</param>
+    /// <param name="category">BGMや効果音などの分類名</param>
     private void BuildSoundTable(
         SoundData[] sounds,
         Dictionary<string, SoundData> table,
         string category) {
 
+        // 登録内容を削除
         table.Clear();
-
+        // 音声データ配列がなければ処理を抜ける
         if (sounds == null) return;
 
+        // 音声データ配列を走査
         for (int i = 0; i < sounds.Length; i++) {
+            // 要素ごとに取得
             SoundData sound = sounds[i];
 
-            if (sound == null ||
-                string.IsNullOrWhiteSpace(sound.soundName)) {
-
-                Debug.LogWarning(
-                    $"[AudioManager] {category}一覧の要素{i}に名前がありません。",
-                    this
-                );
+            // 音がないか、名前が空なら警告を出す
+            if (sound == null || string.IsNullOrWhiteSpace(sound.soundName)) {
+                // 警告を出す
+                Debug.LogWarning($"[AudioManager] {category}一覧の要素{i}に名前がありません。", this);
                 continue;
             }
-
+            // 再生する音声ファイルが未設定なら警告を出す
             if (sound.clip == null) {
+                // 警告を出す
                 Debug.LogWarning(
                     $"[AudioManager] {category}「{sound.soundName}」にClipがありません。",
                     this
@@ -171,7 +177,9 @@ public class AudioManager : MonoBehaviour {
                 continue;
             }
 
+            // 同じ名前がすでに辞書に登録されているか確認する
             if (table.ContainsKey(sound.soundName)) {
+                // 警告を出す
                 Debug.LogWarning(
                     $"[AudioManager] {category}名「{sound.soundName}」が重複しています。" +
                     "先に登録された音声を使用します。",
@@ -179,20 +187,31 @@ public class AudioManager : MonoBehaviour {
                 );
                 continue;
             }
-
+            // 配列に追加
             table.Add(sound.soundName, sound);
         }
     }
 
+    /// <summary>
+    /// 音声データを検索、取得できたかどうかを返す
+    /// </summary>
+    /// <param name="table">検索対象の辞書</param>
+    /// <param name="soundName">検索する音声名</param>
+    /// <param name="category">BGMか効果音</param>
+    /// <param name="sound">取得した音声データを返す</param>
+    /// <returns></returns>
     private bool TryGetSound(
         Dictionary<string, SoundData> table,
         string soundName,
         string category,
         out SoundData sound) {
 
+        // 初期値をnullにする。
         sound = null;
 
+        // 音声名がnull・空文字・空白だけなら警告を出して終了する
         if (string.IsNullOrWhiteSpace(soundName)) {
+            // 警告を出す
             Debug.LogWarning(
                 $"[AudioManager] 呼び出す{category}名が空です。",
                 this
@@ -200,17 +219,18 @@ public class AudioManager : MonoBehaviour {
             return false;
         }
 
+        // 指定名の音声データが存在し、再生用Clipも設定されているか確認する
         if (!table.TryGetValue(soundName, out sound) ||
             sound == null ||
             sound.clip == null) {
-
+            // 警告を出す
             Debug.LogWarning(
                 $"[AudioManager] {category}「{soundName}」が未登録、またはClipがありません。",
                 this
             );
             return false;
         }
-
+        // 音声データとClipが正常に取得できたことを返す
         return true;
     }
 
@@ -219,32 +239,29 @@ public class AudioManager : MonoBehaviour {
     // =========================================================
 
     /// <summary>
-    /// BGMを再生する。
-    ///
-    /// loop：ループするか。
-    /// restart：同じBGMでも先頭から再生し直すか。
-    ///
-    /// 同じBGMが一時停止中なら、restart=falseで続きから再開します。
+    /// 指定したBGMを再生
     /// </summary>
+    /// <param name="soundName">音声の名前</param>
+    /// <param name="loop">ループ再生するかどうか</param>
+    /// <param name="restart">先頭から再生</param>
     public void PlayBGM(
         string soundName,
         bool loop = true,
         bool restart = false) {
 
-        if (!TryGetSound(bgmTable, soundName, "BGM", out SoundData sound)) {
-            return;
-        }
-
+        // 指定されたBGMが登録されていなければ処理を終了する
+        if (!TryGetSound(bgmTable, soundName, "BGM", out SoundData sound)) return;
+        // 実行中のBGMフェード処理をキャンセルする
         CancelBGMFade();
-
+        // ループ設定をAudioSourceに反映する
         bgmSource.loop = loop;
 
-        bool sameBgm =
-            currentBgm == sound &&
-            bgmSource.clip == sound.clip;
+        // 登録データと再生中のClipが両方一致するか確認する
+        bool sameBgm = currentBgm == sound && bgmSource.clip == sound.clip;
 
+        // 同じBGMで、先頭からの再生指定がない場合に処理する
         if (sameBgm && !restart) {
-
+            // 一時停止中なら、停止位置から再生を再開する
             if (isBgmPaused) {
                 bgmSource.UnPause();
                 isBgmPaused = false;
@@ -252,20 +269,22 @@ public class AudioManager : MonoBehaviour {
                 return;
             }
 
-            // 同じBGMを毎回先頭へ戻さない。
+            // 同じBGMがすでに再生中なら、先頭に戻さず維持する。
             if (bgmSource.isPlaying) {
                 ApplyVolumes();
                 return;
             }
         }
-
+        // 現在のBGMを停止する
         bgmSource.Stop();
 
+        // 新しいBGMデータを管理対象に設定する
         currentBgm = sound;
         isBgmPaused = false;
 
+        // 再生するClipを設定する
         bgmSource.clip = sound.clip;
-
+        // 音量を適用して、BGMを再生する
         ApplyVolumes();
         bgmSource.Play();
     }
@@ -274,12 +293,19 @@ public class AudioManager : MonoBehaviour {
     /// BGMを停止する。次の再生は先頭から。
     /// </summary>
     public void StopBGM() {
+        // 実行中のBGMフェード処理をキャンセルする。
         CancelBGMFade();
 
+        // 現在のBGM再生を停止する。
         bgmSource.Stop();
+
+        // AudioSourceに設定されている音声データを解除する。
         bgmSource.clip = null;
 
+        // 現在のBGMとして管理しているデータを解除する。
         currentBgm = null;
+
+        // 一時停止中を示すフラグを解除する。
         isBgmPaused = false;
     }
 
@@ -287,11 +313,16 @@ public class AudioManager : MonoBehaviour {
     /// BGMを一時停止する。
     /// </summary>
     public void PauseBGM() {
+        // BGMが再生中でなければ、何もせず終了する。
         if (!bgmSource.isPlaying) return;
 
+        // 実行中のBGMフェード処理をキャンセルする。
         CancelBGMFade();
 
+        // BGMを現在の再生位置で一時停止する。
         bgmSource.Pause();
+
+        // 一時停止中であることを記録する。
         isBgmPaused = true;
     }
 
@@ -299,9 +330,13 @@ public class AudioManager : MonoBehaviour {
     /// 一時停止したBGMを続きから再開する。
     /// </summary>
     public void ResumeBGM() {
+        // 一時停止中でない場合、またはClipがない場合は終了する。
         if (!isBgmPaused || bgmSource.clip == null) return;
 
+        // 一時停止した位置からBGMを再開する。
         bgmSource.UnPause();
+
+        // 一時停止状態を解除する。
         isBgmPaused = false;
     }
 
@@ -311,37 +346,45 @@ public class AudioManager : MonoBehaviour {
     /// </summary>
     public void FadeOutBGM(float duration = 1f) {
 
-        if (duration <= 0f ||
-            !bgmSource.isPlaying ||
-            !isActiveAndEnabled) {
-
+        // 時間が0以下、BGMが再生中でない、またはコンポーネントが無効なら停止する。
+        if (duration <= 0f || !bgmSource.isPlaying || !isActiveAndEnabled) {
+            // BGMを停止
             StopBGM();
             return;
         }
 
-        // 既存のフェードを止め、現在の音量から引き継ぐ。
+        // 既存のフェードを止め、現在の音量を引き継ぐ。
         CancelBGMFade(false);
 
-        bgmFadeCoroutine = StartCoroutine(
-            FadeOutBGMCoroutine(duration)
+        // 指定時間で音量を下げるコルーチンを開始する。
+        bgmFadeCoroutine = StartCoroutine(FadeOutBGMCoroutine(duration)
         );
     }
 
+    /// <summary>
+    /// BGMの音量を指定された時間をかけて徐々に下げ、最後にBGMを停止するコルーチン
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     private IEnumerator FadeOutBGMCoroutine(float duration) {
+        // フェード開始からの経過時間を0秒にする。
         float elapsed = 0f;
+        // フェード開始時点の音量を保存する。
         float startVolume = bgmFadeVolume;
 
+        // 指定されたフェード時間が経過するまで繰り返す。
         while (elapsed < duration) {
+            // Time.timeScaleの影響を受けずに経過時間を加算する
             elapsed += Time.unscaledDeltaTime;
-
+            // 経過時間に応じて、開始音量から0へ徐々に変化させる
             bgmFadeVolume = Mathf.Lerp(
                 startVolume,
                 0f,
                 Mathf.Clamp01(elapsed / duration)
             );
-
+            // 変更した音量をAudioSourceなどに反映する
             ApplyVolumes();
-
+            // 次のフレームまで待機する
             yield return null;
         }
 
@@ -350,14 +393,29 @@ public class AudioManager : MonoBehaviour {
         StopBGM();
     }
 
+    /// <summary>
+    /// BGMのフェード処理をキャンセルする
+    /// </summary>
+    /// <param name="restoreVolume"></param>
     private void CancelBGMFade(bool restoreVolume = true) {
+
+        // フェード処理が実行中か確認する。
         if (bgmFadeCoroutine != null) {
+
+            // 実行中のフェード用コルーチンを停止する。
             StopCoroutine(bgmFadeCoroutine);
+
+            // コルーチンの参照を解除する。
             bgmFadeCoroutine = null;
         }
 
+        // 音量を元に戻す指定がある場合に実行する。
         if (restoreVolume) {
+
+            // フェード用の音量を通常値の1.0に戻す。
             bgmFadeVolume = 1f;
+
+            // 変更した音量をAudioSourceなどに反映する。
             ApplyVolumes();
         }
     }
@@ -456,7 +514,7 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void OnDisable() {
-        if (Instance != this) return;
+        if (instance != this) return;
 
         // 無効化時にフェード処理を残さない。
         CancelBGMFade();
@@ -475,8 +533,8 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        if (Instance == this) {
-            Instance = null;
+        if (instance == this) {
+            instance = null;
         }
     }
 }
