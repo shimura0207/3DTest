@@ -37,7 +37,7 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(koyaku, card.Value, slot.rush);
+                CardAttack(koyaku, card.Value, slot.rush,slot.nrush);
                 
                 // UIに反映
                 PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
@@ -76,7 +76,7 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(koyaku, card.Value, slot.rush);
+                CardAttack(koyaku, card.Value, slot.rush,slot.nrush);
 
                 // UIに反映
                 PlayerHPUIControllere hp;
@@ -108,15 +108,16 @@ public class AttackPhase : PhaseBase {
     /// <param name="koyaku">当選役</param>
     /// <param name="card">確認するカード</param>
     /// <param name="rush">ラッシュ中か否か</param>
-    private void CardAttack(PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush) {
+    private void CardAttack(PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush,bool nrush) {
         // カードの対応役の型を変換
         List<PachisuroSymbolKoyakuEnum> suportRole = card.SuportRoleToKoyaku();
         if (suportRole == null) return; 
         // 子役をチェックしてダメージ設定
         int damage = 0;
         // ラッシュ中の7当選もしくは全対応なら確定攻撃
-        if (rush && koyaku == PachisuroSymbolKoyakuEnum.Seven ||
-            card.suportRole == CardSuportRole.ALL) {
+        if ((rush && koyaku == PachisuroSymbolKoyakuEnum.Seven ||
+            card.suportRole == CardSuportRole.ALL)|| (nrush && koyaku == PachisuroSymbolKoyakuEnum.Seven ||
+            card.suportRole == CardSuportRole.ALL)) {
             damage = card.currentStatus.ATK;
         }
         else {
