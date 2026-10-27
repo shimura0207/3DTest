@@ -60,15 +60,36 @@ public class AttackPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
-        PlayerHPUIControllere hp;
-        GameObject player = GameObject.Find("Player1HP");
-        hp = player.GetComponent<PlayerHPUIControllere>();
-        hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
+        // 当選役取得
+        SlotReelController slot; //呼ぶスクリプトにあだなつける
+        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
+        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
+        List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
+
+        // フィールドのカード取得
+        var fieldCards = CardObjectManager.instance.fieldObjectList[PlayerType.Opponent];
+
+        // 当選役の数分の対応役チェック
+        foreach (var koyaku in koyakuList) {
+            // フィールドのカードをひとつずつチェック
+            foreach (var card in fieldCards) {
+                // フィールドにカードがなければスキップ
+                if (!card.Value) continue;
+                // 対応役によって攻撃
+                CardAttack(koyaku, card.Value, slot.rush);
+
+                // UIに反映
+                PlayerHPUIControllere hp;
+                GameObject player = GameObject.Find("Player1HP");
+                hp = player.GetComponent<PlayerHPUIControllere>();
+                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
+
+                await UniTask.DelayFrame(10);
+            }
+        }
 
         // 次のフェイズへ
         nextPhase = true;
-
-        await UniTask.DelayFrame(30);
         await UniTask.CompletedTask;
     }
 

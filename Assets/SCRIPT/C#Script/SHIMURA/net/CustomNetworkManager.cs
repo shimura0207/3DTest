@@ -908,26 +908,34 @@ public class CustomNetworkManager : NetworkManager {
             Debug.LogWarning($"不明な通信ID：{values[0]}");
             return;
         }
-        switch (useID) { 
+        switch (useID) {
 
-        case NetworkUseID.atk:
-            NetworkReceiveProcessor.ReceiveAttack(values);
-            break;
+            case NetworkUseID.atk:
+                NetworkReceiveProcessor.ReceiveAttack(values);
+                break;
 
-        case NetworkUseID.hp:
-            NetworkReceiveProcessor.ReceiveHP(values);
-            break;
+            case NetworkUseID.hp:
+                NetworkReceiveProcessor.ReceiveHP(values);
+                break;
 
-        case NetworkUseID.draw:
-            NetworkReceiveProcessor.ReceiveDraw(values);
-            break;
+            case NetworkUseID.draw:
+                NetworkReceiveProcessor.ReceiveDraw(values);
+                break;
 
-        case NetworkUseID.samon:
-            NetworkReceiveProcessor.ReceiveSummon(values);
-            break;
+            case NetworkUseID.samon:
+                NetworkReceiveProcessor.ReceiveSummon(values);
+                break;
 
             case NetworkUseID.deck:
                 AreaCardManager.instance.SetOpponentDeck(values);
+                break;
+
+            case NetworkUseID.PachisuroGoButton:
+                BattleSystemManager.instance.PachisuroGo();
+                break;
+
+            case NetworkUseID.TurnEndButton:
+                BattleSystemManager.instance.TurnEnd();
                 break;
         }
     }

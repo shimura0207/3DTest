@@ -32,6 +32,9 @@ public class AreaCardManager : MonoBehaviour {
     // プレイヤーごとの山札外カード
     public Dictionary<PlayerType, OutDeckCards> outDeckCards { get; private set; }
 
+    // 相手のデッキを受け取ったか
+    public bool catchOpponentDeck { get; private set; } = false;
+
     /// <summary>
     /// 初期化処理
     /// @author oorui
@@ -176,6 +179,15 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="opponentDeck"></param>
     public void SetOpponentDeck(string[] opponentDeck) {
+        catchOpponentDeck = true;
 
+    }
+
+    /// <summary>
+    /// デッキ受け取りフラグのセット
+    /// </summary>
+    /// <param name="setFlag"></param>
+    public void SetCatchOpponentDeck(bool setFlag) {
+        catchOpponentDeck = setFlag;
     }
 }
