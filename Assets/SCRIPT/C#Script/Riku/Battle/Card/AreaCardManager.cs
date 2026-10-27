@@ -73,7 +73,7 @@ public class AreaCardManager : MonoBehaviour {
     public void ShuffleDeck() {
         // Fisher-Yatesシャッフル
         // リストの上から順にランダムな位置のカードと入れ替えていく
-        int listMax = deckCards.Count;
+        int listMax = deckCards[PlayerType.Self].Count;
         for (int i = 0; i < listMax - 1; i++) {
             // 順番で選ばれたカード以降の範囲から抽選
             int randomIndex = Random.Range(i, listMax);
@@ -180,7 +180,20 @@ public class AreaCardManager : MonoBehaviour {
     /// <param name="opponentDeck"></param>
     public void SetOpponentDeck(string[] opponentDeck) {
         catchOpponentDeck = true;
-
+        List<int> deck = new List<int>();
+        for (int i = 0; i < opponentDeck.Length; i++) {
+            // 配列の頭は識別IDなのでスキップ
+            if (i == 0) continue;
+            // 一つずつint型のIDに変換して入れていく
+            int cardID = -1;
+            if (!NetworkValueConverter.TryGetInt(opponentDeck[i], out cardID)) continue;
+            deck.Add(cardID);
+        }
+        // 変換したデッキをセット
+        if (deck.Count != GameConst.DECK_CARD_MAX) {
+            Debug.Log("相手のデッキが正しくセットされていません。");
+        }
+        deckCards[PlayerType.Opponent] = deck;
     }
 
     /// <summary>
