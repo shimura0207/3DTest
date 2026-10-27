@@ -405,11 +405,11 @@ public enum NetworkUseID {
     draw,
     samon,
 
+    // デッキの送信
     deck,
-
-
+    // パチスロフェイズへの移行ボタン
     PachisuroGoButton,
-
+    // ターンエンドボタン
     TurnEndButton,
 
     FirstPlayer,
@@ -420,4 +420,7 @@ public enum NetworkUseID {
 
     // 既存のNetworkUseIDの末尾に追加
     slot, // パチスロ通信
+
+    // カードの使用
+    playCard,
 }

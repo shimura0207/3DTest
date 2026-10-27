@@ -68,7 +68,7 @@ public class MainPhase : PhaseBase {
                         // サイズが上限超過しないか
                         if (cardObject.currentStatus.SIZE <= remainingSize) {
                             // カードを使用
-                            UniTask task = PlayCard(PlayerType.Self, cardObject.objectID);
+                            UniTask task = PlayCard(cardObject.objectID);
                         }
                         else {
                             resetPos = true;
@@ -101,36 +101,37 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
-        // 相手の使用したカード取得
-        int playCardObjectID = BattleSystemManager.instance.GetOpponentPlayCard();
-
-        if (playCardObjectID <= -1) return;
-        // 受け取ったカードの使用
-        UniTask task = PlayCard(PlayerType.Opponent, playCardObjectID);
-
+        //// 相手の使用したカード取得
+        //int playCardObjectID = BattleSystemManager.instance.GetOpponentPlayCard();
+        //
+        //if (playCardObjectID <= -1) return;
+        //// 受け取ったカードの使用
+        //UniTask task = PlayCard(PlayerType.Opponent, playCardObjectID);
+        
         await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// カードの使用
     /// </summary>
-    /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="objectID">使用するオブジェクトのID</param>
     /// <returns></returns>
-    private async UniTask PlayCard(PlayerType player, int objectID) {
+    private async UniTask PlayCard(int objectID) {
         if (!cardObject) return;
         // オブジェクトIDからオブジェクト取得
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
         // カードタイプによって分岐
         switch (cardObject.cardType) {
             case CardType.Monster:
+                // レーン設置ウィンドウを出す
+                FieldLane lane = await MenuWindowManager.Instance.LaneMenuOpen();
                 // モンスター召喚
-                await BattleSystemManager.instance.SummonMonster(player, obj);
+                await BattleSystemManager.instance.SummonMonster(PlayerType.Self, obj, lane);
                 Debug.Log("モンスター召喚！！");
                 break;
             case CardType.Spell:
                 // スペルを唱える
-                BattleSystemManager.instance.CastSpell(player, obj);
+                BattleSystemManager.instance.CastSpell(PlayerType.Self, obj);
                 Debug.Log("スペル発動！！");
                 break;
         }
