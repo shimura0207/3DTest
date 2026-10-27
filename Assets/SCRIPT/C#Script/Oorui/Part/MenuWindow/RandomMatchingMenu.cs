@@ -4,7 +4,6 @@
  */
 
 using Cysharp.Threading.Tasks;
-using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,11 +21,20 @@ public class RandomMatchingMenu : MenuWindowBase {
     // マッチング中からキャンセルする処理
     [SerializeField] private Button cancelButton;
     private bool isCancel = false;
+
+    // ランダムマッチがキャンセルされたかどうかを管理する。
+    public static bool IsMatchingCancelled { get; private set; } = false;
+    // マッチング中のアニメーションを実行するかどうか。
+    private bool isAnimatingMatchingText = false;
+
+    // Open処理ごとに異なる番号を付け、古い処理を識別する。
+    private int openSessionId = 0;
     /// <summary>
     /// 初期化処理
     /// </summary>
     public override async UniTask Initialize() {
         await base.Initialize();
+        // ボタンの処理登録
         cancelButton.onClick.RemoveListener(OnClickCancelButton);
         cancelButton.onClick.AddListener(OnClickCancelButton);
         // 初期状態を設定する
@@ -38,63 +46,94 @@ public class RandomMatchingMenu : MenuWindowBase {
     /// メニューが開かれたときの処理
     /// </summary>
     public override async UniTask Open() {
-        // メニューウィンドウを表示する
-        await base.Open();
-        // 新しいマッチングのキャンセル状態を初期化する。
+        // 今回のOpen処理に識別番号を割り当てる。
+        int sessionId = ++openSessionId;
+
+        // 新しいマッチングの状態を初期化する。
         isCancel = false;
-        // 新しい対戦の先攻情報を初期化する。
+        IsMatchingCancelled = false;
         FirstPlayerManager.Reset();
-        // メニューを開いている状態にする
+
+        // メニューを開いている状態にする。
         isMenuOpen = true;
+        isAnimatingMatchingText = true;
 
-        // マッチング中のアニメーションを別タスクで開始する。
-        AnimateMatchingText().Forget();
+        // メニューウィンドウを表示する。
+        await base.Open();
 
-        // ランダムマッチを開始する
+        // 待機中に別のOpenやCloseが実行された場合は終了する。
+        if (sessionId != openSessionId) return;
+
+        // マッチング中のアニメーションを開始する。
+        AnimateMatchingText(sessionId).Forget();
+
+        // MatchingNetMatchが存在しない場合はエラー表示にする。
+        if (MatchingNetMatch.instance == null) {
+            matchingText.text = "マッチングを開始できません。";
+            isAnimatingMatchingText = false;
+            return;
+        }
+
+        // ランダムマッチを開始する。
         MatchingNetMatch.instance.OnRandomMatchButton();
 
-        // 対戦開始通知を受け取るまで待機する
+        // キャンセル、メニュー終了、通信終了、対戦開始のいずれかを待機する。
         await UniTask.WaitUntil(() =>
+            sessionId != openSessionId ||
+            isCancel ||
             !isMenuOpen ||
             CustomNetworkManager.instance == null ||
             CustomNetworkManager.instance.IsMatchStarted
         );
 
-        // キャンセルされた場合はメニューを閉じて処理を終了する。
+        // 古いOpen処理なら、以降の表示やメニュー操作を行わない。
+        if (sessionId != openSessionId) return;
+
+        // キャンセルされた場合はメニューを閉じて終了する。
         if (isCancel) {
-            // MatchingNetMatch.instance.
             await Close();
             return;
         }
 
-        // メニューが閉じられた場合は後続処理を行わない
+        // メニューが閉じられていた場合は終了する。
         if (!isMenuOpen) return;
 
-        // NetworkManagerがなくなった場合はエラー表示にする
+        // 通信が終了していた場合はエラーを表示する。
         if (CustomNetworkManager.instance == null) {
+            isAnimatingMatchingText = false;
             matchingText.text = "通信が終了しました。";
             return;
         }
 
-        // 対戦相手を確認したら表示を更新する
+        // マッチング中のアニメーションを停止する。
+        isAnimatingMatchingText = false;
+
+        // 対戦相手が見つかったことを表示する。
         matchingText.text = "対戦相手が見つかりました。";
 
-        // 先攻を決定する。ホストは送信し、クライアントは受信を待つ。
+        // ホストは先攻を決定して送信し、クライアントは受信を待つ。
         DecideFirstPlayer();
 
         // 先攻情報が確定するまで待機する。
         await UniTask.WaitUntil(() =>
+            sessionId != openSessionId ||
             !isMenuOpen ||
             FirstPlayerManager.isFirstPlayerDecided
         );
 
-        // メニューが閉じられていたら後続処理を行わない。
+        // 古いOpen処理なら終了する。
+        if (sessionId != openSessionId) return;
+
+        // メニューが閉じられていた場合は終了する。
         if (!isMenuOpen) return;
 
-        // 少し表示してから閉じる処理
+        // 対戦相手が見つかった表示を少し維持する。
         await UniTask.Delay(1000);
 
-        // マッチング後にメニューを閉じる
+        // 待機中に別の処理へ切り替わっていたら終了する。
+        if (sessionId != openSessionId) return;
+
+        // 現在のマッチングメニューだけを閉じる。
         await Close();
     }
 
@@ -102,13 +141,20 @@ public class RandomMatchingMenu : MenuWindowBase {
     /// ウィンドウを閉じるときの処理
     /// </summary>
     public override async UniTask Close() {
-        // 待機中の処理を終了させる
-        isMenuOpen = false;
+        // 実行中のOpen処理とアニメーションを無効化する。
+        ++openSessionId;
 
-        // メニューウィンドウを非表示にする
+        // メニューとアニメーションを停止状態にする。
+        isMenuOpen = false;
+        isAnimatingMatchingText = false;
+
+        // メニューウィンドウを非表示にする。
         await base.Close();
 
-        // 表示内容を初期化する
+        // Closeの待機中に新しいOpenが始まった場合は表示を変更しない。
+        if (isMenuOpen) return;
+
+        // 表示内容を初期化する。
         matchingText.text = "";
     }
 
@@ -179,25 +225,29 @@ public class RandomMatchingMenu : MenuWindowBase {
     /// </summary>
     /// <param name="flag"></param>
     public void SetIsCanncel(bool flag) {
+        // 内部のキャンセル状態を更新する。
         isCancel = flag;
+
+        // MatchingPartから参照できるキャンセル状態を更新する。
+        IsMatchingCancelled = flag;
     }
 
     /// <summary>
     /// マッチング中の「...」を1つずつ表示する処理
     /// </summary>
-    private async UniTask AnimateMatchingText() {
+    private async UniTask AnimateMatchingText(int sessionId) {
         // 表示するドットの数を管理する。
         int dotCount = 0;
 
-        // メニューが開いている間、アニメーションを繰り返す。
-        while (isMenuOpen) {
-            // ドットの数に応じて表示する文字列を変更する。
+        // 今回のOpen処理が有効な間だけアニメーションを続ける。
+        while (sessionId == openSessionId && isMenuOpen && isAnimatingMatchingText) {
+            // マッチング中のテキストを更新する。
             matchingText.text = "対戦相手を探しています" + new string('.', dotCount);
 
             // 次の表示まで0.5秒待機する。
             await UniTask.Delay(500);
 
-            // 文字数管理
+            // ドットの数を0～3で繰り返す。
             dotCount = (dotCount + 1) % 4;
         }
     }

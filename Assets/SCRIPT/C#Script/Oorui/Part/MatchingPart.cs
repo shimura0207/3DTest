@@ -68,13 +68,22 @@ public class MatchingPart : PartBase {
 
             // ランダムマッチが選択された場合
             if (isRandomMatch) {
-                // ランダムマッチパートに遷移
+                // ランダムマッチが選択されたことをログに出力する。
                 Debug.Log("ランダムマッチを選択");
 
-                // メニューを開く
+                // マッチング画面を開き、終了するまで待機する。
                 await MenuWindowManager.Instance.Open<RandomMatchingMenu>();
 
-                // 閉じたら遷移
+                // キャンセルされた場合はマッチング画面に留まる。
+                if (RandomMatchingMenu.IsMatchingCancelled) {
+                    // ランダムマッチの選択状態を解除する。
+                    isRandomMatch = false;
+
+                    // ボタンの再入力を待つため、ループの先頭に戻る。
+                    continue;
+                }
+
+                // キャンセルされずにマッチングが完了した場合のみ対戦画面へ遷移する。
                 await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
                 return;
             }
