@@ -25,30 +25,27 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public async UniTask Open(int id) {
-        // 基底側でメニューウィンドウを表示
+        // 基底クラスの処理でメニューを表示する。
         await base.Open();
-        // 先攻プレイヤーを保持する変数。
-        PlayerType firstPlayer;
 
-        // 先攻が決定済みなら、管理クラスから取得する。
-        if (FirstPlayerManager.isFirstPlayerDecided) {
-            firstPlayer = FirstPlayerManager.firstPlayer;
-        }
-        else {
-            // 先攻情報がない場合は、従来のランダム決定を使用する。
-            // ※バグ対策、後で消す
-            firstPlayer = DecideFirstPlayer();
+        // 先攻情報が決定していない場合はバトルを開始しない。
+        if (!FirstPlayerManager.isFirstPlayerDecided) {
+            // メニューを閉じて処理を終了する。
+            await Close();
+            return;
         }
 
-        // バトルで使用するデッキを取得する
+        // 決定済みの先攻プレイヤーを取得する。
+        PlayerType firstPlayer = FirstPlayerManager.firstPlayer;
+
+        // バトルで使用するデッキを取得する。
         List<int> useDeckList = GetUseDeckList(id);
 
-        // バトル開始前の準備をする
+        // 先攻情報とデッキを渡してバトルを初期化する。
         BattleSystemManager.instance.BattleSetup(useDeckList, firstPlayer);
 
-        // メニューを閉じる
+        // メニューを閉じる。
         await Close();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>

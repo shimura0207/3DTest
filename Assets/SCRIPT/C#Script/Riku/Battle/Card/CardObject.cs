@@ -65,6 +65,7 @@ public class CardObject : MonoBehaviour {
         cardID = setCardID;
         // IDからステータスを取得
         var data = CardDataMasterUtility.GetCardMaster(cardID);
+        if (data == null) return; 
         // データから各情報を保存
         defaultStatus = new CardStates() { HP = data.HP, ATK = data.ATK, SIZE = data.SIZE };
         currentStatus = defaultStatus;
