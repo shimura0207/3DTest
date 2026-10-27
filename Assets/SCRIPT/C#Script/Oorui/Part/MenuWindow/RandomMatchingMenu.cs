@@ -136,7 +136,7 @@ public class RandomMatchingMenu : MenuWindowBase {
         FirstPlayerManager.SetFirstPlayer(firstPlayer);
 
         // 決定結果をログに出力する。
-        Debug.Log($"[先攻決定] {firstPlayer}");
+        Debug.Log($"[先攻決定][ホスト] 先攻プレイヤー：{firstPlayer}");
 
         // 決定した先攻情報をクライアントへ送信する。
         SendFirstPlayerToClient();
