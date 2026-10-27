@@ -129,6 +129,60 @@ public class CustomNetworkManager : NetworkManager {
     // 通信開始
     // ============================================================
 
+    /// <summary>サーバー側では開始済みだが通知の反映前、という隙間を保護します。</summary>
+    public bool ServerMatchStarted => NetworkServer.active && matchStarted;
+
+    /// <summary>ホスト自身を除く、接続準備中を含む参加者の有無。</summary>
+    public bool HasRemoteParticipant {
+        get {
+            if (!NetworkServer.active) return false;
+            foreach (var conn in NetworkServer.connections.Values) {
+                if (conn != null && !(conn is LocalConnectionToClient)) return true;
+            }
+            return false;
+        }
+    }
+
+    /// <summary>誰も接続していない場合だけホストを停止します。</summary>
+    public bool TryStopEmptyHostForRematch() {
+        if (!NetworkServer.active || matchStarted || IsMatchStarted || HasRemoteParticipant)
+            return false;
+        LeaveRoom();
+        return true;
+    }
+
+    /// <summary>Readyにならない外部参加者だけを切断します。</summary>
+    public void DisconnectUnreadyRemoteParticipants() {
+        if (!NetworkServer.active || matchStarted) return;
+        var targets = new List<NetworkConnectionToClient>();
+        foreach (var conn in NetworkServer.connections.Values) {
+            if (conn != null && !(conn is LocalConnectionToClient) && !conn.isReady)
+                targets.Add(conn);
+        }
+        foreach (var conn in targets) conn.Disconnect();
+    }
+
+    /// <summary>
+    /// 同じPC・同じゲームポートの古い広告を除外します。
+    /// 同一PC内でテストするときはインスタンスごとに別ポートを使用してください。
+    /// </summary>
+    public bool IsOwnEndpoint(string ip, int port) {
+        if (!(transport is KcpTransport kcp) || kcp.Port != port) return false;
+        if (!System.Net.IPAddress.TryParse(ip, out var address)) return false;
+        if (System.Net.IPAddress.IsLoopback(address)) return true;
+        try {
+            foreach (var adapter in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()) {
+                foreach (var entry in adapter.GetIPProperties().UnicastAddresses) {
+                    if (entry.Address.Equals(address)) return true;
+                }
+            }
+        }
+        catch (System.Exception e) {
+            Debug.LogWarning("ローカルIPの確認に失敗しました: " + e.Message);
+        }
+        return false;
+    }
+
     /// <summary>
     /// ホストとして開始する。
     /// TitleManagerのホスト作成処理から呼ぶ。
