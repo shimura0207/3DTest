@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 /// <summary>
@@ -38,6 +39,8 @@ public class CardObject : MonoBehaviour {
     public CardSuportRole suportRole { get; private set; } = CardSuportRole.None;
     // カードタイプ
     public CardType cardType { get; private set; } = CardType.None;
+    // 所有者
+    public PlayerType playerType { get; private set; } = PlayerType.None;
 
     // カードのイラストデータ
     [SerializeField]
@@ -59,7 +62,8 @@ public class CardObject : MonoBehaviour {
     /// </summary>
     /// <param name="setObjectID">オブジェクトの個別ID</param>
     /// <param name="setCardID">カードの識別ID</param>
-    public void Setup(int setObjectID, int setCardID) {
+    /// <param name="player">どちらのプレイヤーか</param>
+    public void Setup(int setObjectID, int setCardID, PlayerType player) {
         // IDのセット
         objectID = setObjectID;
         cardID = setCardID;
@@ -71,6 +75,8 @@ public class CardObject : MonoBehaviour {
         currentStatus = defaultStatus;
         suportRole = (CardSuportRole)data.suportRoleID;
         cardType = (CardType)data.CardType;
+        // 所有者をセット
+        playerType = player;
         // IDからイラストを取得
         spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
     }
@@ -87,6 +93,7 @@ public class CardObject : MonoBehaviour {
         currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
         suportRole = CardSuportRole.None;
         cardType = CardType.None;
+        playerType = PlayerType.None;
         spriteRenderer.sprite = null;
     }
 
