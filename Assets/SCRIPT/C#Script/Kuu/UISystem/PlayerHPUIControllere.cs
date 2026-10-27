@@ -1,5 +1,5 @@
 /*
- * @file    CardTextUI.cs
+ * @file    PlayerHPUIControllere.cs
  * @autor   Kuu
  */
 
@@ -24,7 +24,7 @@ public class PlayerHPUIControllere : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        text.text = playerHP.ToString();
+        text.text = "HP:" + playerHP.ToString();
     }
 
     /// <summary>
