@@ -13,7 +13,13 @@ MonoBehaviour:
   m_Name: AudioManagerConfig
   m_EditorClassIdentifier: 
   bgmList:
-  - soundName: "\u30E1\u30A4\u30F3\u30E1\u30CB\u30E5\u30FCBGM"
-    clip: {fileID: 8300000, guid: 6a0d0091c1745c1418c75175801d5edb, type: 3}
+  - soundName: MainMenuBGM
+    clip: {fileID: 8300000, guid: eb7f40bb703f454448f5b47b628e8b08, type: 3}
     volume: 1
-  seList: []
+  seList:
+  - soundName: "\u30C1\u30A7\u30EA\u30FC"
+    clip: {fileID: 8300000, guid: 20bfdddf6f7759c40b0968f89b671b09, type: 3}
+    volume: 0
+  - soundName: "\u30C1\u30E3\u30F3\u30B9"
+    clip: {fileID: 8300000, guid: a3abf786d35e39844ab64e193f3731ba, type: 3}
+    volume: 0

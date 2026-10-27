@@ -31,6 +31,9 @@ public class MainMenuPart : PartBase {
     // 選択された遷移先
     private MainMenuSelect selectMenu = MainMenuSelect.None;
 
+    // 流すBGM
+    private const string menuBGMName = "MainMenuBGM";
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -53,6 +56,8 @@ public class MainMenuPart : PartBase {
         selectMenu = MainMenuSelect.None;
         // メニューイベントを登録
         RegisterMenuEvent();
+        // BGM再生
+        AudioManager.instance.PlayBGM(menuBGMName);
     }
 
     /// <summary>
