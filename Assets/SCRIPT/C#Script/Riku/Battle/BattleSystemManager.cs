@@ -18,12 +18,12 @@ public class BattleSystemManager : MonoBehaviour {
     // 先攻のプレイヤー
     private PlayerType firstPlayer = PlayerType.None;
     // 現在のターンプレイヤー
-    private PlayerType turnPlayer = PlayerType.None;
+    public PlayerType turnPlayer { get; private set; } = PlayerType.None;
     // 各フェイズのリスト
     [SerializeField]
     private PhaseBase[] phaseList = null;
     // 現在のフェイズ
-    private BattlePhase currentPhase = BattlePhase.None;
+    public BattlePhase currentPhase { get; private set; } = BattlePhase.None;
     // 対戦の状態
     public BattleState battleState { get; private set; } = BattleState.None;
     // プレイヤーの体力
@@ -167,8 +167,8 @@ public class BattleSystemManager : MonoBehaviour {
             // HPの初期化
             playerHP[i] = PLAYER_HP;
             // サイズ上限を最小値に
-            //playerSizeLimit[i] = SIZE_LIMIT_MIN;
-            playerSizeLimit[i] = 10;// デバッグ用仮
+            playerSizeLimit[i] = SIZE_LIMIT_MIN;
+            //playerSizeLimit[i] = 10;// デバッグ用仮
 
             // 手札5枚用意
             for (int f = 0; f < START_HAND_COUNT; f++) {
