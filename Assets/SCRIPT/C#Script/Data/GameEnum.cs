@@ -423,4 +423,6 @@ public enum NetworkUseID {
 
     // カードの使用
     playCard,
+    // モンスターのレーン交換
+    laneCange,
 }

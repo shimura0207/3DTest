@@ -284,7 +284,7 @@ public class BattleSystemManager : MonoBehaviour {
         // 手札の整列
         CardObjectManager.instance.ArrangeHand(player);
 
-        // 自分の処理なら相手に送る
+        // 自身の処理なら相手に送る
         if (player != PlayerType.Self) return;
         var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, card.objectID, FieldLane.None);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
@@ -319,6 +319,11 @@ public class BattleSystemManager : MonoBehaviour {
         AreaCardManager.instance.LaneChange(player, (int)laneA, (int)laneB);
         // オブジェクトを交換
         CardObjectManager.instance.LaneChange(player, laneA, laneB);
+
+        // 自身の処理なら相手に送る
+        if (player != PlayerType.Self) return;
+        var pack = NetworkValueConverter.Pack(NetworkUseID.laneCange, laneA, laneB);
+        CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
     /// <summary>
@@ -341,7 +346,7 @@ public class BattleSystemManager : MonoBehaviour {
     /// 相手のプレイカード受け取り
     /// </summary>
     /// <param name="playCard"></param>
-    public void SetOpponentPlayCard(string[] playCard) {
+    public void ReceiveOpponentPlayCard(string[] playCard) {
         // 2つ目の情報がカードのオブジェクトIDなのでintに変換
         int objectID = -1;
         if (!NetworkValueConverter.TryGetInt(playCard[1], out objectID)) return;
@@ -359,5 +364,20 @@ public class BattleSystemManager : MonoBehaviour {
                 CastSpell(PlayerType.Opponent, obj);
                 break;
         }
+    }
+
+    /// <summary>
+    /// 相手のレーン交換受け取り
+    /// </summary>
+    /// <param name="changeLane"></param>
+    public void ReceiveOpponentLaneChange(string[] changeLane) {
+        // 2,3つ目の情報が交換するレーンなので一度intに変換
+        int laneA = -1;
+        if (!NetworkValueConverter.TryGetInt(changeLane[1], out laneA)) return;
+        int laneB = -1;
+        if (!NetworkValueConverter.TryGetInt(changeLane[2], out laneB)) return;
+
+        // 受け取った2つのレーンを交換
+        LaneChange(PlayerType.Opponent, (FieldLane)laneA, (FieldLane)laneB);
     }
 }
