@@ -3,6 +3,8 @@
  *  @author oorui
  */
 
+using UnityEngine;
+
 /// <summary>
 /// 先攻プレイヤーの情報を管理するクラス
 /// </summary>
@@ -44,14 +46,14 @@ public static class FirstPlayerManager {
         // ホストが先攻かどうかをboolに変換する。
         if (!bool.TryParse(values[1], out bool hostIsFirst)) return;
 
-        // ホストが先攻なら、クライアント視点では対戦相手が先攻。
-        // ホストが後攻なら、クライアント視点では自分が先攻。
-        PlayerType clientFirstPlayer = hostIsFirst
-            ? PlayerType.Opponent
-            : PlayerType.Self;
+        // クライアント視点で先攻プレイヤーを決定する。
+        PlayerType clientFirstPlayer = hostIsFirst ? PlayerType.Opponent : PlayerType.Self;
 
-        // クライアント視点の先攻情報を保存する。
+        // クライアント側に先攻情報を保存する。
         SetFirstPlayer(clientFirstPlayer);
+
+        // クライアント視点で先攻が誰なのかをログに出力する。
+        Debug.Log($"[先攻決定][クライアント] 先攻プレイヤー：{clientFirstPlayer}");
     }
 
     /// <summary>
