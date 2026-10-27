@@ -16,7 +16,9 @@ public class PachisuroNetworkSync : MonoBehaviour {
     public static PachisuroNetworkSync Instance { get; private set; }
 
     // 他のゲーム用メッセージと区別する識別文字列。
-    private const string Prefix = "RG_SLOT_V1";
+    // 変更後
+    // Packへ渡したNetworkUseID.slotと同じ文字列「slot」になる。
+    private const string Prefix = nameof(NetworkUseID.slot);
 
     private const int MaxQueuedPackets = 256;
 
@@ -89,10 +91,7 @@ public class PachisuroNetworkSync : MonoBehaviour {
     }
 
     private void OnDisable() {
-        if (network != null) {
-            network.OnOpponentStringReceived -= OnReceived;
-        }
-
+        // イベントの解除は不要です。
         network = null;
         ResetSession();
     }
@@ -106,22 +105,20 @@ public class PachisuroNetworkSync : MonoBehaviour {
     /// <summary>
     /// NetworkManagerの生成順が前後しても購読できるようにします。
     /// </summary>
+    /// <summary>
+    /// 通信Managerへの参照を取得します。
+    /// イベントへの登録は行いません。
+    /// </summary>
     private void BindNetwork() {
         CustomNetworkManager current = CustomNetworkManager.instance;
 
         if (network == current)
             return;
 
-        if (network != null) {
-            network.OnOpponentStringReceived -= OnReceived;
-        }
-
         network = current;
-        ResetSession();
 
-        if (network != null) {
-            network.OnOpponentStringReceived += OnReceived;
-        }
+        // Managerが入れ替わった場合は前の通信状態を消します。
+        ResetSession();
     }
 
     private void ResetSession() {
@@ -191,22 +188,45 @@ public class PachisuroNetworkSync : MonoBehaviour {
         ));
     }
 
+    /// <summary>
+    /// パチスロ情報を相手へ送ります。
+    /// </summary>
     private bool Send(string message) {
-        if (!Connected || HasError || string.IsNullOrEmpty(sendingPhase))
+        if (!Connected || HasError || string.IsNullOrEmpty(sendingPhase)) {
+            Debug.LogWarning(
+                "[パチスロ送信不可] 接続状態・フェイズ開始状態を確認してください。"
+            );
             return false;
+        }
 
         if (!network.SendStringToOpponent(message)) {
             Fail("パチスロ情報を送信できませんでした。");
             return false;
         }
 
+        Debug.Log($"[パチスロ送信] {message}");
         return true;
     }
 
     // ========================================================
     // 受信・保存
     // ========================================================
+    /// <summary>
+    /// CustomNetworkManagerのswitchから直接呼ばれます。
+    /// パチスロ用IDのメッセージだけが渡されます。
+    /// </summary>
+    public void ReceiveNetworkMessage(string message) {
+        // 初回Updateより先に受信しても参照を取得できるようにします。
+        BindNetwork();
 
+        if (!Connected || HasError)
+            return;
+
+        Debug.Log($"[パチスロ受信] {message}");
+
+        // 既存処理で内容を検証し、キューへ保存します。
+        OnReceived(message);
+    }
     private void OnReceived(string message) {
         if (!Connected || HasError)
             return;

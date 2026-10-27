@@ -157,7 +157,7 @@ public class BattleSystemManager : MonoBehaviour {
         currentTurn = 1;
 
         // 相手のデッキを受け取るまで待つ
-        while (AreaCardManager.instance.catchOpponentDeck) {
+        while (!AreaCardManager.instance.catchOpponentDeck) {
             await UniTask.Yield();
         }
         AreaCardManager.instance.SetCatchOpponentDeck(false);
@@ -247,9 +247,9 @@ public class BattleSystemManager : MonoBehaviour {
         // 山札からIDを抜く
         int card = AreaCardManager.instance.DrawCard(player);
         // オブジェクトの使用化
-        CardObject cardObject = CardObjectManager.instance.UseCardObject(card);
+        CardObject cardObject = CardObjectManager.instance.UseCardObject(card, player);
         // オブジェクトを手札の位置に移動
-        CardObjectManager.instance.MoveToHand(PlayerType.Self, cardObject.objectID);
+        CardObjectManager.instance.MoveToHand(player, cardObject.objectID);
     }
 
     /// <summary>
