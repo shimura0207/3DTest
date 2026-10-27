@@ -84,8 +84,9 @@ public class CardObjectManager : MonoBehaviour {
     /// カードオブジェクトを使用状態にする
     /// </summary>
     /// <param name="cardID">使用カードのID</param>
+    /// <param name="player">どちらのプレイヤーか</param>
     /// <returns></returns>
-    public CardObject UseCardObject(int cardID) {
+    public CardObject UseCardObject(int cardID, PlayerType player) {
         // 使用可能なカードオブジェクトのインスタンスを取得
         CardObject useCard = GetUsableCardObject();
         // 使用可能なIDを取得して使用リストに追加
@@ -105,7 +106,7 @@ public class CardObjectManager : MonoBehaviour {
         // 使用中親オブジェクトへ親を変更
         useCard.transform.SetParent(useObjectRoot, false);
         // オブジェクトの準備
-        useCard.Setup(useID, cardID);
+        useCard.Setup(useID, cardID, player);
         return useCard;
     }
 
@@ -235,6 +236,7 @@ public class CardObjectManager : MonoBehaviour {
         int handID = 0;
         foreach (var card in useObjectList) {
             if (!card) continue;
+            if (card.playerType != player) continue;
             // 手札IDがないやつは手札じゃないのでスキップ
             if (card.handID < 0) continue;
             // 配置

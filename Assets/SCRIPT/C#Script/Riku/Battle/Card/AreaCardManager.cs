@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
+using System.Linq;
 
 using static CommonModule;
 
@@ -171,7 +172,9 @@ public class AreaCardManager : MonoBehaviour {
     public string DeckPack() {
         var deck = deckCards[PlayerType.Self];
 
-        return NetworkValueConverter.Pack(NetworkUseID.deck, deck);
+        // Listをして識別IDと一緒に纏める
+        var pack = new object[] { NetworkUseID.deck }.Concat(deck.Cast<object>()).ToArray();
+        return NetworkValueConverter.Pack(pack);
     }
 
     /// <summary>
@@ -179,7 +182,6 @@ public class AreaCardManager : MonoBehaviour {
     /// </summary>
     /// <param name="opponentDeck"></param>
     public void SetOpponentDeck(string[] opponentDeck) {
-        catchOpponentDeck = true;
         List<int> deck = new List<int>();
         for (int i = 0; i < opponentDeck.Length; i++) {
             // 配列の頭は識別IDなのでスキップ
@@ -194,6 +196,7 @@ public class AreaCardManager : MonoBehaviour {
             Debug.Log("相手のデッキが正しくセットされていません。");
         }
         deckCards[PlayerType.Opponent] = deck;
+        catchOpponentDeck = true;
     }
 
     /// <summary>
