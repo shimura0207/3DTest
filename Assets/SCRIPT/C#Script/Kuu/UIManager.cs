@@ -27,6 +27,9 @@ public class UIManager : SystemObject {
     // 参照カードのデータを保存
     public Entity_CardData.Param cardData { get; private set; } = null;
 
+    // 省略用
+    private BattleSystemManager battleSystem = BattleSystemManager.instance;
+
     // 現在の最大サイズ
     public int currentMaxSize = 0;
 
@@ -55,6 +58,16 @@ public class UIManager : SystemObject {
     /// 実行処理
     /// </summary>
     public void Execute() {
+        // バトル準備が完了していなければ更新しない
+        if (battleSystem == null || battleSystem.battleState != BattleState.InProgress) {
+            return;
+        }
+        if (battleSystem.playerSizeLimit == null ||
+            !battleSystem.playerSizeLimit.ContainsKey(PlayerType.Self) ||
+            !battleSystem.playerSizeLimit.ContainsKey(PlayerType.Opponent)) {
+            return;
+        }
+
         // マウスカーソルのスクリーン座標取得
         Vector3 mousePos = Input.mousePosition;
         // スクリーン座標からレイを取得
@@ -88,10 +101,10 @@ public class UIManager : SystemObject {
         }
 
         // 現在のサイズ状況更新
-        currentMaxSize = BattleSystemManager.instance.playerSizeLimit[PlayerType.Self];
-        opponentMaxSize = BattleSystemManager.instance.playerSizeLimit[PlayerType.Opponent];
-        restSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
-        opponentRestSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Opponent);
+        currentMaxSize = battleSystem.playerSizeLimit[PlayerType.Self];
+        opponentMaxSize = battleSystem.playerSizeLimit[PlayerType.Opponent];
+        restSize = battleSystem.GetRemainingSize(PlayerType.Self);
+        opponentRestSize = battleSystem.GetRemainingSize(PlayerType.Opponent);
     }
 }
 
