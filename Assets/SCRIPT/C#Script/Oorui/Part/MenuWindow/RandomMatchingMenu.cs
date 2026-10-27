@@ -79,8 +79,17 @@ public class RandomMatchingMenu : MenuWindowBase {
         // 対戦相手を確認したら表示を更新する
         matchingText.text = "対戦相手が見つかりました。";
 
-        // 先行プレイヤーを決定する
+        // 先攻を決定する。ホストは送信し、クライアントは受信を待つ。
         DecideFirstPlayer();
+
+        // 先攻情報が確定するまで待機する。
+        await UniTask.WaitUntil(() =>
+            !isMenuOpen ||
+            FirstPlayerManager.isFirstPlayerDecided
+        );
+
+        // メニューが閉じられていたら後続処理を行わない。
+        if (!isMenuOpen) return;
 
         // 少し表示してから閉じる処理
         await UniTask.Delay(1000);
@@ -150,33 +159,13 @@ public class RandomMatchingMenu : MenuWindowBase {
         bool hostIsFirst = FirstPlayerManager.firstPlayer == PlayerType.Self;
 
         // 先攻情報を既存の通信形式に変換する。
-        string message = NetworkValueConverter.Pack(
-            NetworkUseID.FirstPlayer,
-            hostIsFirst
-        );
+        string message = NetworkValueConverter.Pack(NetworkUseID.FirstPlayer, hostIsFirst);
 
         // 対戦相手のクライアントへ先攻情報を送信する。
         if (CustomNetworkManager.instance == null ||
             !CustomNetworkManager.instance.SendStringToOpponent(message)) {
             Debug.LogWarning("[先攻情報] クライアントへの送信に失敗しました。");
         }
-    }
-
-    /// <summary>
-    /// CustomNetworkManagerから呼ぶ、FirstPlayer選考処理
-    /// </summary>
-    public static void ReceiveFirstPlayer(string[] values) {
-        // 通信データの項目数が足りなければ抜ける。
-        if (values.Length != 2) return;
-
-        // ホストが先攻かどうかをboolに変換する
-        if (!bool.TryParse(values[1], out bool hostIsFirst)) return;
-
-        // クライアント自身の視点で先攻プレイヤーを決定する。
-        PlayerType clientFirstPlayer = hostIsFirst ? PlayerType.Opponent : PlayerType.Self;
-
-        // クライアント側に先攻情報を保存する。
-        FirstPlayerManager.SetFirstPlayer(clientFirstPlayer);
     }
 
     /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using kcp2k;
+using Unity.VisualScripting;
 
 // ============================================================
 // ネットワークメッセージ
@@ -928,6 +929,9 @@ public class CustomNetworkManager : NetworkManager {
 
             case NetworkUseID.deck:
                 AreaCardManager.instance.SetOpponentDeck(values);
+                break;
+            case NetworkUseID.FirstPlayer:
+                FirstPlayerManager.ReceiveFirstPlayer(values);
                 break;
 
             case NetworkUseID.PachisuroGoButton:
