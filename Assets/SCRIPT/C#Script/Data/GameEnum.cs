@@ -400,20 +400,24 @@ public enum AbilityProcess {
 /// 通信メッセージの先頭に付ける処理ID。
 /// </summary>
 public enum NetworkUseID {
-    // 攻撃力
-    atk, 
-    // HP
-    hp, 
-    // ドロー
-    draw, 
-    // 召喚
-    samon, 
-    // デッキ
+    atk,
+    hp,
+    draw,
+    samon,
+
     deck,
-    // 先行プレイヤー
-    FirstPlayer,
-    // パチスロGOボタン
+
+
     PachisuroGoButton,
-    // ターンエンドボタン
+
     TurnEndButton,
+
+    FirstPlayer,
+
+    slotStart, // レバーON：役を指定して回転開始
+    slotStop,  // 指定リールを指定角度へ停止
+    slotEnd,   // パチスロフェイズ終了
+
+    // 既存のNetworkUseIDの末尾に追加
+    slot, // パチスロ通信
 }
