@@ -172,7 +172,7 @@ public class BattleSystemManager : MonoBehaviour {
 
             // 手札5枚用意
             for (int f = 0; f < START_HAND_COUNT; f++) {
-                //DrawCard(i);
+                DrawCard(i);
             }
         }
 
