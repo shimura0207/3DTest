@@ -157,7 +157,7 @@ public class BattleSystemManager : MonoBehaviour {
         currentTurn = 1;
 
         // 相手のデッキを受け取るまで待つ
-        while (AreaCardManager.instance.catchOpponentDeck) {
+        while (!AreaCardManager.instance.catchOpponentDeck) {
             await UniTask.Yield();
         }
         AreaCardManager.instance.SetCatchOpponentDeck(false);
