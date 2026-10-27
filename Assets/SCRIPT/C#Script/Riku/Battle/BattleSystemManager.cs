@@ -5,6 +5,7 @@
 
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 
 using static GameConst;
@@ -36,8 +37,6 @@ public class BattleSystemManager : MonoBehaviour {
     private bool pachisuroGo = false;
     // ターンエンドフラグ
     private bool turnEnd = false;
-    // 相手のプレイ待機カード
-    private Queue<int> opponentPlayCardObject = null;
 
     /// <summary>
     /// 初期化処理
@@ -47,7 +46,6 @@ public class BattleSystemManager : MonoBehaviour {
 
         playerHP = new Dictionary<PlayerType, int>();
         playerSizeLimit = new Dictionary<PlayerType, int>();
-        opponentPlayCardObject = new Queue<int>();
     }
 
     /// <summary>
@@ -257,15 +255,18 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="card">召喚するカードのオブジェクト</param>
-    public async UniTask SummonMonster(PlayerType player, CardObject card) {
-        // レーン設置ウィンドウを出す(今後実装予定)
-        FieldLane lane = await MenuWindowManager.Instance.LaneMenuOpen();
+    /// <param name="lane">召喚するカードのレーン</param>
+    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
         // 手札から指定されたレーンにカードを移動
         AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
         // 指定されたレーンにカードを設置
         CardObjectManager.instance.MoveToField(player, card.objectID, lane);
         // 効果発動確認(今後実装予定)
 
+        // 自分の処理なら相手に送る
+        if (player != PlayerType.Self) return;
+        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, card.objectID, lane);
+        CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
     /// <summary>
@@ -282,6 +283,11 @@ public class BattleSystemManager : MonoBehaviour {
         CardObjectManager.instance.UnuseCardObject(card);
         // 手札の整列
         CardObjectManager.instance.ArrangeHand(player);
+
+        // 自身の処理なら相手に送る
+        if (player != PlayerType.Self) return;
+        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, card.objectID, FieldLane.None);
+        CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
 
@@ -313,6 +319,11 @@ public class BattleSystemManager : MonoBehaviour {
         AreaCardManager.instance.LaneChange(player, (int)laneA, (int)laneB);
         // オブジェクトを交換
         CardObjectManager.instance.LaneChange(player, laneA, laneB);
+
+        // 自身の処理なら相手に送る
+        if (player != PlayerType.Self) return;
+        var pack = NetworkValueConverter.Pack(NetworkUseID.laneCange, laneA, laneB);
+        CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
     /// <summary>
@@ -332,20 +343,41 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// 相手のプレイ待機カードセット
+    /// 相手のプレイカード受け取り
     /// </summary>
-    /// <param name="cardID">カードの識別ID</param>
-    public void SetOpponentPlayCard(int cardID) {
-        opponentPlayCardObject.Enqueue(cardID);
+    /// <param name="playCard"></param>
+    public void ReceiveOpponentPlayCard(string[] playCard) {
+        // 2つ目の情報がカードのオブジェクトIDなのでintに変換
+        int objectID = -1;
+        if (!NetworkValueConverter.TryGetInt(playCard[1], out objectID)) return;
+        // 3つ目の情報がレーンIDなので一度intに変換
+        int laneID = -1;
+        if (!NetworkValueConverter.TryGetInt(playCard[2], out objectID)) return;
+
+        // カード使用
+        CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
+        switch (obj.cardType) {
+            case CardType.Monster:
+                UniTask task = SummonMonster(PlayerType.Opponent, obj, (FieldLane)laneID);
+                break;
+            case CardType.Spell:
+                CastSpell(PlayerType.Opponent, obj);
+                break;
+        }
     }
 
     /// <summary>
-    /// プレイ待機中の相手のカードを取得
+    /// 相手のレーン交換受け取り
     /// </summary>
-    /// <returns></returns>
-    public int GetOpponentPlayCard() {
-        if (opponentPlayCardObject.Count <= 0) return -1;
-        
-        return opponentPlayCardObject.Dequeue();
+    /// <param name="changeLane"></param>
+    public void ReceiveOpponentLaneChange(string[] changeLane) {
+        // 2,3つ目の情報が交換するレーンなので一度intに変換
+        int laneA = -1;
+        if (!NetworkValueConverter.TryGetInt(changeLane[1], out laneA)) return;
+        int laneB = -1;
+        if (!NetworkValueConverter.TryGetInt(changeLane[2], out laneB)) return;
+
+        // 受け取った2つのレーンを交換
+        LaneChange(PlayerType.Opponent, (FieldLane)laneA, (FieldLane)laneB);
     }
 }
