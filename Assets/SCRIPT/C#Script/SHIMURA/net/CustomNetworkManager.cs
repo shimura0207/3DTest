@@ -941,6 +941,20 @@ public class CustomNetworkManager : NetworkManager {
             case NetworkUseID.TurnEndButton:
                 BattleSystemManager.instance.TurnEnd();
                 break;
+            case NetworkUseID.slot:
+                PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
+
+                if (sync == null || !sync.isActiveAndEnabled) {
+                    Debug.LogError(
+                        "[パチスロ通信] PachisuroNetworkSyncが存在しないか無効です。"
+                    );
+                    break;
+                }
+
+                // 分解前の文字列を渡します。
+                // パチスロ側で内容を検証してキューへ保存します。
+                sync.ReceiveNetworkMessage(message);
+                break;
         }
     }
     /// <summary>

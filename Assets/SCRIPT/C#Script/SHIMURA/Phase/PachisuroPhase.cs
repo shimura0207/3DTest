@@ -91,7 +91,7 @@ public class PachisuroPhase : PhaseBase {
 
                 // 自分のRUSH・テーブル更新は既存処理を使用する。
                 slot.DebugAAA();
-
+                slot.efectManager.HideTrumps();
                 slot.EndNetworkPlayback();
                 nextPhase = true;
             }
@@ -122,7 +122,7 @@ public class PachisuroPhase : PhaseBase {
             // 相手を表示するため一時的に上書きした状態を戻す。
             // 自分のテーブルを進めないためDebugAAAは呼ばない。
             slot.EndNetworkPlayback();
-
+            
             nextPhase = true;
         }
 
