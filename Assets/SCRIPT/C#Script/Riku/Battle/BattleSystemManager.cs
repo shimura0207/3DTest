@@ -167,8 +167,8 @@ public class BattleSystemManager : MonoBehaviour {
             // HPの初期化
             playerHP[i] = PLAYER_HP;
             // サイズ上限を最小値に
-            //playerSizeLimit[i] = SIZE_LIMIT_MIN;
-            playerSizeLimit[i] = 10;// デバッグ用仮
+            playerSizeLimit[i] = SIZE_LIMIT_MIN;
+            //playerSizeLimit[i] = 10;// デバッグ用仮
 
             // 手札5枚用意
             for (int f = 0; f < START_HAND_COUNT; f++) {
