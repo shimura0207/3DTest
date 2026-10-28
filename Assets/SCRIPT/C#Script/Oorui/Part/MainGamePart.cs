@@ -68,6 +68,7 @@ public class MainGamePart : PartBase {
         pachisuroInstance = Instantiate(patisuro, pos, Quaternion.identity, transform);
         // 生成したオブジェクトを非表示にする
         pachisuroInstance.SetActive(false);
+        result = BattleState.None;
         await UniTask.CompletedTask;
     }
 
@@ -85,7 +86,7 @@ public class MainGamePart : PartBase {
         await BattleExecute();
         // バトル終了後の結果を取得する
         result = battleSystemManager.battleState;
-
+        BattleSystemManager.instance.BattleTeardown();
         // リザルトパートに遷移する
         await PartManager.Instance.TransitionPart(GamePart.EndGame, result);
     }
