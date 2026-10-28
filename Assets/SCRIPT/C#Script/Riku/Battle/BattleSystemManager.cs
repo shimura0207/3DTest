@@ -351,7 +351,7 @@ public class BattleSystemManager : MonoBehaviour {
         if (!NetworkValueConverter.TryGetInt(playCard[1], out objectID)) return;
         // 3つ目の情報がレーンIDなので一度intに変換
         int laneID = -1;
-        if (!NetworkValueConverter.TryGetInt(playCard[2], out objectID)) return;
+        if (!NetworkValueConverter.TryGetInt(playCard[2], out laneID)) return;
 
         // カード使用
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
