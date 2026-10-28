@@ -111,7 +111,7 @@ public class PachisuroPhase : PhaseBase {
             slot.BeginRemotePlayback();
             PachisuroNetworkSync.Instance.BeginRemotePhase();
         }
-
+        
         // 受信処理とリール更新を毎フレーム行う。
         slot.EnemySlotUpdate();
 

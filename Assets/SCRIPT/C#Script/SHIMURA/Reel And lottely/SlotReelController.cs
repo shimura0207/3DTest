@@ -83,7 +83,7 @@ public class SlotReelController : MonoBehaviour {
         savedTable = currentTable;
         savedSlotIndex = slotIndex;
         savedRole = currentSlotSymbolRole;
-        savedRoles = new List<PachisuroSymbolKoyakuEnum>(roles);
+        //savedRoles = new List<PachisuroSymbolKoyakuEnum>(roles);
 
         networkLocalControl = false;
         networkRemoteControl = true;
@@ -105,13 +105,13 @@ public class SlotReelController : MonoBehaviour {
             slotIndex = savedSlotIndex;
             currentSlotSymbolRole = savedRole;
 
-            roles.Clear();
+            //roles.Clear();
 
-            if (savedRoles != null) {
-                roles.AddRange(savedRoles);
-            }
+            //if (savedRoles != null) {
+           //     roles.AddRange(savedRoles);
+           /// }
 
-            savedRoles = null;
+           // savedRoles = null;
         }
 
         networkLocalControl = false;
@@ -705,6 +705,7 @@ public class SlotReelController : MonoBehaviour {
                 state.StartReel(i);
             }
             AddRole(currentSlotSymbolRole);
+
             slotIndex++;//G数を1G増加
         }
         else {

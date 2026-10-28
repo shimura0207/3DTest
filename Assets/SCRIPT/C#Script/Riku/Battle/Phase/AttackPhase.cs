@@ -82,7 +82,7 @@ public class AttackPhase : PhaseBase {
                 PlayerHPUIControllere hp;
                 GameObject player = GameObject.Find("Player1HP");
                 hp = player.GetComponent<PlayerHPUIControllere>();
-                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
+                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
 
                 await UniTask.DelayFrame(10);
             }
