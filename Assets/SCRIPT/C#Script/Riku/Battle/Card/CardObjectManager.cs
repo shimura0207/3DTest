@@ -199,6 +199,8 @@ public class CardObjectManager : MonoBehaviour {
                 break;
             case PlayerType.Opponent:
                 objectTransform.SetParent(opponentFieldLaneRoot[(int)setLane], false);
+                // カードに沿ったイラストに変更
+                card.ChangeCardImage(card.cardID);
                 break;
         }
         // レーンIDセット
