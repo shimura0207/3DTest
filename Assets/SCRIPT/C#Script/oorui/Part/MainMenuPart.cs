@@ -93,28 +93,32 @@ public class MainMenuPart : PartBase {
         switch (selectMenu) {
 
             case MainMenuSelect.Matchmaking:
-
+                // 再生中のBGMを停止する
+                AudioManager.instance.FadeOutBGM();
                 // マッチングパートへ遷移する
                 await PartManager.Instance.TransitionPart(GamePart.Matchmaking);
 
                 break;
 
             case MainMenuSelect.Option:
-
+                // 再生中のBGMを停止する
+                AudioManager.instance.FadeOutBGM();
                 // オプションパートへ遷移する
                 await PartManager.Instance.TransitionPart(GamePart.Option);
 
                 break;
 
             case MainMenuSelect.CardRelation:
-
+                // 再生中のBGMを停止する
+                AudioManager.instance.FadeOutBGM();
                 // カード一覧パートへ遷移する
                 await PartManager.Instance.TransitionPart(GamePart.CardRelation);
 
                 break;
 
             case MainMenuSelect.Gacha:
-
+                // 再生中のBGMを停止する
+                AudioManager.instance.FadeOutBGM();
                 // ガチャパートへ遷移する
                 await PartManager.Instance.TransitionPart(GamePart.Gacha);
 

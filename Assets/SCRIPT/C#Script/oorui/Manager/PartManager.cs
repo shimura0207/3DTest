@@ -109,10 +109,6 @@ public class PartManager : SystemObject {
 
         // 切り替え先のパートが存在しなければ抜ける
         if (currentPart == null) return;
-
-        // 再生中のBGMを停止する
-        AudioManager.instance.FadeOutBGM();
-
         // 切り替え先のパートをセットアップする
         await currentPart.Setup();
 
