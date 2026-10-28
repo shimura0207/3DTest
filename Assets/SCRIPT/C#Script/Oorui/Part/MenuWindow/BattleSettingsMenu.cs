@@ -42,7 +42,7 @@ public class BattleSettingsMenu : MenuWindowBase {
         List<int> useDeckList = GetUseDeckList(id);
 
         // 先攻情報とデッキを渡してバトルを初期化する。
-        BattleSystemManager.instance.BattleSetup(useDeckList, firstPlayer);
+        await BattleSystemManager.instance.BattleSetup(useDeckList, firstPlayer);
 
         // メニューを閉じる。
         await Close();

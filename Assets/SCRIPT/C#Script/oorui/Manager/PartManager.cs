@@ -111,7 +111,7 @@ public class PartManager : SystemObject {
         if (currentPart == null) return;
 
         // 再生中のBGMを停止する
-        AudioManager.instance.StopBGM();
+        AudioManager.instance.FadeOutBGM();
 
         // 切り替え先のパートをセットアップする
         await currentPart.Setup();
