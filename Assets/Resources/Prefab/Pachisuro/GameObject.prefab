@@ -2526,7 +2526,7 @@ GameObject:
   - component: {fileID: 4077387080753597117}
   - component: {fileID: 1541759997447114408}
   - component: {fileID: 500637420470730069}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4299,7 +4299,7 @@ GameObject:
   - component: {fileID: 7195745846149872466}
   - component: {fileID: 337082145130492888}
   - component: {fileID: 5807458620964980338}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Window
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5162,7 +5162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -230}
+  m_AnchoredPosition: {x: -400, y: -206}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8136292783502510964
@@ -7753,7 +7753,7 @@ GameObject:
   - component: {fileID: 6292085404787468728}
   - component: {fileID: 5985004227992004494}
   - component: {fileID: 8392311702694381336}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Koyaku
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8376,7 +8376,7 @@ GameObject:
   - component: {fileID: 929859038812471060}
   - component: {fileID: 3450855173673818948}
   - component: {fileID: 1070766182055713851}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: KoyakuText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10436,7 +10436,7 @@ GameObject:
   - component: {fileID: 3008625732856237187}
   - component: {fileID: 5525442695062653684}
   - component: {fileID: 493855970910460399}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: CardImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11253,7 +11253,7 @@ GameObject:
   - component: {fileID: 8860933144056985388}
   - component: {fileID: 7814293238910430301}
   - component: {fileID: 4315497647530509177}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: StatusText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11595,7 +11595,7 @@ GameObject:
   - component: {fileID: 5669193799110865296}
   - component: {fileID: 1713829044913735079}
   - component: {fileID: 392618737935886502}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: RaceText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13572,7 +13572,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: 209}
+  m_AnchoredPosition: {x: -400, y: 190}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6218990371514896114
@@ -13773,7 +13773,7 @@ GameObject:
   - component: {fileID: 7869309515199780538}
   - component: {fileID: 6294678869671121111}
   - component: {fileID: 1706471439758749362}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: CardTypeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19401,13 +19401,13 @@ GameObject:
   - component: {fileID: 706209915221649871}
   - component: {fileID: 1963336401295675088}
   - component: {fileID: 7682368129271910224}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: DetailText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4863487609527235560
 RectTransform:
   m_ObjectHideFlags: 0
@@ -19444,14 +19444,14 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &706209915221649871
 MonoBehaviour:
@@ -19475,7 +19475,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1963336401295675088
 MonoBehaviour:
   m_ObjectHideFlags: 0
