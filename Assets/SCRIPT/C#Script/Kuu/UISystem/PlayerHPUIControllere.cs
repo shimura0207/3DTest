@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 /// <summary>
 /// プレイヤーのHPをUIに反映させる処理
@@ -14,6 +15,8 @@ using TMPro;
 public class PlayerHPUIControllere : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI text;
+
+    [SerializeField] private Slider HPBar;
     public int playerHP = 50;
     // Start is called before the first frame update
     void Start()
@@ -25,6 +28,7 @@ public class PlayerHPUIControllere : MonoBehaviour
     void Update()
     {
         text.text = "HP:" + playerHP.ToString();
+        HPBar.value = playerHP;
     }
 
     /// <summary>
