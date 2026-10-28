@@ -37,7 +37,7 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(PlayerType.Self, koyaku, card.Value, slot.rush, slot.nrush);
+                CardAttack(PlayerType.Opponent, koyaku, card.Value, slot.rush, slot.nrush);
                 
                 // UIに反映
                 PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
@@ -76,13 +76,13 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(PlayerType.Opponent, koyaku, card.Value, slot.rush, slot.nrush);
+                CardAttack(PlayerType.Self, koyaku, card.Value, slot.rush, slot.nrush);
 
                 // UIに反映
                 PlayerHPUIControllere hp;
                 GameObject player = GameObject.Find("Player1HP");
                 hp = player.GetComponent<PlayerHPUIControllere>();
-                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
+                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
 
                 await UniTask.DelayFrame(10);
             }
