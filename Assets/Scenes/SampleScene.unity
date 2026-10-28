@@ -425,6 +425,11 @@ MonoBehaviour:
   onBattleEnded:
     m_PersistentCalls:
       m_Calls: []
+  hostWaitSeconds: {x: 8, y: 15}
+  retryDelaySeconds: {x: 0.5, y: 2}
+  readyTimeoutSeconds: 15
+  failedRoomCooldownSeconds: 20
+  stopTimeoutSeconds: 5
 --- !u!1 &1387760532
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +590,10 @@ PrefabInstance:
       propertyPath: title
       value: 
       objectReference: {fileID: 1358971117}
+    - target: {fileID: 7422603043375609736, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
+      propertyPath: port
+      value: 7777
+      objectReference: {fileID: 0}
     - target: {fileID: 8346359852100574846, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.3415778
