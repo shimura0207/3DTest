@@ -265,15 +265,16 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="card">召喚するカードのオブジェクト</param>
     /// <param name="lane">召喚するカードのレーン</param>
     public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
+        int objectID = card.objectID;
         // 手札から指定されたレーンにカードを移動
         AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
         // 指定されたレーンにカードを設置
-        CardObjectManager.instance.MoveToField(player, card.objectID, lane);
+        CardObjectManager.instance.MoveToField(player, objectID, lane);
         // 効果発動確認(今後実装予定)
 
         // 自分の処理なら相手に送る
         if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, card.objectID, lane);
+        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
@@ -283,6 +284,7 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="card">唱えるカードのオブジェクト</param>
     public void CastSpell(PlayerType player, CardObject card) {
+        int objectID = card.objectID;
         // 効果発動(今後実装予定)
 
         // カードを手札から墓地に移動
@@ -294,7 +296,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身の処理なら相手に送る
         if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, card.objectID, FieldLane.None);
+        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, FieldLane.None);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
@@ -357,10 +359,10 @@ public class BattleSystemManager : MonoBehaviour {
     public void ReceiveOpponentPlayCard(string[] playCard) {
         // 2つ目の情報がカードのオブジェクトIDなのでintに変換
         int objectID = -1;
-        if (!NetworkValueConverter.TryGetInt(playCard[1], out objectID)) return;
+        NetworkValueConverter.TryGetInt(playCard[1], out objectID);
         // 3つ目の情報がレーンIDなので一度intに変換
         int laneID = -1;
-        if (!NetworkValueConverter.TryGetInt(playCard[2], out laneID)) return;
+        NetworkValueConverter.TryGetInt(playCard[2], out laneID);
 
         // カード使用
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
@@ -381,9 +383,9 @@ public class BattleSystemManager : MonoBehaviour {
     public void ReceiveOpponentLaneChange(string[] changeLane) {
         // 2,3つ目の情報が交換するレーンなので一度intに変換
         int laneA = -1;
-        if (!NetworkValueConverter.TryGetInt(changeLane[1], out laneA)) return;
+        NetworkValueConverter.TryGetInt(changeLane[1], out laneA);
         int laneB = -1;
-        if (!NetworkValueConverter.TryGetInt(changeLane[2], out laneB)) return;
+        NetworkValueConverter.TryGetInt(changeLane[2], out laneB);
 
         // 受け取った2つのレーンを交換
         LaneChange(PlayerType.Opponent, (FieldLane)laneA, (FieldLane)laneB);
