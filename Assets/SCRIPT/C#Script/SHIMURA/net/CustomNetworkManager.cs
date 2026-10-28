@@ -190,6 +190,10 @@ public class CustomNetworkManager : NetworkManager {
     /// trueは起動処理が開始できたことを示す。
     /// 対戦開始は2人の準備完了後。
     /// </summary>
+    // 接続先のポートをKCPへ設定しても、自分の公開用ポートは保持します。
+    private ushort? configuredHostPort;
+    public bool IsRoomBroadcasting => broadcaster != null && broadcaster.IsBroadcasting;
+
     public bool BeginHost() {
         if (!PrepareNetwork())
             return false;
@@ -208,6 +212,10 @@ public class CustomNetworkManager : NetworkManager {
             return false;
         }
 
+        if (transport is KcpTransport hostTransport) {
+            if (!configuredHostPort.HasValue) configuredHostPort = hostTransport.Port;
+            hostTransport.Port = configuredHostPort.Value;
+        }
         stopping = false;
 
         try {
@@ -253,6 +261,7 @@ public class CustomNetworkManager : NetworkManager {
         KcpTransport kcp = (KcpTransport)transport;
 
         // 選んだ部屋のゲーム接続用ポートを反映する
+        if (!configuredHostPort.HasValue) configuredHostPort = kcp.Port;
         kcp.Port = (ushort)port;
         networkAddress = ip.Trim();
 
