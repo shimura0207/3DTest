@@ -169,7 +169,16 @@ public class BattleSystemManager : MonoBehaviour {
 
             // 手札5枚用意
             for (int f = 0; f < START_HAND_COUNT; f++) {
-                DrawCard(i);
+                // ターンプレイヤーから先に手札を用意
+                if (firstPlayer == PlayerType.Self) {
+                    DrawCard(i);
+                }
+                else {
+                    if (i == PlayerType.Self)
+                        DrawCard(PlayerType.Opponent);
+                    if (i == PlayerType.Opponent)
+                        DrawCard(PlayerType.Self);
+                }
             }
         }
 
@@ -351,7 +360,7 @@ public class BattleSystemManager : MonoBehaviour {
         if (!NetworkValueConverter.TryGetInt(playCard[1], out objectID)) return;
         // 3つ目の情報がレーンIDなので一度intに変換
         int laneID = -1;
-        if (!NetworkValueConverter.TryGetInt(playCard[2], out objectID)) return;
+        if (!NetworkValueConverter.TryGetInt(playCard[2], out laneID)) return;
 
         // カード使用
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);

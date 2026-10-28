@@ -269,7 +269,7 @@ public class MatchingNetMatch : MonoBehaviour {
         ShowScreen(ScreenState.Menu, message);
     }
 
-    private void StopSearch() {
+    public void StopSearch() {
         randomMatching = false;
         failedRooms.Clear();
         if (searchCoroutine != null) {
@@ -566,5 +566,24 @@ public class MatchingNetMatch : MonoBehaviour {
         searchCoroutine = null;
         ShowScreen(ScreenState.Menu, message);
         Debug.LogError("[RandomMatch] " + message);
+    }
+
+    /// <summary>
+    /// ランダムマッチをキャンセルする。
+    /// </summary>
+    public void CancelRandomMatch() {
+        // ランダムマッチの再試行を停止する。
+        StopSearch();
+
+        // 起動中の通信を終了する。
+        if (networkManager != null) {
+            networkManager.LeaveRoom();
+        }
+
+        // プレイヤーの役割を初期化する。
+        ResetRole();
+
+        // マッチング画面を終了する。
+        Debug.Log("マッチングをキャンセルしました");
     }
 }
