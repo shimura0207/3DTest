@@ -129,6 +129,18 @@ public class CardObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 全てのカードオブジェクトの未使用化
+    /// </summary>
+    public void AllUnuseCardObject() {
+        foreach (var obj in useObjectList) {
+            if (!obj) continue;
+
+            // 未使用化
+            UnuseCardObject(obj);
+        }
+    }
+
+    /// <summary>
     /// オブジェクトのIDからオブジェクト取得
     /// </summary>
     /// <param name="objectID">取得するオブジェクトのID</param>

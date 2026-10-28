@@ -57,6 +57,8 @@ public class AreaCardManager : MonoBehaviour {
                 outDeckCards[i].fieldCards.Add((int)FieldLane.None);
             }
         }
+
+        catchOpponentDeck = false;
     }
 
     /// <summary>
