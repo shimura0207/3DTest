@@ -53,7 +53,6 @@ public class MatchingNetMatch : MonoBehaviour {
     private bool battleRunning;
 
     [Header("自動マッチング再試行")]
-    [SerializeField] private Vector2 hostWaitSeconds = new Vector2(8f, 15f);
     [SerializeField] private Vector2 retryDelaySeconds = new Vector2(0.5f, 2f);
     [SerializeField] private float readyTimeoutSeconds = 15f;
     [SerializeField] private float failedRoomCooldownSeconds = 20f;
@@ -218,6 +217,7 @@ public class MatchingNetMatch : MonoBehaviour {
             // イベントが画面を切り替える前に自動再試行を終了する。
             randomMatching = false;
             failedRooms.Clear();
+            receiver?.StopReceiveIP();
             ShowScreen(ScreenState.Battle, message);
 
             if (!battleRunning) {
@@ -334,7 +334,7 @@ public class MatchingNetMatch : MonoBehaviour {
     ///
     /// 1. ホストを検索する
     /// 2. 参加可能なホストがいればランダムに参加する
-    /// 3. 見つからなければホストになり、無人なら停止して再検索する
+    /// 3. 見つからなければホストを維持したまま検索する
     /// </summary>
     public void OnRandomMatchButton() {
         if (state != ScreenState.Menu || randomMatching ||
@@ -356,198 +356,194 @@ public class MatchingNetMatch : MonoBehaviour {
     }
 
     /// <summary>
-    /// 検索→参加、または部屋作成→待機→停止→再検索。
-    /// 通信の起動・停止を重ねず、必ず順番に処理する。
+    /// 最初は検索のみ。候補がなければ部屋を公開しながら検索します。
+    /// ホスト同士ではroomIdの小さい方を残し、大きい方だけが参加します。
+    /// IDは部屋を作り直しても変えないため、相互に役割を交換し続けません。
     /// </summary>
     private IEnumerator RandomMatchRoutine() {
-        // StartCoroutineの代入が完了してから処理を始める。
         yield return null;
-        int attempt = 0;
-
         while (randomMatching) {
-            if (networkManager == null || receiver == null) {
-                AbortRandomMatch("マッチング用コンポーネントが失われました");
-                yield break;
-            }
-
-            // 期限切れの失敗候補を掃除する。
-            var expired = new List<string>();
-            foreach (var entry in failedRooms) {
-                if (Time.unscaledTime >= entry.Value) expired.Add(entry.Key);
-            }
-            foreach (string key in expired) failedRooms.Remove(key);
-
-            attempt++;
             attemptDisconnected = false;
             ResetRole();
-            ShowScreen(ScreenState.Waiting, $"対戦相手を検索中... ({attempt}回目)");
-            Debug.Log($"[RandomMatch] 検索開始 #{attempt}");
-
+            ShowScreen(ScreenState.Waiting, "対戦相手を検索中...");
             if (!receiver.StartReceiveIP()) {
                 AbortRandomMatch("検索を開始できません。Consoleを確認してください");
                 yield break;
             }
-            // 前の検索結果を再利用しない。
-            receiver.discoveredHosts.Clear();
 
-            float deadline = Time.unscaledTime + Mathf.Max(0.5f, searchSeconds)
-                + RandomSeconds(new Vector2(0f, 2f));
-            while (randomMatching && Time.unscaledTime < deadline) {
-                if (!receiver.IsReceiving) {
-                    AbortRandomMatch("ホスト検索が停止しました。Consoleを確認してください");
-                    yield break;
-                }
-                yield return null;
-            }
+            float searchEnd = Time.unscaledTime + Mathf.Max(0.5f, searchSeconds)
+                + RandomSeconds(new Vector2(0f, 1f));
+            while (randomMatching && Time.unscaledTime < searchEnd) yield return null;
             if (!randomMatching) break;
-
-            var candidates = new List<UDPListener.UdpMessage>();
-            foreach (var host in receiver.discoveredHosts) {
-                if (host.gamePlaying || string.IsNullOrWhiteSpace(host.ip) ||
-                    host.port < 1 || host.port > 65535)
-                    continue;
-
-                if (networkManager.IsOwnEndpoint(host.ip, host.port)) continue;
-                string key = host.ip + ":" + host.port;
-                if (failedRooms.TryGetValue(key, out float until) &&
-                    Time.unscaledTime < until) continue;
-                candidates.Add(host);
-            }
-            receiver.StopReceiveIP();
-
-            string attemptedRoom = null;
-            bool began;
-            if (candidates.Count > 0) {
-                var host = candidates[matchRandom.Next(candidates.Count)];
-                attemptedRoom = host.ip + ":" + host.port;
-                ipAddress = host.ip;
-                isClient = true;
-                isHost = false;
-                BeginConnecting("対戦相手に接続中...");
-                Debug.Log($"[RandomMatch] 接続開始 {attemptedRoom}");
-                began = networkManager.BeginClient(host.ip, host.port);
-            }
-            else {
-                isHost = true;
-                isClient = false;
-                BeginConnecting("部屋を作成中...");
-                Debug.Log("[RandomMatch] 候補なし。ホストを作成します");
-                began = networkManager.BeginHost();
-            }
-
-            float connectDeadline = Time.unscaledTime + Mathf.Max(1f, connectTimeoutSeconds);
-            float hostDeadline = Time.unscaledTime + RandomSeconds(hostWaitSeconds);
-            float readyDeadline = -1f;
-            bool hostWasReady = false;
-
-            while (randomMatching && began && !attemptDisconnected) {
-                if (networkManager.IsMatchStarted || networkManager.ServerMatchStarted) {
-                    // 部屋状態メッセージによるNotifyRoomStateを待つ。
-                    // サーバーが開始済みなら待機時間を理由に停止しない。
-                    yield return null;
-                    continue;
-                }
-
-                if (isHost) {
-                    if (!NetworkServer.active || !NetworkClient.active) break;
-
-                    bool localReady = NetworkClient.isConnected && NetworkClient.ready;
-                    if (!localReady) {
-                        if (Time.unscaledTime >= connectDeadline) break;
-                    }
-                    else {
-                        if (!hostWasReady) {
-                            hostWasReady = true;
-                            hostDeadline = Time.unscaledTime + RandomSeconds(hostWaitSeconds);
-                            ShowScreen(ScreenState.Waiting, "部屋を作成しました。対戦相手を待っています...");
-                        }
-
-                        if (networkManager.HasRemoteParticipant) {
-                            if (readyDeadline < 0f) {
-                                readyDeadline = Time.unscaledTime + Mathf.Max(1f, readyTimeoutSeconds);
-                                SetStatus("相手が接続中です。準備完了を待っています...");
-                            }
-                            if (Time.unscaledTime >= readyDeadline) {
-                                // 準備が終わらない相手だけ切断。部屋自体は維持する。
-                                networkManager.DisconnectUnreadyRemoteParticipants();
-                                readyDeadline = Time.unscaledTime + Mathf.Max(1f, readyTimeoutSeconds);
-                            }
-                        }
-                        else {
-                            if (readyDeadline >= 0f) {
-                                readyDeadline = -1f;
-                                hostDeadline = Time.unscaledTime + RandomSeconds(hostWaitSeconds);
-                                SetStatus("対戦相手を待っています...");
-                            }
-                            if (Time.unscaledTime >= hostDeadline) {
-                                // 停止直前にも相手の有無と対戦開始を再確認する。
-                                internalStopping = true;
-                                bool stopped = networkManager.TryStopEmptyHostForRematch();
-                                internalStopping = false;
-                                if (stopped) break;
-                            }
-                        }
-                    }
-                }
-                else {
-                    if (!NetworkClient.active) break;
-                    if (NetworkClient.isConnected) {
-                        if (readyDeadline < 0f) {
-                            readyDeadline = Time.unscaledTime + Mathf.Max(1f, readyTimeoutSeconds);
-                        }
-                        if (Time.unscaledTime >= readyDeadline) break;
-                    }
-                    else if (Time.unscaledTime >= connectDeadline) break;
-                }
-                yield return null;
-            }
-
-            // 対戦開始または明示的キャンセル。再接続を行わない。
-            if (!randomMatching) break;
-
-            if (attemptedRoom != null) {
-                failedRooms[attemptedRoom] = Time.unscaledTime +
-                    Mathf.Max(1f, failedRoomCooldownSeconds);
-            }
-
-            Debug.Log("[RandomMatch] 試行終了。停止完了後に再検索します");
-            yield return StopNetworkForRetry();
-            if (!randomMatching) break;
-            if (!stopSucceeded) {
-                AbortRandomMatch("通信の停止が完了しませんでした。再生を停止して確認してください");
+            if (!receiver.IsReceiving) {
+                AbortRandomMatch("UDP検索が停止しました。Consoleを確認してください");
                 yield break;
             }
 
-            ResetRole();
-            ShowScreen(ScreenState.Waiting, "対戦相手を探し直しています...");
+            UDPListener.UdpMessage target;
+            bool hasTarget = TryGetCandidate(false, out target);
+            if (!hasTarget) {
+                isHost = true;
+                BeginConnecting("部屋を作成中...");
+                Debug.Log("[RandomMatch] 部屋を公開しながら検索を継続します");
+                // UDPListenerは停止しません。ゲーム接続とは別のソケットです。
+                if (!networkManager.BeginHost()) {
+                    AbortRandomMatch("ホストを開始できません。ゲームポートの使用状況を確認してください");
+                    yield break;
+                }
+
+                float localDeadline = Time.unscaledTime + Mathf.Max(1f, connectTimeoutSeconds);
+                float remoteReadyDeadline = -1f;
+                while (randomMatching && !attemptDisconnected) {
+                    // Ready通知が処理されるまで部屋を維持します。
+                    if (networkManager.ServerMatchStarted || networkManager.IsMatchStarted) {
+                        yield return null;
+                        continue;
+                    }
+                    if (!NetworkServer.active || !NetworkClient.active) break;
+                    if (!receiver.IsReceiving || !networkManager.IsRoomBroadcasting) {
+                        AbortRandomMatch("公開中のUDP検索または配信が停止しました");
+                        yield break;
+                    }
+                    if (!NetworkClient.isConnected || !NetworkClient.ready) {
+                        if (Time.unscaledTime >= localDeadline) break;
+                        yield return null;
+                        continue;
+                    }
+
+                    // 参加処理中の相手を置き去りにして別の部屋へ移動しません。
+                    if (networkManager.HasRemoteParticipant) {
+                        if (remoteReadyDeadline < 0f)
+                            remoteReadyDeadline = Time.unscaledTime + Mathf.Max(1f, readyTimeoutSeconds);
+                        if (Time.unscaledTime >= remoteReadyDeadline) {
+                            networkManager.DisconnectUnreadyRemoteParticipants();
+                            remoteReadyDeadline = Time.unscaledTime + Mathf.Max(1f, readyTimeoutSeconds);
+                        }
+                    }
+                    else {
+                        remoteReadyDeadline = -1f;
+                        // 自分より優先される部屋だけを選びます。
+                        if (TryGetCandidate(true, out target)) {
+                            bool stopped;
+                            internalStopping = true;
+                            try {
+                                // 停止する直前にも参加者・対戦開始状態を確認します。
+                                stopped = networkManager.TryStopEmptyHostForRematch();
+                            }
+                            finally { internalStopping = false; }
+                            if (stopped) {
+                                Debug.Log($"[RandomMatch] 優先部屋へ移動: {target.roomId} {target.ip}:{target.port}");
+                                hasTarget = true;
+                                yield return WaitForNetworkStop();
+                                if (!randomMatching) break;
+                                if (!stopSucceeded) {
+                                    AbortRandomMatch("ホスト停止が完了しませんでした");
+                                    yield break;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    yield return null;
+                }
+            }
+            if (!randomMatching) break;
+
+            if (hasTarget) {
+                // 接続先を選んだら検索を一旦止めます。接続失敗なら再開します。
+                receiver.StopReceiveIP();
+                ResetRole();
+                isClient = true;
+                ipAddress = target.ip;
+                attemptDisconnected = false;
+                BeginConnecting($"{target.hostName} に接続中...");
+                bool began = networkManager.BeginClient(target.ip, target.port);
+                float deadline = Time.unscaledTime + Mathf.Max(1f, connectTimeoutSeconds);
+                float readyDeadline = -1f;
+                while (randomMatching && began && !attemptDisconnected) {
+                    if (networkManager.IsMatchStarted) {
+                        yield return null;
+                        continue;
+                    }
+                    if (!NetworkClient.active) break;
+                    if (NetworkClient.isConnected) {
+                        if (readyDeadline < 0f)
+                            readyDeadline = Time.unscaledTime + Mathf.Max(1f, readyTimeoutSeconds);
+                        if (Time.unscaledTime >= readyDeadline) break;
+                    }
+                    else if (Time.unscaledTime >= deadline) break;
+                    yield return null;
+                }
+                if (!randomMatching) break;
+                // 広告受信直後に満員・退出となる競合は再試行で処理します。
+                failedRooms[UDPListener.GetKey(target)] = Time.unscaledTime
+                    + Mathf.Max(1f, failedRoomCooldownSeconds);
+            }
+
+            yield return StopNetworkForRetry();
+            if (!randomMatching) break;
+            if (!stopSucceeded) {
+                AbortRandomMatch("通信の停止が完了しませんでした");
+                yield break;
+            }
+            ShowScreen(ScreenState.Waiting, "接続できなかったため再検索します...");
             yield return new WaitForSecondsRealtime(RandomSeconds(retryDelaySeconds));
         }
-
         searchCoroutine = null;
     }
 
     /// <summary>
-    /// 自動再試行用の終了処理。切断通知でメニューへ戻さない。
+    /// 自分・満員・古い広告・最近失敗した部屋を除外します。
+    /// ホスト中は自分より小さいIDのみ。候補内でも最小IDを優先します。
     /// </summary>
-    private IEnumerator StopNetworkForRetry() {
+    private bool TryGetCandidate(bool hosting, out UDPListener.UdpMessage selected) {
+        selected = default;
+        bool found = false;
+        var expired = new List<string>();
+        foreach (var entry in failedRooms)
+            if (Time.unscaledTime >= entry.Value) expired.Add(entry.Key);
+        foreach (var key in expired) failedRooms.Remove(key);
+
+        foreach (var host in receiver.discoveredHosts) {
+            if (host.gamePlaying || !receiver.IsFresh(host) ||
+                string.IsNullOrWhiteSpace(host.ip) || string.IsNullOrEmpty(host.roomId) ||
+                host.roomId == UDPBroadcaster.LocalRoomId || host.port < 1 || host.port > 65535)
+                continue;
+            if (hosting && System.String.CompareOrdinal(host.roomId, UDPBroadcaster.LocalRoomId) >= 0)
+                continue;
+            if (failedRooms.ContainsKey(UDPListener.GetKey(host))) continue;
+            if (!found || System.String.CompareOrdinal(host.roomId, selected.roomId) < 0) {
+                selected = host;
+                found = true;
+            }
+        }
+        return found;
+    }
+
+    /// <summary>停止コールバック完了後に次の接続を開始します。</summary>
+    private IEnumerator WaitForNetworkStop() {
         stopSucceeded = false;
         internalStopping = true;
         try {
-            receiver.StopReceiveIP();
-            networkManager.LeaveRoom();
-
             float deadline = Time.unscaledTime + Mathf.Max(1f, stopTimeoutSeconds);
             while (NetworkClient.active || NetworkServer.active) {
                 if (Time.unscaledTime >= deadline) yield break;
                 yield return null;
             }
-            // 停止コールバックの処理を終えてから次の起動へ進む。
             yield return null;
             stopSucceeded = true;
         }
-        finally {
-            internalStopping = false;
+        finally { internalStopping = false; }
+    }
+
+    private IEnumerator StopNetworkForRetry() {
+        internalStopping = true;
+        try {
+            receiver.StopReceiveIP();
+            networkManager.LeaveRoom();
+            yield return WaitForNetworkStop();
         }
+        finally { internalStopping = false; }
     }
 
     private float RandomSeconds(Vector2 range) {
