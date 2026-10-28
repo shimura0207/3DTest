@@ -45,6 +45,13 @@ public class BattleSystemManager : MonoBehaviour {
 
         playerHP = new Dictionary<PlayerType, int>();
         playerSizeLimit = new Dictionary<PlayerType, int>();
+        firstPlayer = PlayerType.None;
+        turnPlayer = PlayerType.None;
+        currentPhase = BattlePhase.None;
+        battleState = BattleState.None;
+        currentTurn = -1;
+        pachisuroGo = false;
+        turnEnd = false;
     }
 
     /// <summary>
@@ -191,6 +198,19 @@ public class BattleSystemManager : MonoBehaviour {
                 Debug.Log("先攻：相手のターン");
                 break;
         }
+    }
+
+    /// <summary>
+    /// 対戦片付け処理
+    /// </summary>
+    public void BattleTeardown() {
+        // このクラスの初期化処理
+        Initialize();
+        // 各エリアのカード管理クラスの初期化処理
+        AreaCardManager.instance.Initialize();
+        // カードオブジェクトの未使用化と初期化
+        CardObjectManager.instance.AllUnuseCardObject();
+        CardObjectManager.instance.Initialize();
     }
 
     /// <summary>
