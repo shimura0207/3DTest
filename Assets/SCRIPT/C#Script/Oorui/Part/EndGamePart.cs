@@ -71,9 +71,9 @@ public class EndGamePart : PartBase {
         }
 
         // マッチング中であれば終了する
-        if(CustomNetworkManager.instance != null && CustomNetworkManager.instance.IsMatchStarted) {
+        if (MatchingNetMatch.instance != null && CustomNetworkManager.instance.IsMatchStarted) {
             // マッチング終了
-            CustomNetworkManager.instance.LeaveRoom();
+            MatchingNetMatch.instance.CancelRandomMatch();
         }
 
         // メインメニュー画面に遷移する
