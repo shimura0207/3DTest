@@ -360,15 +360,15 @@ public class BattleSystemManager : MonoBehaviour {
         // 2つ目の情報がカードのオブジェクトIDなのでintに変換
         int objectID = -1;
         NetworkValueConverter.TryGetInt(playCard[1], out objectID);
-        // 3つ目の情報がレーンIDなので一度intに変換
-        int laneID = -1;
-        NetworkValueConverter.TryGetInt(playCard[2], out laneID);
+        // 3つ目の情報がレーンIDなのでenumに変換
+        FieldLane laneID = FieldLane.None;
+        NetworkValueConverter.TryGetEnum(playCard[2], out laneID);
 
         // カード使用
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
         switch (obj.cardType) {
             case CardType.Monster:
-                UniTask task = SummonMonster(PlayerType.Opponent, obj, (FieldLane)laneID);
+                UniTask task = SummonMonster(PlayerType.Opponent, obj, laneID);
                 break;
             case CardType.Spell:
                 CastSpell(PlayerType.Opponent, obj);
@@ -381,13 +381,13 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <param name="changeLane"></param>
     public void ReceiveOpponentLaneChange(string[] changeLane) {
-        // 2,3つ目の情報が交換するレーンなので一度intに変換
-        int laneA = -1;
-        NetworkValueConverter.TryGetInt(changeLane[1], out laneA);
-        int laneB = -1;
-        NetworkValueConverter.TryGetInt(changeLane[2], out laneB);
+        // 2,3つ目の情報が交換するレーンなのでenumに変換
+        FieldLane laneA = FieldLane.None;
+        NetworkValueConverter.TryGetEnum(changeLane[1], out laneA);
+        FieldLane laneB = FieldLane.None;
+        NetworkValueConverter.TryGetEnum(changeLane[2], out laneB);
 
         // 受け取った2つのレーンを交換
-        LaneChange(PlayerType.Opponent, (FieldLane)laneA, (FieldLane)laneB);
+        LaneChange(PlayerType.Opponent, laneA, laneB);
     }
 }
