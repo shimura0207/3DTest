@@ -37,7 +37,7 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(koyaku, card.Value, slot.rush,slot.nrush);
+                CardAttack(koyaku, card.Value, slot.rush, slot.nrush);
                 
                 // UIに反映
                 PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
@@ -76,7 +76,7 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(koyaku, card.Value, slot.rush,slot.nrush);
+                CardAttack(koyaku, card.Value, slot.rush, slot.nrush);
 
                 // UIに反映
                 PlayerHPUIControllere hp;
@@ -108,7 +108,8 @@ public class AttackPhase : PhaseBase {
     /// <param name="koyaku">当選役</param>
     /// <param name="card">確認するカード</param>
     /// <param name="rush">ラッシュ中か否か</param>
-    private void CardAttack(PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush,bool nrush) {
+    /// <param name="nrush">ラッシュ当選中かどうか</param>
+    private void CardAttack(PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush, bool nrush) {
         // カードの対応役の型を変換
         List<PachisuroSymbolKoyakuEnum> suportRole = card.SuportRoleToKoyaku();
         if (suportRole == null) return; 

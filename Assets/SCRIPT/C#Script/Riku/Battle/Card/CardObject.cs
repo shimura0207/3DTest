@@ -77,8 +77,16 @@ public class CardObject : MonoBehaviour {
         cardType = (CardType)data.CardType;
         // 所有者をセット
         playerType = player;
-        // IDからイラストを取得
-        spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
+
+        // 相手のカードの場合はとりあえず裏面画像に設定
+        if (playerType == PlayerType.Opponent) {
+            spriteRenderer.sprite = cardImageDatabase.GetCardImage(GameConst.BACK_IMAGE_ID);
+        }
+        // 自分のカードはIDから取得
+        else if (playerType == PlayerType.Self) {
+            // IDからイラストを取得
+            spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
+        }
     }
 
     /// <summary>
@@ -152,5 +160,13 @@ public class CardObject : MonoBehaviour {
                 break;
         }
         return suportRoleList;
+    }
+
+    /// <summary>
+    /// カードの画像変更
+    /// </summary>
+    /// <param name="imageID">画像のID(背面画像以外はカードIDと同じ)</param>
+    public void ChangeCardImage(int imageID) {
+        spriteRenderer.sprite = cardImageDatabase.GetCardImage(imageID);
     }
 }
