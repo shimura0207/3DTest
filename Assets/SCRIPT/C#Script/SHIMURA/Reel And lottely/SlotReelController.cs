@@ -61,6 +61,21 @@ public class SlotReelController : MonoBehaviour {
     private PachisuroSymbolKoyakuEnum savedRole;
     private List<PachisuroSymbolKoyakuEnum> savedRoles;
 
+
+    /// <summary>
+    /// 相手の直近パチスロフェイズの役一覧。
+    /// 自分の役とは分けて保持します。
+    /// </summary>
+    private readonly List<PachisuroSymbolKoyakuEnum> opponentRoles =
+        new List<PachisuroSymbolKoyakuEnum>();
+
+    /// <summary>
+    /// 保存した相手の役を取得します。
+    /// コピーを返すため、呼び出し側で変更しても保存内容は変わりません。
+    /// </summary>
+    public List<PachisuroSymbolKoyakuEnum> GetOpponentRoles() {
+        return new List<PachisuroSymbolKoyakuEnum>(opponentRoles);
+    }
     /// <summary>
     /// 自分のパチスロ操作を開始します。
     /// </summary>
@@ -90,7 +105,7 @@ public class SlotReelController : MonoBehaviour {
         maxBet = false;
 
         slotIndex = 0;
-        RolesDelete();
+        //RolesDelete();
     }
 
     /// <summary>
@@ -99,6 +114,11 @@ public class SlotReelController : MonoBehaviour {
     /// </summary>
     public void EndNetworkPlayback() {
         if (networkRemoteControl) {
+            // 自分の状態へ戻す前に、相手の役一覧を保存する。
+            opponentRoles.Clear();
+            opponentRoles.AddRange(roles);
+
+            // 相手表示のために一時変更した状態を、自分の状態へ戻す。
             rush = savedRush;
             nrush = savedNextRush;
             currentTable = savedTable;
