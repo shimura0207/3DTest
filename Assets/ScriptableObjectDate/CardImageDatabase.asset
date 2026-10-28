@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: CardImageDatabase
   m_EditorClassIdentifier: 
   cardImageDataList:
+  - cardID: 0
+    cardImage: {fileID: 21300000, guid: aaa41a55e66e1b14db608e9ed1bb44fa, type: 3}
   - cardID: 101
     cardImage: {fileID: 21300000, guid: 43e3fe045415dfb438d35d1f6b8bf484, type: 3}
   - cardID: 102

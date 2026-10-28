@@ -99,7 +99,7 @@ public class RandomMatchingMenu : MenuWindowBase {
         }
 
         // 対戦相手が見つかったことを表示する
-        ShowMessage("対戦相手が見つかりました。");
+        ShowMessage("対戦相手が見つかりました");
 
         // ホストが先攻を決定し、クライアントへ送信する
         DecideFirstPlayer();
