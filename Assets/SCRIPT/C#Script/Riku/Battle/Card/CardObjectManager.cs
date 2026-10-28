@@ -132,11 +132,10 @@ public class CardObjectManager : MonoBehaviour {
     /// 全てのカードオブジェクトの未使用化
     /// </summary>
     public void AllUnuseCardObject() {
-        foreach (var obj in useObjectList) {
-            if (!obj) continue;
-
+        int count = useObjectList.Count;
+        for (int i = 0; i < count; i++) {
             // 未使用化
-            UnuseCardObject(obj);
+            UnuseCardObject(useObjectList[i]);
         }
     }
 
