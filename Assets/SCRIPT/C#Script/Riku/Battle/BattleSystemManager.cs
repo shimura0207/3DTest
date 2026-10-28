@@ -359,10 +359,10 @@ public class BattleSystemManager : MonoBehaviour {
     public void ReceiveOpponentPlayCard(string[] playCard) {
         // 2つ目の情報がカードのオブジェクトIDなのでintに変換
         int objectID = -1;
-        if (!NetworkValueConverter.TryGetInt(playCard[1], out objectID)) return;
+        NetworkValueConverter.TryGetInt(playCard[1], out objectID);
         // 3つ目の情報がレーンIDなので一度intに変換
         int laneID = -1;
-        if (!NetworkValueConverter.TryGetInt(playCard[2], out laneID)) return;
+        NetworkValueConverter.TryGetInt(playCard[2], out laneID);
 
         // カード使用
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
@@ -383,9 +383,9 @@ public class BattleSystemManager : MonoBehaviour {
     public void ReceiveOpponentLaneChange(string[] changeLane) {
         // 2,3つ目の情報が交換するレーンなので一度intに変換
         int laneA = -1;
-        if (!NetworkValueConverter.TryGetInt(changeLane[1], out laneA)) return;
+        NetworkValueConverter.TryGetInt(changeLane[1], out laneA);
         int laneB = -1;
-        if (!NetworkValueConverter.TryGetInt(changeLane[2], out laneB)) return;
+        NetworkValueConverter.TryGetInt(changeLane[2], out laneB);
 
         // 受け取った2つのレーンを交換
         LaneChange(PlayerType.Opponent, (FieldLane)laneA, (FieldLane)laneB);
