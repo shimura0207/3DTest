@@ -16,6 +16,9 @@ MonoBehaviour:
   - soundName: MainMenuBGM
     clip: {fileID: 8300000, guid: eb7f40bb703f454448f5b47b628e8b08, type: 3}
     volume: 1
+  - soundName: TitleBGM
+    clip: {fileID: 8300000, guid: aea328a53c0cbbe47ac0837bdc45da9f, type: 3}
+    volume: 0.5
   seList:
   - soundName: "\u30C1\u30A7\u30EA\u30FC"
     clip: {fileID: 8300000, guid: 20bfdddf6f7759c40b0968f89b671b09, type: 3}
