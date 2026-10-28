@@ -169,7 +169,16 @@ public class BattleSystemManager : MonoBehaviour {
 
             // 手札5枚用意
             for (int f = 0; f < START_HAND_COUNT; f++) {
-                DrawCard(i);
+                // ターンプレイヤーから先に手札を用意
+                if (firstPlayer == PlayerType.Self) {
+                    DrawCard(i);
+                }
+                else {
+                    if (i == PlayerType.Self)
+                        DrawCard(PlayerType.Opponent);
+                    if (i == PlayerType.Opponent)
+                        DrawCard(PlayerType.Self);
+                }
             }
         }
 
