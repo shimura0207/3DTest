@@ -337,7 +337,7 @@ public class BattleSystemManager : MonoBehaviour {
         // フィールドの合計サイズ計算
         foreach (var obj in fieldObject) {
             if (!obj.Value) continue;
-            size += obj.Value.currentStatus.SIZE;
+            size += obj.Value.currentStatus[MonsterStatus.SIZE];
         }
         // サイズ上限から合計サイズを引いた値を返す
         return playerSizeLimit[player] - size;

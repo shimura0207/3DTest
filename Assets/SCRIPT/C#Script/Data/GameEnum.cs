@@ -421,3 +421,17 @@ public enum NetworkUseID {
     // モンスターのレーン交換
     laneCange,
 }
+
+/// <summary>
+/// モンスターのステータス
+/// @author Riku
+/// </summary>
+public enum MonsterStatus {
+    None = -1,
+
+    HP,
+    ATK,
+    SIZE,
+
+    Max,
+}

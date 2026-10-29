@@ -22,19 +22,19 @@ public class CardObject : MonoBehaviour {
     public int laneID { get; private set;  } = -1;
 
     // カードのステータス
-    public struct CardStates {
-        // HP
-        public int HP;
-        // 攻撃力
-        public int ATK;
-        // サイズ
-        public int SIZE;
-    }
+    //public struct CardStates {
+    //    // HP
+    //    public int HP;
+    //    // 攻撃力
+    //    public int ATK;
+    //    // サイズ
+    //    public int SIZE;
+    //}
 
     // デフォルトのステータス
-    public CardStates defaultStatus { get; private set; }
+    public Dictionary<MonsterStatus, int> defaultStatus { get; private set; }
     // 現在のステータス
-    public CardStates currentStatus { get; private set; }
+    public Dictionary<MonsterStatus, int> currentStatus { get; private set; }
     // 対応役
     public CardSuportRole suportRole { get; private set; } = CardSuportRole.None;
     // カードタイプ
@@ -53,8 +53,8 @@ public class CardObject : MonoBehaviour {
     /// 初期化
     /// </summary>
     public void Initialize() {
-        defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
-        currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
+        defaultStatus = new Dictionary<MonsterStatus, int>();
+        currentStatus = new Dictionary<MonsterStatus, int>();
     }
 
     /// <summary>
@@ -69,9 +69,11 @@ public class CardObject : MonoBehaviour {
         cardID = setCardID;
         // IDからステータスを取得
         var data = CardDataMasterUtility.GetCardMaster(cardID);
-        if (data == null) return; 
+        if (data == null) return;
         // データから各情報を保存
-        defaultStatus = new CardStates() { HP = data.HP, ATK = data.ATK, SIZE = data.SIZE };
+        defaultStatus[MonsterStatus.HP] = data.HP;
+        defaultStatus[MonsterStatus.ATK] = data.ATK;
+        defaultStatus[MonsterStatus.SIZE] = data.SIZE;
         currentStatus = defaultStatus;
         suportRole = (CardSuportRole)data.suportRoleID;
         cardType = (CardType)data.CardType;
@@ -97,12 +99,22 @@ public class CardObject : MonoBehaviour {
         cardID = -1;
         handID = -1;
         laneID = -1;
-        defaultStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
-        currentStatus = new CardStates() { HP = -1, ATK = -1, SIZE = -1 };
+        defaultStatus = new Dictionary<MonsterStatus, int>();
+        currentStatus = new Dictionary<MonsterStatus, int>();
         suportRole = CardSuportRole.None;
         cardType = CardType.None;
         playerType = PlayerType.None;
         spriteRenderer.sprite = null;
+    }
+
+    /// <summary>
+    /// モンスターとして出ているこのオブジェクトを破壊する
+    /// </summary>
+    public void DestroyMonster() {
+        // フィールドから墓地へIDの移動
+        AreaCardManager.instance.FieldToGrave(playerType, laneID);
+        // 自分自身の未使用化
+        CardObjectManager.instance.UnuseCardObject(this);
     }
 
     /// <summary>
@@ -168,5 +180,33 @@ public class CardObject : MonoBehaviour {
     /// <param name="imageID">画像のID(背面画像以外はカードIDと同じ)</param>
     public void ChangeCardImage(int imageID) {
         spriteRenderer.sprite = cardImageDatabase.GetCardImage(imageID);
+    }
+
+    /// <summary>
+    /// 指定したステータスをセット
+    /// </summary>
+    /// <param name="setStatus">セットするステータス</param>
+    /// <param name="setValue">セットする値</param>
+    public void SetStatus(MonsterStatus setStatus, int setValue) {
+        currentStatus[setStatus] = setValue;
+
+        // HPが0になった場合は破壊
+        if (currentStatus[MonsterStatus.HP] <= 0) {
+            DestroyMonster();
+        }
+    }
+
+    /// <summary>
+    /// 指定したステータスに与える
+    /// </summary>
+    /// <param name="giveStatus">与えるステータス</param>
+    /// <param name="giveValue">与える値</param>
+    public void GiveStatus(MonsterStatus giveStatus, int giveValue) {
+        currentStatus[giveStatus] += giveValue;
+
+        // HPが0になった場合は破壊
+        if (currentStatus[MonsterStatus.HP] <= 0) {
+            DestroyMonster();
+        }
     }
 }
