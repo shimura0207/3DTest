@@ -5,6 +5,7 @@
 
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 using static GameConst;
@@ -232,8 +233,10 @@ public class BattleSystemManager : MonoBehaviour {
             currentTurn++;
         }
         // プレイヤーのサイズ上限を上げる
+        // 1ターン目はスキップ
+        if (currentTurn <= 1) return;
         if (playerSizeLimit[turnPlayer] + SIZE_LIMIT_UP >= SIZE_LIMIT_MAX) {
-            currentTurn = SIZE_LIMIT_MAX;
+            playerSizeLimit[turnPlayer] = SIZE_LIMIT_MAX;
         }
         else {
             playerSizeLimit[turnPlayer] += SIZE_LIMIT_UP;
@@ -296,6 +299,8 @@ public class BattleSystemManager : MonoBehaviour {
         if (player != PlayerType.Self) return;
         var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
+
+        await UniTask.CompletedTask;
     }
 
     /// <summary>

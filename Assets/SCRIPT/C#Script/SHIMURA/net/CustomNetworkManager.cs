@@ -119,12 +119,6 @@ public class CustomNetworkManager : NetworkManager {
     /// 終了中の退出通知から、待機状態に戻さないために使う。
     /// </summary>
     private bool stopping;
-    private void Update() {
-        // Sキーを押した瞬間に1回だけATK情報を送信する
-        if (Input.GetKeyDown(KeyCode.S)) {
-            TestSendATK();
-        }
-    }
     // ============================================================
     // 通信開始
     // ============================================================
@@ -760,7 +754,7 @@ public class CustomNetworkManager : NetworkManager {
     /// <summary>
     /// 相手からstringを受信した瞬間に呼ばれるイベント。
     /// </summary>
-    public event Action<string> OnOpponentStringReceived;
+    //public event Action<string> OnOpponentStringReceived;
 
     // テスト用の文字列サイズ上限。
     // ネットワーク自体の上限ではなく、このゲームで設ける制限。
@@ -973,23 +967,6 @@ public class CustomNetworkManager : NetworkManager {
             return;
         }
         switch (useID) {
-
-            case NetworkUseID.atk:
-                NetworkReceiveProcessor.ReceiveAttack(values);
-                break;
-
-            case NetworkUseID.hp:
-                NetworkReceiveProcessor.ReceiveHP(values);
-                break;
-
-            case NetworkUseID.draw:
-                NetworkReceiveProcessor.ReceiveDraw(values);
-                break;
-
-            case NetworkUseID.samon:
-                NetworkReceiveProcessor.ReceiveSummon(values);
-                break;
-
             case NetworkUseID.deck:
                 AreaCardManager.instance.SetOpponentDeck(values);
                 break;
@@ -1024,23 +1001,6 @@ public class CustomNetworkManager : NetworkManager {
             case NetworkUseID.laneCange:
                 BattleSystemManager.instance.ReceiveOpponentLaneChange(values);
                 break;
-        }
-    }
-    /// <summary>
-    /// テスト送信：カードID「02」の攻撃力に500加算する情報を送ります。
-    /// </summary>
-    public void TestSendATK() {
-        string message = NetworkValueConverter.Pack(
-            NetworkUseID.atk, // 処理ID
-            "02",            // 対象カードID
-            500              // 加算値
-        );
-
-        if (SendStringToOpponent(message)) {
-            Debug.Log($"[ATK送信] {message}");
-        }
-        else {
-            Debug.LogWarning("[ATK送信失敗] マッチング状態を確認してください。");
         }
     }
 }

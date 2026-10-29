@@ -400,11 +400,6 @@ public enum AbilityProcess {
 /// 通信メッセージの先頭に付ける処理ID。
 /// </summary>
 public enum NetworkUseID {
-    atk,
-    hp,
-    draw,
-    samon,
-
     // デッキの送信
     deck,
     // パチスロフェイズへの移行ボタン
