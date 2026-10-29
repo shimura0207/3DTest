@@ -46,7 +46,9 @@ public class SlotReelController : MonoBehaviour {
 
     // 相手の操作を再生中か。
     private bool networkRemoteControl;
-
+    // 現在のパチスロフェイズ終了時の攻撃判定用状態。
+    public bool AttackRush { get; private set; }
+    public bool AttackNextRush { get; private set; }
     // リールロック演出中は停止入力を受け付けない。
     public bool NetworkReelLockRunning { get; private set; }
 
@@ -98,6 +100,10 @@ public class SlotReelController : MonoBehaviour {
     /// 相手を再生していた場合は、自分の状態へ戻します。
     /// </summary>
     public void EndNetworkPlayback() {
+        if (networkLocalControl || networkRemoteControl) {
+            AttackRush = rush;
+            AttackNextRush = nrush;
+        }
         if (networkRemoteControl) {
             rush = savedRush;
             nrush = savedNextRush;
