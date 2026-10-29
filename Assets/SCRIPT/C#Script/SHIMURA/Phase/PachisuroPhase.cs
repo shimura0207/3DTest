@@ -25,7 +25,6 @@ public class PachisuroPhase : PhaseBase {
 
     private bool entered;
     private bool finished;
-    private bool localTurn;
     private bool connectionWarningShown;
 
     public override void Setup() {
@@ -73,7 +72,6 @@ public class PachisuroPhase : PhaseBase {
 
         if (!entered) {
             entered = true;
-            localTurn = true;
 
             PachisuroNetworkSync.Instance.BeginLocalPhase();
             slot.BeginLocalPlayback();
@@ -106,7 +104,6 @@ public class PachisuroPhase : PhaseBase {
 
         if (!entered) {
             entered = true;
-            localTurn = false;
 
             slot.BeginRemotePlayback();
             PachisuroNetworkSync.Instance.BeginRemotePhase();
@@ -166,7 +163,6 @@ public class PachisuroPhase : PhaseBase {
 
         entered = false;
         finished = false;
-        localTurn = false;
 
         if (Instance == this) {
             Instance = null;

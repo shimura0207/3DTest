@@ -98,6 +98,8 @@ public class AudioManager : SystemObject {
         // 音声一覧を辞書へ登録し直す
         RebuildSoundTables();
         ApplyVolumes();
+
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
