@@ -94,12 +94,12 @@ public class RandomMatchingMenu : MenuWindowBase {
 
         // 通信が終了していた場合はエラーを表示する
         if (CustomNetworkManager.instance == null) {
-            ShowMessage("通信が終了しました。");
+            ShowMessage("通信が終了しました");
             return;
         }
 
         // 対戦相手が見つかったことを表示する
-        ShowMessage("対戦相手が見つかりました。");
+        ShowMessage("対戦相手が見つかりました");
 
         // ホストが先攻を決定し、クライアントへ送信する
         DecideFirstPlayer();
