@@ -135,6 +135,9 @@ public class AttackPhase : PhaseBase {
             damage *= 2;
         }
 
+        // ダメージ0なら攻撃はしない
+        if (damage <= 0) return;
+
         FieldLane frontLane = FieldLane.None;
         // 0除算回避
         if (card.laneID == 0) {
@@ -150,7 +153,6 @@ public class AttackPhase : PhaseBase {
         if (frontMonster) {
             // モンスターにダメージを与える
             frontMonster.GiveStatus(MonsterStatus.HP, -damage);
-
         }
         else {
             // プレイヤーにダメージを与える
