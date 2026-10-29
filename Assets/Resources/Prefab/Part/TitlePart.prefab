@@ -316,6 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   start: {fileID: 2446970069927516941}
+  titleLogo: {fileID: 4822078957293235731}
 --- !u!1 &7891194909185714652
 GameObject:
   m_ObjectHideFlags: 0
