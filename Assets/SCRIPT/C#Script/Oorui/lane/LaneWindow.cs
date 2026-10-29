@@ -41,6 +41,19 @@ public class LaneWindow : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public async UniTask Setup() {
+        // フィールド上のカード情報を取得
+        var fieldObjectList = CardObjectManager.instance.fieldObjectList;
+
+        // 自分のフィールドにカードがあるレーンのボタンを非表示にする
+        Lane1Button.gameObject.SetActive(fieldObjectList[PlayerType.Self][FieldLane.Lane1] == null);
+
+        Lane2Button.gameObject.SetActive(fieldObjectList[PlayerType.Self][FieldLane.Lane2] == null);
+
+        Lane3Button.gameObject.SetActive(fieldObjectList[PlayerType.Self][FieldLane.Lane3] == null);
+
+        Lane4Button.gameObject.SetActive(fieldObjectList[PlayerType.Self][FieldLane.Lane4] == null);
+
+        Lane5Button.gameObject.SetActive(fieldObjectList[PlayerType.Self][FieldLane.Lane5] == null);
 
         await UniTask.CompletedTask;
     }
@@ -97,6 +110,27 @@ public class LaneWindow : MenuWindowBase {
     private void OnClickLane5Button() {
         // Lane1が押されたことを返す
         completionSource.TrySetResult(FieldLane.Lane5);
+    }
+
+    /// 空いているレーンが存在するか確認する
+    /// </summary>
+    /// <returns>空きレーンがあればtrue</returns>
+    public bool HasEmptyLane() {
+
+        // CardObjectManagerが存在しなければ選択できない
+        if (CardObjectManager.instance == null) return false;
+
+        // 自分のフィールドの各レーンを確認
+        var fieldObjectList = CardObjectManager.instance.fieldObjectList[PlayerType.Self];
+
+        foreach (var card in fieldObjectList.Values) {
+
+            // カードが存在しないレーンがあれば空きあり
+            if (card == null) return true;
+        }
+
+        // すべてのレーンにカードがある
+        return false;
     }
 
 }

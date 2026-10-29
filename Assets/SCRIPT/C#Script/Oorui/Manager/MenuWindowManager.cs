@@ -128,9 +128,17 @@ public class MenuWindowManager : SystemObject {
 
         // メニューが見つからない場合は処理を終了
         if (laneWindow == null) {
-            return default;
+            return FieldLane.None;
         }
 
+        // 空きレーンがなければメニューを開かない
+        if (!laneWindow.HasEmptyLane()) {
+            Debug.Log("空いているレーンがありません。");
+            return FieldLane.None;
+        }
+
+        // レーンにカードがないか検索
+        await laneWindow.Setup();
         // レーンを選択するまで待機し、結果を返す
         return await laneWindow.OpenAndWaitForSelection();
     }
