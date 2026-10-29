@@ -113,6 +113,8 @@ public class CardObject : MonoBehaviour {
     public void DestroyMonster() {
         // フィールドから墓地へIDの移動
         AreaCardManager.instance.FieldToGrave(playerType, laneID);
+        // オブジェクトのフィールドを離れる処理
+        CardObjectManager.instance.LeaveFieldSetup(playerType, (FieldLane)laneID);
         // 自分自身の未使用化
         CardObjectManager.instance.UnuseCardObject(this);
     }
