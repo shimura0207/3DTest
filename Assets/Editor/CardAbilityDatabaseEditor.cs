@@ -88,7 +88,7 @@ public class CardAbilityDatabaseEditor : Editor {
                 };
 
                 // 設定したデータを追加
-                database.AddCardAbilityDataList(inputCardID, inputData);
+                database.AddCardAbilityDataList(inputCardID, inputAbilityID, inputData);
 
                 // 変更をアセットに保存
                 EditorUtility.SetDirty(database);

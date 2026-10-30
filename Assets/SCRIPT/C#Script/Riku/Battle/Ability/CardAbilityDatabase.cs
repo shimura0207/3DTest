@@ -48,26 +48,17 @@ public class CardAbilityDatabase : ScriptableObject {
     /// <summary>
     /// リストにデータ追加
     /// </summary>
-    /// <param name="addID"></param>
+    /// <param name="addCardID"></param>
     /// <param name="abilityData"></param>
-    public void AddCardAbilityDataList(int addID, AbilityData abilityData) {
+    public void AddCardAbilityDataList(int addCardID, int addAbilityID, AbilityData abilityData) {
         // カードデータを構造体にして追加
         CardAbilityData data = new CardAbilityData() {
-            cardID = addID,
+            cardID = addCardID,
             abilityList = new List<AbilityData>()
         };
         
         // リストに何もなければそのまま追加
         if (cardAbilityDataList.Count == 0) {
-            // 効果の番号より小さい番号にはnullを入れておく
-            //for (int i = 0; i < abilityID; i++) {
-            //    data.abilityList.Add(null);
-            //}
-            // 効果番号の位置に効果が設定される
-            //data.abilityList.Add(abilityFunc);
-            // 追加
-            //cardAbilityDataList.Add(data);
-
             // 効果リストに追加
             data.abilityList.Add(abilityData);
             // リストに追加
@@ -77,21 +68,7 @@ public class CardAbilityDatabase : ScriptableObject {
 
         // 同じカードIDに他の効果が入っている場合
         foreach (var card in cardAbilityDataList) {
-            if (card.cardID != addID) continue;
-
-            //// 追加したい効果番号がなかったらその番号までnullを詰めて追加
-            //if (card.abilityList.Count <= abilityID) {
-            //    // nullの敷き詰め
-            //    for (int i = 0; i < abilityID - card.abilityList.Count; i++) {
-            //        card.abilityList.Add(null);
-            //    }
-            //    // 効果番号の位置に効果が設定される
-            //    card.abilityList.Add(abilityFunc);
-            //}
-            //else {
-            //    // 追加したい効果番号に追加
-            //    card.abilityList[abilityID] = abilityFunc;
-            //}
+            if (card.cardID != addCardID) continue;
 
             // 効果リストに追加
             card.abilityList.Add(abilityData);
@@ -102,16 +79,9 @@ public class CardAbilityDatabase : ScriptableObject {
         int insertIndex = 0;
         // 追加データのIDより大きいIDが出てくるまでカウント
         while (cardAbilityDataList.Count > insertIndex &&
-               cardAbilityDataList[insertIndex].cardID < addID) {
+               cardAbilityDataList[insertIndex].cardID < addCardID) {
             insertIndex++;
         }
-        //// 効果の番号より小さい番号にはnullを入れておく
-        //for (int i = 0; i < abilityID; i++) {
-        //    data.abilityList.Add(null);
-        //}
-        //// 効果番号の位置に効果が設定される
-        //data.abilityList.Add(abilityFunc);
-
         // 効果リストに追加
         data.abilityList.Add(abilityData);
         // 適正な位置に追加

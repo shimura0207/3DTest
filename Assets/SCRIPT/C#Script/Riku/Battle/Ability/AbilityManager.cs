@@ -36,6 +36,4 @@ public class AbilityManager : MonoBehaviour {
     public void SetAblityQueue(Func<UniTask> setFunc) {
         abilityQueue.Enqueue(setFunc);
     }
-
-
 }

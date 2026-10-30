@@ -21,16 +21,6 @@ public class CardObject : MonoBehaviour {
     // レーンID(フィールド以外の場所にある場合は使わない)
     public int laneID { get; private set;  } = -1;
 
-    // カードのステータス
-    //public struct CardStates {
-    //    // HP
-    //    public int HP;
-    //    // 攻撃力
-    //    public int ATK;
-    //    // サイズ
-    //    public int SIZE;
-    //}
-
     // デフォルトのステータス
     public Dictionary<MonsterStatus, int> defaultStatus { get; private set; }
     // 現在のステータス
