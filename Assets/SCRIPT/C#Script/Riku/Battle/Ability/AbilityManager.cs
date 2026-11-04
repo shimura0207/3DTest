@@ -32,8 +32,14 @@ public class AbilityManager : MonoBehaviour {
     /// <summary>
     /// 効果実行処理
     /// </summary>
-    public void AbilityExecute() {
-
+    /// <returns></returns>
+    public async UniTask AbilityExecute() {
+        while (true) {
+            // 積まれた効果をひとつずつ発動
+            var ability = abilityQueue.Dequeue();
+            if (ability == null) break; 
+            await ability();
+        }
     }
 
     /// <summary>

@@ -321,8 +321,12 @@ public enum AbilityTiming {
     TurnStart,
     // カード使用時
     Play,
+    // 離れたとき
+    Leave,
     // 攻撃時
     Attack,
+    // 攻撃を受けたとき
+    GetHit,
     // ターン終了時
     TurnEnd,
 
