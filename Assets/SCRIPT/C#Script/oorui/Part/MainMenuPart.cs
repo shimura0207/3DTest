@@ -24,12 +24,25 @@ public class MainMenuPart : PartBase {
     [SerializeField] private Button gacha;
     // カード関連画面遷移ボタン
     [SerializeField] private Button card;
+    // チュートリアル遷移ボタン
+    [SerializeField] private Button tutorial;
 
     // プレイヤー名を表示するテキスト
     [SerializeField] private TMP_Text playerNameText;
 
     // 選択された遷移先
     private MainMenuSelect selectMenu = MainMenuSelect.None;
+    // 各ボタンの多角形判定
+    [SerializeField] private PolygonButtonHitArea matchingHitArea;
+    [SerializeField] private PolygonButtonHitArea optionHitArea;
+    [SerializeField] private PolygonButtonHitArea gachaHitArea;
+    [SerializeField] private PolygonButtonHitArea cardHitArea;
+    [SerializeField] private PolygonButtonHitArea tutorialArea;
+    /// <summary>
+    /// メニュー説明用テキスト
+    /// </summary>
+    [SerializeField] private TMP_Text menuDescriptionText;
+
 
     // 流すBGM
     private const string menuBGMName = "MainMenuBGM";
@@ -75,10 +88,33 @@ public class MainMenuPart : PartBase {
     /// メニューイベントを登録する
     /// </summary>
     private void RegisterMenuEvent() {
+        // クリックイベント
         matching.onClick.AddListener(OnMatchmakingSelected);
         option.onClick.AddListener(OnOptionSelected);
         gacha.onClick.AddListener(OnGachaSelected);
         card.onClick.AddListener(OnCartListSelected);
+        tutorial.onClick.AddListener(OnTutorialSelected);
+
+        // カーソルが重なったときのテキスト表示
+        matchingHitArea.OnHover += () => {
+            menuDescriptionText.text = "対戦相手を探し、対戦が可能です";
+        };
+
+        optionHitArea.OnHover += () => {
+            menuDescriptionText.text = "ゲームの設定、名前を変更が可能です";
+        };
+
+        gachaHitArea.OnHover += () => {
+            menuDescriptionText.text = "ガチャを引き、カードを取得することが可能です";
+        };
+
+        cardHitArea.OnHover += () => {
+            menuDescriptionText.text = "所持カードやデッキを確認可能です";
+        };
+
+        tutorialArea.OnHover += () => {
+            menuDescriptionText.text = "対戦の基本を学ぶことが可能です";
+        };
     }
 
     /// <summary>
@@ -123,6 +159,13 @@ public class MainMenuPart : PartBase {
                 await PartManager.Instance.TransitionPart(GamePart.Gacha);
 
                 break;
+
+            case MainMenuSelect.Tutorial:
+                // 再生中のBGMを停止する
+                AudioManager.instance.FadeOutBGM();
+                // チュートリアルパートへ遷移する
+                await PartManager.Instance.TransitionPart(GamePart.Tutorial);
+                break;
         }
     }
 
@@ -162,6 +205,12 @@ public class MainMenuPart : PartBase {
         selectMenu = MainMenuSelect.CardRelation;
     }
 
+    /// <summary>
+    /// チュートリアルメニューが選択された時の処理
+    /// </summary>
+    private void OnTutorialSelected() {
+        selectMenu = MainMenuSelect.Tutorial;
+    }
     /// <summary>
     /// 片付け処理
     /// </summary>

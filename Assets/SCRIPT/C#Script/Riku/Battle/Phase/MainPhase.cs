@@ -61,12 +61,13 @@ public class MainPhase : PhaseBase {
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
                         // レーン交換
-                        if (!LaneChange(ray)) resetPos = true;
+                        if (!LaneChange(ray))
+                            resetPos = true;
                     }
                     // カードが手札のものだった場合の処理
                     else if (cardObject.handID > -1){
                         // サイズが上限超過しないか
-                        if (cardObject.currentStatus.SIZE <= remainingSize) {
+                        if (cardObject.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
                             // カードを使用
                             UniTask task = PlayCard(cardObject.objectID);
                         }
@@ -154,6 +155,12 @@ public class MainPhase : PhaseBase {
             catchObject = hit.collider.gameObject;
             // オブジェクトのクラス取得
             cardObject = catchObject.GetComponent<CardObject>();
+            // 相手のカードなら掴まない
+            if (cardObject.playerType != PlayerType.Self) {
+                catchObject = null;
+                cardObject = null;
+                return;
+            }
             // 位置を保存
             catchStartPos = catchObject.transform.position;
         }

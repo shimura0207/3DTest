@@ -48,7 +48,8 @@ public enum MainMenuSelect {
     CardRelation,   // カード関連
     Gacha,          // ガチャ
     Title,          // タイトル
-    EndGame         // リザルト
+    EndGame,        // リザルト
+    Tutorial        // チュートリアル
 }
 
 /// <summary>
@@ -300,7 +301,7 @@ public enum SpecialAbility {
 /// </summary>
 public enum KeywordAbility {
     None = -1,
-    
+
     // アスリート(疲労しない)
     Athlete,
     // ターゲット集中(相手の攻撃を全て受ける)
@@ -420,4 +421,18 @@ public enum NetworkUseID {
     playCard,
     // モンスターのレーン交換
     laneCange,
+}
+
+/// <summary>
+/// モンスターのステータス
+/// @author Riku
+/// </summary>
+public enum MonsterStatus {
+    None = -1,
+
+    HP,
+    ATK,
+    SIZE,
+
+    Max,
 }
