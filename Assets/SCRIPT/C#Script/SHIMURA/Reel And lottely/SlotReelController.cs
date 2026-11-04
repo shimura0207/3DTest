@@ -62,7 +62,55 @@ public class SlotReelController : MonoBehaviour {
     private int savedSlotIndex;
     private PachisuroSymbolKoyakuEnum savedRole;
     private List<PachisuroSymbolKoyakuEnum> savedRoles;
+    /// <summary>
+    /// チュートリアル用の確定役。
+    /// 回転が正常に開始できたときだけ、先頭から1つ消費する。
+    /// </summary>
+    private readonly Queue<PachisuroSymbolKoyakuEnum> tutorialRoles =
+        new Queue<PachisuroSymbolKoyakuEnum>();
 
+    /// <summary>
+    /// 次に自分が回す5Gの役を指定する。
+    ///
+    /// ・引数の順番が1G目～5G目になる。
+    /// ・再度呼ぶと、残っている予約を新しい5Gで置き換える。
+    /// ・すでに回転中のGの役は変更しない。
+    /// ・5Gを消費すると通常抽選に戻る。
+    /// </summary>
+    public void SetTutorialRoles(
+        PachisuroSymbolKoyakuEnum first,
+        PachisuroSymbolKoyakuEnum second,
+        PachisuroSymbolKoyakuEnum third,
+        PachisuroSymbolKoyakuEnum fourth,
+        PachisuroSymbolKoyakuEnum fifth
+    ) {
+        var rolesToSet = new[] {
+        first, second, third, fourth, fifth
+    };
+
+        // 不正な指定の場合、現在の予約は変更しない。
+        foreach (var role in rolesToSet) {
+            if (role == PachisuroSymbolKoyakuEnum.NONE ||
+                !System.Enum.IsDefined(typeof(PachisuroSymbolKoyakuEnum), role)) {
+                Debug.LogError($"チュートリアルの役指定が不正です：{role}");
+                return;
+            }
+        }
+
+        tutorialRoles.Clear();
+
+        foreach (var role in rolesToSet) {
+            tutorialRoles.Enqueue(role);
+        }
+    }
+
+    /// <summary>
+    /// 未使用の確定役を破棄して、通常抽選へ戻す。
+    /// チュートリアルを途中終了するときにも呼ぶ。
+    /// </summary>
+    public void ClearTutorialRoles() {
+        tutorialRoles.Clear();
+    }
     /// <summary>
     /// 自分のパチスロ操作を開始します。
     /// </summary>
@@ -272,7 +320,20 @@ public class SlotReelController : MonoBehaviour {
     /// ここが未設定だと、そのリールは動きません。
     /// </summary>
     [SerializeField] private GameObject[] reels = new GameObject[3];
+    /// <summary>
+    /// trueなら通信なしで自分のリールを操作する。
+    /// パチスロフェイズ開始前に設定する。
+    /// </summary>
+    public bool IsTutorialMode { get; private set; }
 
+    public void SetTutorialMode(bool enabled) {
+        IsTutorialMode = enabled;
+
+        // 通常対戦へ確定役の予約を持ち越さない。
+        if (!enabled) {
+            ClearTutorialRoles();
+        }
+    }
     //============================================================
     // 役ごとの停止角度設定
     //============================================================
@@ -425,6 +486,21 @@ public class SlotReelController : MonoBehaviour {
             efectManager.HideTrumps();
 
         }
+        // Cキーで、通信しないチュートリアルモードへ変更。
+        if (Input.GetKeyDown(KeyCode.C)) {
+            SetTutorialMode(true);
+
+            // 次に回す5Gの役を指定。
+            SetTutorialRoles(
+                PachisuroSymbolKoyakuEnum.Bell,
+                PachisuroSymbolKoyakuEnum.Replay,
+                PachisuroSymbolKoyakuEnum.WeakCherry,
+                PachisuroSymbolKoyakuEnum.StrongCherry,
+                PachisuroSymbolKoyakuEnum.Seven
+            );
+
+            Debug.Log("チュートリアルモードON：次の5Gの役を設定しました。");
+        }
     }
 
     //============================================================
@@ -535,31 +611,54 @@ public class SlotReelController : MonoBehaviour {
     /// 抽選・回転開始が成功した場合だけ、相手へ送ります。
     /// </summary>
     public bool TryStartSpin() {
-        PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
-
+        // 通信の有無にかかわらず必要な確認。
         if (!networkLocalControl ||
-            sync == null ||
-            !sync.Connected ||
-            sync.HasError ||
+            !NetworkReady ||
             NetworkReelLockRunning ||
             slotIndex >= SLOT_TEARN_MAX_G) {
             return false;
         }
 
-        // 引数なしなので、自分側で役を抽選する。
-        if (!StartSpinCore())
+        PachisuroNetworkSync sync = null;
+
+        // 通常対戦のときだけ接続を確認する。
+        if (!IsTutorialMode) {
+            sync = PachisuroNetworkSync.Instance;
+
+            if (sync == null || !sync.Connected || sync.HasError)
+                return false;
+        }
+
+        // 予約がなければ通常抽選。
+        PachisuroSymbolKoyakuEnum? fixedRole =
+            tutorialRoles.Count > 0
+                ? (PachisuroSymbolKoyakuEnum?)tutorialRoles.Peek()
+                : null;
+
+        if (!StartSpinCore(fixedRole))
             return false;
 
-        sync.SendStart(
-            slotIndex,
-            currentSlotSymbolRole,
-            rush,
-            nrush,
-            currentTable
-        );
+        // 開始成功時だけ確定役を消費する。
+        if (fixedRole.HasValue) {
+            tutorialRoles.Dequeue();
+        }
+
+        // チュートリアルでは送信しない。
+        if (!IsTutorialMode) {
+            sync.SendStart(
+                slotIndex,
+                currentSlotSymbolRole,
+                rush,
+                nrush,
+                currentTable
+            );
+        }
 
         return true;
     }
+
+
+
     /// <summary>
     /// レバーON入力。
     /// 
@@ -789,16 +888,22 @@ public class SlotReelController : MonoBehaviour {
     /// 停止目標角度を計算し、その角度と回転速度を相手へ送ります。
     /// </summary>
     public bool TryReserveStop(int reelIndex) {
-        PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
-
         if (!networkLocalControl ||
             !NetworkReady ||
-            NetworkReelLockRunning ||
-            sync == null ||
-            !sync.Connected ||
-            sync.HasError) {
+            NetworkReelLockRunning) {
             return false;
         }
+
+        PachisuroNetworkSync sync = null;
+
+        if (!IsTutorialMode) {
+            sync = PachisuroNetworkSync.Instance;
+
+            if (sync == null || !sync.Connected || sync.HasError)
+                return false;
+        }
+
+        // この下のリール番号チェック・停止角度計算などは既存のまま。
 
         if (reelIndex < 0 || reelIndex >= reels.Length ||
             reels[reelIndex] == null) {
@@ -823,15 +928,23 @@ public class SlotReelController : MonoBehaviour {
         );
 
         state.ReserveStop(reelIndex, targetAngle);
+        // 停止予約自体は通常どおり行い、送信だけ省略する。
+        if (!IsTutorialMode) {
+            sync.SendStop(
+                slotIndex,
+                reelIndex,
+                targetAngle,
+                reelSpeeds[reelIndex]
+            );
 
-        // 現在角度ではなく、停止する予定の角度を送信する。
-        sync.SendStop(
-            slotIndex,
-            reelIndex,
-            targetAngle,
-            reelSpeeds[reelIndex]
-        );
-
+            // 現在角度ではなく、停止する予定の角度を送信する。
+            sync.SendStop(
+                slotIndex,
+                reelIndex,
+                targetAngle,
+                reelSpeeds[reelIndex]
+            );
+        }
         return true;
     }
     //============================================================
