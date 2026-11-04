@@ -13,8 +13,8 @@ using UnityEngine.UI;
 /// 新規デッキ編成を行う画面
 /// </summary>
 public class DeckBuildMenu : MenuWindowBase {
-    // デッキパートに戻るボタン
-    [SerializeField] private Button returnDeckPartButton;
+    // 保存ボタン
+    [SerializeField] private Button saveButton;
 
     // 選択された操作
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
@@ -24,10 +24,8 @@ public class DeckBuildMenu : MenuWindowBase {
     /// </summary>
     public override async UniTask Initialize() {
         await base.Initialize();
-
-        // ボタンイベントの二重登録を防止する
-        returnDeckPartButton.onClick.RemoveListener(OnReturnButton);
-        returnDeckPartButton.onClick.AddListener(OnReturnButton);
+        // ボタンのイベント登録、解除をまとめて行う
+        ALLListner();
     }
 
     /// <summary>
@@ -59,9 +57,19 @@ public class DeckBuildMenu : MenuWindowBase {
     }
 
     /// <summary>
+    /// ボタンイベントの登録、解除をまとめて行う
+    /// </summary>
+    private void ALLListner() {
+        // ボタンイベントの二重登録を防止する
+        // 保存ボタン
+        saveButton.onClick.RemoveListener(OnSaveButton);
+        saveButton.onClick.AddListener(OnSaveButton);
+    }
+
+    /// <summary>
     /// デッキパートに戻るボタンが押されたときの処理
     /// </summary>
-    private void OnReturnButton() {
+    private void OnSaveButton() {
         // 戻る操作を設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;
     }
