@@ -31,6 +31,14 @@ MonoBehaviour:
       abilityProcess: -1
       specialAbility: -1
       keywordAbility: 0
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 2
+      abilityTarget: 1
+      abilityCondition: 1
+      abilityProcess: 8
+      specialAbility: -1
+      keywordAbility: -1
   - cardID: 2
     abilityList:
     - abilityID: 2

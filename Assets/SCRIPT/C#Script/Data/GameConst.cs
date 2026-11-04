@@ -26,4 +26,7 @@ public class GameConst {
     public static readonly int SIZE_LIMIT_MAX = 10;
     // サイズ上限上昇値
     public static readonly int SIZE_LIMIT_UP = 2;
+
+    // 1ターンのスペル回数上限
+    public static readonly int SPELL_CAST_MAX = 3;
 }
