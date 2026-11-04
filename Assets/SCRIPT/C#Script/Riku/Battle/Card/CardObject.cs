@@ -19,7 +19,7 @@ public class CardObject : MonoBehaviour {
     // 手札ID(手札以外の場所にある場合は使わない)
     public int handID { get; private set; } = -1;
     // レーンID(フィールド以外の場所にある場合は使わない)
-    public int laneID { get; private set;  } = -1;
+    public int laneID { get; private set; } = -1;
 
     // デフォルトのステータス
     public Dictionary<MonsterStatus, int> defaultStatus { get; private set; }
@@ -31,10 +31,9 @@ public class CardObject : MonoBehaviour {
     public CardType cardType { get; private set; } = CardType.None;
     // 所有者
     public PlayerType playerType { get; private set; } = PlayerType.None;
+    // カードの効果
+    private List<CardAbilityDatabase.AbilityData> abilityList; 
 
-    // カードのイラストデータ
-    [SerializeField]
-    private CardImageDatabase cardImageDatabase = null;
     // SpriteRendererコンポーネント
     [SerializeField]
     private SpriteRenderer spriteRenderer = null;
@@ -45,6 +44,7 @@ public class CardObject : MonoBehaviour {
     public void Initialize() {
         defaultStatus = new Dictionary<MonsterStatus, int>();
         currentStatus = new Dictionary<MonsterStatus, int>();
+        abilityList = new List<CardAbilityDatabase.AbilityData>();
     }
 
     /// <summary>
@@ -72,12 +72,12 @@ public class CardObject : MonoBehaviour {
 
         // 相手のカードの場合はとりあえず裏面画像に設定
         if (playerType == PlayerType.Opponent) {
-            spriteRenderer.sprite = cardImageDatabase.GetCardImage(GameConst.BACK_IMAGE_ID);
+            spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(GameConst.BACK_IMAGE_ID);
         }
         // 自分のカードはIDから取得
         else if (playerType == PlayerType.Self) {
             // IDからイラストを取得
-            spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
+            spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(cardID);
         }
     }
 
@@ -94,6 +94,7 @@ public class CardObject : MonoBehaviour {
         suportRole = CardSuportRole.None;
         cardType = CardType.None;
         playerType = PlayerType.None;
+        abilityList = new List<CardAbilityDatabase.AbilityData>();
         spriteRenderer.sprite = null;
     }
 
@@ -171,7 +172,7 @@ public class CardObject : MonoBehaviour {
     /// </summary>
     /// <param name="imageID">画像のID(背面画像以外はカードIDと同じ)</param>
     public void ChangeCardImage(int imageID) {
-        spriteRenderer.sprite = cardImageDatabase.GetCardImage(imageID);
+        spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(imageID);
     }
 
     /// <summary>

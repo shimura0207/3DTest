@@ -349,21 +349,6 @@ public enum AbilityTarget {
 }
 
 /// <summary>
-/// 効果の発動条件
-/// @author Riku
-/// </summary>
-public enum AbilityCondition {
-    None = -1,
-
-    // 無条件
-    Free,
-    // 現在のサイズによって
-    CurrentSize,
-
-    Max,
-}
-
-/// <summary>
 /// 効果の発動内容
 /// @author Riku
 /// </summary>

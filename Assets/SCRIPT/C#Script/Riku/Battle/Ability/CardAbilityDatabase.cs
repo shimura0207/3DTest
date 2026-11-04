@@ -24,7 +24,6 @@ public class CardAbilityDatabase : ScriptableObject {
         // 通常効果用
         public AbilityTiming abilityTiming;
         public AbilityTarget abilityTarget;
-        public AbilityCondition abilityCondition;
         public AbilityProcess abilityProcess;
 
         // 特殊効果用

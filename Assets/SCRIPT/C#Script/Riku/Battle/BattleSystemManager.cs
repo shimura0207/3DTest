@@ -33,6 +33,8 @@ public class BattleSystemManager : MonoBehaviour {
     public Dictionary <PlayerType, int> playerSizeLimit { get; private set; } = null;
     // 現在のターン
     private int currentTurn = -1;
+    // スペルを唱えた回数
+    public int spellCastCount { get; private set; } = -1;
     // バチスロ移行フラグ
     private bool pachisuroGo = false;
     // ターンエンドフラグ
@@ -51,6 +53,7 @@ public class BattleSystemManager : MonoBehaviour {
         currentPhase = BattlePhase.None;
         battleState = BattleState.None;
         currentTurn = -1;
+        spellCastCount = -1;
         pachisuroGo = false;
         turnEnd = false;
     }
@@ -105,6 +108,8 @@ public class BattleSystemManager : MonoBehaviour {
         if (currentPhase == BattlePhase.EndPhase) {
             // ターンプレイヤー交代
             ChangeTurnPlayer();
+            // スペルの使用回数リセット
+            spellCastCount = 0;
             // スタートフェイズに戻る
             currentPhase = BattlePhase.StartPhase;
             
@@ -318,6 +323,8 @@ public class BattleSystemManager : MonoBehaviour {
         CardObjectManager.instance.UnuseCardObject(card);
         // 手札の整列
         CardObjectManager.instance.ArrangeHand(player);
+        // スペルの回数カウント
+        spellCastCount++;
 
         // 自身の処理なら相手に送る
         if (player != PlayerType.Self) return;

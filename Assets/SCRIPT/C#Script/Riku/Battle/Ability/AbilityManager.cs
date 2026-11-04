@@ -30,6 +30,13 @@ public class AbilityManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 効果実行処理
+    /// </summary>
+    public void AbilityExecute() {
+
+    }
+
+    /// <summary>
     /// 効果をキューに積む
     /// </summary>
     /// <param name="setFunc">発動効果</param>
