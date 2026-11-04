@@ -44,14 +44,8 @@ public class DeckBuildingPart : PartBase {
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
         isDeckBuild = false;
-
-        // ボタンイベントの二重登録を防ぐ
-        returnButton.onClick.RemoveListener(OnReturnMenuSelected);
-        returnButton.onClick.AddListener(OnReturnMenuSelected);
-
-        deckBuildButton.onClick.RemoveListener(OnDeckBuildSelected);
-        deckBuildButton.onClick.AddListener(OnDeckBuildSelected);
-
+        // ボタンのイベント登録、解除をまとめて行う
+        AllListner();
         Debug.Log("デッキ構築画面表示中");
     }
 
@@ -90,6 +84,20 @@ public class DeckBuildingPart : PartBase {
                     return;
             }
         }
+    }
+
+    /// <summary>
+    /// ボタンイベントの登録、解除をまとめて行う
+    /// </summary>
+    private void AllListner() {
+
+        // ボタンイベントの二重登録を防ぐ
+        // 戻るボタン
+        returnButton.onClick.RemoveListener(OnReturnMenuSelected);
+        returnButton.onClick.AddListener(OnReturnMenuSelected);
+        // デッキ編成
+        deckBuildButton.onClick.RemoveListener(OnDeckBuildSelected);
+        deckBuildButton.onClick.AddListener(OnDeckBuildSelected);
     }
 
     /// <summary>

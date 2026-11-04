@@ -1,13 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System;
+
 
 /// 多角形の内側だけをクリック可能にするUI判定クラス。
 /// 頂点はRectTransformのローカル座標で管理する。
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
-public class PolygonButtonHitArea : MonoBehaviour, ICanvasRaycastFilter {
+public class PolygonButtonHitArea : MonoBehaviour, ICanvasRaycastFilter, IPointerEnterHandler {
     // 頂点座標データ配列
     [SerializeField]
     private Vector2[] points ={
@@ -17,6 +18,16 @@ public class PolygonButtonHitArea : MonoBehaviour, ICanvasRaycastFilter {
         new Vector2( 100f,  50f),
         new Vector2( 100f, -50f)
     };
+
+    // カーソルが重なったときのイベント
+    public Action OnHover;
+
+    /// <summary>
+    /// カーソルが重なったときの処理
+    /// </summary>
+    public void OnPointerEnter(PointerEventData eventData) {
+        OnHover?.Invoke();
+    }
 
     /// <summary>
     /// InspectorやEditorから頂点配列を取得する。

@@ -30,6 +30,16 @@ public class MainMenuPart : PartBase {
 
     // 選択された遷移先
     private MainMenuSelect selectMenu = MainMenuSelect.None;
+    // 各ボタンの多角形判定
+    [SerializeField] private PolygonButtonHitArea matchingHitArea;
+    [SerializeField] private PolygonButtonHitArea optionHitArea;
+    [SerializeField] private PolygonButtonHitArea gachaHitArea;
+    [SerializeField] private PolygonButtonHitArea cardHitArea;
+    /// <summary>
+    /// メニュー説明用テキスト
+    /// </summary>
+    [SerializeField] private TMP_Text menuDescriptionText;
+
 
     // 流すBGM
     private const string menuBGMName = "MainMenuBGM";
@@ -75,10 +85,28 @@ public class MainMenuPart : PartBase {
     /// メニューイベントを登録する
     /// </summary>
     private void RegisterMenuEvent() {
+        // クリックイベント
         matching.onClick.AddListener(OnMatchmakingSelected);
         option.onClick.AddListener(OnOptionSelected);
         gacha.onClick.AddListener(OnGachaSelected);
         card.onClick.AddListener(OnCartListSelected);
+
+        // カーソルが重なったときのテキスト表示
+        matchingHitArea.OnHover += () => {
+            menuDescriptionText.text = "対戦相手を探し、対戦が可能です";
+        };
+
+        optionHitArea.OnHover += () => {
+            menuDescriptionText.text = "ゲームの設定、名前を変更が可能です";
+        };
+
+        gachaHitArea.OnHover += () => {
+            menuDescriptionText.text = "ガチャを引き、カードを取得することが可能です";
+        };
+
+        cardHitArea.OnHover += () => {
+            menuDescriptionText.text = "所持カードやデッキを確認可能です";
+        };
     }
 
     /// <summary>
@@ -161,6 +189,7 @@ public class MainMenuPart : PartBase {
         // 遷移先オプションに設定する
         selectMenu = MainMenuSelect.CardRelation;
     }
+
 
     /// <summary>
     /// 片付け処理
