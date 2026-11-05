@@ -298,12 +298,21 @@ public class BattleSystemManager : MonoBehaviour {
         AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
         // 指定されたレーンにカードを設置
         CardObjectManager.instance.MoveToField(player, objectID, lane);
-        // 効果発動確認(今後実装予定)
+        // 召喚時効果発動確認
+        foreach (var ability in card.abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Play) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(ability);
+        }
 
         // 自分の処理なら相手に送る
-        if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
-        CustomNetworkManager.instance.SendStringToOpponent(pack);
+        if (player == PlayerType.Self) {
+            var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
+            CustomNetworkManager.instance.SendStringToOpponent(pack);
+        }
+
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
 
         await UniTask.CompletedTask;
     }
@@ -315,8 +324,12 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="card">唱えるカードのオブジェクト</param>
     public void CastSpell(PlayerType player, CardObject card) {
         int objectID = card.objectID;
-        // 効果発動(今後実装予定)
-
+        // スペルの効果発動確認
+        foreach (var ability in card.abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Play) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(ability);
+        }
         // カードを手札から墓地に移動
         AreaCardManager.instance.HandToGrave(player, card.handID);
         // カードオブジェクトを未使用状態に
@@ -327,9 +340,13 @@ public class BattleSystemManager : MonoBehaviour {
         spellCastCount++;
 
         // 自身の処理なら相手に送る
-        if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, FieldLane.None);
-        CustomNetworkManager.instance.SendStringToOpponent(pack);
+        if (player == PlayerType.Self) {
+            var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, FieldLane.None);
+            CustomNetworkManager.instance.SendStringToOpponent(pack);
+        }
+
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
     }
 
 

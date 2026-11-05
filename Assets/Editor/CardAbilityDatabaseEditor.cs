@@ -21,8 +21,8 @@ public class CardAbilityDatabaseEditor : Editor {
     private AbilityType inputAbilityType = AbilityType.None;
     // 入力された特殊効果
     private SpecialAbility inputSpecialAbility = SpecialAbility.None;
-    // 入力されたキーワード効果
-    private KeywordAbility inputKeywordAbility = KeywordAbility.None;
+    // 入力された常在効果
+    private PassiveAbility inputPassiveAbility = PassiveAbility.None;
     // 入力された効果の発動タイミング
     private AbilityTiming inputAbilityTiming = AbilityTiming.None;
     // 入力された効果の発動対象
@@ -59,10 +59,10 @@ public class CardAbilityDatabaseEditor : Editor {
                 inputSpecialAbility = (SpecialAbility)UseEnumPopup(
                     "SpecialAbility", inputSpecialAbility);
                 break;
-            case AbilityType.Keyword:
-                // キーワード効果の設定
-                inputKeywordAbility = (KeywordAbility)UseEnumPopup(
-                    "KeywordAbility", inputKeywordAbility);
+            case AbilityType.Passive:
+                // 常在効果の設定
+                inputPassiveAbility = (PassiveAbility)UseEnumPopup(
+                    "PassiveAbility", inputPassiveAbility);
                 break;
         }
 
@@ -77,7 +77,7 @@ public class CardAbilityDatabaseEditor : Editor {
                     abilityTarget = inputAbilityTarget,
                     abilityProcess = inputAbilityProcess,
                     specialAbility = inputSpecialAbility,
-                    keywordAbility = inputKeywordAbility
+                    passiveAbility = inputPassiveAbility
                 };
 
                 // 設定したデータを追加
@@ -92,7 +92,7 @@ public class CardAbilityDatabaseEditor : Editor {
                 inputAbilityID = -1;
                 inputAbilityType = AbilityType.None;
                 inputSpecialAbility = SpecialAbility.None;
-                inputKeywordAbility = KeywordAbility.None;
+                inputPassiveAbility = PassiveAbility.None;
                 inputAbilityTiming = AbilityTiming.None;
                 inputAbilityTarget = AbilityTarget.None;
                 inputAbilityProcess = AbilityProcess.None;
@@ -127,8 +127,8 @@ public class CardAbilityDatabaseEditor : Editor {
                     case AbilityType.Special:
                         EditorGUILayout.LabelField("SpecialAbility", ability.specialAbility.ToString());
                         break;
-                    case AbilityType.Keyword:
-                        EditorGUILayout.LabelField("KeywordAbility", ability.keywordAbility.ToString());
+                    case AbilityType.Passive:
+                        EditorGUILayout.LabelField("PassiveAbility", ability.passiveAbility.ToString());
                         break;
                 }
                 // 登録されているデータを削除するボタン

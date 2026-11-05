@@ -3,6 +3,7 @@
  * @autor   Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -32,7 +33,7 @@ public class CardObject : MonoBehaviour {
     // 所有者
     public PlayerType playerType { get; private set; } = PlayerType.None;
     // カードの効果
-    private List<CardAbilityDatabase.AbilityData> abilityList; 
+    public List<CardAbilityDatabase.AbilityData> abilityList { get; private set; } 
 
     // SpriteRendererコンポーネント
     [SerializeField]
@@ -106,8 +107,36 @@ public class CardObject : MonoBehaviour {
         AreaCardManager.instance.FieldToGrave(playerType, laneID);
         // オブジェクトのフィールドを離れる処理
         CardObjectManager.instance.LeaveFieldSetup(playerType, (FieldLane)laneID);
+        // 離れた時効果発動確認
+        foreach (var ability in abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Leave) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(ability);
+        }
+        // 積まれた効果があれば発動
+        UniTask task =  AbilityManager.instance.AbilityExecute();
         // 自分自身の未使用化
         CardObjectManager.instance.UnuseCardObject(this);
+    }
+
+    /// <summary>
+    /// モンスターとして出ているこのオブジェクトを手札に戻す
+    /// </summary>
+    public void ReturnMonster() {
+        // フィールドから手札へIDの移動
+        AreaCardManager.instance.FieldToHand(playerType, laneID);
+        // オブジェクトのフィールドを離れる処理
+        CardObjectManager.instance.LeaveFieldSetup(playerType, (FieldLane)laneID);
+        // オブジェクトを手札へ移動
+        CardObjectManager.instance.MoveToHand(playerType, objectID);
+        // 離れた時効果発動確認
+        foreach (var ability in abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Leave) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(ability);
+        }
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
     }
 
     /// <summary>

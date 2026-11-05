@@ -138,6 +138,15 @@ public class AttackPhase : PhaseBase {
         // ダメージ0なら攻撃はしない
         if (damage <= 0) return;
 
+        // 攻撃時効果発動確認
+        foreach (var ability in card.abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Attack) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(ability);
+        }
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
+
         FieldLane frontLane = FieldLane.None;
         // 0除算回避
         if (card.laneID == 0) {
@@ -151,6 +160,14 @@ public class AttackPhase : PhaseBase {
 
         // 正面にモンスターがいる場合はモンスターに攻撃
         if (frontMonster) {
+            // 攻撃を受けた時効果発動確認
+            foreach (var ability in frontMonster.abilityList) {
+                if (ability.abilityTiming != AbilityTiming.GetHit) continue;
+                // 見つかった効果を積む
+                AbilityManager.instance.SetAblityQueue(ability);
+            }
+            // 積まれた効果があれば発動
+            task = AbilityManager.instance.AbilityExecute();
             // モンスターにダメージを与える
             frontMonster.GiveStatus(MonsterStatus.HP, -damage);
         }
