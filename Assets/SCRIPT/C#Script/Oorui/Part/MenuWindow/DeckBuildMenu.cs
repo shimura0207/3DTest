@@ -4,8 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,19 +12,49 @@ using UnityEngine.UI;
 /// 新規デッキ編成を行う画面
 /// </summary>
 public class DeckBuildMenu : MenuWindowBase {
+
+    // デッキ名入力欄
+    [SerializeField] private TMP_InputField deckNameInputField;
+
     // 保存ボタン
     [SerializeField] private Button saveButton;
 
+    // カード追加ボタン
+    [SerializeField] private Button addCardButton;
+
+    // カード削除ボタン
+    [SerializeField] private Button removeCardButton;
+
+    // 選択中カードの画像
+    [SerializeField] private Image selectedCardImage;
+
+    // デッキ編成専用の所持カード一覧
+    [SerializeField] private DeckBuildCardListView deckBuildCardListView;
+
+    // デッキに編成したカードの表示
+    [SerializeField] private DeckBuildView deckBuildView;
+
+    // 選択中カードのデッキ登録枚数表示
+    [SerializeField] private TMP_Text selectedCardCountText;
+
     // 選択された操作
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
+
+    // 現在選択されているカードID
+    private int selectedCardID = -1;
 
     /// <summary>
     /// 初期化処理
     /// </summary>
     public override async UniTask Initialize() {
+
         await base.Initialize();
-        // ボタンのイベント登録、解除をまとめて行う
+
+        // ボタンイベントを登録する
         ALLListner();
+
+        // カードクリック時の処理を登録する
+        deckBuildCardListView.SetCardClickAction(OnPossessionCardClicked);
     }
 
     /// <summary>
@@ -36,13 +65,35 @@ public class DeckBuildMenu : MenuWindowBase {
         // メニューを表示する
         await base.Open();
 
-        // 前回の選択状態を初期化する
+        // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
+        selectedCardID = -1;
+        // 選択中カードの枚数表示を初期化する
+        selectedCardCountText.text = "0";
+        // デッキのカードを初期化する
+        deckBuildView.ClearCards();
 
-        // ボタンが選択されるまで待機する
+        // 所持カード情報を最新の状態に更新する
+        deckBuildView.RefreshOwnedCardCounts();
+
+        // デッキ名を初期化する
+        deckNameInputField.text = "";
+
+        // 選択カード画像を初期化する
+        selectedCardImage.sprite = null;
+        selectedCardImage.enabled = false;
+
+        // カード操作ボタンを無効にする
+        addCardButton.interactable = false;
+        removeCardButton.interactable = false;
+
+        // 所持カード一覧を更新する
+        deckBuildCardListView.RefreshCards();
+
+        // 保存ボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
 
-        // 選択後にメニューを閉じる
+        // メニューを閉じる
         await Close();
     }
 
@@ -50,6 +101,7 @@ public class DeckBuildMenu : MenuWindowBase {
     /// メニューを閉じたときの処理
     /// </summary>
     public override async UniTask Close() {
+
         await base.Close();
 
         // 次回の入力待ちに備えて初期化する
@@ -57,20 +109,109 @@ public class DeckBuildMenu : MenuWindowBase {
     }
 
     /// <summary>
-    /// ボタンイベントの登録、解除をまとめて行う
+    /// ボタンイベントの登録、解除
     /// </summary>
     private void ALLListner() {
-        // ボタンイベントの二重登録を防止する
-        // 保存ボタン
+
+        // 二重登録を防止する
         saveButton.onClick.RemoveListener(OnSaveButton);
+        addCardButton.onClick.RemoveListener(OnAddCardButton);
+        removeCardButton.onClick.RemoveListener(OnRemoveCardButton);
+
+        // ボタンイベントを登録する
         saveButton.onClick.AddListener(OnSaveButton);
+        addCardButton.onClick.AddListener(OnAddCardButton);
+        removeCardButton.onClick.AddListener(OnRemoveCardButton);
     }
 
     /// <summary>
-    /// デッキパートに戻るボタンが押されたときの処理
+    /// 所持カードがクリックされたときの処理
+    /// </summary>
+    private void OnPossessionCardClicked(int cardID, Image cardImage) {
+        // 選択されたカードIDを保存する
+        selectedCardID = cardID;
+
+        // 選択されたカード画像を表示する
+        selectedCardImage.sprite = cardImage.sprite;
+        selectedCardImage.enabled = true;
+
+        // カード操作ボタンを有効にする
+        addCardButton.interactable = true;
+        removeCardButton.interactable = true;
+
+        // 選択中カードの登録枚数を表示する
+        UpdateSelectedCardCount();
+    }
+
+    /// <summary>
+    /// ＋ボタンが押されたときの処理
+    /// </summary>
+    private void OnAddCardButton() {
+
+        // カードが選択されていなければ終了する
+        if (selectedCardID < 0) return;
+
+        // デッキにカードを追加する
+        deckBuildView.AddCard(selectedCardID);
+
+        // 登録枚数を更新する
+        UpdateSelectedCardCount();
+    }
+
+    /// <summary>
+    /// －ボタンが押されたときの処理
+    /// </summary>
+    private void OnRemoveCardButton() {
+
+        // カードが選択されていなければ終了する
+        if (selectedCardID < 0) return;
+
+        // デッキからカードを1枚削除する
+        deckBuildView.RemoveCard(selectedCardID);
+
+        // 登録枚数を更新する
+        UpdateSelectedCardCount();
+    }
+
+    /// <summary>
+    /// 保存ボタンが押されたときの処理
     /// </summary>
     private void OnSaveButton() {
-        // 戻る操作を設定する
+
+        // 入力されたデッキ名を取得する
+        string deckName = deckNameInputField.text.Trim();
+
+        // デッキ名が空の場合は仮の名前を設定する
+        if (string.IsNullOrWhiteSpace(deckName)) {
+            deckName = "NoName";
+        }
+
+        // デッキに登録されているカードIDを取得する
+        var cardIDs = deckBuildView.GetCardIDs();
+
+        // デッキをセーブデータに保存する
+        SaveManager.Instance.SaveDeck(deckName, cardIDs);
+
+        // 保存操作を設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;
     }
+
+    /// <summary>
+    /// 選択中カードのデッキ登録枚数を表示する
+    /// </summary>
+    private void UpdateSelectedCardCount() {
+
+        // カードが選択されていなければ0を表示する
+        if (selectedCardID < 0) {
+            selectedCardCountText.text = "0";
+            return;
+        }
+
+        // 選択中カードの登録枚数を取得する
+        int count = deckBuildView.GetCardCount(selectedCardID);
+
+        // 登録枚数をテキストに反映する
+        selectedCardCountText.text = count.ToString();
+    }
+
 }

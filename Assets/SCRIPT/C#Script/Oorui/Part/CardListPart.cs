@@ -94,7 +94,6 @@ public class CardListPart : PartBase {
         // カード関連画面に遷移
         await PartManager.Instance.TransitionPart(GamePart.CardRelation);
 
-        // 現時点では追加の実行処理はない
         await UniTask.CompletedTask;
     }
 

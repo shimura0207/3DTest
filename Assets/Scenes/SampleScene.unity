@@ -425,7 +425,6 @@ MonoBehaviour:
   onBattleEnded:
     m_PersistentCalls:
       m_Calls: []
-  hostWaitSeconds: {x: 8, y: 15}
   retryDelaySeconds: {x: 0.5, y: 2}
   readyTimeoutSeconds: 15
   failedRoomCooldownSeconds: 20

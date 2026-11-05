@@ -4,11 +4,11 @@
  */
 
 using Cysharp.Threading.Tasks;
-using JetBrains.Annotations;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 /// <summary>
 /// デッキ構築パート
@@ -21,6 +21,15 @@ public class DeckBuildingPart : PartBase {
 
     // デッキ編成メニューを開くボタン
     [SerializeField] private Button deckBuildButton;
+
+    // デッキ一覧のContent
+    [SerializeField] private Transform deckButtonContent;
+
+    // デッキボタンのPrefab
+    [SerializeField] private Button deckButtonPrefab;
+
+    // 生成したデッキボタン一覧
+    private List<Button> deckButtons = new List<Button>();
 
     // デッキ編成ボタンが押されたかどうか
     private bool isDeckBuild = false;
@@ -40,12 +49,14 @@ public class DeckBuildingPart : PartBase {
     /// </summary>
     public override async UniTask Setup() {
         await base.Setup();
-
+        deckButtonPrefab.gameObject.SetActive(false);
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
         isDeckBuild = false;
         // ボタンのイベント登録、解除をまとめて行う
         AllListner();
+        // 保存済みデッキを表示する
+        RefreshDeckButtons();
         Debug.Log("デッキ構築画面表示中");
     }
 
@@ -69,7 +80,8 @@ public class DeckBuildingPart : PartBase {
 
                 // デッキ編成メニューを開き、閉じるまで待機する
                 await MenuWindowManager.Instance.Open<DeckBuildMenu>();
-
+                // メニューを閉じた後、保存済みデッキを再表示する
+                RefreshDeckButtons();
                 // メニューを閉じた後も、このパートの入力待ちを続ける
                 continue;
             }
@@ -85,6 +97,46 @@ public class DeckBuildingPart : PartBase {
             }
         }
     }
+
+    /// <summary>
+    /// 保存済みデッキのボタンを再生成する
+    /// </summary>
+    private void RefreshDeckButtons() {
+
+        // 前回生成したボタンをすべて削除する
+        foreach (Button button in deckButtons) {
+            Destroy(button.gameObject);
+        }
+
+        // ボタン一覧を初期化する
+        deckButtons.Clear();
+
+        // セーブデータを読み込む
+        PlayerSaveData saveData = SaveManager.Instance.Load();
+
+        // デッキ一覧が存在しない場合は終了する
+        if (saveData.deckList == null) {
+            return;
+        }
+
+        // 保存されているデッキの数だけボタンを生成する
+        foreach (DeckSaveData deckData in saveData.deckList) {
+
+            deckButtonPrefab.gameObject.SetActive(true);
+
+            // ボタン内のTextMeshProを取得する
+            TMP_Text buttonText = deckButtonPrefab.GetComponentInChildren<TMP_Text>();
+
+            // デッキ名を表示する
+            if (buttonText != null) {
+                buttonText.text = deckData.deckName;
+            }
+
+            // 生成したボタンを管理する
+            deckButtons.Add(deckButtonPrefab);
+        }
+    }
+
 
     /// <summary>
     /// ボタンイベントの登録、解除をまとめて行う

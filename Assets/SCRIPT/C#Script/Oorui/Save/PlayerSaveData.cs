@@ -21,4 +21,7 @@ public class PlayerSaveData {
 
     // 所持ポイント
     public int ownedPoint = 0;
+
+    // 作成したデッキ一覧
+    public List<DeckSaveData> deckList = new List<DeckSaveData>();
 }

@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -78,6 +79,38 @@ public class SaveManager : MonoBehaviour {
                 $"原因: {e}"
             );
         }
+    }
+
+    /// <summary>
+    /// デッキをセーブデータに追加する
+    /// </summary>
+    public void SaveDeck(string deckName, List<int> cardIDs) {
+
+        // デッキ名とカードIDが不正な場合は終了する
+        if (string.IsNullOrWhiteSpace(deckName) || cardIDs == null) return;
+
+        // 現在のセーブデータを読み込む
+        PlayerSaveData saveData = Load();
+
+        // デッキ一覧が初期化されていない場合は生成する
+        if (saveData.deckList == null) {
+            saveData.deckList = new System.Collections.Generic.List<DeckSaveData>();
+        }
+
+        // 新しいデッキデータを作成する
+        DeckSaveData deckData = new DeckSaveData();
+
+        // デッキ名を設定する
+        deckData.deckName = deckName;
+
+        // カードIDをコピーして登録する
+        deckData.cardIDs = new System.Collections.Generic.List<int>(cardIDs);
+
+        // デッキ一覧に追加する
+        saveData.deckList.Add(deckData);
+
+        // プレイヤーセーブデータとして保存する
+        Save(saveData);
     }
 
     /// <summary>

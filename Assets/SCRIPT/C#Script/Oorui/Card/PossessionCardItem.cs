@@ -27,6 +27,8 @@ public class PossessionCardItem : MonoBehaviour {
 
     // 所持枚数を外部から取得するためのプロパティ
     public int OwnedCount => ownedCount;
+    // カード画像を外部から取得するためのプロパティ
+    public Image CardImage => cardImage;
 
     /// <summary>
     /// カード画像と所持枚数を設定する
