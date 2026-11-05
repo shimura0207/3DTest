@@ -274,8 +274,8 @@ public enum AbilityType {
     Normal,
     // 組み合わせでは作れない複雑な特殊効果
     Special,
-    // キーワード効果
-    Keyword,
+    // 常在効果
+    Passive,
 
     Max,
 }
@@ -296,16 +296,16 @@ public enum SpecialAbility {
 }
 
 /// <summary>
-/// キーワード効果
+/// 常在効果
 /// @author Riku
 /// </summary>
-public enum KeywordAbility {
+public enum PassiveAbility {
     None = -1,
 
-    // アスリート(疲労しない)
-    Athlete,
-    // ターゲット集中(相手の攻撃を全て受ける)
-    TargetFocus,
+    // 疲労しない
+    NoFatigue,
+    // 攻撃によるダメージの軽減
+    AttackReduction,
 
     Max,
 }
@@ -321,8 +321,12 @@ public enum AbilityTiming {
     TurnStart,
     // カード使用時
     Play,
+    // 離れたとき
+    Leave,
     // 攻撃時
     Attack,
+    // 攻撃を受けたとき
+    GetHit,
     // ターン終了時
     TurnEnd,
 
@@ -342,8 +346,6 @@ public enum AbilityTarget {
     OpponentPlayer,
     // ランダム
     Random,
-    // 選択
-    Select,
 
     Max,
 }
@@ -377,6 +379,8 @@ public enum AbilityProcess {
     GiveState,
     // モンスター破壊
     DeleteMonster,
+    // モンスターを手札に戻す
+    ReturnMonster,
 
     Max,
 }
