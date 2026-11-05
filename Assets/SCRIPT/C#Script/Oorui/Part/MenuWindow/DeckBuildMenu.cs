@@ -50,11 +50,6 @@ public class DeckBuildMenu : MenuWindowBase {
 
         await base.Initialize();
 
-        // ボタンイベントを登録する
-        ALLListner();
-
-        // カードクリック時の処理を登録する
-        deckBuildCardListView.SetCardClickAction(OnPossessionCardClicked);
     }
 
     /// <summary>
@@ -64,6 +59,11 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // メニューを表示する
         await base.Open();
+        // ボタンイベントを登録する
+        ALLListner();
+
+        // カードクリック時の処理を登録する
+        deckBuildCardListView.SetCardClickAction(OnPossessionCardClicked);
 
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;

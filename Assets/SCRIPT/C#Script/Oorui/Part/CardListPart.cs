@@ -4,8 +4,6 @@
  */
 
 using Cysharp.Threading.Tasks;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
