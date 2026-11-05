@@ -8,7 +8,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Windows;
 
-
 /// <summary>
 /// CardAbilityDatabaseのエディター拡張
 /// </summary>
@@ -28,8 +27,6 @@ public class CardAbilityDatabaseEditor : Editor {
     private AbilityTiming inputAbilityTiming = AbilityTiming.None;
     // 入力された効果の発動対象
     private AbilityTarget inputAbilityTarget = AbilityTarget.None;
-    // 入力された効果の発動条件
-    private AbilityCondition inputAbilityCondition = AbilityCondition.None;
     // 入力された効果の発動内容
     private AbilityProcess inputAbilityProcess = AbilityProcess.None;
 
@@ -53,9 +50,6 @@ public class CardAbilityDatabaseEditor : Editor {
                 // 効果の発動対象の設定
                 inputAbilityTarget = (AbilityTarget)UseEnumPopup(
                     "AbilityTarget", inputAbilityTarget);
-                // 効果の発動条件の設定
-                inputAbilityCondition = (AbilityCondition)UseEnumPopup(
-                    "AbilityCondition", inputAbilityCondition);
                 // 効果の発動内容の設定
                 inputAbilityProcess = (AbilityProcess)UseEnumPopup(
                     "AbilityProcess", inputAbilityProcess);
@@ -81,14 +75,13 @@ public class CardAbilityDatabaseEditor : Editor {
                     abilityType = inputAbilityType,
                     abilityTiming = inputAbilityTiming,
                     abilityTarget = inputAbilityTarget,
-                    abilityCondition = inputAbilityCondition,
                     abilityProcess = inputAbilityProcess,
                     specialAbility = inputSpecialAbility,
                     keywordAbility = inputKeywordAbility
                 };
 
                 // 設定したデータを追加
-                database.AddCardAbilityDataList(inputCardID, inputData);
+                database.AddCardAbilityDataList(inputCardID, inputAbilityID, inputData);
 
                 // 変更をアセットに保存
                 EditorUtility.SetDirty(database);
@@ -102,7 +95,6 @@ public class CardAbilityDatabaseEditor : Editor {
                 inputKeywordAbility = KeywordAbility.None;
                 inputAbilityTiming = AbilityTiming.None;
                 inputAbilityTarget = AbilityTarget.None;
-                inputAbilityCondition = AbilityCondition.None;
                 inputAbilityProcess = AbilityProcess.None;
             }
             else {
@@ -130,7 +122,6 @@ public class CardAbilityDatabaseEditor : Editor {
                     case AbilityType.Normal:
                         EditorGUILayout.LabelField("AbilityTiming", ability.abilityTiming.ToString());
                         EditorGUILayout.LabelField("AbilityTarget", ability.abilityTarget.ToString());
-                        EditorGUILayout.LabelField("AbilityCondition", ability.abilityCondition.ToString());
                         EditorGUILayout.LabelField("AbilityProcess", ability.abilityProcess.ToString());
                         break;
                     case AbilityType.Special:

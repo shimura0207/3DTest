@@ -73,7 +73,11 @@ public class PachisuroPhase : PhaseBase {
         if (!entered) {
             entered = true;
 
-            PachisuroNetworkSync.Instance.BeginLocalPhase();
+            if (!slot.IsTutorialMode) {
+                PachisuroNetworkSync.Instance.BeginLocalPhase();
+            }
+
+            // 通信なしでも入力・回転を有効にするため必要。
             slot.BeginLocalPlayback();
         }
 
@@ -84,7 +88,10 @@ public class PachisuroPhase : PhaseBase {
             !slot.IsAnyReelRotating() &&
             !slot.NetworkReelLockRunning) {
             // 相手へ終了を知らせてから自分の状態を更新する。
-            if (PachisuroNetworkSync.Instance.SendEnd(slot.slotIndex)) {
+            // チュートリアルなら送信せず終了する。
+            // || の左側がtrueの場合、右側は実行されない。
+            if (slot.IsTutorialMode ||
+                PachisuroNetworkSync.Instance.SendEnd(slot.slotIndex)) {
                 finished = true;
 
                 // 自分のRUSH・テーブル更新は既存処理を使用する。
@@ -135,6 +142,13 @@ public class PachisuroPhase : PhaseBase {
             slot = SlotReelController.Instance;
         }
 
+        if (slot == null || !slot.NetworkReady)
+            return false;
+
+        // チュートリアルはリールの初期化が終わっていれば実行可能。
+        if (slot.IsTutorialMode)
+            return true;
+
         PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
 
         if (sync == null || !sync.Connected || sync.HasError) {
@@ -149,7 +163,7 @@ public class PachisuroPhase : PhaseBase {
             return false;
         }
 
-        return slot != null && slot.NetworkReady;
+        return true;
     }
 
     public override void Teardown() {
