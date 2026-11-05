@@ -492,10 +492,10 @@ public class SlotReelController : MonoBehaviour {
 
             // 次に回す5Gの役を指定。
             SetTutorialRoles(
-                PachisuroSymbolKoyakuEnum.Bell,
                 PachisuroSymbolKoyakuEnum.Replay,
                 PachisuroSymbolKoyakuEnum.WeakCherry,
-                PachisuroSymbolKoyakuEnum.StrongCherry,
+                PachisuroSymbolKoyakuEnum.Chance,
+                PachisuroSymbolKoyakuEnum.Seven,
                 PachisuroSymbolKoyakuEnum.Seven
             );
 
