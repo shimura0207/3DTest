@@ -111,7 +111,7 @@ public class CardObject : MonoBehaviour {
         foreach (var ability in abilityList) {
             if (ability.abilityTiming != AbilityTiming.Leave) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(ability);
+            AbilityManager.instance.SetAblityQueue(playerType, ability);
         }
         // 積まれた効果があれば発動
         UniTask task =  AbilityManager.instance.AbilityExecute();
@@ -133,7 +133,7 @@ public class CardObject : MonoBehaviour {
         foreach (var ability in abilityList) {
             if (ability.abilityTiming != AbilityTiming.Leave) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(ability);
+            AbilityManager.instance.SetAblityQueue(playerType, ability);
         }
         // 積まれた効果があれば発動
         UniTask task = AbilityManager.instance.AbilityExecute();

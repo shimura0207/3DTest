@@ -17,6 +17,9 @@ public class AbilityManager : MonoBehaviour {
     // 自身への参照
     public static AbilityManager instance { get; private set; } = null;
 
+    // 効果データ
+    private AbilityProcessData abilityProcessData = null;
+
     // 発動待機効果
     private Queue<Func<UniTask>> abilityQueue = null;
 
@@ -25,6 +28,7 @@ public class AbilityManager : MonoBehaviour {
     /// </summary>
     public void Initialize() {
         instance = this;
+        abilityProcessData = new AbilityProcessData();
 
         abilityQueue = new Queue<Func<UniTask>>();
     }
@@ -52,14 +56,15 @@ public class AbilityManager : MonoBehaviour {
     /// 効果をキューに積む
     /// </summary>
     /// <param name="ability">発動する効果</param>
-    public void SetAblityQueue(CardAbilityDatabase.AbilityData ability) {
+    /// <param name="player">発動させたプレイヤー</param>
+    public void SetAblityQueue(PlayerType player, CardAbilityDatabase.AbilityData ability) {
         Func<UniTask> func = null;
         switch (ability.abilityType) {
             case AbilityType.Normal:
-                func = GetNormalAbility(ability.abilityTiming, ability.abilityTarget, ability.abilityProcess);
+                func = GetNormalAbility(player, ability.abilityTiming, ability.abilityTarget, ability.abilityProcess);
                 break;
             case AbilityType.Special:
-                func = GetSpecialAbility(ability.specialAbility);
+                func = GetSpecialAbility(player, ability.specialAbility);
                 break;
         }
         abilityQueue.Enqueue(func);
@@ -68,14 +73,17 @@ public class AbilityManager : MonoBehaviour {
     /// <summary>
     /// 通常効果の取得
     /// </summary>
+    /// <param name="player">発動させたプレイヤー</param>
     /// <param name="timig">効果タイミング</param>
     /// <param name="target">効果対象</param>
     /// <param name="process">効果内容</param>
     /// <returns></returns>
-    private Func<UniTask> GetNormalAbility(AbilityTiming timig, AbilityTarget target, AbilityProcess process) {
+    private Func<UniTask> GetNormalAbility(PlayerType player, AbilityTiming timig, AbilityTarget target, AbilityProcess process) {
         Func<UniTask> func = null;
+        // ラムダ式で引数を固定して代入する
         switch (process) {
             case AbilityProcess.Draw:
+                func = () => abilityProcessData.DrawAbility(player);
                 break;
             case AbilityProcess.Search:
                 break;
@@ -104,9 +112,10 @@ public class AbilityManager : MonoBehaviour {
     /// <summary>
     /// 特殊効果の取得
     /// </summary>
+    /// <param name="player">発動させたプレイヤー</param>
     /// <param name="ability">効果</param>
     /// <returns></returns>
-    private Func<UniTask> GetSpecialAbility(SpecialAbility ability) {
+    private Func<UniTask> GetSpecialAbility(PlayerType player, SpecialAbility ability) {
         Func<UniTask> func = null;
         switch (ability) {
             case SpecialAbility.Isuka1:

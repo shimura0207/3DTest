@@ -33,8 +33,14 @@ public class MainGamePart : PartBase {
     // カードオブジェクト管理のPrefab
     [SerializeField]
     private GameObject cardObjectManagerPrefab = null;
-    // 生成したカード管理のインスタンス
+    // 生成したカードオブジェクト管理のインスタンス
     private CardObjectManager cardObjectManager = null;
+
+    // カード効果管理のPrefab
+    [SerializeField]
+    private GameObject abilityManagerPrefab = null;
+    // 生成したカード効果管理のインスタンス
+    private AbilityManager abilityManager = null;
 
     [SerializeField]
     private GameObject patisuro = null;
@@ -144,6 +150,17 @@ public class MainGamePart : PartBase {
             if (cardObjectManager == null) return;
             // カード管理を初期化
             cardObjectManager.Initialize();
+        }
+        // カード効果管理のPrefabを作成
+        if (abilityManagerPrefab != null) {
+            // 自身の傘下に生成
+            GameObject abilityObject = Instantiate(abilityManagerPrefab, transform);
+            // 生成したオブジェクトから管理コンポーネントを取得
+            abilityManager = abilityObject.GetComponent<AbilityManager>();
+            // 管理コンポーネントが取得できたか確認
+            if (abilityManager == null) return;
+            // カード効果管理を初期化
+            abilityManager.Initialize();
         }
     }
 

@@ -89,7 +89,7 @@ public class MainPhase : PhaseBase {
                     // カードが手札のものだった場合の処理
                     else if (cardObject.handID > -1) {
                         // カードを使用
-                        UniTask task = PlayCard();
+                        UniTask task = PlayCard(cardObject);
                     }
                 }
                 // フィールド外で離したら元の位置に戻る
@@ -114,21 +114,21 @@ public class MainPhase : PhaseBase {
     /// <summary>
     /// カードの使用
     /// </summary>
-    /// <param name="objectID">使用するオブジェクトのID</param>
+    /// <param name="card">使用するオブジェクトのID</param>
     /// <returns></returns>
-    private async UniTask PlayCard() {
-        if (!cardObject) return;
+    private async UniTask PlayCard(CardObject card) {
+        if (!card) return;
         // カードタイプによって分岐
-        switch (cardObject.cardType) {
+        switch (card.cardType) {
             case CardType.Monster:
                 // 残りのサイズ取得
                 int remainingSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
                 // サイズが上限超過しないか
-                if (cardObject.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
+                if (card.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
                     // レーン設置ウィンドウを出す
                     FieldLane lane = await MenuWindowManager.Instance.LaneMenuOpen();
                     // モンスター召喚
-                    await BattleSystemManager.instance.SummonMonster(PlayerType.Self, cardObject, lane);
+                    await BattleSystemManager.instance.SummonMonster(PlayerType.Self, card, lane);
                     Debug.Log("モンスター召喚！！");
                 }
                 else {
@@ -140,7 +140,7 @@ public class MainPhase : PhaseBase {
                 // スペルの回数上限に引っかからないか
                 if (BattleSystemManager.instance.spellCastCount < GameConst.SPELL_CAST_MAX) {
                     // スペルを唱える
-                    BattleSystemManager.instance.CastSpell(PlayerType.Self, cardObject);
+                    BattleSystemManager.instance.CastSpell(PlayerType.Self, card);
                     Debug.Log("スペル発動！！");
                 }
                 else {
