@@ -29,8 +29,8 @@ public class CardAbilityDatabase : ScriptableObject {
         // 特殊効果用
         public SpecialAbility specialAbility;
 
-        // キーワード効果用
-        public KeywordAbility keywordAbility;
+        // 常在効果用
+        public PassiveAbility passiveAbility;
     }
     [System.Serializable]
     public struct CardAbilityData {

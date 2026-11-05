@@ -34,6 +34,30 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
+        // カード操作
+        CardControl();
+
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
+
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 相手のターン処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask OpponentExecute() {
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
+
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// カード操作
+    /// </summary>
+    private void CardControl() {
         // マウスカーソルのスクリーン座標取得
         Vector3 mousePos = Input.mousePosition;
         // スクリーン座標からレイを取得
@@ -55,7 +79,7 @@ public class MainPhase : PhaseBase {
                 int fieldLayer = LayerMask.GetMask("Field");
                 // フィールドとのレイキャスト
                 if (Physics.Raycast(
-                    ray,RAY_RANGE_MAX,fieldLayer)) {
+                    ray, RAY_RANGE_MAX, fieldLayer)) {
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
                         // レーン交換
@@ -63,7 +87,7 @@ public class MainPhase : PhaseBase {
                             resetPos = true;
                     }
                     // カードが手札のものだった場合の処理
-                    else if (cardObject.handID > -1){
+                    else if (cardObject.handID > -1) {
                         // カードを使用
                         UniTask task = PlayCard();
                     }
@@ -85,15 +109,6 @@ public class MainPhase : PhaseBase {
                 catchStartPos = Vector3.zero;
             }
         }
-        await UniTask.CompletedTask;
-    }
-
-    /// <summary>
-    /// 相手のターン処理
-    /// </summary>
-    /// <returns></returns>
-    public override async UniTask OpponentExecute() {
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
