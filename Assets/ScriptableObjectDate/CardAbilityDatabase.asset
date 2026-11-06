@@ -22,6 +22,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 104
     abilityList:
     - abilityID: 104
@@ -31,6 +32,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 107
     abilityList:
     - abilityID: 107
@@ -40,6 +42,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 108
     abilityList:
     - abilityID: 108
@@ -49,6 +52,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 109
     abilityList:
     - abilityID: 109
@@ -58,6 +62,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 110
     abilityList:
     - abilityID: 110
@@ -67,6 +72,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 120
     abilityList:
     - abilityID: 120
@@ -76,6 +82,7 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 0
   - cardID: 121
     abilityList:
     - abilityID: 121
@@ -85,3 +92,4 @@ MonoBehaviour:
       abilityProcess: 0
       specialAbility: -1
       passiveAbility: -1
+      abilityValue: 5

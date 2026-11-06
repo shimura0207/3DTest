@@ -31,6 +31,9 @@ public class CardAbilityDatabase : ScriptableObject {
 
         // 常在効果用
         public PassiveAbility passiveAbility;
+
+        // 効果の値(ドロー枚数やダメージ数などに用いる)
+        public int abilityValue;
     }
     [System.Serializable]
     public struct CardAbilityData {

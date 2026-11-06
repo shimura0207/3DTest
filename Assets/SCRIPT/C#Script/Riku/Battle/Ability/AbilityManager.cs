@@ -61,7 +61,7 @@ public class AbilityManager : MonoBehaviour {
         Func<UniTask> func = null;
         switch (ability.abilityType) {
             case AbilityType.Normal:
-                func = GetNormalAbility(player, ability.abilityTiming, ability.abilityTarget, ability.abilityProcess);
+                func = GetNormalAbility(player, ability.abilityTiming, ability.abilityTarget, ability.abilityProcess, ability.abilityValue);
                 break;
             case AbilityType.Special:
                 func = GetSpecialAbility(player, ability.specialAbility);
@@ -77,13 +77,14 @@ public class AbilityManager : MonoBehaviour {
     /// <param name="timig">効果タイミング</param>
     /// <param name="target">効果対象</param>
     /// <param name="process">効果内容</param>
+    /// <param name="value">効果値</param>
     /// <returns></returns>
-    private Func<UniTask> GetNormalAbility(PlayerType player, AbilityTiming timig, AbilityTarget target, AbilityProcess process) {
+    private Func<UniTask> GetNormalAbility(PlayerType player, AbilityTiming timig, AbilityTarget target, AbilityProcess process, int value) {
         Func<UniTask> func = null;
         // ラムダ式で引数を固定して代入する
         switch (process) {
             case AbilityProcess.Draw:
-                func = () => abilityProcessData.DrawAbility(player);
+                func = () => abilityProcessData.DrawAbility(player, value);
                 break;
             case AbilityProcess.Search:
                 break;
