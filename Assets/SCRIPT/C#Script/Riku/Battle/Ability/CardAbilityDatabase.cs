@@ -26,9 +26,6 @@ public class CardAbilityDatabase : ScriptableObject {
         public AbilityTarget abilityTarget;
         public AbilityProcess abilityProcess;
 
-        // 特殊効果用
-        public SpecialAbility specialAbility;
-
         // 常在効果用
         public PassiveAbility passiveAbility;
 

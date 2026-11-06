@@ -23,7 +23,7 @@ public class EndPhase : PhaseBase {
             foreach (var ability in monster.Value.abilityList) {
                 if (ability.abilityTiming != AbilityTiming.TurnEnd) continue;
                 // 見つかったターン開始時効果を積む
-                AbilityManager.instance.SetAblityQueue(monster.Value.playerType, ability);
+                AbilityManager.instance.SetAblityQueue(monster.Value, ability);
             }
         }
 
@@ -48,7 +48,7 @@ public class EndPhase : PhaseBase {
             foreach (var ability in monster.Value.abilityList) {
                 if (ability.abilityTiming != AbilityTiming.TurnEnd) continue;
                 // 見つかったターン開始時効果を積む
-                AbilityManager.instance.SetAblityQueue(monster.Value.playerType, ability);
+                AbilityManager.instance.SetAblityQueue(monster.Value, ability);
             }
         }
 

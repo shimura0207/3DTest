@@ -19,8 +19,6 @@ public class CardAbilityDatabaseEditor : Editor {
     private int inputAbilityID = -1;
     // 入力されたカード効果の種類
     private AbilityType inputAbilityType = AbilityType.None;
-    // 入力された特殊効果
-    private SpecialAbility inputSpecialAbility = SpecialAbility.None;
     // 入力された常在効果
     private PassiveAbility inputPassiveAbility = PassiveAbility.None;
     // 入力された効果の発動タイミング
@@ -58,11 +56,6 @@ public class CardAbilityDatabaseEditor : Editor {
                 // 効果の値設定
                 inputAbilityValue = EditorGUILayout.IntField("Value", inputAbilityValue);
                 break;
-            case AbilityType.Special:
-                // 特殊効果の設定
-                inputSpecialAbility = (SpecialAbility)UseEnumPopup(
-                    "SpecialAbility", inputSpecialAbility);
-                break;
             case AbilityType.Passive:
                 // 常在効果の設定
                 inputPassiveAbility = (PassiveAbility)UseEnumPopup(
@@ -80,7 +73,6 @@ public class CardAbilityDatabaseEditor : Editor {
                     abilityTiming = inputAbilityTiming,
                     abilityTarget = inputAbilityTarget,
                     abilityProcess = inputAbilityProcess,
-                    specialAbility = inputSpecialAbility,
                     passiveAbility = inputPassiveAbility,
                     abilityValue = inputAbilityValue,
                 };
@@ -96,7 +88,6 @@ public class CardAbilityDatabaseEditor : Editor {
                 inputCardID = -1;
                 inputAbilityID = -1;
                 inputAbilityType = AbilityType.None;
-                inputSpecialAbility = SpecialAbility.None;
                 inputPassiveAbility = PassiveAbility.None;
                 inputAbilityTiming = AbilityTiming.None;
                 inputAbilityTarget = AbilityTarget.None;
@@ -131,9 +122,6 @@ public class CardAbilityDatabaseEditor : Editor {
                         EditorGUILayout.LabelField("AbilityTarget", ability.abilityTarget.ToString());
                         EditorGUILayout.LabelField("AbilityProcess", ability.abilityProcess.ToString());
                         EditorGUILayout.LabelField($"Value: {ability.abilityValue}");
-                        break;
-                    case AbilityType.Special:
-                        EditorGUILayout.LabelField("SpecialAbility", ability.specialAbility.ToString());
                         break;
                     case AbilityType.Passive:
                         EditorGUILayout.LabelField("PassiveAbility", ability.passiveAbility.ToString());

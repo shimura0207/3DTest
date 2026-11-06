@@ -302,7 +302,7 @@ public class BattleSystemManager : MonoBehaviour {
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Play) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(card.playerType, ability);
+            AbilityManager.instance.SetAblityQueue(card, ability);
         }
 
         // 自分の処理なら相手に送る
@@ -328,7 +328,7 @@ public class BattleSystemManager : MonoBehaviour {
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Play) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(card.playerType, ability);
+            AbilityManager.instance.SetAblityQueue(card, ability);
         }
         // カードを手札から墓地に移動
         AreaCardManager.instance.HandToGrave(player, card.handID);

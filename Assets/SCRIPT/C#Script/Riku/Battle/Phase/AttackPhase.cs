@@ -142,7 +142,7 @@ public class AttackPhase : PhaseBase {
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Attack) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(card.playerType, ability);
+            AbilityManager.instance.SetAblityQueue(card, ability);
         }
         // 積まれた効果があれば発動
         UniTask task = AbilityManager.instance.AbilityExecute();
@@ -164,7 +164,7 @@ public class AttackPhase : PhaseBase {
             foreach (var ability in frontMonster.abilityList) {
                 if (ability.abilityTiming != AbilityTiming.GetHit) continue;
                 // 見つかった効果を積む
-                AbilityManager.instance.SetAblityQueue(frontMonster.playerType, ability);
+                AbilityManager.instance.SetAblityQueue(frontMonster, ability);
             }
             // 積まれた効果があれば発動
             task = AbilityManager.instance.AbilityExecute();
