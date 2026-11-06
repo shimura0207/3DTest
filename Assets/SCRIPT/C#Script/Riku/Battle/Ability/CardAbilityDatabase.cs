@@ -101,4 +101,20 @@ public class CardAbilityDatabase : ScriptableObject {
         if (cardAbilityDataList[cardIndex].abilityList.Count > 0) return;
         cardAbilityDataList.RemoveAt(cardIndex);
     }
+
+    /// <summary>
+    /// カードの効果取得
+    /// </summary>
+    /// <param name="cardID">カードのID</param>
+    /// <returns></returns>
+    public List<AbilityData> GetCardAbility(int cardID) {
+        // カードIDが一致するものを探す
+        foreach (var data in cardAbilityDataList) {
+            // カードIDが一致したので効果を渡す
+            if (data.cardID == cardID)
+                return data.abilityList;
+        }
+        // 一致するものがなかった
+        return null;
+    }
 }

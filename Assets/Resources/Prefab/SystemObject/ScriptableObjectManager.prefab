@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardImageDatabase: {fileID: 11400000, guid: 2e9a70f01b9983446a557d96bbab68e7, type: 2}
+  cardAbilityDatabase: {fileID: 11400000, guid: ac71311c7b19cd440b40d1c82d2c5b49, type: 2}

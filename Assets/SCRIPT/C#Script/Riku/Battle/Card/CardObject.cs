@@ -80,6 +80,11 @@ public class CardObject : MonoBehaviour {
             // IDからイラストを取得
             spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(cardID);
         }
+
+        // IDから効果を取得
+        abilityList = ScriptableObjectManager.instance.GetCardAbility(cardID);
+        // nullだったら空を入れとく
+        if (abilityList == null) abilityList = new List<CardAbilityDatabase.AbilityData>();
     }
 
     /// <summary>
