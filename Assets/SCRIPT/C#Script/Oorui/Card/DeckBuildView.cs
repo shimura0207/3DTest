@@ -30,7 +30,7 @@ public class DeckBuildView : MonoBehaviour {
     // カードIDごとの所持枚数
     private readonly Dictionary<int, int> ownedCardCounts = new Dictionary<int, int>();
 
-    // デッキに登録されているカードID（重複を含む）
+    // デッキに登録されているカードID
     private readonly List<int> deckCardIDs = new List<int>();
 
     // 所持カード情報を読み込み済みかどうか

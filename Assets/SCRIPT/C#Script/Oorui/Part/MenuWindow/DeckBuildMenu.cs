@@ -37,6 +37,9 @@ public class DeckBuildMenu : MenuWindowBase {
     // 選択中カードのデッキ登録枚数表示
     [SerializeField] private TMP_Text selectedCardCountText;
 
+    // 戻るボタン
+    [SerializeField] private Button returnButton;
+
     // 選択された操作
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
 
@@ -46,13 +49,26 @@ public class DeckBuildMenu : MenuWindowBase {
     // 現在選択されているカードID
     private int selectedCardID = -1;
 
+    // カードの最大枚数
+    private const int _DECKCARD_MAXNUM = 30;
+    // 保存ボタンの元の色設定
+    private ColorBlock defaultSaveButtonColors;
+    // 保存ボタン内のテキスト
+    [SerializeField] private TMP_Text saveButtonText;
+
+    // 保存ボタン内のテキストの元の色
+    private Color defaultSaveButtonTextColor;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
     public override async UniTask Initialize() {
-
         await base.Initialize();
+        // 保存ボタンの初期色を保存する
+        defaultSaveButtonColors = saveButton.colors;
 
+        // 保存ボタンのテキストの初期色を保存する
+        defaultSaveButtonTextColor = saveButtonText.color;
     }
 
     /// <summary>
@@ -75,7 +91,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // カードクリック時の処理を登録する
         deckBuildCardListView.SetCardClickAction(OnPossessionCardClicked);
-
+        // 保存ボタンの色を更新する
+        UpdateSaveButtonColor();
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
         selectedCardID = -1;
@@ -141,11 +158,13 @@ public class DeckBuildMenu : MenuWindowBase {
         saveButton.onClick.RemoveListener(OnSaveButton);
         addCardButton.onClick.RemoveListener(OnAddCardButton);
         removeCardButton.onClick.RemoveListener(OnRemoveCardButton);
+        returnButton.onClick.RemoveListener(OnReturnButton);
 
         // ボタンイベントを登録する
         saveButton.onClick.AddListener(OnSaveButton);
         addCardButton.onClick.AddListener(OnAddCardButton);
         removeCardButton.onClick.AddListener(OnRemoveCardButton);
+        returnButton.onClick.AddListener(OnReturnButton);
     }
 
     /// <summary>
@@ -174,12 +193,18 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // カードが選択されていなければ終了する
         if (selectedCardID < 0) return;
+        // デッキに登録されているカードIDを取得する
+        var cardIDs = deckBuildView.GetCardIDs();
+        // 登録されたカードが30枚より多ければ抜ける
+        if (cardIDs.Count > _DECKCARD_MAXNUM) return;
 
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
 
         // 登録枚数を更新する
         UpdateSelectedCardCount();
+        // 保存ボタンの色を更新する
+        UpdateSaveButtonColor();
     }
 
     /// <summary>
@@ -195,6 +220,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // 登録枚数を更新する
         UpdateSelectedCardCount();
+        // 保存ボタンの色を更新する
+        UpdateSaveButtonColor();
     }
 
     /// <summary>
@@ -211,6 +238,12 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // デッキに登録されているカードIDを取得する
         var cardIDs = deckBuildView.GetCardIDs();
+
+        if(cardIDs.Count < _DECKCARD_MAXNUM) {
+            // カード枚数が少ないことを伝える
+            Debug.Log("カード足りないデッキ作れない");
+            return;
+        }
 
         // 編集モードかどうか確認する
         if (editingDeckData != null) {
@@ -235,6 +268,13 @@ public class DeckBuildMenu : MenuWindowBase {
     }
 
     /// <summary>
+    /// 戻るボタンが押された時の処理
+    /// </summary>
+    private void OnReturnButton() {
+        selectMenu = DeckBuildMenuSelect.DeckBuild;
+    }
+
+    /// <summary>
     /// 選択中カードのデッキ登録枚数を表示する
     /// </summary>
     private void UpdateSelectedCardCount() {
@@ -252,4 +292,33 @@ public class DeckBuildMenu : MenuWindowBase {
         selectedCardCountText.text = count.ToString();
     }
 
+    /// <summary>
+    /// デッキのカード枚数に応じて保存ボタンの色を変更する
+    /// </summary>
+    private void UpdateSaveButtonColor() {
+
+        // 現在のデッキ登録枚数を取得する
+        int cardCount = deckBuildView.GetCardIDs().Count;
+
+        // 現在のボタンの色設定を取得する
+        ColorBlock colors = defaultSaveButtonColors;
+
+        // 30枚未満なら灰色にする
+        if (cardCount < _DECKCARD_MAXNUM) {
+            colors.normalColor = Color.gray;
+            colors.highlightedColor = Color.gray;
+            colors.selectedColor = Color.gray;
+            colors.pressedColor = Color.gray;
+
+            // テキストも灰色にする
+            saveButtonText.color = Color.gray;
+        }
+        else {
+            // 元のテキスト色に戻す
+            saveButtonText.color = defaultSaveButtonTextColor;
+        }
+
+        // ボタンに色設定を反映する
+        saveButton.colors = colors;
+    }
 }
