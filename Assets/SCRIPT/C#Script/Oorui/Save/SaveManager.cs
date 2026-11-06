@@ -250,6 +250,43 @@ public class SaveManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 既存デッキの内容を更新する
+    /// </summary>
+    /// <param name="deckID">更新するデッキのID</param>
+    /// <param name="deckName">新しいデッキ名</param>
+    /// <param name="cardIDs">新しいカード一覧</param>
+    /// <returns>更新できたかどうか</returns>
+    public bool UpdateDeck(int deckID, string deckName, List<int> cardIDs) {
+
+        // セーブデータを読み込む
+        PlayerSaveData saveData = Load();
+
+        // デッキ一覧が存在しなければ終了する
+        if (saveData.deckList == null) return false;
+
+        // 更新対象のデッキを検索する
+        DeckSaveData targetDeck = saveData.deckList.Find(
+            deck => deck != null && deck.deckID == deckID
+        );
+
+        // 対象デッキが見つからなければ終了する
+        if (targetDeck == null) return false;
+
+        // デッキ名を更新する
+        targetDeck.deckName = deckName;
+
+        // カード一覧をコピーして更新する
+        targetDeck.cardIDs = cardIDs != null
+            ? new List<int>(cardIDs)
+            : new List<int>();
+
+        // 更新したセーブデータを保存する
+        Save(saveData);
+
+        return true;
+    }
+
+    /// <summary>
     /// デッキIDを指定してデッキを削除する
     /// </summary>
     /// <param name="deckID">削除するデッキのID</param>

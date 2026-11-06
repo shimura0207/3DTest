@@ -123,9 +123,27 @@ public class DeckBuildingPart : PartBase {
 
                 // デッキ確認メニューを開く
                 await menu.Open();
-                // メニューを閉じた後、デッキ一覧を更新する
+
+                // 編集ボタンが押された場合
+                if (menu.IsEditRequested) {
+
+                    // デッキ編集メニューを取得する
+                    DeckBuildMenu editMenu = MenuWindowManager.Instance.Get<DeckBuildMenu>();
+
+                    // メニューが取得できなければ終了する
+                    if (editMenu == null) continue;
+
+                    // 編集するデッキ情報を設定する
+                    editMenu.SetEditDeckData(selectedDeckData);
+
+                    // デッキ編集メニューを開く
+                    await editMenu.Open();
+                }
+
+                // デッキ一覧を更新する
                 RefreshDeckButtons();
-                // メニューを閉じた後も入力待ちを続ける
+
+                // 入力待ちに戻る
                 continue;
             }
 

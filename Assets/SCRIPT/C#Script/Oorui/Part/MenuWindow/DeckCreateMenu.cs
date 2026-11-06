@@ -24,6 +24,8 @@ public class DeckCreateMenu : MenuWindowBase {
 
     // デッキ削除ボタン
     [SerializeField] private Button deleteButton;
+    // デッキ編集ボタン
+    [SerializeField] private Button editButton;
 
     // 選択されたデッキ情報
     private DeckSaveData deckData = null;
@@ -34,8 +36,11 @@ public class DeckCreateMenu : MenuWindowBase {
     // メニューの操作状態
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
 
+    // デッキ削除時の文字列
     private const string _DELETE_DECK = "デッキを削除しますか？";
 
+    // 編集ボタンが押されたかどうか
+    public bool IsEditRequested { get; private set; }
 
     /// <summary>
     /// 表示するデッキ情報を設定する
@@ -56,7 +61,8 @@ public class DeckCreateMenu : MenuWindowBase {
     /// メニューを開く
     /// </summary>
     public override async UniTask Open() {
-
+        // 編集要求を初期化する
+        IsEditRequested = false;
         // 操作状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
 
@@ -110,23 +116,20 @@ public class DeckCreateMenu : MenuWindowBase {
         // 前回生成したカード表示を削除する
         ClearCards();
 
-        // カードIDごとに登録枚数を集計する
-        Dictionary<int, int> cardCounts = OwnedCardUtility.GetCardCounts(deckData.cardIDs);
-
-        // 集計したカード情報を1種類ずつ表示する
-        foreach (var entry in cardCounts) {
+        // デッキに登録されているカードIDを1枚ずつ処理する
+        foreach (int cardID in deckData.cardIDs) {
 
             // カードIDから画像を取得する
-            Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(entry.Key);
+            Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(cardID);
 
             // 画像が取得できなければ次のカードへ進む
             if (cardSprite == null) continue;
 
-            // カード表示オブジェクトを生成する
+            // カード表示オブジェクトを1枚生成する
             PossessionCardItem cardItem = Instantiate(cardPrefab, content);
 
-            // カードID・画像・デッキ内の枚数を設定する
-            cardItem.SetCard(entry.Key, cardSprite, entry.Value);
+            // カードID・画像・枚数1枚を設定する
+            cardItem.SetCard(cardID, cardSprite, 1, false);
 
             // 生成したオブジェクトをリストに登録する
             cardItems.Add(cardItem);
@@ -172,11 +175,18 @@ public class DeckCreateMenu : MenuWindowBase {
         // 削除ボタンのイベントを一度解除する
         deleteButton.onClick.RemoveListener(OnDeleteButton);
 
+        // 編集ボタンのイベントを一度解除する
+        editButton.onClick.RemoveListener(OnEditButton);
+
+
         // 戻るボタンのイベントを登録する
         returnButton.onClick.AddListener(OnReturnButton);
 
         // 削除ボタンのイベントを登録する
         deleteButton.onClick.AddListener(OnDeleteButton);
+
+        // 編集ボタンのイベントを登録する
+        editButton.onClick.AddListener(OnEditButton);
     }
 
 
@@ -215,6 +225,21 @@ public class DeckCreateMenu : MenuWindowBase {
         deckData = null;
 
         // デッキ一覧に戻る操作に設定する
+        selectMenu = DeckBuildMenuSelect.DeckBuild;
+    }
+
+    /// <summary>
+    /// デッキ編集ボタンが押された時の処理
+    /// </summary>
+    private void OnEditButton() {
+
+        // デッキ情報が存在しなければ終了する
+        if (deckData == null) return;
+
+        // 編集要求を設定する
+        IsEditRequested = true;
+
+        // メニューを閉じる操作に設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;
     }
 }

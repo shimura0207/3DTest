@@ -40,6 +40,9 @@ public class DeckBuildMenu : MenuWindowBase {
     // 選択された操作
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
 
+    // 編集対象のデッキ情報
+    private DeckSaveData editingDeckData = null;
+
     // 現在選択されているカードID
     private int selectedCardID = -1;
 
@@ -50,6 +53,14 @@ public class DeckBuildMenu : MenuWindowBase {
 
         await base.Initialize();
 
+    }
+
+    /// <summary>
+    /// 編集するデッキ情報を設定する
+    /// </summary>
+    public void SetEditDeckData(DeckSaveData data) {
+        // 編集対象のデッキ情報を保持する
+        editingDeckData = data;
     }
 
     /// <summary>
@@ -75,9 +86,18 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // 所持カード情報を最新の状態に更新する
         deckBuildView.RefreshOwnedCardCounts();
+        // 編集モードかどうか確認する
+        if (editingDeckData != null) {
+            // 保存されているデッキ名を入力欄に設定する
+            deckNameInputField.text = editingDeckData.deckName;
 
-        // デッキ名を初期化する
-        deckNameInputField.text = "";
+            // 保存されているカード一覧を読み込む
+            deckBuildView.SetCardIDs(editingDeckData.cardIDs);
+        }
+        else {
+            // 新規作成の場合はデッキ名を初期化する
+            deckNameInputField.text = "";
+        }
 
         // 選択カード画像を初期化する
         selectedCardImage.sprite = null;
@@ -102,10 +122,14 @@ public class DeckBuildMenu : MenuWindowBase {
     /// </summary>
     public override async UniTask Close() {
 
+        // メニューを非表示にする
         await base.Close();
 
         // 次回の入力待ちに備えて初期化する
         selectMenu = DeckBuildMenuSelect.None;
+
+        // 編集対象のデッキ情報を初期化する
+        editingDeckData = null;
     }
 
     /// <summary>
@@ -177,7 +201,6 @@ public class DeckBuildMenu : MenuWindowBase {
     /// 保存ボタンが押されたときの処理
     /// </summary>
     private void OnSaveButton() {
-
         // 入力されたデッキ名を取得する
         string deckName = deckNameInputField.text.Trim();
 
@@ -189,8 +212,23 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキに登録されているカードIDを取得する
         var cardIDs = deckBuildView.GetCardIDs();
 
-        // デッキをセーブデータに保存する
-        SaveManager.Instance.SaveDeck(deckName, cardIDs);
+        // 編集モードかどうか確認する
+        if (editingDeckData != null) {
+
+            // 既存デッキの内容を更新する
+            bool isUpdated = SaveManager.Instance.UpdateDeck(
+                editingDeckData.deckID,
+                deckName,
+                cardIDs
+            );
+
+            // 更新に失敗した場合は終了する
+            if (!isUpdated) return;
+        }
+        else {
+            // 新しいデッキとして保存する
+            SaveManager.Instance.SaveDeck(deckName, cardIDs);
+        }
 
         // 保存操作を設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;

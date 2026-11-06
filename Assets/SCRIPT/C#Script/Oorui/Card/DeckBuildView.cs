@@ -192,6 +192,28 @@ public class DeckBuildView : MonoBehaviour {
     }
 
     /// <summary>
+    /// 保存済みのカード一覧をデッキに読み込む
+    /// </summary>
+    /// <param name="cardIDs">読み込むカードID一覧</param>
+    public void SetCardIDs(List<int> cardIDs) {
+
+        // 現在のカード表示を初期化する
+        ClearCards();
+
+        // 読み込むカード一覧が存在しなければ終了する
+        if (cardIDs == null) {
+            return;
+        }
+
+        // 保存されているカードを1枚ずつデッキに追加する
+        foreach (int cardID in cardIDs) {
+
+            // 既存の追加処理を利用してカードを登録する
+            AddCard(cardID);
+        }
+    }
+
+    /// <summary>
     /// デッキに登録されているカードIDを取得する
     /// </summary>
     public List<int> GetCardIDs() {
