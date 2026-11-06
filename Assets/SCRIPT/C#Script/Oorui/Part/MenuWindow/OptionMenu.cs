@@ -34,9 +34,7 @@ public class OptionMenu : MenuWindowBase {
         PlayerSaveData saveData = SaveManager.Instance.Load();
         playerNameInputField.text = saveData.playerName;
 
-        // ボタンのイベントを登録する
-        savePlayerNameButton.onClick.RemoveListener(OnSavePlayerName);
-        savePlayerNameButton.onClick.AddListener(OnSavePlayerName);
+
     }
 
     /// <summary>
@@ -45,7 +43,9 @@ public class OptionMenu : MenuWindowBase {
     /// <returns></returns>
     public override async UniTask Open() {
         await base.Open();
-
+        // ボタンのイベントを登録する
+        savePlayerNameButton.onClick.RemoveListener(OnSavePlayerName);
+        savePlayerNameButton.onClick.AddListener(OnSavePlayerName);
     }
 
     /// <summary>

@@ -9,18 +9,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 /// <summary>
 /// デッキ構築パート
 /// </summary>
-
 public class DeckBuildingPart : PartBase {
 
     // メニューに戻るボタン
     [SerializeField] private Button returnButton;
-
-    // デッキ編成メニューを開くボタン
-    [SerializeField] private Button deckBuildButton;
 
     // デッキ一覧のContent
     [SerializeField] private Transform deckButtonContent;
@@ -31,11 +26,18 @@ public class DeckBuildingPart : PartBase {
     // 生成したデッキボタン一覧
     private List<Button> deckButtons = new List<Button>();
 
-    // デッキ編成ボタンが押されたかどうか
+    // 新規作成ボタンが押されたかどうか
     private bool isDeckBuild = false;
+
+    // 既存デッキが選択されたかどうか
+    private bool isDeckSelect = false;
+
+    // 選択されたデッキ情報
+    private DeckSaveData selectedDeckData = null;
 
     // 選択された遷移先
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
+
 
     /// <summary>
     /// 初期化処理
@@ -44,21 +46,30 @@ public class DeckBuildingPart : PartBase {
         await base.Initialize();
     }
 
+
     /// <summary>
     /// 使用前準備
     /// </summary>
     public override async UniTask Setup() {
+
         await base.Setup();
+
+        // 複製元のPrefabを非表示にする
         deckButtonPrefab.gameObject.SetActive(false);
+
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
         isDeckBuild = false;
-        // ボタンのイベント登録、解除をまとめて行う
+        isDeckSelect = false;
+        selectedDeckData = null;
+
+        // ボタンイベントの登録
         AllListner();
+
         // 保存済みデッキを表示する
         RefreshDeckButtons();
-        Debug.Log("デッキ構築画面表示中");
     }
+
 
     /// <summary>
     /// 実行処理
@@ -70,21 +81,72 @@ public class DeckBuildingPart : PartBase {
 
             // ボタンが押されるまで待機する
             await UniTask.WaitUntil(() =>
-                selectMenu != DeckBuildMenuSelect.None || isDeckBuild);
+                selectMenu != DeckBuildMenuSelect.None ||
+                isDeckBuild ||
+                isDeckSelect
+            );
 
-            // デッキ編成メニューが選択された場合
+
+            // 新規作成ボタンが押された場合
             if (isDeckBuild) {
 
                 // 次回の操作に備えてフラグを初期化する
                 isDeckBuild = false;
 
-                // デッキ編成メニューを開き、閉じるまで待機する
+                // 新規デッキ編成メニューを開く
                 await MenuWindowManager.Instance.Open<DeckBuildMenu>();
-                // メニューを閉じた後、保存済みデッキを再表示する
+
+                // メニューを閉じた後に一覧を更新する
                 RefreshDeckButtons();
-                // メニューを閉じた後も、このパートの入力待ちを続ける
+
                 continue;
             }
+
+
+            // 既存デッキが選択された場合
+            if (isDeckSelect) {
+
+                // 次回の操作に備えてフラグを初期化する
+                isDeckSelect = false;
+
+                // 選択されたデッキ情報が存在するか確認する
+                if (selectedDeckData == null) continue;
+
+                // デッキ確認メニューを取得する
+                DeckCreateMenu menu = MenuWindowManager.Instance.Get<DeckCreateMenu>();
+
+                // メニューが取得できなければ終了する
+                if (menu == null) continue;
+
+                // 選択されたデッキ情報を設定する
+                menu.SetDeckData(selectedDeckData);
+
+                // デッキ確認メニューを開く
+                await menu.Open();
+
+                // 編集ボタンが押された場合
+                if (menu.IsEditRequested) {
+
+                    // デッキ編集メニューを取得する
+                    DeckBuildMenu editMenu = MenuWindowManager.Instance.Get<DeckBuildMenu>();
+
+                    // メニューが取得できなければ終了する
+                    if (editMenu == null) continue;
+
+                    // 編集するデッキ情報を設定する
+                    editMenu.SetEditDeckData(selectedDeckData);
+
+                    // デッキ編集メニューを開く
+                    await editMenu.Open();
+                }
+
+                // デッキ一覧を更新する
+                RefreshDeckButtons();
+
+                // 入力待ちに戻る
+                continue;
+            }
+
 
             // 選択された遷移先に応じて処理する
             switch (selectMenu) {
@@ -98,6 +160,7 @@ public class DeckBuildingPart : PartBase {
         }
     }
 
+
     /// <summary>
     /// 保存済みデッキのボタンを再生成する
     /// </summary>
@@ -105,11 +168,37 @@ public class DeckBuildingPart : PartBase {
 
         // 前回生成したボタンをすべて削除する
         foreach (Button button in deckButtons) {
-            Destroy(button.gameObject);
+            if (button != null) {
+                Destroy(button.gameObject);
+            }
         }
 
         // ボタン一覧を初期化する
         deckButtons.Clear();
+
+        // 新規作成ボタンを生成する
+        Button createButton = Instantiate(
+            deckButtonPrefab,
+            deckButtonContent
+        );
+
+        // 新規作成ボタンを表示する
+        createButton.gameObject.SetActive(true);
+
+        // ボタン内のテキストを取得する
+        TMP_Text createText = createButton.GetComponentInChildren<TMP_Text>();
+
+        // 新規作成の文字を設定する
+        if (createText != null) {
+            createText.text = "新規作成";
+        }
+
+        // 新規作成ボタンのイベントを登録する
+        createButton.onClick.RemoveAllListeners();
+        createButton.onClick.AddListener(OnDeckBuildSelected);
+
+        // リストの0番目に登録する
+        deckButtons.Add(createButton);
 
         // セーブデータを読み込む
         PlayerSaveData saveData = SaveManager.Instance.Load();
@@ -122,35 +211,49 @@ public class DeckBuildingPart : PartBase {
         // 保存されているデッキの数だけボタンを生成する
         foreach (DeckSaveData deckData in saveData.deckList) {
 
-            deckButtonPrefab.gameObject.SetActive(true);
+            // デッキボタンを生成する
+            Button newButton = Instantiate(
+                deckButtonPrefab,
+                deckButtonContent
+            );
 
-            // ボタン内のTextMeshProを取得する
-            TMP_Text buttonText = deckButtonPrefab.GetComponentInChildren<TMP_Text>();
+            // ボタンを表示する
+            newButton.gameObject.SetActive(true);
+
+            // ボタン内のテキストを取得する
+            TMP_Text buttonText =
+                newButton.GetComponentInChildren<TMP_Text>();
 
             // デッキ名を表示する
             if (buttonText != null) {
                 buttonText.text = deckData.deckName;
             }
 
-            // 生成したボタンを管理する
-            deckButtons.Add(deckButtonPrefab);
+            // このボタンに対応するデッキ情報を保持する
+            DeckSaveData targetDeck = deckData;
+
+            // デッキ選択イベントを登録する
+            newButton.onClick.RemoveAllListeners();
+            newButton.onClick.AddListener(
+                () => OnDeckSelected(targetDeck)
+            );
+
+            // 生成したボタンをリストに追加する
+            deckButtons.Add(newButton);
         }
     }
 
 
     /// <summary>
-    /// ボタンイベントの登録、解除をまとめて行う
+    /// ボタンイベントの登録をまとめて行う
     /// </summary>
     private void AllListner() {
 
-        // ボタンイベントの二重登録を防ぐ
-        // 戻るボタン
+        // 戻るボタンの二重登録を防ぐ
         returnButton.onClick.RemoveListener(OnReturnMenuSelected);
         returnButton.onClick.AddListener(OnReturnMenuSelected);
-        // デッキ編成
-        deckBuildButton.onClick.RemoveListener(OnDeckBuildSelected);
-        deckBuildButton.onClick.AddListener(OnDeckBuildSelected);
     }
+
 
     /// <summary>
     /// メニューに戻るボタンが押されたときの処理
@@ -161,12 +264,26 @@ public class DeckBuildingPart : PartBase {
         selectMenu = DeckBuildMenuSelect.MainMenu;
     }
 
+
     /// <summary>
-    /// デッキ編成ボタンが押されたときの処理
+    /// 新規作成ボタンが押されたときの処理
     /// </summary>
     private void OnDeckBuildSelected() {
 
-        // デッキ編成メニューを開く
+        // 新規作成フラグを設定する
         isDeckBuild = true;
+    }
+
+
+    /// <summary>
+    /// 既存デッキのボタンが押されたときの処理
+    /// </summary>
+    private void OnDeckSelected(DeckSaveData deckData) {
+
+        // 選択されたデッキ情報を保持する
+        selectedDeckData = deckData;
+
+        // 既存デッキ選択フラグを設定する
+        isDeckSelect = true;
     }
 }

@@ -11,6 +11,7 @@ using UnityEngine.UI;
 /// 所持カード1種類分の表示を管理するクラス
 /// </summary>
 public class PossessionCardItem : MonoBehaviour {
+
     // カード画像を表示するImage
     [SerializeField]
     private Image cardImage = null;
@@ -27,15 +28,22 @@ public class PossessionCardItem : MonoBehaviour {
 
     // 所持枚数を外部から取得するためのプロパティ
     public int OwnedCount => ownedCount;
+
     // カード画像を外部から取得するためのプロパティ
     public Image CardImage => cardImage;
 
     /// <summary>
     /// カード画像と所持枚数を設定する
     /// </summary>
-    public void SetCard(int cardID,Sprite cardSprite, int count) {   
+    /// <param name="cardID">カードID</param>
+    /// <param name="cardSprite">カード画像</param>
+    /// <param name="count">所持枚数</param>
+    /// <param name="isShowCount">枚数を表示するかどうか</param>
+    public void SetCard(int cardID, Sprite cardSprite, int count, bool isShowCount = true) {
+
         // ソート時に使用するカードIDを保存する
         CardID = cardID;
+
         // カード画像を設定する
         if (cardImage != null) {
             cardImage.sprite = cardSprite;
@@ -47,12 +55,19 @@ public class PossessionCardItem : MonoBehaviour {
             cardImage.color = count == 0 ? Color.gray : Color.white;
         }
 
-        // 所持枚数を設定する
+        // 所持枚数を保持する
+        ownedCount = count;
+
+        // 枚数表示用テキストが設定されている場合
         if (countText != null) {
-            // 所持カード枚数を登録
-            ownedCount = count;
-            // カード枚数を表示
-            countText.text = $"×{count}";
+
+            // 枚数表示の有無を切り替える
+            countText.gameObject.SetActive(isShowCount);
+
+            // 枚数表示が有効な場合のみテキストを設定する
+            if (isShowCount) {
+                countText.text = $"×{count}";
+            }
         }
     }
 }

@@ -126,7 +126,7 @@ public class MainPhase : PhaseBase {
                 // サイズが上限超過しないか
                 if (card.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
                     // レーン設置ウィンドウを出す
-                    FieldLane lane = await MenuWindowManager.Instance.LaneMenuOpen();
+                    FieldLane lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
                     // モンスター召喚
                     await BattleSystemManager.instance.SummonMonster(PlayerType.Self, card, lane);
                     Debug.Log("モンスター召喚！！");

@@ -11,6 +11,8 @@ using System.Collections.Generic;
 /// </summary>
 [Serializable]
 public class DeckSaveData {
+    // デッキ識別用のID
+    public int deckID;
 
     // デッキの名前
     public string deckName;
