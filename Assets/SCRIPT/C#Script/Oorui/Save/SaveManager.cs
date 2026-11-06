@@ -249,6 +249,32 @@ public class SaveManager : MonoBehaviour {
         return isChanged;
     }
 
+    /// <summary>
+    /// デッキIDを指定してデッキを削除する
+    /// </summary>
+    /// <param name="deckID">削除するデッキのID</param>
+    /// <returns>削除できたかどうか</returns>
+    public bool DeleteDeck(int deckID) {
+
+        // セーブデータを読み込む
+        PlayerSaveData saveData = Load();
+
+        // デッキ一覧が存在しなければ削除できない
+        if (saveData.deckList == null) return false;
+
+        // 指定されたIDのデッキを削除する
+        int removedCount = saveData.deckList.RemoveAll(
+            deck => deck != null && deck.deckID == deckID
+        );
+
+        // 削除対象が見つからなければ終了する
+        if (removedCount == 0) return false;
+
+        // 更新したセーブデータを保存する
+        Save(saveData);
+
+        return true;
+    }
 
     /// <summary>
     /// セーブファイルからデータを読み込む

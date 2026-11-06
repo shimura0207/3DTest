@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,9 @@ public class DeckCreateMenu : MenuWindowBase {
     // カード表示用Prefab
     [SerializeField] private PossessionCardItem cardPrefab;
 
+    // デッキ削除ボタン
+    [SerializeField] private Button deleteButton;
+
     // 選択されたデッキ情報
     private DeckSaveData deckData = null;
 
@@ -29,6 +33,8 @@ public class DeckCreateMenu : MenuWindowBase {
 
     // メニューの操作状態
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
+
+    private const string _DELETE_DECK = "デッキを削除しますか？";
 
 
     /// <summary>
@@ -90,23 +96,16 @@ public class DeckCreateMenu : MenuWindowBase {
     private void RefreshDeckCards() {
 
         // 表示先とPrefabが設定されているか確認する
-        if (content == null || cardPrefab == null) {
-            Debug.LogError("DeckCreateMenuのContentまたはCardPrefabが設定されていません");
-            return;
-        }
+        if (content == null || cardPrefab == null) return;
 
         // デッキ情報が存在するか確認する
         if (deckData == null || deckData.cardIDs == null) {
-            Debug.LogWarning("デッキ情報が設定されていません");
             ClearCards();
             return;
         }
 
         // マスターデータ管理クラスが存在するか確認する
-        if (ScriptableObjectManager.instance == null) {
-            Debug.LogError("ScriptableObjectManagerが存在しません");
-            return;
-        }
+        if (ScriptableObjectManager.instance == null) return;
 
         // 前回生成したカード表示を削除する
         ClearCards();
@@ -121,9 +120,7 @@ public class DeckCreateMenu : MenuWindowBase {
             Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(entry.Key);
 
             // 画像が取得できなければ次のカードへ進む
-            if (cardSprite == null) {
-                continue;
-            }
+            if (cardSprite == null) continue;
 
             // カード表示オブジェクトを生成する
             PossessionCardItem cardItem = Instantiate(cardPrefab, content);
@@ -169,12 +166,17 @@ public class DeckCreateMenu : MenuWindowBase {
     /// ボタンイベントを登録する
     /// </summary>
     private void AllListner() {
-
         // 戻るボタンのイベントを一度解除する
         returnButton.onClick.RemoveListener(OnReturnButton);
 
+        // 削除ボタンのイベントを一度解除する
+        deleteButton.onClick.RemoveListener(OnDeleteButton);
+
         // 戻るボタンのイベントを登録する
         returnButton.onClick.AddListener(OnReturnButton);
+
+        // 削除ボタンのイベントを登録する
+        deleteButton.onClick.AddListener(OnDeleteButton);
     }
 
 
@@ -184,6 +186,35 @@ public class DeckCreateMenu : MenuWindowBase {
     private void OnReturnButton() {
 
         // メニューを閉じる操作に設定する
+        selectMenu = DeckBuildMenuSelect.DeckBuild;
+    }
+
+    /// <summary>
+    /// デッキ削除ボタンが押された時の処理
+    /// </summary>
+    private async void OnDeleteButton() {
+        // デッキ情報が存在しなければ終了する
+        if (deckData == null) return;
+
+        // SaveManagerが存在するか確認する
+        if (SaveManager.Instance == null) return;
+
+        // デッキ削除の確認画面を表示する
+        bool isDeleteDeck = await MenuWindowManager.Instance.Confirm(_DELETE_DECK);
+
+        // いいえが選択された場合は削除せずに終了する
+        if (!isDeleteDeck) return;
+
+        // 選択中のデッキをセーブデータから削除する
+        bool isDeleted = SaveManager.Instance.DeleteDeck(deckData.deckID);
+
+        // 削除に失敗した場合はメニューを閉じない
+        if (!isDeleted) return;
+
+        // デッキ情報を初期化する
+        deckData = null;
+
+        // デッキ一覧に戻る操作に設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;
     }
 }

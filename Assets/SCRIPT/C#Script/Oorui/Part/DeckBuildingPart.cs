@@ -110,25 +110,21 @@ public class DeckBuildingPart : PartBase {
                 isDeckSelect = false;
 
                 // 選択されたデッキ情報が存在するか確認する
-                if (selectedDeckData == null) {
-                    continue;
-                }
+                if (selectedDeckData == null) continue;
 
                 // デッキ確認メニューを取得する
                 DeckCreateMenu menu = MenuWindowManager.Instance.Get<DeckCreateMenu>();
 
                 // メニューが取得できなければ終了する
-                if (menu == null) {
-                    Debug.LogError("DeckCreateMenuを取得できません");
-                    continue;
-                }
+                if (menu == null) continue;
 
                 // 選択されたデッキ情報を設定する
                 menu.SetDeckData(selectedDeckData);
 
                 // デッキ確認メニューを開く
                 await menu.Open();
-
+                // メニューを閉じた後、デッキ一覧を更新する
+                RefreshDeckButtons();
                 // メニューを閉じた後も入力待ちを続ける
                 continue;
             }
