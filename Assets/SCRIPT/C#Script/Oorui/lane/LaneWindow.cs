@@ -37,6 +37,7 @@ public class LaneWindow : MenuWindowBase {
 
     // レーンボタン一覧
     private Button[] laneButtonList;
+
     // レーン一覧
     private readonly FieldLane[] fieldLaneList = {
     FieldLane.Lane1,
