@@ -330,7 +330,7 @@ public enum AbilityTarget {
     // 自身のランダムなモンスター
     SelfRandomMonster,
     // 相手のランダムなモンスター
-    OponentRandomMonster,
+    OpponentRandomMonster,
     // 自身の選択したモンスター
     SelfSelectMonster,
     // 相手の選択したモンスター

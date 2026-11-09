@@ -173,7 +173,7 @@ public class AttackPhase : PhaseBase {
         }
         else {
             // プレイヤーにダメージを与える
-            BattleSystemManager.instance.PlayerGiveDamage(player, damage);
+            BattleSystemManager.instance.PlayerGiveHP(player, -damage);
         }
     }
 }

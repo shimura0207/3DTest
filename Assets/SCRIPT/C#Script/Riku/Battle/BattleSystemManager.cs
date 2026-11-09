@@ -249,13 +249,13 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// プレイヤーに指定のダメージを与える
+    /// プレイヤーに指定のHPを付与
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
-    /// <param name="giveDamage">与えるダメージ量</param>
-    public void PlayerGiveDamage(PlayerType player, int giveDamage) {
-        // ダメージ分HPを減らす
-        playerHP[player] -= giveDamage;
+    /// <param name="giveHP">付与量</param>
+    public void PlayerGiveHP(PlayerType player, int giveHP) {
+        // HP付与
+        playerHP[player] += giveHP;
 
         // HPが0以下なら勝敗がつく
         if (playerHP[player] > 0) return;
