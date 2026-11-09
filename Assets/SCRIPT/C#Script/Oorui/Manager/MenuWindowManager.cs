@@ -239,4 +239,21 @@ public class MenuWindowManager : SystemObject {
         // 共通のルーム画面を表示する
         await menu.Open();
     }
+
+    /// <summary>
+    /// デッキ選択メニューを表示し、選択結果を返す
+    /// </summary>
+    /// <param name="currentDeckID">現在選択されているデッキID</param>
+    /// <returns>決定されたデッキID。キャンセル時はnull</returns>
+    public async UniTask<int?> DeckSelectMenuOpen(int currentDeckID) {
+
+        // 管理しているデッキ選択メニューを取得する
+        DeckSelectMenu menu = Get<DeckSelectMenu>();
+
+        // メニューが存在しない場合はキャンセル扱いにする
+        if (menu == null) return null;
+
+        // 現在のデッキIDを渡してメニューを開き、選択結果を返す
+        return await menu.OpenAndWaitForSelection(currentDeckID);
+    }
 }
