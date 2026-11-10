@@ -304,7 +304,7 @@ MonoBehaviour:
     - cardID: 201
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
@@ -317,7 +317,7 @@ MonoBehaviour:
     - cardID: 202
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
@@ -330,7 +330,7 @@ MonoBehaviour:
     - cardID: 203
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
@@ -343,7 +343,7 @@ MonoBehaviour:
     - cardID: 204
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
@@ -356,7 +356,7 @@ MonoBehaviour:
     - cardID: 205
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
@@ -369,7 +369,7 @@ MonoBehaviour:
     - cardID: 206
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
@@ -382,7 +382,7 @@ MonoBehaviour:
     - cardID: 207
       name: 
       rarityID: 0
-      themeID: 3
+      themeID: 4
       suportRoleID: 0
       FirstRaceID: 0
       SecondRaceID: 0
