@@ -79,10 +79,6 @@ public class CardInfoText : MonoBehaviour {
         
         // データがなければ非表示
         if (data == null) {
-            return;
-        }
-        // カードが裏向きなら非表示
-        if (data.cardID == 0) {
             simpleText.enabled = false;
             detaileText.enabled = false;
             return;
