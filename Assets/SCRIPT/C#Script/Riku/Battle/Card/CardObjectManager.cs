@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Analytics;
 using static CommonModule;
 
 /// <summary>
@@ -165,6 +165,22 @@ public class CardObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 手札のカード取得
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <returns></returns>
+    public List<CardObject> GetHandCardList(PlayerType player) {
+        List<CardObject> handList = new List<CardObject>();
+        foreach (CardObject cardObject in useObjectList) {
+            if (!cardObject) continue;
+            if (cardObject.playerType != player) continue;
+            if (cardObject.handID <= 0) continue;
+            handList.Add(cardObject);
+        }
+        return handList;
+    }
+
+    /// <summary>
     /// 手札への移動
     /// </summary>
     /// <param name="player">どっちのプレイヤーか</param>
@@ -246,15 +262,7 @@ public class CardObjectManager : MonoBehaviour {
         }
 
         // 手札のカードを取得
-        List<CardObject> handList = new List<CardObject>();
-        foreach (var card in useObjectList) {
-            if (!card) continue;
-            if (card.playerType != player) continue;
-            // 手札IDがないやつは手札じゃないのでスキップ
-            if (card.handID < 0) continue;
-
-            handList.Add(card);
-        }
+        List<CardObject> handList = GetHandCardList(player);
 
         // handID順に並べ替え(ラムダ式で比較)
         handList.Sort((a, b) => a.handID.CompareTo(b.handID));

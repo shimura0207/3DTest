@@ -330,12 +330,8 @@ public class BattleSystemManager : MonoBehaviour {
             // 見つかった効果を積む
             AbilityManager.instance.SetAblityQueue(card, ability);
         }
-        // カードを手札から墓地に移動
-        AreaCardManager.instance.HandToGrave(player, card.handID);
-        // カードオブジェクトを未使用状態に
-        CardObjectManager.instance.UnuseCardObject(card);
-        // 手札の整列
-        CardObjectManager.instance.ArrangeHand(player);
+        // 発動したスペルは手札から捨てる
+        HandDestruction(player, card);
         // スペルの回数カウント
         spellCastCount++;
 
@@ -438,5 +434,19 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 受け取った2つのレーンを交換
         LaneChange(PlayerType.Opponent, laneA, laneB);
+    }
+
+    /// <summary>
+    /// 手札を捨てる
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">捨てるカード</param>
+    public void HandDestruction(PlayerType player, CardObject card) {
+        // カードを手札から墓地に移動
+        AreaCardManager.instance.HandToGrave(player, card.handID);
+        // カードオブジェクトを未使用状態に
+        CardObjectManager.instance.UnuseCardObject(card);
+        // 手札の整列
+        CardObjectManager.instance.ArrangeHand(player);
     }
 }

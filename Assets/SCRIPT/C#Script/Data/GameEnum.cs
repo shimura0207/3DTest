@@ -327,18 +327,18 @@ public enum AbilityTarget {
     SelfPlayer,
     // 相手プレイヤー
     OpponentPlayer,
-    // 自身のランダムなモンスター
-    SelfRandomMonster,
-    // 相手のランダムなモンスター
-    OpponentRandomMonster,
-    // 自身の選択したモンスター
-    SelfSelectMonster,
-    // 相手の選択したモンスター
-    OpponentSelectMonster,
-    // 自身の全てのモンスター
-    SelfAllMonster,
-    // 自身の全てのモンスター
-    OpponentAllMonster,
+    // 自身のランダムなカード
+    SelfRandom,
+    // 相手のランダムなカード
+    OpponentRandom,
+    // 自身のカードを選択
+    SelfSelect,
+    // 相手のカードを選択
+    OpponentSelect,
+    // 自身の全てのカード
+    SelfAll,
+    // 相手の全てのカード
+    OpponentAll,
     // このモンスター
     ThisMonster,
     // 他のモンスター

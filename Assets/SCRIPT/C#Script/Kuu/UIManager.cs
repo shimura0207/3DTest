@@ -45,9 +45,6 @@ public class UIManager : SystemObject {
     // マウスの左右クリック判定
     public bool mouseButton { get; private set; } = true;
 
-    // レイキャストの最大距離
-    private const float RAY_RANGE_MAX = 10.0f;
-
     public override async UniTask Initialize() {
         instance = this;
 
@@ -81,7 +78,7 @@ public class UIManager : SystemObject {
             // レイキャストでカードを触れているか判定
             if (Physics.Raycast(
                 ray, out RaycastHit hit,
-                RAY_RANGE_MAX, cardLayer)
+                GameConst.RAY_RANGE_MAX, cardLayer)
                 ) {
                 if (!hit.collider) return;
                 // 触れているオブジェクトを保存
