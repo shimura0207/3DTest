@@ -19,8 +19,6 @@ public class CardAbilityDatabaseEditor : Editor {
     private int inputAbilityID = -1;
     // 入力されたカード効果の種類
     private AbilityType inputAbilityType = AbilityType.None;
-    // 入力された特殊効果
-    private SpecialAbility inputSpecialAbility = SpecialAbility.None;
     // 入力された常在効果
     private PassiveAbility inputPassiveAbility = PassiveAbility.None;
     // 入力された効果の発動タイミング
@@ -29,6 +27,8 @@ public class CardAbilityDatabaseEditor : Editor {
     private AbilityTarget inputAbilityTarget = AbilityTarget.None;
     // 入力された効果の発動内容
     private AbilityProcess inputAbilityProcess = AbilityProcess.None;
+    // 入力された効果の値
+    private int inputAbilityValue = -1;
 
     public override void OnInspectorGUI() {
         CardAbilityDatabase database = (CardAbilityDatabase)target;
@@ -53,11 +53,8 @@ public class CardAbilityDatabaseEditor : Editor {
                 // 効果の発動内容の設定
                 inputAbilityProcess = (AbilityProcess)UseEnumPopup(
                     "AbilityProcess", inputAbilityProcess);
-                break;
-            case AbilityType.Special:
-                // 特殊効果の設定
-                inputSpecialAbility = (SpecialAbility)UseEnumPopup(
-                    "SpecialAbility", inputSpecialAbility);
+                // 効果の値設定
+                inputAbilityValue = EditorGUILayout.IntField("Value", inputAbilityValue);
                 break;
             case AbilityType.Passive:
                 // 常在効果の設定
@@ -71,13 +68,13 @@ public class CardAbilityDatabaseEditor : Editor {
             if (inputCardID != -1 && inputAbilityID != -1) {
                 // 設定した内容を纏める
                 CardAbilityDatabase.AbilityData inputData = new CardAbilityDatabase.AbilityData() {
-                    abilityID = inputCardID,
+                    abilityID = inputAbilityID,
                     abilityType = inputAbilityType,
                     abilityTiming = inputAbilityTiming,
                     abilityTarget = inputAbilityTarget,
                     abilityProcess = inputAbilityProcess,
-                    specialAbility = inputSpecialAbility,
-                    passiveAbility = inputPassiveAbility
+                    passiveAbility = inputPassiveAbility,
+                    abilityValue = inputAbilityValue,
                 };
 
                 // 設定したデータを追加
@@ -91,11 +88,11 @@ public class CardAbilityDatabaseEditor : Editor {
                 inputCardID = -1;
                 inputAbilityID = -1;
                 inputAbilityType = AbilityType.None;
-                inputSpecialAbility = SpecialAbility.None;
                 inputPassiveAbility = PassiveAbility.None;
                 inputAbilityTiming = AbilityTiming.None;
                 inputAbilityTarget = AbilityTarget.None;
                 inputAbilityProcess = AbilityProcess.None;
+                inputAbilityValue = -1;
             }
             else {
                 // カードIDか効果番号が入っていなければ警告
@@ -117,15 +114,14 @@ public class CardAbilityDatabaseEditor : Editor {
             EditorGUILayout.LabelField($"CardID: {data.cardID}", EditorStyles.boldLabel);
             foreach (var ability in data.abilityList) {
                 abilityIndex++;
+                EditorGUILayout.LabelField($"AbilityID: {ability.abilityID}");
                 // 効果表示
                 switch (ability.abilityType) {
                     case AbilityType.Normal:
                         EditorGUILayout.LabelField("AbilityTiming", ability.abilityTiming.ToString());
                         EditorGUILayout.LabelField("AbilityTarget", ability.abilityTarget.ToString());
                         EditorGUILayout.LabelField("AbilityProcess", ability.abilityProcess.ToString());
-                        break;
-                    case AbilityType.Special:
-                        EditorGUILayout.LabelField("SpecialAbility", ability.specialAbility.ToString());
+                        EditorGUILayout.LabelField($"Value: {ability.abilityValue}");
                         break;
                     case AbilityType.Passive:
                         EditorGUILayout.LabelField("PassiveAbility", ability.passiveAbility.ToString());

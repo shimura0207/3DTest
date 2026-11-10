@@ -272,25 +272,8 @@ public enum AbilityType {
 
     // 組み合わせで作れる通常効果
     Normal,
-    // 組み合わせでは作れない複雑な特殊効果
-    Special,
     // 常在効果
     Passive,
-
-    Max,
-}
-
-/// <summary>
-/// 特殊効果
-/// @author Riku
-/// </summary>
-public enum SpecialAbility {
-    None = -1,
-
-    // イスカの1番目の効果(仮)
-    Isuka1,
-    // イスカの2番目の効果(仮)
-    Isuka2,
 
     Max,
 }
@@ -340,12 +323,27 @@ public enum AbilityTiming {
 public enum AbilityTarget {
     None = -1,
 
-    // 自身
+    // 自身プレイヤー
     SelfPlayer,
-    // 相手
+    // 相手プレイヤー
     OpponentPlayer,
-    // ランダム
-    Random,
+    // 自身のランダムなカード
+    SelfRandom,
+    // 相手のランダムなカード
+    OpponentRandom,
+    // 自身のカードを選択
+    SelfSelect,
+    // 相手のカードを選択
+    OpponentSelect,
+    // 自身の全てのカード
+    SelfAll,
+    // 相手の全てのカード
+    OpponentAll,
+    // このモンスター
+    ThisMonster,
+    // 他のモンスター
+    OtherMonster,
+
 
     Max,
 }
@@ -359,12 +357,10 @@ public enum AbilityProcess {
 
     // カードのドロー
     Draw,
-    // カードのサーチ
-    Search,
     // ダメージ付与
     GiveDamage,
-    // HP回復
-    HeelHP,
+    // HP増加
+    GiveHealth,
     // 手札を捨てる
     DiscardHand,
     // ATK上昇

@@ -55,41 +55,33 @@ public class AbilityManager : MonoBehaviour {
     /// <summary>
     /// 効果をキューに積む
     /// </summary>
+    /// <param name="card">発動させたカード</param>
     /// <param name="ability">発動する効果</param>
-    /// <param name="player">発動させたプレイヤー</param>
-    public void SetAblityQueue(PlayerType player, CardAbilityDatabase.AbilityData ability) {
+    public void SetAblityQueue(CardObject card, CardAbilityDatabase.AbilityData ability) {
         Func<UniTask> func = null;
-        switch (ability.abilityType) {
-            case AbilityType.Normal:
-                func = GetNormalAbility(player, ability.abilityTiming, ability.abilityTarget, ability.abilityProcess);
-                break;
-            case AbilityType.Special:
-                func = GetSpecialAbility(player, ability.specialAbility);
-                break;
-        }
+        if (ability.abilityType != AbilityType.Normal) return;
+        func = GetNormalAbility(card, ability.abilityTarget, ability.abilityProcess, ability.abilityValue);
         abilityQueue.Enqueue(func);
     }
 
     /// <summary>
     /// 通常効果の取得
     /// </summary>
-    /// <param name="player">発動させたプレイヤー</param>
-    /// <param name="timig">効果タイミング</param>
+    /// <param name="card">発動させたカード</param>
     /// <param name="target">効果対象</param>
     /// <param name="process">効果内容</param>
+    /// <param name="value">効果値</param>
     /// <returns></returns>
-    private Func<UniTask> GetNormalAbility(PlayerType player, AbilityTiming timig, AbilityTarget target, AbilityProcess process) {
+    private Func<UniTask> GetNormalAbility(CardObject card, AbilityTarget target, AbilityProcess process, int value) {
         Func<UniTask> func = null;
         // ラムダ式で引数を固定して代入する
         switch (process) {
             case AbilityProcess.Draw:
-                func = () => abilityProcessData.DrawAbility(player);
-                break;
-            case AbilityProcess.Search:
+                func = () => abilityProcessData.DrawAbility(card.playerType, value);
                 break;
             case AbilityProcess.GiveDamage:
                 break;
-            case AbilityProcess.HeelHP:
+            case AbilityProcess.GiveHealth:
                 break;
             case AbilityProcess.DiscardHand:
                 break;
@@ -104,23 +96,6 @@ public class AbilityManager : MonoBehaviour {
             case AbilityProcess.GiveState:
                 break;
             case AbilityProcess.DeleteMonster:
-                break;
-        }
-        return func;
-    }
-
-    /// <summary>
-    /// 特殊効果の取得
-    /// </summary>
-    /// <param name="player">発動させたプレイヤー</param>
-    /// <param name="ability">効果</param>
-    /// <returns></returns>
-    private Func<UniTask> GetSpecialAbility(PlayerType player, SpecialAbility ability) {
-        Func<UniTask> func = null;
-        switch (ability) {
-            case SpecialAbility.Isuka1:
-                break;
-            case SpecialAbility.Isuka2:
                 break;
         }
         return func;

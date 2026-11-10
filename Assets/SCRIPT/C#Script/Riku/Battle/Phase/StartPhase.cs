@@ -23,7 +23,7 @@ public class StartPhase : PhaseBase {
             foreach (var ability in monster.Value.abilityList) {
                if (ability.abilityTiming != AbilityTiming.TurnStart) continue;
                // 見つかったターン開始時効果を積む
-               AbilityManager.instance.SetAblityQueue(monster.Value.playerType, ability);
+               AbilityManager.instance.SetAblityQueue(monster.Value, ability);
             }
         }
 
@@ -51,7 +51,7 @@ public class StartPhase : PhaseBase {
             foreach (var ability in monster.Value.abilityList) {
                 if (ability.abilityTiming != AbilityTiming.TurnStart) continue;
                 // 見つかったターン開始時効果を積む
-                AbilityManager.instance.SetAblityQueue(monster.Value.playerType, ability);
+                AbilityManager.instance.SetAblityQueue(monster.Value, ability);
             }
         }
 
