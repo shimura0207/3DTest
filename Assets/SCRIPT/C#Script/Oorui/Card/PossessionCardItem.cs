@@ -70,4 +70,20 @@ public class PossessionCardItem : MonoBehaviour {
             }
         }
     }
+
+    /// <summary>
+    /// カードの所持状況に応じて画像の色を変更
+    /// </summary>
+    /// <param name="isOwned">所持しているか</param>
+    public void SetOwnedState(bool isOwned) {
+
+        // 所持しているカードは通常色で表示
+        if (isOwned) {
+            cardImage.color = Color.white;
+        }
+        // 未所持カードは灰色で表示
+        else {
+            cardImage.color = Color.gray;
+        }
+    }
 }

@@ -31,8 +31,11 @@ public class CreatePointManager : SystemObject {
         // 自身をシングルトンとして登録する
         Instance = this;
 
-        // 初期所持ポイントを設定
-        currentPoint = INITIAL_POINT;
+        // セーブデータから生成ポイントを読み込む
+        PlayerSaveData saveData = SaveManager.Instance.Load();
+
+        // 保存されているポイントを現在の所持量に設定する
+        currentPoint = Mathf.Clamp(saveData.ownedPoint, 0, MAX_POINT);
 
         await UniTask.CompletedTask;
     }
@@ -46,6 +49,21 @@ public class CreatePointManager : SystemObject {
     }
 
     /// <summary>
+    /// 生成ポイントを保存する
+    /// </summary>
+    private void SavePoint() {
+
+        // 現在のプレイヤーデータを読み込む
+        PlayerSaveData saveData = SaveManager.Instance.Load();
+
+        // 現在の生成ポイントを保存データに反映する
+        saveData.ownedPoint = currentPoint;
+
+        // プレイヤーデータを保存する
+        SaveManager.Instance.Save(saveData);
+    }
+
+    /// <summary>
     /// ポイントを追加する
     /// </summary>
     /// <param name="amount">追加するポイント量</param>
@@ -54,7 +72,10 @@ public class CreatePointManager : SystemObject {
         if (amount <= 0) return;
 
         // 最大数を超えないようにポイントを追加する
-        currentPoint = Mathf.Min(currentPoint + amount, MAX_POINT);
+        currentPoint = (int)Mathf.Min((long)currentPoint + amount, MAX_POINT);
+
+        // 変更したポイントを保存する
+        SavePoint();
     }
 
     /// <summary>
@@ -73,18 +94,20 @@ public class CreatePointManager : SystemObject {
     /// <summary>
     /// ポイントを消費する
     /// </summary>
-    /// <param name="amount"></param>
-    /// <returns></returns>
     public bool SpendPoint(int amount) {
+
         // 0以下は減らせない
         if (amount <= 0) return false;
 
-        // ポイントを消費できるかチェック、所持ポイントが消費量以下なら減らせない
+        // ポイントを消費できるか確認する
         if (!CanSpendPoint(amount)) return false;
 
         // 所持ポイントから指定分減らす
         currentPoint -= amount;
-        // 消費できたことを通知
+
+        // 変更したポイントを保存する
+        SavePoint();
+
         return true;
     }
 

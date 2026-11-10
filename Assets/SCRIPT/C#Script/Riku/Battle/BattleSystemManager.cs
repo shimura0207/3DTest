@@ -249,13 +249,13 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// プレイヤーに指定のダメージを与える
+    /// プレイヤーに指定のHPを付与
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
-    /// <param name="giveDamage">与えるダメージ量</param>
-    public void PlayerGiveDamage(PlayerType player, int giveDamage) {
-        // ダメージ分HPを減らす
-        playerHP[player] -= giveDamage;
+    /// <param name="giveHP">付与量</param>
+    public void PlayerGiveHP(PlayerType player, int giveHP) {
+        // HP付与
+        playerHP[player] += giveHP;
 
         // HPが0以下なら勝敗がつく
         if (playerHP[player] > 0) return;
@@ -294,15 +294,17 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="lane">召喚するカードのレーン</param>
     public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
         int objectID = card.objectID;
-        // 手札から指定されたレーンにカードを移動
-        AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        if (card.handID >= 0) {
+            // 手札から指定されたレーンにカードを移動
+            AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        }
         // 指定されたレーンにカードを設置
         CardObjectManager.instance.MoveToField(player, objectID, lane);
         // 召喚時効果発動確認
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Play) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(card.playerType, ability);
+            AbilityManager.instance.SetAblityQueue(card, ability);
         }
 
         // 自分の処理なら相手に送る
@@ -328,14 +330,10 @@ public class BattleSystemManager : MonoBehaviour {
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Play) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(card.playerType, ability);
+            AbilityManager.instance.SetAblityQueue(card, ability);
         }
-        // カードを手札から墓地に移動
-        AreaCardManager.instance.HandToGrave(player, card.handID);
-        // カードオブジェクトを未使用状態に
-        CardObjectManager.instance.UnuseCardObject(card);
-        // 手札の整列
-        CardObjectManager.instance.ArrangeHand(player);
+        // 発動したスペルは手札から捨てる
+        HandDestruction(player, card);
         // スペルの回数カウント
         spellCastCount++;
 
@@ -438,5 +436,19 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 受け取った2つのレーンを交換
         LaneChange(PlayerType.Opponent, laneA, laneB);
+    }
+
+    /// <summary>
+    /// 手札を捨てる
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">捨てるカード</param>
+    public void HandDestruction(PlayerType player, CardObject card) {
+        // カードを手札から墓地に移動
+        AreaCardManager.instance.HandToGrave(player, card.handID);
+        // カードオブジェクトを未使用状態に
+        CardObjectManager.instance.UnuseCardObject(card);
+        // 手札の整列
+        CardObjectManager.instance.ArrangeHand(player);
     }
 }

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Analytics;
 using static CommonModule;
 
 /// <summary>
@@ -165,6 +165,22 @@ public class CardObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 手札のカード取得
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <returns></returns>
+    public List<CardObject> GetHandCardList(PlayerType player) {
+        List<CardObject> handList = new List<CardObject>();
+        foreach (CardObject cardObject in useObjectList) {
+            if (!cardObject) continue;
+            if (cardObject.playerType != player) continue;
+            if (cardObject.handID <= 0) continue;
+            handList.Add(cardObject);
+        }
+        return handList;
+    }
+
+    /// <summary>
     /// 手札への移動
     /// </summary>
     /// <param name="player">どっちのプレイヤーか</param>
@@ -183,7 +199,7 @@ public class CardObjectManager : MonoBehaviour {
                 break;
         }
         // 手札IDを仮で振り分け
-        useObjectList[objectID].SetHandID(0);
+        useObjectList[objectID].SetHandID(int.MaxValue);
         // 手札の整列
         ArrangeHand(player);
     }
@@ -245,13 +261,15 @@ public class CardObjectManager : MonoBehaviour {
             setPos -= ((halfHand - 1) * HAND_CARD_DISTANCE) + (HAND_CARD_DISTANCE / 2);
         }
 
+        // 手札のカードを取得
+        List<CardObject> handList = GetHandCardList(player);
+
+        // handID順に並べ替え(ラムダ式で比較)
+        handList.Sort((a, b) => a.handID.CompareTo(b.handID));
+
         // 決定された左端の位置から手札の枚数分右にずらしながら配置する
         int handID = 0;
-        foreach (var card in useObjectList) {
-            if (!card) continue;
-            if (card.playerType != player) continue;
-            // 手札IDがないやつは手札じゃないのでスキップ
-            if (card.handID < 0) continue;
+        foreach (var card in handList) {
             // 配置
             card.transform.localPosition = new Vector3(setPos, 0.0f, 0.0f);
             // 手札IDをセット

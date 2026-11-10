@@ -71,10 +71,15 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     private List<int> GetUseDeckList(int id) {
-        // デッキデータを取得
-        List<int> deck = DeckDataMasterUtility.GetDeckMaster(1);
+        // セーブデータから指定されたデッキのカードID一覧を取得する
+        List<int> deck = SaveManager.Instance.GetDeckCardIDs(id);
 
-        // 使用デッキを返す
+        // デッキが存在しない場合
+        if (deck == null) {
+            return new List<int>();
+        }
+
+        // カードID一覧を返す
         return deck;
     }
 

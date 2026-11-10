@@ -33,11 +33,11 @@ public class CardObject : MonoBehaviour {
     // 所有者
     public PlayerType playerType { get; private set; } = PlayerType.None;
     // カードの効果
-    public List<CardAbilityDatabase.AbilityData> abilityList { get; private set; } 
+    public List<CardAbilityDatabase.AbilityData> abilityList { get; private set; }
 
     // SpriteRendererコンポーネント
     [SerializeField]
-    private SpriteRenderer spriteRenderer = null;
+    public SpriteRenderer spriteRenderer { get; private set; } = null;
 
     /// <summary>
     /// 初期化
@@ -116,7 +116,7 @@ public class CardObject : MonoBehaviour {
         foreach (var ability in abilityList) {
             if (ability.abilityTiming != AbilityTiming.Leave) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(playerType, ability);
+            AbilityManager.instance.SetAblityQueue(this, ability);
         }
         // 積まれた効果があれば発動
         UniTask task =  AbilityManager.instance.AbilityExecute();
@@ -138,7 +138,7 @@ public class CardObject : MonoBehaviour {
         foreach (var ability in abilityList) {
             if (ability.abilityTiming != AbilityTiming.Leave) continue;
             // 見つかった効果を積む
-            AbilityManager.instance.SetAblityQueue(playerType, ability);
+            AbilityManager.instance.SetAblityQueue(this, ability);
         }
         // 積まれた効果があれば発動
         UniTask task = AbilityManager.instance.AbilityExecute();
@@ -225,12 +225,21 @@ public class CardObject : MonoBehaviour {
 
     /// <summary>
     /// 指定したステータスに与える
+    /// ※破壊処理を内包しているのでHPを減らす場合はforeach厳禁
     /// </summary>
     /// <param name="giveStatus">与えるステータス</param>
     /// <param name="giveValue">与える値</param>
     public void GiveStatus(MonsterStatus giveStatus, int giveValue) {
         currentStatus[giveStatus] += giveValue;
 
+        // ATKが0以下の場合は0にする
+        if (currentStatus[MonsterStatus.ATK] <= 0) {
+            currentStatus[MonsterStatus.ATK] = 0;
+        }
+        // SIZEが0以下の場合は0にする
+        if (currentStatus[MonsterStatus.SIZE] <= 0) {
+            currentStatus[MonsterStatus.SIZE] = 0;
+        }
         // HPが0になった場合は破壊
         if (currentStatus[MonsterStatus.HP] <= 0) {
             DestroyMonster();

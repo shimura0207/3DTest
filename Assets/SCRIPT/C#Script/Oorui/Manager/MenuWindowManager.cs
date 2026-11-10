@@ -178,6 +178,22 @@ public class MenuWindowManager : SystemObject {
     }
 
     /// <summary>
+    /// チュートリアル用のテキスト表示
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public async UniTask TutorialTextWindow(string message) {
+        // メニューウィンドウの取得
+        TextWindowMenu menu = Get<TextWindowMenu>();
+
+        // なかった場合は何も出さない
+        if (menu == null) return;
+
+        // メニューの表示
+        await menu.Open(message);
+    }
+
+    /// <summary>
     /// バトル設定を行うメニュー
     /// </summary>
     /// <param name="id"></param>
@@ -238,5 +254,22 @@ public class MenuWindowManager : SystemObject {
 
         // 共通のルーム画面を表示する
         await menu.Open();
+    }
+
+    /// <summary>
+    /// デッキ選択メニューを表示し、選択結果を返す
+    /// </summary>
+    /// <param name="currentDeckID">現在選択されているデッキID</param>
+    /// <returns>決定されたデッキID。キャンセル時はnull</returns>
+    public async UniTask<int?> DeckSelectMenuOpen(int currentDeckID) {
+
+        // 管理しているデッキ選択メニューを取得する
+        DeckSelectMenu menu = Get<DeckSelectMenu>();
+
+        // メニューが存在しない場合はキャンセル扱いにする
+        if (menu == null) return null;
+
+        // 現在のデッキIDを渡してメニューを開き、選択結果を返す
+        return await menu.OpenAndWaitForSelection(currentDeckID);
     }
 }

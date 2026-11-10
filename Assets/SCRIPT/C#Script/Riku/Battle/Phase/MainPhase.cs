@@ -25,9 +25,6 @@ public class MainPhase : PhaseBase {
     private Vector3 catchStartPos = Vector3.zero;
     // 座標の初期化フラグ
     private bool resetPos = false;
-
-    // レイキャストの最大距離
-    private const float RAY_RANGE_MAX = 10.0f;
     
     /// <summary>
     /// 自身のターン処理
@@ -79,7 +76,7 @@ public class MainPhase : PhaseBase {
                 int fieldLayer = LayerMask.GetMask("Field");
                 // フィールドとのレイキャスト
                 if (Physics.Raycast(
-                    ray, RAY_RANGE_MAX, fieldLayer)) {
+                    ray, GameConst.RAY_RANGE_MAX, fieldLayer)) {
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
                         // レーン交換
@@ -161,7 +158,7 @@ public class MainPhase : PhaseBase {
         // レイキャストでカードを触れているか判定
         if (Physics.Raycast(
             ray, out RaycastHit hit,
-            RAY_RANGE_MAX, cardLayer)
+            GameConst.RAY_RANGE_MAX, cardLayer)
             ) {
             if (!hit.collider) return;
             // 触れているオブジェクトを保存
@@ -207,7 +204,7 @@ public class MainPhase : PhaseBase {
         // レーンのレイキャスト
         if (Physics.Raycast(
         ray, out RaycastHit hit,
-        RAY_RANGE_MAX, laneLayer)) {
+        GameConst.RAY_RANGE_MAX, laneLayer)) {
             // レーン番号の取得
             FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
             // レーンの位置変更

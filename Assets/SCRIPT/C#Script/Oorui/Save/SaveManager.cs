@@ -29,6 +29,8 @@ public class SaveManager : MonoBehaviour {
     private string CardDataSaveFilePath =>
         Path.Combine(@"D:\RG_SaveData", CARD_SAVE_FILE_NAME);
 
+    // カードのポイント変換定数
+    private const int CARD_ACQUIRED = 10;
 
     /// <summary>
     /// SaveManagerの初期化
@@ -384,7 +386,52 @@ public class SaveManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// カードを1枚入手する
+    /// </summary>
+    /// <param name="cardID">入手したカードのID</param>
+    /// <param name="duplicatePoint">4枚目以降に変換するポイント</param>
+    /// <returns>カード入手処理の結果</returns>
+    public void AcquireCard(int cardID) {
 
+        // 不正なカードIDやポイントを受け付けない
+        if (cardID <= 0) return;
+
+        // 所持カードデータを読み込む
+        PossessionCardSaveData cardSaveData = LoadCards();
+
+        // 現在の同一カードの所持枚数を確認する
+        int ownedCount = 0;
+
+        foreach (int id in cardSaveData.cardID) {
+            // 入手対象と同じカードIDなら枚数を増やす
+            if (id == cardID) {
+                ownedCount++;
+            }
+        }
+
+        // 同じカードを3枚以上所持している場合
+        if (ownedCount >= 3) {
+
+            // 生成ポイントに変換する
+            if (CreatePointManager.Instance == null) return;
+
+            // 生成ポイントを追加する
+            CreatePointManager.Instance.AddPoint(CARD_ACQUIRED);
+
+            return;
+        }
+
+        // 所持カードにカードIDを1枚追加する
+        cardSaveData.cardID.Add(cardID);
+
+        // 所持カードデータを保存する
+        SaveCards(cardSaveData);
+        // 入手したカードを表示(デバッグde)
+        Debug.Log($"カードID:{cardID} を入手しました");
+
+        return;
+    }
     /// <summary>
     /// 所持カードのセーブファイルを読み込む
     /// </summary>

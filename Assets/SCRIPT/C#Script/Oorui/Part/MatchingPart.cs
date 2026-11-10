@@ -5,10 +5,10 @@
  */
 
 using Cysharp.Threading.Tasks;
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 
 /// <summary>
 /// マッチングパート
@@ -27,6 +27,19 @@ public class MatchingPart : PartBase {
     // Inspectorからメニューに戻るボタンを設定する
     [SerializeField] private Button returnButton;
 
+    // デッキ選択ボタン
+    [SerializeField] private Button deckSelectButton;
+
+    // 選択中のデッキ名を表示するテキスト
+    [SerializeField] private TMP_Text selectedDeckText;
+
+    // 選択されたデッキID（未選択は-1）
+    private int selectedDeckID = -1;
+
+    // デッキ選択ボタンが押されたか
+    private bool isDeckSelect = false;
+
+
     // 接続状況
     // private ConnectionState conection = ConnectionState.None;
     /// <summary>
@@ -43,17 +56,24 @@ public class MatchingPart : PartBase {
         // 接続状況の初期化
         //conection = ConnectionState.None;
 
-        // ランダムボタンが押された時の処理を登録する
-        randomButton.onClick.AddListener(OnClickRandomButton);
-        // マッチングボタンが押された時の処理を登録する
-        privateButton.onClick.AddListener(OnClickMatchingButton);
-        // 戻るボタンが押された時の処理を登録
-        returnButton.onClick.AddListener(OnClickReturnButton);
-
-        // フラグを初期化する
+        // 選択状態を初期化する
         isRandomMatch = false;
         isPrivateMatch = false;
         isReturn = false;
+        selectedDeckID = -1;
+
+        // ボタンイベントを登録する
+        randomButton.onClick.RemoveListener(OnClickRandomButton);
+        randomButton.onClick.AddListener(OnClickRandomButton);
+
+        privateButton.onClick.RemoveListener(OnClickMatchingButton);
+        privateButton.onClick.AddListener(OnClickMatchingButton);
+
+        returnButton.onClick.RemoveListener(OnClickReturnButton);
+        returnButton.onClick.AddListener(OnClickReturnButton);
+
+        deckSelectButton.onClick.RemoveListener(OnClickDeckSelectButton);
+        deckSelectButton.onClick.AddListener(OnClickDeckSelectButton);
     }
 
     /// <summary>
@@ -64,27 +84,55 @@ public class MatchingPart : PartBase {
         // ボタンが選択されるまで繰り返し待機する
         while (true) {
             // ランダムマッチまたはプライベートマッチが選択されるまで待機
-            await UniTask.WaitUntil(() => isRandomMatch || isPrivateMatch || isReturn);
+            await UniTask.WaitUntil(() => isRandomMatch || isPrivateMatch || isReturn || isDeckSelect);
+            // デッキ選択ボタンが押された場合
+            if (isDeckSelect) {
 
+                // デッキ選択フラグを初期化する
+                isDeckSelect = false;
+
+                // 現在のデッキIDを渡してデッキ選択メニューを開く
+                int? result = await MenuWindowManager.Instance.DeckSelectMenuOpen(selectedDeckID);
+
+                // キャンセルされた場合は現在の選択状態を維持する
+                if (result == null) continue;
+
+                // 決定されたデッキIDを保持する
+                selectedDeckID = result.Value;
+
+                // 選択されたデッキ情報を取得する
+                DeckSaveData deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
+
+                // 選択されたデッキ名を表示する
+                if (deckData != null && selectedDeckText != null) {
+                    selectedDeckText.text = deckData.deckName;
+                }
+
+                // 選択されたデッキIDをログに表示する
+                Debug.Log($"使用デッキID：{selectedDeckID}");
+            }
             // ランダムマッチが選択された場合
             if (isRandomMatch) {
-                // ランダムマッチが選択されたことをログに出力する。
-                Debug.Log("ランダムマッチを選択");
+                // デッキが選択されていない場合
+                if (selectedDeckID < 0) {
+                    // デッキを選択していないことを伝えるメニュー表示をする
 
-                // マッチング画面を開き、終了するまで待機する。
+                    // 選択状態を解除する
+                    isRandomMatch = false;
+                    continue;
+                }
+                // マッチング画面を開く
                 await MenuWindowManager.Instance.Open<RandomMatchingMenu>();
 
-                // キャンセルされた場合はマッチング画面に留まる。
+                // キャンセルされた場合
                 if (RandomMatchingMenu.IsMatchingCancelled) {
-                    // ランダムマッチの選択状態を解除する。
                     isRandomMatch = false;
-
-                    // ボタンの再入力を待つため、ループの先頭に戻る。
                     continue;
                 }
 
-                // キャンセルされずにマッチングが完了した場合のみ対戦画面へ遷移する。
-                await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
+                // 選択されたデッキIDを渡して対戦画面へ遷移する
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID);
+
                 return;
             }
 
@@ -169,6 +217,15 @@ public class MatchingPart : PartBase {
     }
 
     /// <summary>
+    /// デッキ選択ボタンが押されたときの処理
+    /// </summary>
+    private void OnClickDeckSelectButton() {
+
+        // デッキ選択フラグを有効にする
+        isDeckSelect = true;
+    }
+
+    /// <summary>
     /// 片付け処理
     /// </summary>
     /// <returns></returns>
@@ -178,6 +235,7 @@ public class MatchingPart : PartBase {
         randomButton.onClick.RemoveListener(OnClickRandomButton);
         privateButton.onClick.RemoveListener(OnClickMatchingButton);
         returnButton.onClick.RemoveListener(OnClickReturnButton);
+        deckSelectButton.onClick.RemoveListener(OnClickDeckSelectButton);
         // フラグを初期化する
         isPrivateMatch = false;
         isRandomMatch = false;
