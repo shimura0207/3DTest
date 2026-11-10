@@ -27,4 +27,36 @@ public class CardDataMasterUtility {
         }
         return null;
     }
+
+    /// <summary>
+    /// マスターデータに登録されているすべてのカードIDを取得
+    /// </summary>
+    /// <returns>カードID一覧</returns>
+    public static List<int> GetAllCardIDs() {
+
+        // 取得結果を格納するリスト
+        List<int> cardIDList = new List<int>();
+
+        // マスターデータが存在するか確認
+        if (MasterDataManager.cardData == null ||
+            MasterDataManager.cardData.Count == 0) return cardIDList;
+
+        // カードのマスターデータ取得
+        var cardMasterList = MasterDataManager.cardData[0];
+
+        // マスターデータに登録されているIDをすべて取得
+        for (int i = 0, max = cardMasterList.Count; i < max; i++) {
+
+            // カードIDを取得
+            int cardID = cardMasterList[i].cardID;
+
+            // 重複しているIDは追加しない
+            if (cardIDList.Contains(cardID)) continue;
+
+            // IDをリストに追加
+            cardIDList.Add(cardID);
+        }
+
+        return cardIDList;
+    }
 }
