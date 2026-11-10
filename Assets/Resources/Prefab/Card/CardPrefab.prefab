@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 865221912351205521}
   - component: {fileID: 5198467781708675456}
   - component: {fileID: 1819846692414181974}
+  - component: {fileID: 4570636800543679119}
   m_Layer: 5
   m_Name: CardPrefab
   m_TagString: Untagged
@@ -136,6 +137,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardImage: {fileID: 1616079159238598096}
   countText: {fileID: 6551839715820380779}
+--- !u!114 &4570636800543679119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6820165627245781284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d4c8fec0bcbf714aa35b20491bf8877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7234295736859459963
 GameObject:
   m_ObjectHideFlags: 0

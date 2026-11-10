@@ -194,6 +194,20 @@ public class MenuWindowManager : SystemObject {
     }
 
     /// <summary>
+    /// カードの詳細メニューを開く
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async UniTask CardDetailMenuOpen(int id) {
+        // メニューの取得
+        CardDetailMenu menu = Get<CardDetailMenu>();
+        if (menu == null) return;
+
+        // メニューを開く
+        await menu.Open(id);
+    }
+
+    /// <summary>
     /// バトル設定を行うメニュー
     /// </summary>
     /// <param name="id"></param>

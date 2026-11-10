@@ -3,8 +3,10 @@
  *  @author oorui
  */
 
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -85,5 +87,12 @@ public class PossessionCardItem : MonoBehaviour {
         else {
             cardImage.color = Color.gray;
         }
+    }
+
+    // 右クリックされたときの処理
+    public void OnRightClick() {
+
+        // カード詳細メニューを開く
+        MenuWindowManager.Instance.CardDetailMenuOpen(CardID).Forget();
     }
 }
