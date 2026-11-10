@@ -178,6 +178,22 @@ public class MenuWindowManager : SystemObject {
     }
 
     /// <summary>
+    /// チュートリアル用のテキスト表示
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public async UniTask TutorialTextWindow(string message) {
+        // メニューウィンドウの取得
+        TextWindowMenu menu = Get<TextWindowMenu>();
+
+        // なかった場合は何も出さない
+        if (menu == null) return;
+
+        // メニューの表示
+        await menu.Open(message);
+    }
+
+    /// <summary>
     /// バトル設定を行うメニュー
     /// </summary>
     /// <param name="id"></param>
