@@ -37,7 +37,7 @@ public class CardObject : MonoBehaviour {
 
     // SpriteRendererコンポーネント
     [SerializeField]
-    private SpriteRenderer spriteRenderer = null;
+    public SpriteRenderer spriteRenderer { get; private set; } = null;
 
     /// <summary>
     /// 初期化
