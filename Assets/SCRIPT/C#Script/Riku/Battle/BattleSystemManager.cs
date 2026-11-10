@@ -292,7 +292,8 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="card">召喚するカードのオブジェクト</param>
     /// <param name="lane">召喚するカードのレーン</param>
-    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
+    /// <param name="isAbility">効果発動中かどうか</param>
+    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane, bool isAbility = false) {
         int objectID = card.objectID;
         if (card.handID >= 0) {
             // 手札から指定されたレーンにカードを移動
@@ -313,6 +314,9 @@ public class BattleSystemManager : MonoBehaviour {
             CustomNetworkManager.instance.SendStringToOpponent(pack);
         }
 
+        // 効果発動中ならここで終了
+        if (isAbility) await UniTask.CompletedTask;
+        
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
 

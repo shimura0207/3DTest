@@ -370,16 +370,14 @@ public enum AbilityProcess {
     UpATK,
     // ATK減少
     DownATK,
-    // モンスターを出す
-    SummonMonster,
-    // モンスター変化
-    TransformationMonster,
-    // 状態付与
-    GiveState,
     // モンスター破壊
     DeleteMonster,
     // モンスターを手札に戻す
     ReturnMonster,
+    // なかまよび(マジカルバードの特殊効果)
+    Nakamayobi,
+    // レベルアップ(リールギアの特殊効果)
+    LevelUP,
 
     Max,
 }

@@ -80,22 +80,31 @@ public class AbilityManager : MonoBehaviour {
                 func = () => abilityProcessData.DrawAbility(card.playerType, value);
                 break;
             case AbilityProcess.GiveDamage:
+                func = () => abilityProcessData.GiveDamageAbility(card, card.playerType, target, value);
                 break;
             case AbilityProcess.GiveHealth:
+                func = () => abilityProcessData.GiveHealthAbility(card, card.playerType, target, value);
                 break;
             case AbilityProcess.DiscardHand:
+                func = () => abilityProcessData.HandDestructionAbility(card.playerType, target);
                 break;
             case AbilityProcess.UpATK:
+                func = () => abilityProcessData.GiveAttackAbility(card, card.playerType, target, value);
                 break;
             case AbilityProcess.DownATK:
-                break;
-            case AbilityProcess.SummonMonster:
-                break;
-            case AbilityProcess.TransformationMonster:
-                break;
-            case AbilityProcess.GiveState:
+                func = () => abilityProcessData.ReduceAttackAbility(card, card.playerType, target, value);
                 break;
             case AbilityProcess.DeleteMonster:
+                func = () => abilityProcessData.DeleteMonsterAbility(card, card.playerType, target);
+                break;
+            case AbilityProcess.ReturnMonster:
+                func = () => abilityProcessData.ReturnMonsterAbility(card, card.playerType, target);
+                break;
+            case AbilityProcess.Nakamayobi:
+                func = () => abilityProcessData.NakamayobiAbility(card.playerType);
+                break;
+            case AbilityProcess.LevelUP:
+                func = () => abilityProcessData.LevelUPAbility(card);
                 break;
         }
         return func;
