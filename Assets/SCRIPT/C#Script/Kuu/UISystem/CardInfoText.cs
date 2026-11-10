@@ -76,6 +76,7 @@ public class CardInfoText : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         var data = UIManager.instance.cardData;
+        
         // データがなければ非表示
         if (data == null) {
             simpleText.enabled = false;

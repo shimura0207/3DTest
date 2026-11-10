@@ -87,6 +87,10 @@ public class UIManager : SystemObject {
                 cardObject = catchObject.GetComponent<CardObject>();
                 // IDからステータスを取得
                 cardData = CardDataMasterUtility.GetCardMaster(cardObject.cardID);
+                // 裏向きならデータは要らない
+                if (cardObject.SpriteRenderer.sprite == ScriptableObjectManager.instance.GetCardImage(0)) {
+                    cardData = null;
+                }
             }
             else {
                 cardData = null;
