@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
@@ -366,5 +367,26 @@ public class AbilityProcessData {
         if (handDestruction[target] == null) return;
         // 手札を捨てる
         await handDestruction[target](player);
+    }
+
+    /// <summary>
+    /// なかまよび効果(マジカルバードの特殊効果)
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    public async UniTask NakamayobiAbility(PlayerType player) {
+        // マジカルバードモンスターのカードID全取得
+        List<int> bardIDs = new List<int>();
+        //foreach (var data in CardDataMastterUtility) {
+        //    if (data.CardType != CardType.Monster) continue;
+        //    bardIDs.Add(data.cardID);
+        //}
+        // ランダムで1体を選ぶ
+        int rand = UnityEngine.Random.Range(0, bardIDs.Count);
+        // 出すレーンを選択
+        FieldLane lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
+        // 選ばれたモンスターを召喚
+        CardObject cardObject = CardObjectManager.instance.UseCardObject(bardIDs[rand], player);
+        await BattleSystemManager.instance.SummonMonster(player, cardObject, lane);
     }
 }

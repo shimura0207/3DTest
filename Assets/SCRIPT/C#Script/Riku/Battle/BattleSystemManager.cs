@@ -294,8 +294,10 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="lane">召喚するカードのレーン</param>
     public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
         int objectID = card.objectID;
-        // 手札から指定されたレーンにカードを移動
-        AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        if (card.handID >= 0) {
+            // 手札から指定されたレーンにカードを移動
+            AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        }
         // 指定されたレーンにカードを設置
         CardObjectManager.instance.MoveToField(player, objectID, lane);
         // 召喚時効果発動確認
