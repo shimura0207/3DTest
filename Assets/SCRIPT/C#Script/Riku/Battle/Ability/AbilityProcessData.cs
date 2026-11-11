@@ -727,5 +727,6 @@ public class AbilityProcessData {
             // イラスト設定
             card.ChangeCardImage(card.cardID);
         }
+        await UniTask.CompletedTask;
     }
 }
