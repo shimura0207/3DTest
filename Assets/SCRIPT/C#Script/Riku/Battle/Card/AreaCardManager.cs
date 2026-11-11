@@ -142,6 +142,18 @@ public class AreaCardManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 任意のカードをフィールドから手札へ送る
+    /// </summary>
+    /// <param name="player">自分か相手か</param>
+    /// <param name="laneID">フィールドのレーン番号</param>
+    public void FieldToHand(PlayerType player, int laneID) {
+        // 手札に指定されたカードを追加
+        outDeckCards[player].handCards.Add(outDeckCards[player].fieldCards[laneID]);
+        // 指定されたカードをフィールドから削除
+        outDeckCards[player].fieldCards.RemoveAt(laneID);
+    }
+
+    /// <summary>
     /// 任意のカードをゲーム外から特定のレーンに出す
     /// </summary>
     /// <param name="player">自分か相手か</param>
@@ -175,7 +187,7 @@ public class AreaCardManager : MonoBehaviour {
         var deck = deckCards[PlayerType.Self];
 
         // Listをして識別IDと一緒に纏める
-        var pack = new object[] { NetworkUseID.deck }.Concat(deck.Cast<object>()).ToArray();
+        var pack = new object[] { NetworkUseID.Deck }.Concat(deck.Cast<object>()).ToArray();
         return NetworkValueConverter.Pack(pack);
     }
 

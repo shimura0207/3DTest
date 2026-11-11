@@ -34,30 +34,23 @@ public class StandbyPart : PartBase {
         // レンタルデッキを取得
         List<int> rental = DeckDataMasterUtility.GetDeckMaster(1);
 
-        // 現在の所持カードセーブデータの取得
+        // 現在の所持カードセーブデータを取得
         PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
 
-        // どちらかがなければ、処理を終わる
+        // どちらかがなければ処理を終了する
         if (rental == null || saveData == null) return;
 
-        // カードIDのリストが初期化されていない場合は新しく作成する
-        if (saveData.cardID == null) {
-            saveData.cardID = new List<int>();
-        }
+        // 所持カードリストを初期化する
+        saveData.cardID = new List<int>();
 
-        // レンタルデッキのカードIDを所持カードリストに追加する
-        if (saveData.cardID.Count == 0) {
-            saveData.cardID.AddRange(rental);
+        // レンタルデッキのカードIDをすべて追加する
+        saveData.cardID.AddRange(rental);
 
-            // 初回登録した所持カードを保存する
-            SaveManager.Instance.SaveCards(saveData);
-        }
-
-        // 所持カードのセーブデータをファイルに保存する
+        // 所持カードのセーブデータを保存する
         SaveManager.Instance.SaveCards(saveData);
 
         // デバッグログを表示する
-        Debug.Log("StandbyPart通過");
+        Debug.Log($"レンタルデッキ登録完了：{saveData.cardID.Count}枚");
 
 
     }

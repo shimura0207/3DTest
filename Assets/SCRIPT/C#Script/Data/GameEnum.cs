@@ -189,7 +189,10 @@ public enum CardRearity {
 /// カードのテーマ 
 /// </summary>
 public enum CardTheme {
-
+    None = -1,
+    RG = 1,         // RG
+    MagicalBard = 2,// マジカルバード
+    Doragon = 3     // ドラゴン
 }
 /// <summary>
 /// カードのタイプ
@@ -272,40 +275,23 @@ public enum AbilityType {
 
     // 組み合わせで作れる通常効果
     Normal,
-    // 組み合わせでは作れない複雑な特殊効果
-    Special,
-    // キーワード効果
-    Keyword,
+    // 常在効果
+    Passive,
 
     Max,
 }
 
 /// <summary>
-/// 特殊効果
+/// 常在効果
 /// @author Riku
 /// </summary>
-public enum SpecialAbility {
+public enum PassiveAbility {
     None = -1,
 
-    // イスカの1番目の効果(仮)
-    Isuka1,
-    // イスカの2番目の効果(仮)
-    Isuka2,
-
-    Max,
-}
-
-/// <summary>
-/// キーワード効果
-/// @author Riku
-/// </summary>
-public enum KeywordAbility {
-    None = -1,
-
-    // アスリート(疲労しない)
-    Athlete,
-    // ターゲット集中(相手の攻撃を全て受ける)
-    TargetFocus,
+    // 疲労しない
+    NoFatigue,
+    // 攻撃によるダメージの軽減
+    AttackReduction,
 
     Max,
 }
@@ -321,8 +307,12 @@ public enum AbilityTiming {
     TurnStart,
     // カード使用時
     Play,
+    // 離れたとき
+    Leave,
     // 攻撃時
     Attack,
+    // 攻撃を受けたとき
+    GetHit,
     // ターン終了時
     TurnEnd,
 
@@ -336,29 +326,27 @@ public enum AbilityTiming {
 public enum AbilityTarget {
     None = -1,
 
-    // 自身
+    // 自身プレイヤー
     SelfPlayer,
-    // 相手
+    // 相手プレイヤー
     OpponentPlayer,
-    // ランダム
-    Random,
-    // 選択
-    Select,
+    // 自身のランダムなカード
+    SelfRandom,
+    // 相手のランダムなカード
+    OpponentRandom,
+    // 自身のカードを選択
+    SelfSelect,
+    // 相手のカードを選択
+    OpponentSelect,
+    // 自身の全てのカード
+    SelfAll,
+    // 相手の全てのカード
+    OpponentAll,
+    // このモンスター
+    ThisMonster,
+    // 他のモンスター
+    OtherMonster,
 
-    Max,
-}
-
-/// <summary>
-/// 効果の発動条件
-/// @author Riku
-/// </summary>
-public enum AbilityCondition {
-    None = -1,
-
-    // 無条件
-    Free,
-    // 現在のサイズによって
-    CurrentSize,
 
     Max,
 }
@@ -372,26 +360,26 @@ public enum AbilityProcess {
 
     // カードのドロー
     Draw,
-    // カードのサーチ
-    Search,
     // ダメージ付与
     GiveDamage,
-    // HP回復
-    HeelHP,
+    // HP増加
+    GiveHealth,
     // 手札を捨てる
     DiscardHand,
     // ATK上昇
     UpATK,
     // ATK減少
     DownATK,
-    // モンスターを出す
-    SummonMonster,
-    // モンスター変化
-    TransformationMonster,
-    // 状態付与
-    GiveState,
     // モンスター破壊
     DeleteMonster,
+    // モンスターを手札に戻す
+    ReturnMonster,
+    // なかまよび(マジカルバードの特殊効果)
+    Nakamayobi,
+    // レベルアップ(リールギアの特殊効果)
+    LevelUP,
+    // 総攻撃(ドラゴンの特殊効果)
+    Soukougeki,
 
     Max,
 }
@@ -402,7 +390,7 @@ public enum AbilityProcess {
 /// </summary>
 public enum NetworkUseID {
     // デッキの送信
-    deck,
+    Deck,
     // パチスロフェイズへの移行ボタン
     PachisuroGoButton,
     // ターンエンドボタン
@@ -410,17 +398,23 @@ public enum NetworkUseID {
 
     FirstPlayer,
 
-    slotStart, // レバーON：役を指定して回転開始
-    slotStop,  // 指定リールを指定角度へ停止
-    slotEnd,   // パチスロフェイズ終了
+    // レバーON：役を指定して回転開始
+    SlotStart,
+    // 指定リールを指定角度へ停止
+    SlotStop,
+    // パチスロフェイズ終了
+    SlotEnd,
 
+    // パチスロ通信
     // 既存のNetworkUseIDの末尾に追加
-    slot, // パチスロ通信
+    Slot,
 
     // カードの使用
-    playCard,
+    PlayCard,
     // モンスターのレーン交換
-    laneCange,
+    LaneCange,
+    // 効果対象カード
+    AbilityTargetCard,
 }
 
 /// <summary>

@@ -17,7 +17,18 @@ public class EndPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
-        // ターン終了時処理(今後実装予定)
+        // ターン終了時効果があるか確認
+        foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Self]) {
+            if (!monster.Value) continue;
+            foreach (var ability in monster.Value.abilityList) {
+                if (ability.abilityTiming != AbilityTiming.TurnEnd) continue;
+                // 見つかったターン開始時効果を積む
+                AbilityManager.instance.SetAblityQueue(monster.Value, ability);
+            }
+        }
+
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
 
         // 次のフェイズへ
         nextPhase = true;
@@ -31,7 +42,18 @@ public class EndPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
-        // ターン終了時処理(今後実装予定)
+        // ターン終了時効果があるか確認
+        foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Opponent]) {
+            if (!monster.Value) continue;
+            foreach (var ability in monster.Value.abilityList) {
+                if (ability.abilityTiming != AbilityTiming.TurnEnd) continue;
+                // 見つかったターン開始時効果を積む
+                AbilityManager.instance.SetAblityQueue(monster.Value, ability);
+            }
+        }
+
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
 
         // 次のフェイズへ
         nextPhase = true;

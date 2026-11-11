@@ -45,3 +45,24 @@ MonoBehaviour:
     - DeckID: 1
       CardID: 121
       Count: 2
+    - DeckID: 1
+      CardID: 101
+      Count: 2
+    - DeckID: 1
+      CardID: 112
+      Count: 2
+    - DeckID: 1
+      CardID: 111
+      Count: 2
+    - DeckID: 1
+      CardID: 113
+      Count: 2
+    - DeckID: 0
+      CardID: 0
+      Count: 0
+    - DeckID: 0
+      CardID: 0
+      Count: 0
+    - DeckID: 0
+      CardID: 0
+      Count: 0

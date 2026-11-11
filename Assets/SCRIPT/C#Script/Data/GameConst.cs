@@ -26,4 +26,10 @@ public class GameConst {
     public static readonly int SIZE_LIMIT_MAX = 10;
     // サイズ上限上昇値
     public static readonly int SIZE_LIMIT_UP = 2;
+
+    // 1ターンのスペル回数上限
+    public static readonly int SPELL_CAST_MAX = 3;
+
+    // レイキャストの最大距離
+    public static readonly float RAY_RANGE_MAX = 10.0f;
 }

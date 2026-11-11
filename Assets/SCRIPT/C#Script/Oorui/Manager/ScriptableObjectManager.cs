@@ -20,6 +20,9 @@ public class ScriptableObjectManager : SystemObject {
     // カードのイラストデータ
     [SerializeField]
     private CardImageDatabase cardImageDatabase = null;
+    // カードの効果データ
+    [SerializeField]
+    private CardAbilityDatabase cardAbilityDatabase = null;
 
     /// <summary>
     /// 初期化処理
@@ -38,8 +41,14 @@ public class ScriptableObjectManager : SystemObject {
     /// <returns></returns>
     public Sprite GetCardImage(int cardID) {
         return cardImageDatabase.GetCardImage(cardID);
-
     }
 
-
+    /// <summary>
+    /// ID毎のカードの効果を取得
+    /// </summary>
+    /// <param name="cardID"></param>
+    /// <returns></returns>
+    public List<CardAbilityDatabase.AbilityData> GetCardAbility(int cardID) {
+        return cardAbilityDatabase.GetCardAbility(cardID);
+    }
 }

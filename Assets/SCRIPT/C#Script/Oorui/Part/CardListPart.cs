@@ -4,8 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
@@ -24,6 +23,12 @@ public class CardListPart : PartBase {
     [SerializeField] private Button sort_OwnerCard;
     // ひとつ前の画面に戻るボタン
     [SerializeField] private Button returnButton;
+    // カード表示切り替えボタン
+    [SerializeField]
+    private Button toggleDisplayButton;
+    // TextMeshProの参照
+    [SerializeField]
+    private TMP_Text toggleDisplayText;
 
     // 選択された遷移先
     private CardRelationMenuSelect selectMenu = CardRelationMenuSelect.None;
@@ -72,6 +77,10 @@ public class CardListPart : PartBase {
         // 画面遷移イベント
         returnButton.onClick.RemoveListener(OnReturnSelected);
         returnButton.onClick.AddListener(OnReturnSelected);
+        // カード表示切り替えイベント
+        toggleDisplayButton.onClick.RemoveListener(OnToggleDisplay);
+        toggleDisplayButton.onClick.AddListener(OnToggleDisplay);
+
     }
 
     /// <summary>
@@ -79,6 +88,20 @@ public class CardListPart : PartBase {
     /// </summary>
     private void OnReturnSelected() {
         selectMenu = CardRelationMenuSelect.CardRelation;
+    }
+
+    /// <summary>
+    /// カード表示を切り替える
+    /// </summary>
+    private void OnToggleDisplay() {
+
+        // カード表示を切り替える
+        possessionCardListView.ToggleCardDisplay();
+
+        // 現在の表示状態に応じてテキストを変更
+        toggleDisplayText.text = possessionCardListView.isShowAllCards
+            ? "所持カードのみ表示"
+            : "全カード表示";
     }
 
     /// <summary>
@@ -94,7 +117,6 @@ public class CardListPart : PartBase {
         // カード関連画面に遷移
         await PartManager.Instance.TransitionPart(GamePart.CardRelation);
 
-        // 現時点では追加の実行処理はない
         await UniTask.CompletedTask;
     }
 

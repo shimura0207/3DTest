@@ -3,6 +3,7 @@
  * @autor   Riku
  */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -19,17 +20,7 @@ public class CardObject : MonoBehaviour {
     // 手札ID(手札以外の場所にある場合は使わない)
     public int handID { get; private set; } = -1;
     // レーンID(フィールド以外の場所にある場合は使わない)
-    public int laneID { get; private set;  } = -1;
-
-    // カードのステータス
-    //public struct CardStates {
-    //    // HP
-    //    public int HP;
-    //    // 攻撃力
-    //    public int ATK;
-    //    // サイズ
-    //    public int SIZE;
-    //}
+    public int laneID { get; private set; } = -1;
 
     // デフォルトのステータス
     public Dictionary<MonsterStatus, int> defaultStatus { get; private set; }
@@ -41,13 +32,14 @@ public class CardObject : MonoBehaviour {
     public CardType cardType { get; private set; } = CardType.None;
     // 所有者
     public PlayerType playerType { get; private set; } = PlayerType.None;
+    // カードの効果
+    public List<CardAbilityDatabase.AbilityData> abilityList { get; private set; }
 
-    // カードのイラストデータ
-    [SerializeField]
-    private CardImageDatabase cardImageDatabase = null;
     // SpriteRendererコンポーネント
     [SerializeField]
     private SpriteRenderer spriteRenderer = null;
+    // 読み取り専用プロパティ
+    public SpriteRenderer SpriteRenderer => spriteRenderer;
 
     /// <summary>
     /// 初期化
@@ -55,6 +47,7 @@ public class CardObject : MonoBehaviour {
     public void Initialize() {
         defaultStatus = new Dictionary<MonsterStatus, int>();
         currentStatus = new Dictionary<MonsterStatus, int>();
+        abilityList = new List<CardAbilityDatabase.AbilityData>();
     }
 
     /// <summary>
@@ -82,13 +75,18 @@ public class CardObject : MonoBehaviour {
 
         // 相手のカードの場合はとりあえず裏面画像に設定
         if (playerType == PlayerType.Opponent) {
-            spriteRenderer.sprite = cardImageDatabase.GetCardImage(GameConst.BACK_IMAGE_ID);
+            spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(GameConst.BACK_IMAGE_ID);
         }
         // 自分のカードはIDから取得
         else if (playerType == PlayerType.Self) {
             // IDからイラストを取得
-            spriteRenderer.sprite = cardImageDatabase.GetCardImage(cardID);
+            spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(cardID);
         }
+
+        // IDから効果を取得
+        abilityList = ScriptableObjectManager.instance.GetCardAbility(cardID);
+        // nullだったら空を入れとく
+        if (abilityList == null) abilityList = new List<CardAbilityDatabase.AbilityData>();
     }
 
     /// <summary>
@@ -104,19 +102,54 @@ public class CardObject : MonoBehaviour {
         suportRole = CardSuportRole.None;
         cardType = CardType.None;
         playerType = PlayerType.None;
+        abilityList = new List<CardAbilityDatabase.AbilityData>();
         spriteRenderer.sprite = null;
     }
 
     /// <summary>
     /// モンスターとして出ているこのオブジェクトを破壊する
     /// </summary>
-    public void DestroyMonster() {
+    /// <param name="isAbility">効果発動中かどうか</param>
+    public void DestroyMonster(bool isAbility = false) {
         // フィールドから墓地へIDの移動
         AreaCardManager.instance.FieldToGrave(playerType, laneID);
         // オブジェクトのフィールドを離れる処理
         CardObjectManager.instance.LeaveFieldSetup(playerType, (FieldLane)laneID);
+        // 離れた時効果発動確認
+        foreach (var ability in abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Leave) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(this, ability);
+        }
         // 自分自身の未使用化
         CardObjectManager.instance.UnuseCardObject(this);
+        
+        if (isAbility) return;
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
+    }
+
+    /// <summary>
+    /// モンスターとして出ているこのオブジェクトを手札に戻す
+    /// <param name="isAbility">効果発動中かどうか</param>
+    /// </summary>
+    public void ReturnMonster(bool isAbility = false) {
+        // フィールドから手札へIDの移動
+        AreaCardManager.instance.FieldToHand(playerType, laneID);
+        // オブジェクトのフィールドを離れる処理
+        CardObjectManager.instance.LeaveFieldSetup(playerType, (FieldLane)laneID);
+        // オブジェクトを手札へ移動
+        CardObjectManager.instance.MoveToHand(playerType, objectID);
+        // 離れた時効果発動確認
+        foreach (var ability in abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Leave) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(this, ability);
+        }
+
+        if (isAbility) return;
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
     }
 
     /// <summary>
@@ -181,7 +214,7 @@ public class CardObject : MonoBehaviour {
     /// </summary>
     /// <param name="imageID">画像のID(背面画像以外はカードIDと同じ)</param>
     public void ChangeCardImage(int imageID) {
-        spriteRenderer.sprite = cardImageDatabase.GetCardImage(imageID);
+        spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(imageID);
     }
 
     /// <summary>
@@ -200,12 +233,21 @@ public class CardObject : MonoBehaviour {
 
     /// <summary>
     /// 指定したステータスに与える
+    /// ※破壊処理を内包しているのでHPを減らす場合はforeach厳禁
     /// </summary>
     /// <param name="giveStatus">与えるステータス</param>
     /// <param name="giveValue">与える値</param>
     public void GiveStatus(MonsterStatus giveStatus, int giveValue) {
         currentStatus[giveStatus] += giveValue;
 
+        // ATKが0以下の場合は0にする
+        if (currentStatus[MonsterStatus.ATK] <= 0) {
+            currentStatus[MonsterStatus.ATK] = 0;
+        }
+        // SIZEが0以下の場合は0にする
+        if (currentStatus[MonsterStatus.SIZE] <= 0) {
+            currentStatus[MonsterStatus.SIZE] = 0;
+        }
         // HPが0になった場合は破壊
         if (currentStatus[MonsterStatus.HP] <= 0) {
             DestroyMonster();

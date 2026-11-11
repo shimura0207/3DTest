@@ -119,27 +119,44 @@ public class MenuWindowManager : SystemObject {
     }
 
     /// <summary>
-    /// レーン選択画面を開き、選択結果を返す
+    /// 空いているレーンを選択するメニュー
     /// </summary>
-    public async UniTask<FieldLane> LaneMenuOpen() {
+    public async UniTask<FieldLane> EmptyLaneMenuOpen(PlayerType playerType) {
 
-        // 管理しているLaneWindowを取得
+        // LaneWindowを取得
         LaneWindow laneWindow = Get<LaneWindow>();
 
-        // メニューが見つからない場合は処理を終了
-        if (laneWindow == null) {
-            return FieldLane.None;
-        }
+        // メニューがなければ終了
+        if (laneWindow == null) return FieldLane.None;
 
-        // 空きレーンがなければメニューを開かない
-        if (!laneWindow.HasEmptyLane()) {
-            Debug.Log("空いているレーンがありません。");
-            return FieldLane.None;
-        }
+        // 空きレーンがなければ終了
+        if (!laneWindow.HasEmptyLane(playerType)) return FieldLane.None;
 
-        // レーンにカードがないか検索
-        await laneWindow.Setup();
-        // レーンを選択するまで待機し、結果を返す
+        // 空いているレーンのみ表示
+        laneWindow.SetupEmptyLane(playerType);
+
+        // 選択結果を返す
+        return await laneWindow.OpenAndWaitForSelection();
+    }
+
+    /// <summary>
+    /// カードが置かれているレーンを選択するメニュー
+    /// </summary>
+    public async UniTask<FieldLane> PlacedLaneMenuOpen(PlayerType playerType) {
+
+        // LaneWindowを取得
+        LaneWindow laneWindow = Get<LaneWindow>();
+
+        // メニューがなければ終了
+        if (laneWindow == null) return FieldLane.None;
+
+        // カードが置かれたレーンがなければ終了
+        if (!laneWindow.HasPlacedLane(playerType)) return FieldLane.None;
+
+        // カードが置かれているレーンのみ表示
+        laneWindow.SetupPlacedLane(playerType);
+
+        // 選択結果を返す
         return await laneWindow.OpenAndWaitForSelection();
     }
 
@@ -158,6 +175,36 @@ public class MenuWindowManager : SystemObject {
 
         // 選択結果を返す
         return await menu.Open(message);
+    }
+
+    /// <summary>
+    /// チュートリアル用のテキスト表示
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public async UniTask TutorialTextWindow(string message) {
+        // メニューウィンドウの取得
+        TextWindowMenu menu = Get<TextWindowMenu>();
+
+        // なかった場合は何も出さない
+        if (menu == null) return;
+
+        // メニューの表示
+        await menu.Open(message);
+    }
+
+    /// <summary>
+    /// カードの詳細メニューを開く
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async UniTask CardDetailMenuOpen(int id) {
+        // メニューの取得
+        CardDetailMenu menu = Get<CardDetailMenu>();
+        if (menu == null) return;
+
+        // メニューを開く
+        await menu.Open(id);
     }
 
     /// <summary>
@@ -221,5 +268,22 @@ public class MenuWindowManager : SystemObject {
 
         // 共通のルーム画面を表示する
         await menu.Open();
+    }
+
+    /// <summary>
+    /// デッキ選択メニューを表示し、選択結果を返す
+    /// </summary>
+    /// <param name="currentDeckID">現在選択されているデッキID</param>
+    /// <returns>決定されたデッキID。キャンセル時はnull</returns>
+    public async UniTask<int?> DeckSelectMenuOpen(int currentDeckID) {
+
+        // 管理しているデッキ選択メニューを取得する
+        DeckSelectMenu menu = Get<DeckSelectMenu>();
+
+        // メニューが存在しない場合はキャンセル扱いにする
+        if (menu == null) return null;
+
+        // 現在のデッキIDを渡してメニューを開き、選択結果を返す
+        return await menu.OpenAndWaitForSelection(currentDeckID);
     }
 }

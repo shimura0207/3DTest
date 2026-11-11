@@ -25,15 +25,36 @@ public class MainPhase : PhaseBase {
     private Vector3 catchStartPos = Vector3.zero;
     // 座標の初期化フラグ
     private bool resetPos = false;
-
-    // レイキャストの最大距離
-    private const float RAY_RANGE_MAX = 10.0f;
     
     /// <summary>
     /// 自身のターン処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
+        // カード操作
+        CardControl();
+
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
+
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 相手のターン処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask OpponentExecute() {
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
+
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// カード操作
+    /// </summary>
+    private void CardControl() {
         // マウスカーソルのスクリーン座標取得
         Vector3 mousePos = Input.mousePosition;
         // スクリーン座標からレイを取得
@@ -53,11 +74,9 @@ public class MainPhase : PhaseBase {
             if (Input.GetMouseButtonUp(0)) {
                 // フィールドレイヤー取得
                 int fieldLayer = LayerMask.GetMask("Field");
-                // 残りのサイズ取得
-                int remainingSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
                 // フィールドとのレイキャスト
                 if (Physics.Raycast(
-                    ray,RAY_RANGE_MAX,fieldLayer)) {
+                    ray, GameConst.RAY_RANGE_MAX, fieldLayer)) {
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
                         // レーン交換
@@ -65,16 +84,9 @@ public class MainPhase : PhaseBase {
                             resetPos = true;
                     }
                     // カードが手札のものだった場合の処理
-                    else if (cardObject.handID > -1){
-                        // サイズが上限超過しないか
-                        if (cardObject.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
-                            // カードを使用
-                            UniTask task = PlayCard(cardObject.objectID);
-                        }
-                        else {
-                            resetPos = true;
-                            Debug.Log("サイズが超過しています");
-                        }
+                    else if (cardObject.handID > -1) {
+                        // カードを使用
+                        UniTask task = PlayCard(cardObject);
                     }
                 }
                 // フィールド外で離したら元の位置に戻る
@@ -94,46 +106,44 @@ public class MainPhase : PhaseBase {
                 catchStartPos = Vector3.zero;
             }
         }
-        await UniTask.CompletedTask;
-    }
-
-    /// <summary>
-    /// 相手のターン処理
-    /// </summary>
-    /// <returns></returns>
-    public override async UniTask OpponentExecute() {
-        //// 相手の使用したカード取得
-        //int playCardObjectID = BattleSystemManager.instance.GetOpponentPlayCard();
-        //
-        //if (playCardObjectID <= -1) return;
-        //// 受け取ったカードの使用
-        //UniTask task = PlayCard(PlayerType.Opponent, playCardObjectID);
-        
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// カードの使用
     /// </summary>
-    /// <param name="objectID">使用するオブジェクトのID</param>
+    /// <param name="card">使用するオブジェクトのID</param>
     /// <returns></returns>
-    private async UniTask PlayCard(int objectID) {
-        if (!cardObject) return;
-        // オブジェクトIDからオブジェクト取得
-        CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
+    private async UniTask PlayCard(CardObject card) {
+        if (!card) return;
         // カードタイプによって分岐
-        switch (cardObject.cardType) {
+        switch (card.cardType) {
             case CardType.Monster:
-                // レーン設置ウィンドウを出す
-                FieldLane lane = await MenuWindowManager.Instance.LaneMenuOpen();
-                // モンスター召喚
-                await BattleSystemManager.instance.SummonMonster(PlayerType.Self, obj, lane);
-                Debug.Log("モンスター召喚！！");
+                // 残りのサイズ取得
+                int remainingSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
+                // サイズが上限超過しないか
+                if (card.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
+                    // レーン設置ウィンドウを出す
+                    FieldLane lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
+                    // モンスター召喚
+                    await BattleSystemManager.instance.SummonMonster(PlayerType.Self, card, lane);
+                    Debug.Log("モンスター召喚！！");
+                }
+                else {
+                    resetPos = true;
+                    Debug.Log("サイズが超過しています");
+                }
                 break;
             case CardType.Spell:
-                // スペルを唱える
-                BattleSystemManager.instance.CastSpell(PlayerType.Self, obj);
-                Debug.Log("スペル発動！！");
+                // スペルの回数上限に引っかからないか
+                if (BattleSystemManager.instance.spellCastCount < GameConst.SPELL_CAST_MAX) {
+                    // スペルを唱える
+                    BattleSystemManager.instance.CastSpell(PlayerType.Self, card);
+                    Debug.Log("スペル発動！！");
+                }
+                else {
+                    resetPos = true;
+                    Debug.Log("サイズが超過しています");
+                }
                 break;
         }
     }
@@ -148,7 +158,7 @@ public class MainPhase : PhaseBase {
         // レイキャストでカードを触れているか判定
         if (Physics.Raycast(
             ray, out RaycastHit hit,
-            RAY_RANGE_MAX, cardLayer)
+            GameConst.RAY_RANGE_MAX, cardLayer)
             ) {
             if (!hit.collider) return;
             // 触れているオブジェクトを保存
@@ -194,7 +204,7 @@ public class MainPhase : PhaseBase {
         // レーンのレイキャスト
         if (Physics.Raycast(
         ray, out RaycastHit hit,
-        RAY_RANGE_MAX, laneLayer)) {
+        GameConst.RAY_RANGE_MAX, laneLayer)) {
             // レーン番号の取得
             FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
             // レーンの位置変更

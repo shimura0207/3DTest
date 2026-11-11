@@ -33,6 +33,8 @@ public class BattleSystemManager : MonoBehaviour {
     public Dictionary <PlayerType, int> playerSizeLimit { get; private set; } = null;
     // 現在のターン
     private int currentTurn = -1;
+    // スペルを唱えた回数
+    public int spellCastCount { get; private set; } = -1;
     // バチスロ移行フラグ
     private bool pachisuroGo = false;
     // ターンエンドフラグ
@@ -51,6 +53,7 @@ public class BattleSystemManager : MonoBehaviour {
         currentPhase = BattlePhase.None;
         battleState = BattleState.None;
         currentTurn = -1;
+        spellCastCount = -1;
         pachisuroGo = false;
         turnEnd = false;
     }
@@ -105,6 +108,8 @@ public class BattleSystemManager : MonoBehaviour {
         if (currentPhase == BattlePhase.EndPhase) {
             // ターンプレイヤー交代
             ChangeTurnPlayer();
+            // スペルの使用回数リセット
+            spellCastCount = 0;
             // スタートフェイズに戻る
             currentPhase = BattlePhase.StartPhase;
             
@@ -244,13 +249,13 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// プレイヤーに指定のダメージを与える
+    /// プレイヤーに指定のHPを付与
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
-    /// <param name="giveDamage">与えるダメージ量</param>
-    public void PlayerGiveDamage(PlayerType player, int giveDamage) {
-        // ダメージ分HPを減らす
-        playerHP[player] -= giveDamage;
+    /// <param name="giveHP">付与量</param>
+    public void PlayerGiveHP(PlayerType player, int giveHP) {
+        // HP付与
+        playerHP[player] += giveHP;
 
         // HPが0以下なら勝敗がつく
         if (playerHP[player] > 0) return;
@@ -287,18 +292,33 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="card">召喚するカードのオブジェクト</param>
     /// <param name="lane">召喚するカードのレーン</param>
-    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
+    /// <param name="isAbility">効果発動中かどうか</param>
+    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane, bool isAbility = false) {
         int objectID = card.objectID;
-        // 手札から指定されたレーンにカードを移動
-        AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        if (card.handID >= 0) {
+            // 手札から指定されたレーンにカードを移動
+            AreaCardManager.instance.HandToField(player, card.handID, (int)lane);
+        }
         // 指定されたレーンにカードを設置
         CardObjectManager.instance.MoveToField(player, objectID, lane);
-        // 効果発動確認(今後実装予定)
+        // 召喚時効果発動確認
+        foreach (var ability in card.abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Play) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(card, ability);
+        }
 
         // 自分の処理なら相手に送る
-        if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
-        CustomNetworkManager.instance.SendStringToOpponent(pack);
+        if (player == PlayerType.Self) {
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, lane);
+            CustomNetworkManager.instance.SendStringToOpponent(pack);
+        }
+
+        // 効果発動中ならここで終了
+        if (isAbility) await UniTask.CompletedTask;
+        
+        // 積まれた効果があれば発動
+        await AbilityManager.instance.AbilityExecute();
 
         await UniTask.CompletedTask;
     }
@@ -310,19 +330,25 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="card">唱えるカードのオブジェクト</param>
     public void CastSpell(PlayerType player, CardObject card) {
         int objectID = card.objectID;
-        // 効果発動(今後実装予定)
-
-        // カードを手札から墓地に移動
-        AreaCardManager.instance.HandToGrave(player, card.handID);
-        // カードオブジェクトを未使用状態に
-        CardObjectManager.instance.UnuseCardObject(card);
-        // 手札の整列
-        CardObjectManager.instance.ArrangeHand(player);
+        // スペルの効果発動確認
+        foreach (var ability in card.abilityList) {
+            if (ability.abilityTiming != AbilityTiming.Play) continue;
+            // 見つかった効果を積む
+            AbilityManager.instance.SetAblityQueue(card, ability);
+        }
+        // 発動したスペルは手札から捨てる
+        HandDestruction(player, card);
+        // スペルの回数カウント
+        spellCastCount++;
 
         // 自身の処理なら相手に送る
-        if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, FieldLane.None);
-        CustomNetworkManager.instance.SendStringToOpponent(pack);
+        if (player == PlayerType.Self) {
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, FieldLane.None);
+            CustomNetworkManager.instance.SendStringToOpponent(pack);
+        }
+
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
     }
 
 
@@ -357,7 +383,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身の処理なら相手に送る
         if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.laneCange, laneA, laneB);
+        var pack = NetworkValueConverter.Pack(NetworkUseID.LaneCange, laneA, laneB);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 
@@ -414,5 +440,19 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 受け取った2つのレーンを交換
         LaneChange(PlayerType.Opponent, laneA, laneB);
+    }
+
+    /// <summary>
+    /// 手札を捨てる
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <param name="card">捨てるカード</param>
+    public void HandDestruction(PlayerType player, CardObject card) {
+        // カードを手札から墓地に移動
+        AreaCardManager.instance.HandToGrave(player, card.handID);
+        // カードオブジェクトを未使用状態に
+        CardObjectManager.instance.UnuseCardObject(card);
+        // 手札の整列
+        CardObjectManager.instance.ArrangeHand(player);
     }
 }

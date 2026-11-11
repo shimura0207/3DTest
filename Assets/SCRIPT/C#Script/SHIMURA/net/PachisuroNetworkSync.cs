@@ -18,7 +18,7 @@ public class PachisuroNetworkSync : MonoBehaviour {
     // 他のゲーム用メッセージと区別する識別文字列。
     // 変更後
     // Packへ渡したNetworkUseID.slotと同じ文字列「slot」になる。
-    private const string Prefix = nameof(NetworkUseID.slot);
+    private const string Prefix = nameof(NetworkUseID.Slot);
 
     private const int MaxQueuedPackets = 256;
 

@@ -8,7 +8,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Windows;
 
-
 /// <summary>
 /// CardAbilityDatabaseのエディター拡張
 /// </summary>
@@ -20,18 +19,16 @@ public class CardAbilityDatabaseEditor : Editor {
     private int inputAbilityID = -1;
     // 入力されたカード効果の種類
     private AbilityType inputAbilityType = AbilityType.None;
-    // 入力された特殊効果
-    private SpecialAbility inputSpecialAbility = SpecialAbility.None;
-    // 入力されたキーワード効果
-    private KeywordAbility inputKeywordAbility = KeywordAbility.None;
+    // 入力された常在効果
+    private PassiveAbility inputPassiveAbility = PassiveAbility.None;
     // 入力された効果の発動タイミング
     private AbilityTiming inputAbilityTiming = AbilityTiming.None;
     // 入力された効果の発動対象
     private AbilityTarget inputAbilityTarget = AbilityTarget.None;
-    // 入力された効果の発動条件
-    private AbilityCondition inputAbilityCondition = AbilityCondition.None;
     // 入力された効果の発動内容
     private AbilityProcess inputAbilityProcess = AbilityProcess.None;
+    // 入力された効果の値
+    private int inputAbilityValue = -1;
 
     public override void OnInspectorGUI() {
         CardAbilityDatabase database = (CardAbilityDatabase)target;
@@ -53,22 +50,16 @@ public class CardAbilityDatabaseEditor : Editor {
                 // 効果の発動対象の設定
                 inputAbilityTarget = (AbilityTarget)UseEnumPopup(
                     "AbilityTarget", inputAbilityTarget);
-                // 効果の発動条件の設定
-                inputAbilityCondition = (AbilityCondition)UseEnumPopup(
-                    "AbilityCondition", inputAbilityCondition);
                 // 効果の発動内容の設定
                 inputAbilityProcess = (AbilityProcess)UseEnumPopup(
                     "AbilityProcess", inputAbilityProcess);
+                // 効果の値設定
+                inputAbilityValue = EditorGUILayout.IntField("Value", inputAbilityValue);
                 break;
-            case AbilityType.Special:
-                // 特殊効果の設定
-                inputSpecialAbility = (SpecialAbility)UseEnumPopup(
-                    "SpecialAbility", inputSpecialAbility);
-                break;
-            case AbilityType.Keyword:
-                // キーワード効果の設定
-                inputKeywordAbility = (KeywordAbility)UseEnumPopup(
-                    "KeywordAbility", inputKeywordAbility);
+            case AbilityType.Passive:
+                // 常在効果の設定
+                inputPassiveAbility = (PassiveAbility)UseEnumPopup(
+                    "PassiveAbility", inputPassiveAbility);
                 break;
         }
 
@@ -77,18 +68,17 @@ public class CardAbilityDatabaseEditor : Editor {
             if (inputCardID != -1 && inputAbilityID != -1) {
                 // 設定した内容を纏める
                 CardAbilityDatabase.AbilityData inputData = new CardAbilityDatabase.AbilityData() {
-                    abilityID = inputCardID,
+                    abilityID = inputAbilityID,
                     abilityType = inputAbilityType,
                     abilityTiming = inputAbilityTiming,
                     abilityTarget = inputAbilityTarget,
-                    abilityCondition = inputAbilityCondition,
                     abilityProcess = inputAbilityProcess,
-                    specialAbility = inputSpecialAbility,
-                    keywordAbility = inputKeywordAbility
+                    passiveAbility = inputPassiveAbility,
+                    abilityValue = inputAbilityValue,
                 };
 
                 // 設定したデータを追加
-                database.AddCardAbilityDataList(inputCardID, inputData);
+                database.AddCardAbilityDataList(inputCardID, inputAbilityID, inputData);
 
                 // 変更をアセットに保存
                 EditorUtility.SetDirty(database);
@@ -98,12 +88,11 @@ public class CardAbilityDatabaseEditor : Editor {
                 inputCardID = -1;
                 inputAbilityID = -1;
                 inputAbilityType = AbilityType.None;
-                inputSpecialAbility = SpecialAbility.None;
-                inputKeywordAbility = KeywordAbility.None;
+                inputPassiveAbility = PassiveAbility.None;
                 inputAbilityTiming = AbilityTiming.None;
                 inputAbilityTarget = AbilityTarget.None;
-                inputAbilityCondition = AbilityCondition.None;
                 inputAbilityProcess = AbilityProcess.None;
+                inputAbilityValue = -1;
             }
             else {
                 // カードIDか効果番号が入っていなければ警告
@@ -125,19 +114,17 @@ public class CardAbilityDatabaseEditor : Editor {
             EditorGUILayout.LabelField($"CardID: {data.cardID}", EditorStyles.boldLabel);
             foreach (var ability in data.abilityList) {
                 abilityIndex++;
+                EditorGUILayout.LabelField($"AbilityID: {ability.abilityID}");
                 // 効果表示
                 switch (ability.abilityType) {
                     case AbilityType.Normal:
                         EditorGUILayout.LabelField("AbilityTiming", ability.abilityTiming.ToString());
                         EditorGUILayout.LabelField("AbilityTarget", ability.abilityTarget.ToString());
-                        EditorGUILayout.LabelField("AbilityCondition", ability.abilityCondition.ToString());
                         EditorGUILayout.LabelField("AbilityProcess", ability.abilityProcess.ToString());
+                        EditorGUILayout.LabelField($"Value: {ability.abilityValue}");
                         break;
-                    case AbilityType.Special:
-                        EditorGUILayout.LabelField("SpecialAbility", ability.specialAbility.ToString());
-                        break;
-                    case AbilityType.Keyword:
-                        EditorGUILayout.LabelField("KeywordAbility", ability.keywordAbility.ToString());
+                    case AbilityType.Passive:
+                        EditorGUILayout.LabelField("PassiveAbility", ability.passiveAbility.ToString());
                         break;
                 }
                 // 登録されているデータを削除するボタン
