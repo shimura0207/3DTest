@@ -40,6 +40,9 @@ public class DeckBuildMenu : MenuWindowBase {
     // 戻るボタン
     [SerializeField] private Button returnButton;
 
+    // デッキ全体の登録枚数表示
+    [SerializeField] private TMP_Text deckCardCountText;
+
     // 選択された操作
     private DeckBuildMenuSelect selectMenu = DeckBuildMenuSelect.None;
 
@@ -96,13 +99,16 @@ public class DeckBuildMenu : MenuWindowBase {
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
         selectedCardID = -1;
+        
         // 選択中カードの枚数表示を初期化する
         selectedCardCountText.text = "0";
         // デッキのカードを初期化する
         deckBuildView.ClearCards();
-
+        // デッキ全体の登録枚数を更新する
+        UpdateDeckCardCount();
         // 所持カード情報を最新の状態に更新する
         deckBuildView.RefreshOwnedCardCounts();
+        
         // 編集モードかどうか確認する
         if (editingDeckData != null) {
             // 保存されているデッキ名を入力欄に設定する
@@ -110,6 +116,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
             // 保存されているカード一覧を読み込む
             deckBuildView.SetCardIDs(editingDeckData.cardIDs);
+            // デッキ全体の登録枚数を更新する
+            UpdateDeckCardCount();
         }
         else {
             // 新規作成の場合はデッキ名を初期化する
@@ -223,6 +231,9 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
 
+        // デッキ全体の登録枚数を更新する
+        UpdateDeckCardCount();
+
         // 残り編成可能枚数を更新する
         UpdateRemainingCardCount();
 
@@ -243,6 +254,9 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // デッキからカードを1枚削除する
         deckBuildView.RemoveCard(selectedCardID);
+
+        // デッキ全体の登録枚数を更新する
+        UpdateDeckCardCount();
 
         // 残り編成可能枚数を更新する
         UpdateRemainingCardCount();
@@ -380,5 +394,17 @@ public class DeckBuildMenu : MenuWindowBase {
             selectedCardID,
             remainingCount
         );
+    }
+
+    /// <summary>
+    /// デッキ全体の登録枚数を表示する
+    /// </summary>
+    private void UpdateDeckCardCount() {
+
+        // 現在のデッキ登録枚数を取得する
+        int count = deckBuildView.GetCardIDs().Count;
+
+        // 登録枚数 / 最大枚数を表示する
+        deckCardCountText.text = $"{count}/{_DECKCARD_MAXNUM}";
     }
 }

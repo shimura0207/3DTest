@@ -967,7 +967,7 @@ public class CustomNetworkManager : NetworkManager {
             return;
         }
         switch (useID) {
-            case NetworkUseID.deck:
+            case NetworkUseID.Deck:
                 AreaCardManager.instance.SetOpponentDeck(values);
                 break;
             case NetworkUseID.FirstPlayer:
@@ -981,7 +981,7 @@ public class CustomNetworkManager : NetworkManager {
             case NetworkUseID.TurnEndButton:
                 BattleSystemManager.instance.TurnEnd();
                 break;
-            case NetworkUseID.slot:
+            case NetworkUseID.Slot:
                 PachisuroNetworkSync sync = PachisuroNetworkSync.Instance;
 
                 if (sync == null || !sync.isActiveAndEnabled) {
@@ -995,11 +995,14 @@ public class CustomNetworkManager : NetworkManager {
                 // パチスロ側で内容を検証してキューへ保存します。
                 sync.ReceiveNetworkMessage(message);
                 break;
-            case NetworkUseID.playCard:
+            case NetworkUseID.PlayCard:
                 BattleSystemManager.instance.ReceiveOpponentPlayCard(values);
                 break;
-            case NetworkUseID.laneCange:
+            case NetworkUseID.LaneCange:
                 BattleSystemManager.instance.ReceiveOpponentLaneChange(values);
+                break;
+            case NetworkUseID.AbilityTargetCard:
+                AbilityManager.instance.ReceiveOpponentAbilityTargetCard(values);
                 break;
         }
     }
