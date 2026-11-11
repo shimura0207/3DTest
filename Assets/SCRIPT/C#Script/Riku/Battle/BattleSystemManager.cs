@@ -310,7 +310,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自分の処理なら相手に送る
         if (player == PlayerType.Self) {
-            var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, lane);
             CustomNetworkManager.instance.SendStringToOpponent(pack);
         }
 
@@ -343,7 +343,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身の処理なら相手に送る
         if (player == PlayerType.Self) {
-            var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, FieldLane.None);
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, FieldLane.None);
             CustomNetworkManager.instance.SendStringToOpponent(pack);
         }
 
@@ -383,7 +383,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身の処理なら相手に送る
         if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.laneCange, laneA, laneB);
+        var pack = NetworkValueConverter.Pack(NetworkUseID.LaneCange, laneA, laneB);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 

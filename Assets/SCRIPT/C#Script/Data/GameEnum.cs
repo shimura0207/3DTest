@@ -378,6 +378,8 @@ public enum AbilityProcess {
     Nakamayobi,
     // レベルアップ(リールギアの特殊効果)
     LevelUP,
+    // 総攻撃(ドラゴンの特殊効果)
+    Soukougeki,
 
     Max,
 }
@@ -388,7 +390,7 @@ public enum AbilityProcess {
 /// </summary>
 public enum NetworkUseID {
     // デッキの送信
-    deck,
+    Deck,
     // パチスロフェイズへの移行ボタン
     PachisuroGoButton,
     // ターンエンドボタン
@@ -396,17 +398,23 @@ public enum NetworkUseID {
 
     FirstPlayer,
 
-    slotStart, // レバーON：役を指定して回転開始
-    slotStop,  // 指定リールを指定角度へ停止
-    slotEnd,   // パチスロフェイズ終了
+    // レバーON：役を指定して回転開始
+    SlotStart,
+    // 指定リールを指定角度へ停止
+    SlotStop,
+    // パチスロフェイズ終了
+    SlotEnd,
 
+    // パチスロ通信
     // 既存のNetworkUseIDの末尾に追加
-    slot, // パチスロ通信
+    Slot,
 
     // カードの使用
-    playCard,
+    PlayCard,
     // モンスターのレーン交換
-    laneCange,
+    LaneCange,
+    // 効果対象カード
+    AbilityTargetCard,
 }
 
 /// <summary>

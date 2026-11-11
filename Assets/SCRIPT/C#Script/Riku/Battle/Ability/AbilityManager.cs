@@ -109,4 +109,16 @@ public class AbilityManager : MonoBehaviour {
         }
         return func;
     }
+
+    /// <summary>
+    /// 相手の効果対象カード受け取り
+    /// </summary>
+    /// <param name="abilityTargetCard"></param>
+    public void ReceiveOpponentAbilityTargetCard(string[] abilityTargetCard) {
+        // 送られたオブジェクトIDをintに変換
+        int objectID = -1;
+        NetworkValueConverter.TryGetInt(abilityTargetCard[1], out objectID);
+        // オブジェクトIDからオブジェクト取得
+        abilityProcessData.receiveCard = CardObjectManager.instance.GetUseCardObject(objectID);
+    }
 }
