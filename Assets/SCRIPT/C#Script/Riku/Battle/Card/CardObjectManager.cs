@@ -174,7 +174,7 @@ public class CardObjectManager : MonoBehaviour {
         foreach (CardObject cardObject in useObjectList) {
             if (!cardObject) continue;
             if (cardObject.playerType != player) continue;
-            if (cardObject.handID <= 0) continue;
+            if (cardObject.handID < 0) continue;
             handList.Add(cardObject);
         }
         return handList;

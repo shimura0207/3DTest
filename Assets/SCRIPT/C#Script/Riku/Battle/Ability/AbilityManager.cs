@@ -74,34 +74,35 @@ public class AbilityManager : MonoBehaviour {
     /// <returns></returns>
     private Func<UniTask> GetNormalAbility(CardObject card, AbilityTarget target, AbilityProcess process, int value) {
         Func<UniTask> func = null;
+        PlayerType player = card.playerType;
         // ラムダ式で引数を固定して代入する
         switch (process) {
             case AbilityProcess.Draw:
-                func = () => abilityProcessData.DrawAbility(card.playerType, value);
+                func = () => abilityProcessData.DrawAbility(player, value);
                 break;
             case AbilityProcess.GiveDamage:
-                func = () => abilityProcessData.GiveDamageAbility(card, card.playerType, target, value);
+                func = () => abilityProcessData.GiveDamageAbility(card, player, target, value);
                 break;
             case AbilityProcess.GiveHealth:
-                func = () => abilityProcessData.GiveHealthAbility(card, card.playerType, target, value);
+                func = () => abilityProcessData.GiveHealthAbility(card, player, target, value);
                 break;
             case AbilityProcess.DiscardHand:
-                func = () => abilityProcessData.HandDestructionAbility(card.playerType, target);
+                func = () => abilityProcessData.HandDestructionAbility(player, target);
                 break;
             case AbilityProcess.UpATK:
-                func = () => abilityProcessData.GiveAttackAbility(card, card.playerType, target, value);
+                func = () => abilityProcessData.GiveAttackAbility(card, player, target, value);
                 break;
             case AbilityProcess.DownATK:
-                func = () => abilityProcessData.ReduceAttackAbility(card, card.playerType, target, value);
+                func = () => abilityProcessData.ReduceAttackAbility(card, player, target, value);
                 break;
             case AbilityProcess.DeleteMonster:
-                func = () => abilityProcessData.DeleteMonsterAbility(card, card.playerType, target);
+                func = () => abilityProcessData.DeleteMonsterAbility(card, player, target);
                 break;
             case AbilityProcess.ReturnMonster:
-                func = () => abilityProcessData.ReturnMonsterAbility(card, card.playerType, target);
+                func = () => abilityProcessData.ReturnMonsterAbility(card, player, target);
                 break;
             case AbilityProcess.Nakamayobi:
-                func = () => abilityProcessData.NakamayobiAbility(card.playerType);
+                func = () => abilityProcessData.NakamayobiAbility(player);
                 break;
             case AbilityProcess.LevelUP:
                 func = () => abilityProcessData.LevelUPAbility(card);
