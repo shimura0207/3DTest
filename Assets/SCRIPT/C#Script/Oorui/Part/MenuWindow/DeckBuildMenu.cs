@@ -124,8 +124,11 @@ public class DeckBuildMenu : MenuWindowBase {
         addCardButton.interactable = false;
         removeCardButton.interactable = false;
 
-        // 所持カード一覧を更新する
-        deckBuildCardListView.RefreshCards();
+        // 現在デッキに登録されているカードIDを取得する
+        var currentDeckCardIDs = deckBuildView.GetCardIDs();
+
+        // デッキ登録済み枚数を差し引いて所持カード一覧を更新する
+        deckBuildCardListView.RefreshCards(currentDeckCardIDs);
 
         // 保存ボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
@@ -193,16 +196,39 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // カードが選択されていなければ終了する
         if (selectedCardID < 0) return;
+
         // デッキに登録されているカードIDを取得する
         var cardIDs = deckBuildView.GetCardIDs();
-        // 登録されたカードが30枚より多ければ抜ける
-        if (cardIDs.Count > _DECKCARD_MAXNUM) return;
+
+        // 30枚に達していれば終了する
+        if (cardIDs.Count >= _DECKCARD_MAXNUM) return;
+
+        // 所持カード情報を取得する
+        var saveData = SaveManager.Instance.LoadCards();
+
+        // 所持枚数を取得する
+        var cardCounts = OwnedCardUtility.GetCardCounts(saveData.cardID);
+
+        // 選択カードの所持枚数を取得する
+        int ownedCount = cardCounts.ContainsKey(selectedCardID)
+            ? cardCounts[selectedCardID]
+            : 0;
+
+        // 現在の登録枚数を取得する
+        int deckCount = deckBuildView.GetCardCount(selectedCardID);
+
+        // 所持枚数を超える場合は追加しない
+        if (deckCount >= ownedCount) return;
 
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
 
+        // 残り編成可能枚数を更新する
+        UpdateRemainingCardCount();
+
         // 登録枚数を更新する
         UpdateSelectedCardCount();
+
         // 保存ボタンの色を更新する
         UpdateSaveButtonColor();
     }
@@ -218,8 +244,12 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキからカードを1枚削除する
         deckBuildView.RemoveCard(selectedCardID);
 
+        // 残り編成可能枚数を更新する
+        UpdateRemainingCardCount();
+
         // 登録枚数を更新する
         UpdateSelectedCardCount();
+
         // 保存ボタンの色を更新する
         UpdateSaveButtonColor();
     }
@@ -239,7 +269,7 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキに登録されているカードIDを取得する
         var cardIDs = deckBuildView.GetCardIDs();
 
-        if(cardIDs.Count < _DECKCARD_MAXNUM) {
+        if (cardIDs.Count < _DECKCARD_MAXNUM) {
             // カード枚数が少ないことを伝える
             Debug.Log("カード足りないデッキ作れない");
             return;
@@ -320,5 +350,35 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // ボタンに色設定を反映する
         saveButton.colors = colors;
+    }
+
+
+    /// <summary>
+    /// 選択中カードの残り編成可能枚数を更新する
+    /// </summary>
+    private void UpdateRemainingCardCount() {
+
+        // 所持カード情報を取得する
+        var saveData = SaveManager.Instance.LoadCards();
+
+        // カードIDごとの所持枚数を取得する
+        var cardCounts = OwnedCardUtility.GetCardCounts(saveData.cardID);
+
+        // 所持枚数を取得する
+        int ownedCount = cardCounts.ContainsKey(selectedCardID)
+            ? cardCounts[selectedCardID]
+            : 0;
+
+        // デッキに登録されている枚数を取得する
+        int deckCount = deckBuildView.GetCardCount(selectedCardID);
+
+        // 残り編成可能枚数を計算する
+        int remainingCount = Mathf.Max(0, ownedCount - deckCount);
+
+        // 所持カード一覧の表示だけを更新する
+        deckBuildCardListView.UpdateCardOwnedCount(
+            selectedCardID,
+            remainingCount
+        );
     }
 }
