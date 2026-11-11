@@ -107,6 +107,9 @@ public class AbilityManager : MonoBehaviour {
             case AbilityProcess.LevelUP:
                 func = () => abilityProcessData.LevelUPAbility(card);
                 break;
+            case AbilityProcess.Soukougeki:
+                func = () => abilityProcessData.SoukougekiAbility(player);
+                break;
         }
         return func;
     }
