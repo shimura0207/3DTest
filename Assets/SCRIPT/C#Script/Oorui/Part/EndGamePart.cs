@@ -26,7 +26,8 @@ public class EndGamePart : PartBase {
 
     // メニューに戻るボタン
     [SerializeField] private Button returnMenuButton;
-
+    // 報酬を付与済みかどうか
+    private bool isRewardGranted = false;
     public override async UniTask Initialize() {
         // 基底側の処理を呼ぶ
         await base.Initialize();
@@ -61,6 +62,15 @@ public class EndGamePart : PartBase {
         // 選択状態を初期化する
         selectMenu = ResultSelectMenu.None;
 
+        // 報酬がまだ付与されていない場合
+        if (!isRewardGranted) {
+            // 報酬付与済みにする
+            isRewardGranted = true;
+
+            // 対戦結果に応じてカード報酬を付与する
+            BattleRewardManager.GrantRewards(battleResult);
+        }
+
         // リザルト結果に応じて変更
         BattleResult(battleResult);
 
@@ -85,8 +95,11 @@ public class EndGamePart : PartBase {
     /// </summary>
     /// <param name="result">自分視点の対戦結果</param>
     public void SetBattleResult(BattleState result) {
-        // 受け取った対戦結果を保存する
+        // 対戦結果を保存する
         battleResult = result;
+
+        // 新しい対戦の報酬付与状態を初期化する
+        isRewardGranted = false;
     }
 
     /// <summary>
