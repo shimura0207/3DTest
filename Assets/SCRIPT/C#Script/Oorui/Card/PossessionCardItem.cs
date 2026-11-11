@@ -37,40 +37,22 @@ public class PossessionCardItem : MonoBehaviour {
     /// <summary>
     /// カード画像と所持枚数を設定する
     /// </summary>
-    /// <param name="cardID">カードID</param>
-    /// <param name="cardSprite">カード画像</param>
-    /// <param name="count">所持枚数</param>
-    /// <param name="isShowCount">枚数を表示するかどうか</param>
     public void SetCard(int cardID, Sprite cardSprite, int count, bool isShowCount = true) {
 
-        // ソート時に使用するカードIDを保存する
+        // カードIDを保存する
         CardID = cardID;
-
-        // カード画像を設定する
-        if (cardImage != null) {
-            cardImage.sprite = cardSprite;
-
-            // カード画像の縦横比を維持する
-            cardImage.preserveAspect = true;
-
-            // 0枚の場合は灰色、1枚以上の場合は通常色にする
-            cardImage.color = count == 0 ? Color.gray : Color.white;
-        }
 
         // 所持枚数を保持する
         ownedCount = count;
 
-        // 枚数表示用テキストが設定されている場合
-        if (countText != null) {
-
-            // 枚数表示の有無を切り替える
-            countText.gameObject.SetActive(isShowCount);
-
-            // 枚数表示が有効な場合のみテキストを設定する
-            if (isShowCount) {
-                countText.text = $"×{count}";
-            }
+        // カード画像を設定する
+        if (cardImage != null) {
+            cardImage.sprite = cardSprite;
+            cardImage.preserveAspect = true;
         }
+
+        // 所持枚数と画像の色を更新する
+        UpdateOwnedCount(count, isShowCount);
     }
 
     /// <summary>
@@ -94,5 +76,27 @@ public class PossessionCardItem : MonoBehaviour {
 
         // カード詳細メニューを開く
         MenuWindowManager.Instance.CardDetailMenuOpen(CardID).Forget();
+    }
+
+    /// <summary>
+    /// デッキ登録後の残り所持枚数を更新する
+    /// </summary>
+    public void UpdateOwnedCount(int count, bool isShowCount = true) {
+
+        // 所持枚数を更新する
+        ownedCount = Mathf.Max(0, count);
+
+        // カード画像の色を更新する
+        if (cardImage != null) {
+            cardImage.color = ownedCount == 0 ? Color.gray : Color.white;
+        }
+
+        // 所持枚数テキストを更新する
+        if (countText != null) {
+            countText.gameObject.SetActive(isShowCount);
+            if (isShowCount) {
+                countText.text = $"×{ownedCount}";
+            }
+        }
     }
 }

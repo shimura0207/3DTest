@@ -39,7 +39,8 @@ public class DeckBuildCardListView : MonoBehaviour {
     /// <summary>
     /// デッキ編成用の所持カード一覧を更新する
     /// </summary>
-    public void RefreshCards() {
+    /// <param name="deckCardIDs">現在デッキに登録されているカードID</param>
+    public void RefreshCards(List<int> deckCardIDs = null) {
 
         // 必要なオブジェクトが設定されているか確認する
         if (!CheckInstance()) return;
@@ -53,8 +54,14 @@ public class DeckBuildCardListView : MonoBehaviour {
         // セーブデータが存在しない場合は終了する
         if (saveData == null || saveData.cardID == null) return;
 
-        // カードIDごとの所持枚数を集計する
+        // 所持カードIDごとの枚数を集計する
         Dictionary<int, int> cardCounts = OwnedCardUtility.GetCardCounts(saveData.cardID);
+
+        // デッキ登録済みカードIDごとの枚数を集計する
+        Dictionary<int, int> deckCounts =
+            deckCardIDs != null
+            ? OwnedCardUtility.GetCardCounts(deckCardIDs)
+            : new Dictionary<int, int>();
 
         // カードIDごとに表示を生成する
         foreach (KeyValuePair<int, int> entry in cardCounts) {
@@ -65,11 +72,19 @@ public class DeckBuildCardListView : MonoBehaviour {
             // 画像が取得できなければスキップする
             if (cardSprite == null) continue;
 
+            // デッキ登録済み枚数を取得する
+            int registeredCount = deckCounts.ContainsKey(entry.Key)
+                ? deckCounts[entry.Key]
+                : 0;
+
+            // 残り編成可能枚数を計算する
+            int remainingCount = Mathf.Max(0, entry.Value - registeredCount);
+
             // カード表示Prefabを生成する
             PossessionCardItem cardItem = Instantiate(cardPrefab, content);
 
-            // カード画像と所持枚数を設定する
-            cardItem.SetCard(entry.Key, cardSprite, entry.Value);
+            // 残り枚数を設定する
+            cardItem.SetCard(entry.Key, cardSprite, remainingCount);
 
             // クリック処理クラスを取得する
             PossessionCardClick cardClick = cardItem.GetComponent<PossessionCardClick>();
@@ -218,6 +233,25 @@ public class DeckBuildCardListView : MonoBehaviour {
         // スクロール位置を先頭に戻す
         if (scrollRect != null) {
             scrollRect.verticalNormalizedPosition = 1f;
+        }
+    }
+
+    /// <summary>
+    /// 指定したカードの残り所持枚数を更新する
+    /// </summary>
+    public void UpdateCardOwnedCount(int cardID, int remainingCount) {
+
+        // 一覧にあるカードを検索する
+        foreach (PossessionCardItem cardItem in cardItems) {
+
+            // カードIDが一致するか確認する
+            if (cardItem.CardID != cardID) continue;
+
+            // 残り所持枚数を更新する
+            cardItem.UpdateOwnedCount(remainingCount);
+
+            // 対象カードが見つかったので終了する
+            return;
         }
     }
 }
