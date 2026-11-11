@@ -292,7 +292,8 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="player">どちらのプレイヤーか</param>
     /// <param name="card">召喚するカードのオブジェクト</param>
     /// <param name="lane">召喚するカードのレーン</param>
-    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane) {
+    /// <param name="isAbility">効果発動中かどうか</param>
+    public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane, bool isAbility = false) {
         int objectID = card.objectID;
         if (card.handID >= 0) {
             // 手札から指定されたレーンにカードを移動
@@ -309,10 +310,13 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自分の処理なら相手に送る
         if (player == PlayerType.Self) {
-            var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, lane);
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, lane);
             CustomNetworkManager.instance.SendStringToOpponent(pack);
         }
 
+        // 効果発動中ならここで終了
+        if (isAbility) await UniTask.CompletedTask;
+        
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
 
@@ -339,7 +343,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身の処理なら相手に送る
         if (player == PlayerType.Self) {
-            var pack = NetworkValueConverter.Pack(NetworkUseID.playCard, objectID, FieldLane.None);
+            var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, FieldLane.None);
             CustomNetworkManager.instance.SendStringToOpponent(pack);
         }
 
@@ -379,7 +383,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身の処理なら相手に送る
         if (player != PlayerType.Self) return;
-        var pack = NetworkValueConverter.Pack(NetworkUseID.laneCange, laneA, laneB);
+        var pack = NetworkValueConverter.Pack(NetworkUseID.LaneCange, laneA, laneB);
         CustomNetworkManager.instance.SendStringToOpponent(pack);
     }
 

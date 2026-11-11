@@ -109,7 +109,8 @@ public class CardObject : MonoBehaviour {
     /// <summary>
     /// モンスターとして出ているこのオブジェクトを破壊する
     /// </summary>
-    public void DestroyMonster() {
+    /// <param name="isAbility">効果発動中かどうか</param>
+    public void DestroyMonster(bool isAbility = false) {
         // フィールドから墓地へIDの移動
         AreaCardManager.instance.FieldToGrave(playerType, laneID);
         // オブジェクトのフィールドを離れる処理
@@ -120,16 +121,19 @@ public class CardObject : MonoBehaviour {
             // 見つかった効果を積む
             AbilityManager.instance.SetAblityQueue(this, ability);
         }
-        // 積まれた効果があれば発動
-        UniTask task =  AbilityManager.instance.AbilityExecute();
         // 自分自身の未使用化
         CardObjectManager.instance.UnuseCardObject(this);
+        
+        if (isAbility) return;
+        // 積まれた効果があれば発動
+        UniTask task = AbilityManager.instance.AbilityExecute();
     }
 
     /// <summary>
     /// モンスターとして出ているこのオブジェクトを手札に戻す
+    /// <param name="isAbility">効果発動中かどうか</param>
     /// </summary>
-    public void ReturnMonster() {
+    public void ReturnMonster(bool isAbility = false) {
         // フィールドから手札へIDの移動
         AreaCardManager.instance.FieldToHand(playerType, laneID);
         // オブジェクトのフィールドを離れる処理
@@ -142,6 +146,8 @@ public class CardObject : MonoBehaviour {
             // 見つかった効果を積む
             AbilityManager.instance.SetAblityQueue(this, ability);
         }
+
+        if (isAbility) return;
         // 積まれた効果があれば発動
         UniTask task = AbilityManager.instance.AbilityExecute();
     }

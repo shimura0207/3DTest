@@ -55,6 +55,10 @@ public class CardObjectManager : MonoBehaviour {
     private const int CARD_OBJECT_MAX = 30;
     // 手札間隔
     private const float HAND_CARD_DISTANCE = 0.05f;
+    // 縮小後の手札の親の座標
+    private readonly Vector3 SHRINK_HAND_POSITION = new Vector3(0.15f, -0.015f, 0.0f);
+    // 手札の縮小倍率
+    private const float SHRINK_HAND_SCALE = 0.5f;
 
     /// <summary>
     /// 初期化
@@ -174,7 +178,7 @@ public class CardObjectManager : MonoBehaviour {
         foreach (CardObject cardObject in useObjectList) {
             if (!cardObject) continue;
             if (cardObject.playerType != player) continue;
-            if (cardObject.handID <= 0) continue;
+            if (cardObject.handID < 0) continue;
             handList.Add(cardObject);
         }
         return handList;
@@ -279,6 +283,22 @@ public class CardObjectManager : MonoBehaviour {
             // 配置位置を一つ右にずらす
             setPos += HAND_CARD_DISTANCE;
         }
+    }
+
+    /// <summary>
+    /// 手札の拡大
+    /// </summary>
+    public void ScaleUpHand() {
+        selfHandRoot.localScale = Vector3.one;
+        selfHandRoot.localPosition = Vector3.zero;
+    }
+
+    /// <summary>
+    /// 手札の縮小
+    /// </summary>
+    public void ScaleDownHand() {
+        selfHandRoot.localScale *= SHRINK_HAND_SCALE;
+        selfHandRoot.localPosition = SHRINK_HAND_POSITION;
     }
 
     /// <summary>

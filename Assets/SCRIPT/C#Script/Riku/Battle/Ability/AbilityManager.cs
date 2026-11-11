@@ -74,30 +74,52 @@ public class AbilityManager : MonoBehaviour {
     /// <returns></returns>
     private Func<UniTask> GetNormalAbility(CardObject card, AbilityTarget target, AbilityProcess process, int value) {
         Func<UniTask> func = null;
+        PlayerType player = card.playerType;
         // ラムダ式で引数を固定して代入する
         switch (process) {
             case AbilityProcess.Draw:
-                func = () => abilityProcessData.DrawAbility(card.playerType, value);
+                func = () => abilityProcessData.DrawAbility(player, value);
                 break;
             case AbilityProcess.GiveDamage:
+                func = () => abilityProcessData.GiveDamageAbility(card, player, target, value);
                 break;
             case AbilityProcess.GiveHealth:
+                func = () => abilityProcessData.GiveHealthAbility(card, player, target, value);
                 break;
             case AbilityProcess.DiscardHand:
+                func = () => abilityProcessData.HandDestructionAbility(player, target);
                 break;
             case AbilityProcess.UpATK:
+                func = () => abilityProcessData.GiveAttackAbility(card, player, target, value);
                 break;
             case AbilityProcess.DownATK:
-                break;
-            case AbilityProcess.SummonMonster:
-                break;
-            case AbilityProcess.TransformationMonster:
-                break;
-            case AbilityProcess.GiveState:
+                func = () => abilityProcessData.ReduceAttackAbility(card, player, target, value);
                 break;
             case AbilityProcess.DeleteMonster:
+                func = () => abilityProcessData.DeleteMonsterAbility(card, player, target);
+                break;
+            case AbilityProcess.ReturnMonster:
+                func = () => abilityProcessData.ReturnMonsterAbility(card, player, target);
+                break;
+            case AbilityProcess.Nakamayobi:
+                func = () => abilityProcessData.NakamayobiAbility(player);
+                break;
+            case AbilityProcess.LevelUP:
+                func = () => abilityProcessData.LevelUPAbility(card);
                 break;
         }
         return func;
+    }
+
+    /// <summary>
+    /// 相手の効果対象カード受け取り
+    /// </summary>
+    /// <param name="abilityTargetCard"></param>
+    public void ReceiveOpponentAbilityTargetCard(string[] abilityTargetCard) {
+        // 送られたオブジェクトIDをintに変換
+        int objectID = -1;
+        NetworkValueConverter.TryGetInt(abilityTargetCard[1], out objectID);
+        // オブジェクトIDからオブジェクト取得
+        abilityProcessData.receiveCard = CardObjectManager.instance.GetUseCardObject(objectID);
     }
 }
