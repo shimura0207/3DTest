@@ -393,16 +393,15 @@ public class SaveManager : MonoBehaviour {
     /// <param name="duplicatePoint">4枚目以降に変換するポイント</param>
     /// <returns>カード入手処理の結果</returns>
     public void AcquireCard(int cardID) {
-
-        // 不正なカードIDやポイントを受け付けない
+        // 不正なカードIDを受け付けない
         if (cardID <= 0) return;
 
         // 所持カードデータを読み込む
         PossessionCardSaveData cardSaveData = LoadCards();
 
-        // 現在の同一カードの所持枚数を確認する
+        // 同じカードIDの所持枚数を確認する
         int ownedCount = 0;
-
+        // 取得したカードとセーブデータを使用して走査
         foreach (int id in cardSaveData.cardID) {
             // 入手対象と同じカードIDなら枚数を増やす
             if (id == cardID) {
@@ -410,15 +409,16 @@ public class SaveManager : MonoBehaviour {
             }
         }
 
-        // 同じカードを3枚以上所持している場合
+        // 既に3枚所持している場合はポイントに変換する
         if (ownedCount >= 3) {
 
-            // 生成ポイントに変換する
+            // ポイント管理クラスが存在しなければ終了する
             if (CreatePointManager.Instance == null) return;
 
-            // 生成ポイントを追加する
+            // 4枚目以降は10ポイントに変換する
             CreatePointManager.Instance.AddPoint(CARD_ACQUIRED);
 
+            Debug.Log($"カードID:{cardID} は4枚目以降のため10ポイントに変換しました");
             return;
         }
 
@@ -427,10 +427,9 @@ public class SaveManager : MonoBehaviour {
 
         // 所持カードデータを保存する
         SaveCards(cardSaveData);
-        // 入手したカードを表示(デバッグde)
-        Debug.Log($"カードID:{cardID} を入手しました");
 
-        return;
+        // 入手ログを表示する
+        Debug.Log($"カードID:{cardID} を入手しました。現在の所持枚数:{ownedCount + 1}");
     }
     /// <summary>
     /// 所持カードのセーブファイルを読み込む
@@ -471,5 +470,15 @@ public class SaveManager : MonoBehaviour {
             Debug.LogError($"所持カードの読み込みに失敗しました: {e.Message}");
             return new PossessionCardSaveData();
         }
+    }
+
+    /// <summary>
+    /// 所持カードのセーブファイルが存在するか確認する
+    /// </summary>
+    /// <returns>セーブファイルが存在するか</returns>
+    public bool HasCardSaveFile() {
+
+        // 所持カードのセーブファイルが存在するか返す
+        return File.Exists(CardDataSaveFilePath);
     }
 }
