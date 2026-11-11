@@ -756,7 +756,8 @@ public class SlotReelController : MonoBehaviour {
 
         return reels.Length;
     }
-
+    int par = 100;
+    bool Rnrush;
     /// <summary>
     /// 1G分の回転を開始します。
     /// 手動のレバーONと同じ処理を外部から呼べるようにしたものです。
@@ -835,7 +836,36 @@ public class SlotReelController : MonoBehaviour {
             // 通常側：受信した役があれば、その役を採用する。
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.DrawRole(currentTable);
-
+                par=Random.Range(0, 1);
+            switch (currentSlotSymbolRole) {
+                case PachisuroSymbolKoyakuEnum.Miss:
+                    break;
+                case PachisuroSymbolKoyakuEnum.Bell:
+                    break;
+                case PachisuroSymbolKoyakuEnum.Replay:
+                    break;
+                case PachisuroSymbolKoyakuEnum.WeakCherry:
+                    if (par >= 95) {
+                        Rnrush = true;
+                    }
+                    break;
+                case PachisuroSymbolKoyakuEnum.Suika:
+                    if (par >= 95) {
+                        Rnrush = true;
+                    }
+                    break;
+                case PachisuroSymbolKoyakuEnum.Chance:
+                    if (par >= 70) {
+                        Rnrush = true;
+                    }
+                    break;
+                case PachisuroSymbolKoyakuEnum.StrongCherry:
+                    if (par >= 50) {
+                        Rnrush = true;
+                    }
+                    break;
+               
+            }
             //レア役
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.WeakCherry
                 || currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Suika
@@ -1071,7 +1101,7 @@ public class SlotReelController : MonoBehaviour {
 
                 efectManager.STOP_S();
 
-                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven||Rnrush) {
                     efectManager.hack();
                 }
 
@@ -1385,9 +1415,10 @@ public class SlotReelController : MonoBehaviour {
         Debug.Log("slotIndex = " + slotIndex);
         Debug.Log("SLOT_TEARN_MAX_G = " + SLOT_TEARN_MAX_G);
 
-        if (nrush) {
+        if (nrush||Rnrush) {
             rush = true;
             nrush = false;
+            Rnrush = false;
             Debug.Log("★★★ RUSH = true にしました");
         }
         else {
