@@ -105,6 +105,23 @@ public class AreaCardManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 山札から墓地へ送る
+    /// </summary>
+    /// <param name="player">どちらのプレイヤーか</param>
+    /// <returns></returns>
+    public int DeckToGrave(PlayerType player) {
+        if (IsEmpty(deckCards[player])) return -1;
+
+        // 山札の一番上のカードを自分の墓地に追加
+        int card = deckCards[player][0];
+        outDeckCards[player].graveCards.Add(card);
+        // 山札の一番上のカードを削除
+        deckCards[player].RemoveAt(0);
+
+        return card;
+    }
+
+    /// <summary>
     /// 任意のカードを手札から特定のレーンに出す
     /// </summary>
     /// <param name="player">自分か相手か</param>

@@ -106,6 +106,7 @@ public class AbilityProcessData {
         giveStatus[AbilityTarget.SelfAll] = (status, card, player, value) => {
             var fieldMonster = CardObjectManager.instance.fieldObjectList[player];
             for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
                 // モンスターに指定ステータスを付与
                 fieldMonster[i].GiveStatus(status, value);
             }
@@ -117,6 +118,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             var fieldMonster = CardObjectManager.instance.fieldObjectList[revPla];
             for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
                 // モンスターに指定ステータスを付与
                 fieldMonster[i].GiveStatus(status, value);
             }
@@ -187,6 +189,7 @@ public class AbilityProcessData {
             // 全ての手札を取得
             List<CardObject> handCards = CardObjectManager.instance.GetHandCardList(player);
             for (int i = 0; i < handCards.Count; i++) {
+                if (!handCards[i]) continue;
                 // 捨てる
                 BattleSystemManager.instance.HandDestruction(player, handCards[i]);
             }
@@ -199,6 +202,7 @@ public class AbilityProcessData {
             // 全ての手札を取得
             List<CardObject> handCards = CardObjectManager.instance.GetHandCardList(player);
             for (int i = 0; i < handCards.Count; i++) {
+                if (!handCards[i]) continue;
                 // 捨てる
                 BattleSystemManager.instance.HandDestruction(revPla, handCards[i]);
             }
@@ -255,6 +259,7 @@ public class AbilityProcessData {
         deleteMonster[AbilityTarget.SelfAll] = (card, player) => {
             var fieldMonster = CardObjectManager.instance.fieldObjectList[player];
             for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
                 // 取得したモンスターを破壊
                 fieldMonster[i].DestroyMonster(true);
             }
@@ -266,6 +271,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             var fieldMonster = CardObjectManager.instance.fieldObjectList[revPla];
             for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
                 // 取得したモンスターを破壊
                 fieldMonster[i].DestroyMonster(true);
             }
@@ -342,6 +348,7 @@ public class AbilityProcessData {
         returnMonster[AbilityTarget.SelfAll] = (card, player) => {
             var fieldMonster = CardObjectManager.instance.fieldObjectList[player];
             for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
                 // 取得したモンスターを手札に戻す
                 fieldMonster[i].ReturnMonster(true);
             }
@@ -353,6 +360,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             var fieldMonster = CardObjectManager.instance.fieldObjectList[revPla];
             for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
                 // 取得したモンスターを手札に戻す
                 fieldMonster[i].ReturnMonster(true);
             }
@@ -726,6 +734,29 @@ public class AbilityProcessData {
             card.Setup(card.objectID, isukaLv1ID, card.playerType);
             // イラスト設定
             card.ChangeCardImage(card.cardID);
+        }
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 総攻撃効果(ドラゴンの特殊効果)
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    public async UniTask SoukougekiAbility(PlayerType player) {
+        // プレイヤーの全てのモンスター取得
+        var fieldMonster = CardObjectManager.instance.fieldObjectList[player];
+        for (FieldLane i = 0; i < FieldLane.Max; i++) {
+            if (!fieldMonster[i]) continue;
+            // 取得したモンスターのサイズを0にする
+            fieldMonster[i].SetStatus(MonsterStatus.SIZE, 0);
+        }
+        // プレイヤーの全ての手札取得
+        List<CardObject> handCards = CardObjectManager.instance.GetHandCardList(player);
+        for (int i = 0; i < handCards.Count; i++) {
+            if (!handCards[i]) continue;
+            // 取得したモンスターのサイズを0にする
+            handCards[i].SetStatus(MonsterStatus.SIZE, 0);
         }
         await UniTask.CompletedTask;
     }
