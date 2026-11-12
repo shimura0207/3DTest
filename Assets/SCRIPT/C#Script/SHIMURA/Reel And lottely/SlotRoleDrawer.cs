@@ -1,135 +1,160 @@
+
 using UnityEngine;
 
 /// <summary>
 /// パチスロの役抽選を管理するクラス。
-/// 
-/// MonoBehaviour ではないので、GameObject にはアタッチしません。
-/// SlotReelController.cs の中で new SlotRoleDrawer() して使います。
-/// 
-/// 【このクラスの役割】
-/// ・現在のテーブル T1〜T5 に応じて役を抽選する
-/// ・SlotSymbolRole を日本語表示名に変換する
-/// 
-/// 【ここをいじるとどうなる？】
-/// roleTables の数字を変えると、役確率が変わります。
-/// 例：Bell の数字を増やすとベルが当たりやすくなります。
-/// ただし、各行の合計は必ず 65536 にしてください。
+///
+/// MonoBehaviourではありません。
+/// SlotReelController.csなどから new SlotRoleDrawer() して使用します。
+///
+/// 【機能】
+/// ・T1～T50の役抽選
+/// ・RUSH専用の役抽選
+/// ・役の日本語表示名を取得
 /// </summary>
-public class SlotRoleDrawer
-{
-    /// <summary>
-    /// 乱数の最大値。
-    /// Random.Range(0, 99) なので、実際に出る値は 0〜99 です。
-    /// </summary>
+public class SlotRoleDrawer {
+    // 乱数範囲：0～99
     private const int MaxRandom = 100;
 
-    /// <summary>
-    /// テーブル番号の最小値と最大値。
-    /// Inspector で範囲外の値を入れても、この範囲に補正します。
-    /// </summary>
+    // 使用できるテーブル範囲
     private const int MinTable = 1;
-    private const int MaxTable = 5;
+    private const int MaxTable = 50;
 
-    int randomValue;
     /// <summary>
     /// 役抽選テーブル。
-    /// 
-    /// 行：テーブル番号
-    /// 0行目 = T1
-    /// 1行目 = T2
-    /// 2行目 = T3
-    /// 3行目 = T4
-    /// 4行目 = T5
-    /// 
-    /// 列：SlotSymbolRole enum の順番
-    /// Miss, Bell, Replay, WeakCherry, Watermelon, Chance, StrongCherry, Seven
-    /// 
-    /// 【編集時の注意】
-    /// 各行の合計は必ず 100 にしてください。
-    /// 合計が足りない場合、最後にハズレへ逃げる可能性があります。
-    /// 合計が多すぎる場合、後ろの役が抽選されにくくなります。
+    ///
+    /// 行：テーブル番号（T1～T50）
+    ///
+    /// 列：PachisuroSymbolKoyakuEnumの順番
+    ///
+    /// 0 Miss         はずれ
+    /// 1 Bell         ベル
+    /// 2 Replay       リプレイ
+    /// 3 WeakCherry   弱チェリー
+    /// 4 Suika        スイカ
+    /// 5 Chance       チャンス目
+    /// 6 StrongCherry 強チェリー
+    /// 7 Seven        7揃い
+    ///
+    /// 各行の合計は必ず100％です。
     /// </summary>
+
     private readonly int[,] roleTables =
     {
-        { 45, 0, 20,  4,  6,  2, 2, 21 }, // T1
-        { 40, 2, 22,  4, 6,  2, 2, 22 }, // T2
-        { 35, 2, 22,  6,  8,  2,2, 22 }, // T3
-        { 30, 4, 24,  6,  8,  3, 2,23 }, // T4
-        { 25, 5, 25,  6,  9,  4, 4,23 }  // T5
+        // はずれ, ベル, リプ, 弱チェ, スイカ, チャンス目, 強チェ, 7揃い
+
+        { 45, 20, 20,  4,  6,  2,  2,  1 }, // T1
+        { 40, 22, 22,  4,  6,  2,  2,  2 }, // T2
+        { 35, 22, 23,  6,  8,  2,  2,  2 }, // T3
+        { 30, 24, 24,  6,  8,  3,  2,  3 }, // T4
+        { 25, 25, 25,  6,  8,  4,  4,  3 }, // T5
+
+        { 23, 26, 25,  6,  8,  4,  4,  4 }, // T6
+        { 21, 25, 25,  7,  9,  4,  4,  5 }, // T7
+        { 19, 25, 25,  7,  9,  5,  5,  5 }, // T8
+        { 17, 25, 25,  7, 10,  5,  5,  6 }, // T9
+        { 15, 25, 25,  8, 10,  5,  6,  6 }, // T10
+
+        { 15, 25, 25,  8, 10,  5,  6,  6 }, // T11
+        { 14, 26, 25,  8, 10,  5,  6,  6 }, // T12
+        { 14, 25, 25,  8, 11,  5,  6,  6 }, // T13
+        { 14, 24, 24,  8, 11,  6,  6,  7 }, // T14
+        { 13, 24, 23,  9, 11,  6,  7,  7 }, // T15
+        { 13, 24, 23,  9, 11,  6,  7,  7 }, // T16
+        { 12, 24, 24,  9, 11,  6,  7,  7 }, // T17
+        { 12, 24, 24,  9, 11,  6,  7,  7 }, // T18
+        { 12, 24, 23,  9, 12,  6,  7,  7 }, // T19
+        { 11, 24, 24,  9, 12,  6,  7,  7 }, // T20
+
+        { 11, 24, 24,  9, 12,  6,  7,  7 }, // T21
+        { 11, 23, 23,  9, 12,  7,  7,  8 }, // T22
+        { 10, 24, 23,  9, 12,  7,  7,  8 }, // T23
+        { 10, 24, 23,  9, 12,  7,  7,  8 }, // T24
+        {  9, 23, 22, 10, 13,  7,  8,  8 }, // T25
+        {  9, 23, 22, 10, 13,  7,  8,  8 }, // T26
+        {  9, 23, 22, 10, 13,  7,  8,  8 }, // T27
+        {  8, 23, 23, 10, 13,  7,  8,  8 }, // T28
+        {  8, 23, 23, 10, 13,  7,  8,  8 }, // T29
+        {  8, 22, 21, 10, 14,  8,  8,  9 }, // T30
+
+        {  7, 22, 22, 10, 14,  8,  8,  9 }, // T31
+        {  7, 22, 22, 10, 14,  8,  8,  9 }, // T32
+        {  6, 23, 22, 10, 14,  8,  8,  9 }, // T33
+        {  6, 23, 22, 10, 14,  8,  8,  9 }, // T34
+        {  6, 22, 21, 11, 14,  8,  9,  9 }, // T35
+        {  5, 22, 21, 11, 15,  8,  9,  9 }, // T36
+        {  5, 22, 21, 11, 15,  8,  9,  9 }, // T37
+        {  5, 21, 20, 11, 15,  9,  9, 10 }, // T38
+        {  4, 21, 21, 11, 15,  9,  9, 10 }, // T39
+        {  4, 21, 21, 11, 15,  9,  9, 10 }, // T40
+
+        {  3, 22, 21, 11, 15,  9,  9, 10 }, // T41
+        {  3, 21, 21, 11, 16,  9,  9, 10 }, // T42
+        {  3, 21, 21, 11, 16,  9,  9, 10 }, // T43
+        {  2, 22, 21, 11, 16,  9,  9, 10 }, // T44
+        {  2, 21, 20, 12, 16,  9, 10, 10 }, // T45
+        {  1, 20, 20, 12, 16, 10, 10, 11 }, // T46
+        {  1, 20, 20, 12, 16, 10, 10, 11 }, // T47
+        {  1, 20, 19, 12, 17, 10, 10, 11 }, // T48
+        {  0, 20, 20, 12, 17, 10, 10, 11 }, // T49
+        {  0, 20, 20, 12, 17, 10, 10, 11 }, // T50
     };
 
     /// <summary>
-    /// 指定されたテーブルで役を抽選します。
-    /// 
-    /// table は 1〜5 を想定しています。
-    /// 1未満なら1、5より大きければ5として扱います。
+    /// 通常時の役抽選。
+    /// 指定テーブルに応じて役を抽選します。
     /// </summary>
-    public PachisuroSymbolKoyakuEnum DrawRole(int table)
-    {
-        // Inspector で範囲外の値が入っても壊れないように補正します。
-        int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
-
-        // 0〜65535 の乱数を取得します。
-        randomValue = Random.Range(0, MaxRandom);
-
-        // border は「ここまでの合計値」です。
-        // 乱数が border 未満になった時点で、その役に当選します。
-        int border = 0;
-
-        for (int i = 0; i < roleTables.GetLength(1); i++)
-        {
-            border += roleTables[tableIndex, i];
-
-            if (randomValue < border)
-            {
-                return (PachisuroSymbolKoyakuEnum)i;
-            }
-        }
-
-        // 通常はここには来ません。
-        // テーブル合計が 65536 未満だった場合などの保険です。
-        return PachisuroSymbolKoyakuEnum.Miss;
+    public PachisuroSymbolKoyakuEnum DrawRole(int table) {
+        return DrawRoleFromTable(table);
     }
 
-    //RUSH
+    /// <summary>
+    /// RUSH時の役抽選。
+    ///
+    /// 現在の仕様：
+    /// 50％で7揃い確定。
+    /// 残り50％で指定テーブルから通常抽選。
+    /// </summary>
     public PachisuroSymbolKoyakuEnum RUSHDrawRole(int table) {
         int sevenRandomValue = Random.Range(0, 2);
 
         if (sevenRandomValue == 0) {
             return PachisuroSymbolKoyakuEnum.Seven;
         }
-        else {
-            // Inspector で範囲外の値が入っても壊れないように補正します。
-            int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
 
-            // 0〜65535 の乱数を取得します。
-            randomValue = Random.Range(0, MaxRandom);
+        return DrawRoleFromTable(table);
+    }
 
-            // border は「ここまでの合計値」です。
-            // 乱数が border 未満になった時点で、その役に当選します。
-            int border = 0;
+    /// <summary>
+    /// テーブルに応じた共通役抽選処理。
+    /// </summary>
+    private PachisuroSymbolKoyakuEnum DrawRoleFromTable(int table) {
+        // T1～T50の範囲に補正
+        int tableIndex = Mathf.Clamp(table, MinTable, MaxTable) - 1;
 
-            for (int i = 0; i < roleTables.GetLength(1); i++) {
-                border += roleTables[tableIndex, i];
+        // 0～99の乱数
+        int randomValue = Random.Range(0, MaxRandom);
 
-                if (randomValue < border) {
-                    return (PachisuroSymbolKoyakuEnum)i;
-                }
+        // 累積確率
+        int border = 0;
+
+        for (int i = 0; i < roleTables.GetLength(1); i++) {
+            border += roleTables[tableIndex, i];
+
+            if (randomValue < border) {
+                return (PachisuroSymbolKoyakuEnum)i;
             }
         }
-        // 通常はここには来ません。
-        // テーブル合計が 65536 未満だった場合などの保険です。
+
+        // 保険
         return PachisuroSymbolKoyakuEnum.Miss;
     }
 
     /// <summary>
     /// 役の日本語表示名を返します。
-    /// Debug.Log や UI 表示に使います。
     /// </summary>
-    public string GetRoleName(PachisuroSymbolKoyakuEnum role)
-    {
-        switch (role)
-        {
+    public string GetRoleName(PachisuroSymbolKoyakuEnum role) {
+        switch (role) {
             case PachisuroSymbolKoyakuEnum.Miss:
                 return "ハズレ";
 
