@@ -111,6 +111,8 @@ public class AttackPhase : PhaseBase {
     /// <param name="rush">ラッシュ中か否か</param>
     /// <param name="nextRush">ラッシュ当選中かどうか</param>
     private void CardAttack(PlayerType player, PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush, bool nextRush) {
+        // 疲労中は攻撃できない
+        if (card.isFatigue) return;
         // カードの対応役の型を変換
         List<PachisuroSymbolKoyakuEnum> suportRole = card.SuportRoleToKoyaku();
         if (suportRole == null) return; 
@@ -160,11 +162,18 @@ public class AttackPhase : PhaseBase {
 
         // 正面にモンスターがいる場合はモンスターに攻撃
         if (frontMonster) {
-            // 攻撃を受けた時効果発動確認
             foreach (var ability in frontMonster.abilityList) {
-                if (ability.abilityTiming != AbilityTiming.GetHit) continue;
-                // 見つかった効果を積む
-                AbilityManager.instance.SetAblityQueue(frontMonster, ability);
+                // 攻撃によるダメージの軽減があるか確認
+                if (ability.passiveAbility == PassiveAbility.AttackReduction) {
+                    // あればダメージを軽減
+                    damage -= ability.abilityValue;
+                    if (damage < 0) damage = 0;
+                }
+                // 攻撃を受けた時効果発動確認
+                if (ability.abilityTiming == AbilityTiming.GetHit) {
+                    // 見つかった効果を積む
+                    AbilityManager.instance.SetAblityQueue(frontMonster, ability);
+                }
             }
             // 積まれた効果があれば発動
             task = AbilityManager.instance.AbilityExecute();

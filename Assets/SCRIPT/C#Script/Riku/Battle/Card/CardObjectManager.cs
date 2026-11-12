@@ -238,6 +238,8 @@ public class CardObjectManager : MonoBehaviour {
         card.SetLaneID((int)setLane);
         // 手札の整列
         ArrangeHand(player);
+        // 疲労させる
+        card.SetIsFatigue(true);
     }
 
     /// <summary>
@@ -357,10 +359,18 @@ public class CardObjectManager : MonoBehaviour {
         // フィールドのリストを交換
         fieldObjectList[player][laneA] = cardB;
         fieldObjectList[player][laneB] = cardA;
-        // レーンIDを交換
-        if (cardA)
+        
+        if (cardA) {
+            // レーンIDを交換
             cardA.SetLaneID((int)laneB);
-        if (cardB)
+            // 疲労させる
+            cardA.SetIsFatigue(true);
+        }
+        if (cardB) {
+            // レーンIDを交換
             cardB.SetLaneID((int)laneA);
+            // 疲労させる
+            cardB.SetIsFatigue(true);
+        }
     }
 }
