@@ -483,7 +483,7 @@ public class SlotReelController : MonoBehaviour {
         }
 
         if (IsAnyReelRotating() == false && slotIndex == SLOT_TEARN_MAX_G) {
-            efectManager.HideTrumps();
+            //efectManager.HideTrumps();
 
         }
         // Cキーで、通信しないチュートリアルモードへ変更。
@@ -501,6 +501,7 @@ public class SlotReelController : MonoBehaviour {
 
             Debug.Log("チュートリアルモードON：次の5Gの役を設定しました。");
         }
+        
     }
 
     //============================================================
@@ -1557,5 +1558,7 @@ public class SlotReelController : MonoBehaviour {
     }
 
 
-
+    
+        
+    
 }
