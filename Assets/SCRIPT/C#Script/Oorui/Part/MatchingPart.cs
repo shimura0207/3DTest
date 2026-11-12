@@ -131,7 +131,7 @@ public class MatchingPart : PartBase {
                 }
 
                 // 選択されたデッキIDを渡して対戦画面へ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID);
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID,MainGamePartType.Matching);
 
                 return;
             }
@@ -178,7 +178,7 @@ public class MatchingPart : PartBase {
                 // // ホストまたはクライアントが選択された場合
                 // // プライベートマッチパートに遷移
                 // await PartManager.Instance.TransitionPart(GamePart.PrivateMatch, conection);
-                await PartManager.Instance.TransitionPart(GamePart.MainGame, 1);
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, 1, MainGamePartType.Matching);
                 return;
             }
 

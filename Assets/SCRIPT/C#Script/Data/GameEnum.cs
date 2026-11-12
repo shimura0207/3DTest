@@ -434,3 +434,13 @@ public enum MonsterStatus {
 
     Max,
 }
+
+/// <summary>
+/// 遷移先のメインゲームパートの種類
+/// @author oorui
+/// </summary>
+public enum MainGamePartType{
+    None = -1,
+    Matching,       // マッチングへの遷移
+    Tutotrial       // チュートリアルへの遷移
+}

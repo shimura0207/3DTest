@@ -164,7 +164,7 @@ public class MainMenuPart : PartBase {
                 // 再生中のBGMを停止する
                 AudioManager.instance.FadeOutBGM();
                 // チュートリアルパートへ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.Tutorial);
+                await PartManager.Instance.TransitionPart(GamePart.MainGame,1, MainGamePartType.Tutotrial);
                 break;
         }
     }
