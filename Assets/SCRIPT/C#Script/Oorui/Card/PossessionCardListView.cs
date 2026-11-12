@@ -78,6 +78,9 @@ public class PossessionCardListView : MonoBehaviour {
             // 所持状況に応じて画像の色を変更
             cardItem.SetOwnedState(ownedCount > 0);
 
+            // 詳細メニュー終了後に一覧を更新する処理を登録
+            cardItem.SetDetailClosedCallback(RefreshCards);
+
             // 生成したカードを管理リストに登録
             cardItems.Add(cardItem);
         }

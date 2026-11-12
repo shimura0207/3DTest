@@ -135,8 +135,11 @@ public class DeckBuildMenu : MenuWindowBase {
         // 現在デッキに登録されているカードIDを取得する
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
 
+        // デッキ登録情報を一覧側に反映する
+        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
+
         // デッキ登録済み枚数を差し引いて所持カード一覧を更新する
-        deckBuildCardListView.RefreshCards(currentDeckCardIDs);
+        deckBuildCardListView.RefreshCards();
 
         // 保存ボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
@@ -231,6 +234,12 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
 
+        // 現在のデッキ登録カードIDを取得する
+        var currentDeckCardIDs = deckBuildView.GetCardIDs();
+
+        // デッキ登録情報を一覧側に反映する
+        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
+
         // デッキ全体の登録枚数を更新する
         UpdateDeckCardCount();
 
@@ -255,6 +264,12 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキからカードを1枚削除する
         deckBuildView.RemoveCard(selectedCardID);
 
+        // 現在のデッキ登録カードIDを取得する
+        var currentDeckCardIDs = deckBuildView.GetCardIDs();
+
+        // デッキ登録情報を一覧側に反映する
+        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
+
         // デッキ全体の登録枚数を更新する
         UpdateDeckCardCount();
 
@@ -266,6 +281,7 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // 保存ボタンの色を更新する
         UpdateSaveButtonColor();
+
     }
 
     /// <summary>
