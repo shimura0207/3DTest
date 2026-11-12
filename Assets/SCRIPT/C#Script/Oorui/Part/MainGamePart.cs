@@ -4,6 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -51,6 +52,8 @@ public class MainGamePart : PartBase {
     public static int deckID { get; private set; } = 0;
 
     BattleState result = BattleState.None;
+    // メインゲームで遷移するパート
+    MainGamePartType type = MainGamePartType.None;
 
     /// <summary>
     /// 初期化処理
@@ -86,15 +89,56 @@ public class MainGamePart : PartBase {
         // オブジェクトを表示する
         pachisuroInstance.SetActive(true);
 
+        // ゲームの種類によって処理を分岐
+        switch (type) {
+
+            // マッチング対戦
+            case MainGamePartType.Matching:
+                // 対戦用更新処理
+                await MatchingBattleExecute();
+                break;
+
+            // チュートリアル
+            case MainGamePartType.Tutotrial:
+                // チュートリアル用更新処理
+                await TutorialGameExecute();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// マッチングのExecute処理
+    /// </summary>
+    /// <returns></returns>
+    private async UniTask MatchingBattleExecute() {
         // バトル開始前の準備を行う
         await MenuWindowManager.Instance.BattleSettingsMenuOpen(deckID);
+        // UIの進行処理
         UniTask task = UIExecute();
+        // バトルの進行処理
         await BattleExecute();
         // バトル終了後の結果を取得する
         result = battleSystemManager.battleState;
         BattleSystemManager.instance.BattleTeardown();
         // リザルトパートに遷移する
         await PartManager.Instance.TransitionPart(GamePart.EndGame, result);
+    }
+
+    /// <summary>
+    /// チュートリアル用更新処理
+    /// </summary>
+    /// <returns></returns>
+    private async UniTask TutorialGameExecute() {
+        // チュートリアルデッキを取得
+        List<int> deck = DeckDataMasterUtility.GetDeckMaster(1);
+        // レンタルデッキが取得できなければ処理を終了する
+        if (deck == null) return;
+
+
+
+
+        // メインメニューパートに遷移
+        await PartManager.Instance.TransitionPart(GamePart.MainMenu);
     }
 
     /// <summary>
@@ -168,10 +212,17 @@ public class MainGamePart : PartBase {
     /// 使用デッキの登録
     /// </summary>
     /// <param name="id"></param>
-    public void SetDeckID(int id) {
-        deckID = id;
-    }
+    public void SetDeckID(int id, MainGamePartType type) {
 
+        // マッチングであればデッキIDと種類を渡す
+        if (type == MainGamePartType.Matching) {
+            deckID = id;
+            this.type = type;
+        }
+        else if (type == MainGamePartType.Tutotrial) {
+            this.type = type;
+        }
+    }
     /// <summary>
     /// バトルの進行処理
     /// </summary>

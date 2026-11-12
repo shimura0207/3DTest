@@ -16,18 +16,19 @@ public class SaveManager : MonoBehaviour {
     // 自身への参照
     public static SaveManager Instance { get; private set; }
 
-    // プレイヤー関連のセーブファイル名
-    private const string PLAYER_SAVE_FILE_NAME = "PlayerData.json";
+    // プレイヤー関連の暗号化セーブファイル名
+    private const string PLAYER_SAVE_FILE_NAME = "PlayerData.dat";
 
-    // 所持カード用のセーブファイル名
-    private const string CARD_SAVE_FILE_NAME = "PossessionCardData.json";
+    // 所持カード用の暗号化セーブファイル名
+    private const string CARD_SAVE_FILE_NAME = "PossessionCardData.dat";
 
-    // セーブデータの保存先
+
+    // 新しいセーブデータの保存先
     private string PlayerDataSaveFilePath =>
-        Path.Combine(@"D:\RG_SaveData", PLAYER_SAVE_FILE_NAME);
+        Path.Combine(Application.persistentDataPath, PLAYER_SAVE_FILE_NAME);
 
     private string CardDataSaveFilePath =>
-        Path.Combine(@"D:\RG_SaveData", CARD_SAVE_FILE_NAME);
+        Path.Combine(Application.persistentDataPath, CARD_SAVE_FILE_NAME);
 
     // カードのポイント変換定数
     private const int CARD_ACQUIRED = 10;
@@ -63,23 +64,24 @@ public class SaveManager : MonoBehaviour {
         }
 
         try {
-            // セーブファイルを保存するフォルダのパスを取得する
+            // 保存先フォルダを作成する
             string directoryPath = Path.GetDirectoryName(PlayerDataSaveFilePath);
-
-            // フォルダが存在しない場合は作成する
             Directory.CreateDirectory(directoryPath);
 
-            // SaveDataをJSON形式の文字列に変換する
+            // セーブデータをJSON形式に変換する
             string json = JsonUtility.ToJson(saveData, true);
 
-            // JSONファイルにデータを書き込む
-            File.WriteAllText(PlayerDataSaveFilePath, json);
+            // JSONを暗号化する
+            byte[] encryptedData = SaveDataCrypto.Encrypt(json);
 
-            // 保存先のパスを含めて成功ログを表示する
+            // 暗号化したデータをバイト配列として保存する
+            File.WriteAllBytes(PlayerDataSaveFilePath, encryptedData);
+
+            // 保存成功ログを表示する
             Debug.Log($"セーブが完了しました: {PlayerDataSaveFilePath}");
         }
         catch (Exception e) {
-            // 保存に失敗した原因と保存先を表示する
+            // 保存に失敗した原因を表示する
             Debug.LogError(
                 $"セーブに失敗しました。\n" +
                 $"保存先: {PlayerDataSaveFilePath}\n" +
@@ -319,39 +321,44 @@ public class SaveManager : MonoBehaviour {
     /// セーブファイルからデータを読み込む
     /// </summary>
     public PlayerSaveData Load() {
-
-        // セーブファイルが存在しなければ新規データを返す
+        // 新しいセーブファイルが存在しない場合
         if (!File.Exists(PlayerDataSaveFilePath)) {
-            Debug.Log("セーブファイルが存在しないため、新規データを作成します");
+            Debug.Log("既存のセーブファイルが存在しないため、新規データを作成します");
+            // 新しいプレイヤーデータを返す
             return new PlayerSaveData();
         }
 
         try {
-            // ファイルからJSON文字列を読み込む
-            string json = File.ReadAllText(PlayerDataSaveFilePath);
 
-            // JSON文字列をSaveDataに変換する
+            // 暗号化データを読み込む
+            byte[] encryptedData = File.ReadAllBytes(PlayerDataSaveFilePath);
+
+            // 改ざん検知後に復号
+            string json = SaveDataCrypto.Decrypt(encryptedData);
+
+            // JSONからプレイヤーデータに変換
             PlayerSaveData saveData = JsonUtility.FromJson<PlayerSaveData>(json);
 
-            // 読み込み結果が不正な場合はエラーにする
+            // 読み込み結果を確認
             if (saveData == null) {
-                throw new InvalidDataException("セーブデータを読み込めませんでした");
+                throw new InvalidDataException("セーブデータが不正です");
             }
 
-            // 既存デッキのIDを確認し、必要なら割り振る
+            // デッキIDの整合性を確認
             if (EnsureDeckIDs(saveData)) {
-
-                // IDを割り振ったデータを保存する
+                // 更新したデータを保存
                 Save(saveData);
             }
 
-            // 読み込んだセーブデータを返す
             return saveData;
         }
         catch (Exception e) {
-            // ファイルの破損などで読み込めない場合は新規データを返す
-            Debug.LogError($"ロードに失敗しました: {e.Message}");
-            return new PlayerSaveData();
+
+            // 改ざんや破損を検知した場合
+            Debug.LogError($"プレイヤーデータの読み込みに失敗しました: {e}");
+
+            // 元のセーブデータを上書きしない
+            throw;
         }
     }
 
@@ -361,7 +368,7 @@ public class SaveManager : MonoBehaviour {
     /// </summary>
     public void SaveCards(PossessionCardSaveData cardSaveData) {
 
-        // 保存するデータが存在しない場合は終了する
+        // 保存するデータが存在しない場合は処理を終了する
         if (cardSaveData == null) {
             Debug.LogError("保存する所持カードデータがありません");
             return;
@@ -374,14 +381,17 @@ public class SaveManager : MonoBehaviour {
             // 所持カードデータをJSON形式に変換する
             string json = JsonUtility.ToJson(cardSaveData, true);
 
-            // カード専用のJSONファイルに保存する
-            File.WriteAllText(CardDataSaveFilePath, json);
+            // JSONを暗号化する
+            byte[] encryptedData = SaveDataCrypto.Encrypt(json);
+
+            // 暗号化したデータをバイト配列として保存する
+            File.WriteAllBytes(CardDataSaveFilePath, encryptedData);
 
             // 保存成功ログを表示する
             Debug.Log($"所持カードの保存が完了しました: {CardDataSaveFilePath}");
         }
         catch (Exception e) {
-            // エラー表示
+            // 保存に失敗した原因を表示する
             Debug.LogError($"所持カードの保存に失敗しました: {e}");
         }
     }
@@ -436,39 +446,43 @@ public class SaveManager : MonoBehaviour {
     /// </summary>
     public PossessionCardSaveData LoadCards() {
 
-        // ファイルが存在しなければ空の所持カードデータを返す
+        // 新しいセーブファイルが存在しない場合
         if (!File.Exists(CardDataSaveFilePath)) {
-            Debug.Log("所持カードのセーブファイルがないため、新規データを作成します");
+            Debug.Log("既存の所持カードデータが存在しないため、新規作成します");
+            // 空の所持カードデータを返す
             return new PossessionCardSaveData();
         }
 
         try {
-            // JSONファイルから文字列を読み込む
-            string json = File.ReadAllText(CardDataSaveFilePath);
 
-            // JSON文字列を所持カードデータに変換する
-            PossessionCardSaveData cardSaveData =
-                JsonUtility.FromJson<PossessionCardSaveData>(json);
+            // 暗号化データを読み込む
+            byte[] encryptedData = File.ReadAllBytes(CardDataSaveFilePath);
 
-            // 読み込み結果が不正な場合はエラーにする
+            // 改ざん検知後に復号
+            string json = SaveDataCrypto.Decrypt(encryptedData);
+
+            // JSONから所持カードデータに変換
+            PossessionCardSaveData cardSaveData = JsonUtility.FromJson<PossessionCardSaveData>(json);
+
+            // 読み込み結果を確認
             if (cardSaveData == null) {
-                throw new InvalidDataException(
-                    "所持カードデータを読み込めませんでした"
-                );
+                throw new InvalidDataException("所持カードデータが不正です");
             }
 
-            // リストがnullの場合は空のリストを用意する
+            // リストがnullの場合は初期化
             if (cardSaveData.cardID == null) {
                 cardSaveData.cardID = new List<int>();
             }
 
-            // 所持カードデータを返す
             return cardSaveData;
         }
         catch (Exception e) {
-            // 読み込み失敗時はエラーを表示して空データを返す
-            Debug.LogError($"所持カードの読み込みに失敗しました: {e.Message}");
-            return new PossessionCardSaveData();
+
+            // 改ざんや破損を検知した場合
+            Debug.LogError($"所持カードデータの読み込みに失敗しました: {e}");
+
+            // 元のセーブデータを上書きしない
+            throw;
         }
     }
 

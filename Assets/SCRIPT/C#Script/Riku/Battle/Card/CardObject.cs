@@ -4,10 +4,13 @@
  */
 
 using Cysharp.Threading.Tasks;
+using Mirror.BouncyCastle.Math.Field;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 /// <summary>
 /// カードオブジェクトクラス
@@ -34,6 +37,8 @@ public class CardObject : MonoBehaviour {
     public PlayerType playerType { get; private set; } = PlayerType.None;
     // カードの効果
     public List<CardAbilityDatabase.AbilityData> abilityList { get; private set; }
+    // 疲労しているかどうか
+    public bool isFatigue { get; private set; } = false;
 
     // SpriteRendererコンポーネント
     [SerializeField]
@@ -103,6 +108,7 @@ public class CardObject : MonoBehaviour {
         cardType = CardType.None;
         playerType = PlayerType.None;
         abilityList = new List<CardAbilityDatabase.AbilityData>();
+        isFatigue = false;
         spriteRenderer.sprite = null;
     }
 
@@ -252,5 +258,17 @@ public class CardObject : MonoBehaviour {
         if (currentStatus[MonsterStatus.HP] <= 0) {
             DestroyMonster();
         }
+    }
+
+    /// <summary>
+    /// 疲労状態の変更
+    /// </summary>
+    /// <param name="setFatigue"></param>
+    public void SetIsFatigue(bool setFatigue) {
+        // 疲労しない効果を持っている場合は変更できない
+        foreach (var ability in abilityList) {
+            if (ability.passiveAbility == PassiveAbility.NoFatigue) return;
+        }
+        isFatigue = setFatigue;
     }
 }

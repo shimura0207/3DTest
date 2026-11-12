@@ -83,6 +83,16 @@ public class BattleSettingsMenu : MenuWindowBase {
         return deck;
     }
 
+    private List<int> GetUseTutorialDeckList() {
+        // レンタルデッキを取得
+        List<int> rental = DeckDataMasterUtility.GetDeckMaster(1);
+
+        // レンタルデッキが取得できなければ処理を終了する
+        if (rental == null) return new List<int>();
+
+        return rental;
+    }
+
     /// <summary>
     /// ウィンドウ非表示時の処理
     /// </summary>

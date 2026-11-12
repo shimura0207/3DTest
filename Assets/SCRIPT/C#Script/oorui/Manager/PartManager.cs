@@ -201,7 +201,7 @@ public class PartManager : SystemObject {
     /// <param name="nextPart">切り替え先のパート</param>
     /// <param name="state">使用デッキID</param>
     /// <returns>切り替え処理のUniTask</returns>
-    public async UniTask TransitionPart(GamePart nextPart, int id) {
+    public async UniTask TransitionPart(GamePart nextPart, int id, MainGamePartType type) {
         // パートの管理配列が初期化されていなければ抜ける
         if (partList == null) return;
 
@@ -221,9 +221,13 @@ public class PartManager : SystemObject {
         if (currentPart == null) return;
 
         // 切り替え先がPrivateMatchingPartか確認する
-        if (currentPart is MainGamePart mainGamePart) {
+        if (currentPart is MainGamePart mainGamePart && type == MainGamePartType.Matching) {
             // 切り替え先がMainGamePartであれば、使用デッキのIDを登録
-            mainGamePart.SetDeckID(id);
+            mainGamePart.SetDeckID(id, type);
+        }
+        else if (currentPart is MainGamePart mainGamePartSecond && type == MainGamePartType.Tutotrial) {
+            // 切り替え先がMainGamePartかつパートタイプがチュートリアルであれば、デッキは登録せず、パートの種類を渡す
+            mainGamePartSecond.SetDeckID(id, type);
         }
 
         // 切り替え先のパートのセットアップを行う

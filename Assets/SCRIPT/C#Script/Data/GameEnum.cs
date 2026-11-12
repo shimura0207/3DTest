@@ -374,6 +374,10 @@ public enum AbilityProcess {
     DeleteMonster,
     // モンスターを手札に戻す
     ReturnMonster,
+    // モンスターの疲労を癒す
+    HealFatigue,
+    // モンスターを疲労させる
+    GiveFatigue,
     // なかまよび(マジカルバードの特殊効果)
     Nakamayobi,
     // レベルアップ(リールギアの特殊効果)
@@ -429,4 +433,14 @@ public enum MonsterStatus {
     SIZE,
 
     Max,
+}
+
+/// <summary>
+/// 遷移先のメインゲームパートの種類
+/// @author oorui
+/// </summary>
+public enum MainGamePartType{
+    None = -1,
+    Matching,       // マッチングへの遷移
+    Tutotrial       // チュートリアルへの遷移
 }

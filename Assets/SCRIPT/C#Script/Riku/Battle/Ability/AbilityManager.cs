@@ -101,11 +101,20 @@ public class AbilityManager : MonoBehaviour {
             case AbilityProcess.ReturnMonster:
                 func = () => abilityProcessData.ReturnMonsterAbility(card, player, target);
                 break;
+            case AbilityProcess.HealFatigue:
+                func = () => abilityProcessData.HealFatigueAbility(card, player, target);
+                break;
+            case AbilityProcess.GiveFatigue:
+                func = () => abilityProcessData.GiveFatigueAbility(card, player, target);
+                break;
             case AbilityProcess.Nakamayobi:
                 func = () => abilityProcessData.NakamayobiAbility(player);
                 break;
             case AbilityProcess.LevelUP:
                 func = () => abilityProcessData.LevelUPAbility(card);
+                break;
+            case AbilityProcess.Soukougeki:
+                func = () => abilityProcessData.SoukougekiAbility(player);
                 break;
         }
         return func;

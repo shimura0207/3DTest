@@ -17,9 +17,12 @@ public class StartPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
-        // ターン開始時効果があるか確認
         foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Self]) {
             if (!monster.Value) continue;
+            // 疲労回復
+            monster.Value.SetIsFatigue(false);
+
+            // ターン開始時効果があるか確認
             foreach (var ability in monster.Value.abilityList) {
                if (ability.abilityTiming != AbilityTiming.TurnStart) continue;
                // 見つかったターン開始時効果を積む
@@ -45,9 +48,12 @@ public class StartPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
-        // ターン開始時効果があるか確認
         foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Opponent]) {
             if (!monster.Value) continue;
+            // 疲労回復
+            monster.Value.SetIsFatigue(false);
+
+            // ターン開始時効果があるか確認
             foreach (var ability in monster.Value.abilityList) {
                 if (ability.abilityTiming != AbilityTiming.TurnStart) continue;
                 // 見つかったターン開始時効果を積む

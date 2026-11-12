@@ -278,12 +278,19 @@ public class BattleSystemManager : MonoBehaviour {
     /// </summary>
     /// <param name="player">どちらのプレイヤーか</param>
     public void DrawCard(PlayerType player) {
-        // 山札からIDを抜く
-        int card = AreaCardManager.instance.DrawCard(player);
-        // オブジェクトの使用化
-        CardObject cardObject = CardObjectManager.instance.UseCardObject(card, player);
-        // オブジェクトを手札の位置に移動
-        CardObjectManager.instance.MoveToHand(player, cardObject.objectID);
+        // 手札上限なら手札ではなく墓地へ送る
+        int handCount = AreaCardManager.instance.outDeckCards[player].handCards.Count;
+        if (HAND_COUNT_MAX <= handCount) {
+            // 山札トップから墓地へ
+            AreaCardManager.instance.DeckToGrave(player);
+        } else {
+            // 山札からIDを抜く
+            int card = AreaCardManager.instance.DrawCard(player);
+            // オブジェクトの使用化
+            CardObject cardObject = CardObjectManager.instance.UseCardObject(card, player);
+            // オブジェクトを手札の位置に移動
+            CardObjectManager.instance.MoveToHand(player, cardObject.objectID);
+        }
     }
 
     /// <summary>
