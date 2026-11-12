@@ -374,6 +374,10 @@ public enum AbilityProcess {
     DeleteMonster,
     // モンスターを手札に戻す
     ReturnMonster,
+    // モンスターの疲労を癒す
+    HealFatigue,
+    // モンスターを疲労させる
+    GiveFatigue,
     // なかまよび(マジカルバードの特殊効果)
     Nakamayobi,
     // レベルアップ(リールギアの特殊効果)

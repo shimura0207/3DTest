@@ -20,6 +20,8 @@ public class AbilityProcessData {
     private Dictionary<AbilityTarget, Func<CardObject, PlayerType, UniTask>> deleteMonster = null;
     // モンスターを手札に戻す効果
     private Dictionary<AbilityTarget, Func<CardObject, PlayerType, UniTask>> returnMonster = null;
+    // モンスターの疲労関連効果
+    private Dictionary<AbilityTarget, Func<bool, CardObject, PlayerType, UniTask>> fatigueMonster = null;
 
     // 受け取ったカード
     public CardObject receiveCard = null;
@@ -392,6 +394,95 @@ public class AbilityProcessData {
     }
 
     /// <summary>
+    /// モンスターの疲労関連効果の登録
+    /// </summary>
+    private void RegisterFatigueMonster() {
+        fatigueMonster = new Dictionary<AbilityTarget, Func<bool, CardObject, PlayerType, UniTask>>();
+        // 自身プレイヤー
+        fatigueMonster[AbilityTarget.SelfPlayer] = null;
+        // 相手プレイヤー
+        fatigueMonster[AbilityTarget.SelfPlayer] = null;
+        // 自身のランダムなカード
+        fatigueMonster[AbilityTarget.SelfRandom] = async (fatigue, card, player) => {
+            // ランダムなモンスター取得
+            CardObject monster = await GetRandomMonster(player);
+            // 取得したモンスターの疲労状態変更
+            monster.SetIsFatigue(fatigue);
+        };
+        // 相手のランダムなカード
+        fatigueMonster[AbilityTarget.OpponentRandom] = async (fatigue, card, player) => {
+            // 相手プレイヤーを取得
+            PlayerType revPla = GetReversePlayer(player);
+            // ランダムなモンスター取得
+            CardObject monster = await GetRandomMonster(revPla);
+            // 取得したモンスターの疲労状態変更
+            monster.SetIsFatigue(fatigue);
+        };
+        // 自分の選択したカード
+        fatigueMonster[AbilityTarget.SelfSelect] = async (fatigue, card, player) => {
+            // 選択モンスター取得
+            CardObject monster = await GetSelectMonster(player);
+            // 取得したモンスターの疲労状態変更
+            monster.SetIsFatigue(fatigue);
+        };
+        // 相手の選択したカード
+        fatigueMonster[AbilityTarget.OpponentSelect] = async (fatigue, card, player) => {
+            // 相手プレイヤーを取得
+            PlayerType revPla = GetReversePlayer(player);
+            // 選択モンスター取得
+            CardObject monster = await GetSelectMonster(revPla);
+            // 取得したモンスターの疲労状態変更
+            monster.SetIsFatigue(fatigue);
+        };
+        // 自身の全てのモンスター
+        fatigueMonster[AbilityTarget.SelfAll] = (fatigue, card, player) => {
+            var fieldMonster = CardObjectManager.instance.fieldObjectList[player];
+            for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
+                // 取得したモンスターの疲労状態変更
+                fieldMonster[i].SetIsFatigue(fatigue);
+            }
+            return UniTask.CompletedTask;
+        };
+        // 相手の全てのモンスター
+        fatigueMonster[AbilityTarget.OpponentAll] = (fatigue, card, player) => {
+            // 相手プレイヤーを取得
+            PlayerType revPla = GetReversePlayer(player);
+            var fieldMonster = CardObjectManager.instance.fieldObjectList[revPla];
+            for (FieldLane i = 0; i < FieldLane.Max; i++) {
+                if (!fieldMonster[i]) continue;
+                // 取得したモンスターの疲労状態変更
+                fieldMonster[i].SetIsFatigue(fatigue);
+            }
+            return UniTask.CompletedTask;
+        };
+        // このモンスター
+        fatigueMonster[AbilityTarget.ThisMonster] = (fatigue, card, player) => {
+            if (!card) return UniTask.CompletedTask;
+            // 取得したモンスターの疲労状態変更
+            card.SetIsFatigue(fatigue);
+            return UniTask.CompletedTask;
+        };
+        // このモンスター以外のすべてのモンスター
+        fatigueMonster[AbilityTarget.OtherMonster] = (fatigue, card, player) => {
+            // 発動モンスター以外の全てのモンスターを取得
+            List<CardObject> otherMonster = new List<CardObject>();
+            for (PlayerType i = 0; i < PlayerType.Max; i++) {
+                foreach (var obj in CardObjectManager.instance.fieldObjectList[i]) {
+                    if (!obj.Value) continue;
+                    if (card && card == obj.Value) continue;
+                    otherMonster.Add(obj.Value);
+                }
+            }
+            // 取得したモンスターの疲労状態変更
+            for (int i = 0; i < otherMonster.Count; i++) {
+                otherMonster[i].SetIsFatigue(fatigue);
+            }
+            return UniTask.CompletedTask;
+        };
+    }
+
+    /// <summary>
     /// 対のプレイヤーを返す
     /// </summary>
     /// <param name="player"></param>
@@ -669,6 +760,34 @@ public class AbilityProcessData {
         if (returnMonster[target] == null) return;
         // モンスターを手札に戻す
         await returnMonster[target](card, player);
+    }
+
+    /// <summary>
+    /// モンスターの疲労を癒す効果
+    /// </summary>
+    /// <param name="card">発動カード</param>
+    /// <param name="player">発動プレイヤー</param>
+    /// <param name="target">発動対象</param>
+    /// <returns></returns>
+    public async UniTask HealFatigueAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // ターゲットが正常ではないなら処理しない
+        if (fatigueMonster[target] == null) return;
+        // モンスターの疲労を癒す
+        await fatigueMonster[target](false, card, player);
+    }
+
+    /// <summary>
+    /// モンスターを疲労させる効果
+    /// </summary>
+    /// <param name="card">発動カード</param>
+    /// <param name="player">発動プレイヤー</param>
+    /// <param name="target">発動対象</param>
+    /// <returns></returns>
+    public async UniTask GiveFatigueAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // ターゲットが正常ではないなら処理しない
+        if (fatigueMonster[target] == null) return;
+        // モンスターを疲労させる
+        await fatigueMonster[target](true, card, player);
     }
 
     /// <summary>
