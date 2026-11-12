@@ -11,6 +11,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CardDetailMenu : MenuWindowBase {
+    // 受け取ったカードID
+    private int cardID = -1;
+
     // カード名を表示するテキスト
     [SerializeField] private TMP_Text cardNameText;
     // カードタイプを表示するテキスト
@@ -35,6 +38,11 @@ public class CardDetailMenu : MenuWindowBase {
     [SerializeField] private Image bellImage;   // ベル
     [SerializeField] private Image suikaImage;  // スイカ
 
+    // カード生成関連UI
+    [SerializeField] private Button createButton;   // カード生成ボタン
+    [SerializeField] private Text pullPointText;    // 消費ポイントテキスト
+    [SerializeField] private Text havePointText;    // 現在の所持ポイント
+    [SerializeField] private Text haveCardNumText;  // 現在のカードの所持数
 
 
     // ボタンが選択されるまで待機するための完了通知
@@ -56,6 +64,8 @@ public class CardDetailMenu : MenuWindowBase {
     /// <param name="id"></param>
     /// <returns></returns>
     public async UniTask Open(int id) {
+        // メンバ変数でIDを受け取る
+        cardID = id;
         // テキストの初期化を行う
         AllTextSetup();
         // ID指定のカードの取得を行う
@@ -190,6 +200,16 @@ public class CardDetailMenu : MenuWindowBase {
     }
 
     /// <summary>
+    /// カード生成ボタンが押された時の処理
+    /// </summary>
+    private void OnCreateButton() {
+        // カード生成を行う
+        SaveManager.Instance.AcquireCard(cardID);
+    }
+
+    
+
+    /// <summary>
     /// 対応役の画像を初期化する
     /// </summary>
     private void AllSuportRoleImageSetup() {
@@ -264,5 +284,15 @@ public class CardDetailMenu : MenuWindowBase {
                 suikaImage.color = Color.white;
                 break;
         }
+    }
+
+    /// <summary>
+    /// 閉じられた時の処理
+    /// </summary>
+    /// <returns></returns>
+    public override async UniTask Close() {
+        await base.Close();
+        // カードの初期化
+        cardID = -1;
     }
 }

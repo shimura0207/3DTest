@@ -41,14 +41,24 @@ public class PossessionCardClick : MonoBehaviour, IPointerClickHandler {
     /// カードがクリックされたときの処理
     /// </summary>
     public void OnPointerClick(PointerEventData eventData) {
-
         // カード情報が取得できなければ終了する
         if (possessionCardItem == null) return;
 
-        // カードIDとImageを渡す
-        onCardClicked?.Invoke(
-            possessionCardItem.CardID,
-            possessionCardItem.CardImage
-        );
+        // 左クリックの場合
+        if (eventData.button == PointerEventData.InputButton.Left) {
+
+            // カードIDとImageを渡す
+            onCardClicked?.Invoke(
+                possessionCardItem.CardID,
+                possessionCardItem.CardImage
+            );
+        }
+
+        // 右クリックの場合
+        else if (eventData.button == PointerEventData.InputButton.Right) {
+
+            // カード詳細メニューを開く
+            possessionCardItem.OnRightClick();
+        }
     }
 }
