@@ -16,6 +16,8 @@ public class GameConst {
     public static readonly int DECK_CARD_MAX = 30;
     // 初手札枚数
     public static readonly int START_HAND_COUNT = 5;
+    // 手札上限枚数
+    public static readonly int HAND_COUNT_MAX = 10;
 
     // 裏面画像のID
     public static readonly int BACK_IMAGE_ID = 0;
