@@ -81,8 +81,6 @@ public class CardObject : MonoBehaviour {
         // 相手のカードの場合はとりあえず裏面画像に設定
         if (playerType == PlayerType.Opponent) {
             spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(GameConst.BACK_IMAGE_ID);
-            // 向きを反対にする
-            transform.localEulerAngles = new Vector3(180, 0, 0);
         }
         // 自分のカードはIDから取得
         else if (playerType == PlayerType.Self) {
