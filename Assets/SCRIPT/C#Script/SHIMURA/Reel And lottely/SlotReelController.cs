@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using static grassFlash;
 
 /// <summary>
@@ -115,6 +116,7 @@ public class SlotReelController : MonoBehaviour {
     /// 自分のパチスロ操作を開始します。
     /// </summary>
     public void BeginLocalPlayback() {
+        ResetRoleStocks();
         networkLocalControl = true;
         networkRemoteControl = false;
         maxBet = false;
@@ -128,6 +130,7 @@ public class SlotReelController : MonoBehaviour {
     /// 自分の抽選状態は保存しておきます。
     /// </summary>
     public void BeginRemotePlayback() {
+        ResetRoleStocks();
         savedRush = rush;
         savedNextRush = nrush;
         savedTable = currentTable;
@@ -148,6 +151,8 @@ public class SlotReelController : MonoBehaviour {
     /// 相手を再生していた場合は、自分の状態へ戻します。
     /// </summary>
     public void EndNetworkPlayback() {
+        HideRushLogo();
+        ResetRoleStocks();
         if (networkLocalControl || networkRemoteControl) {
             AttackRush = rush;
             AttackNextRush = nrush;
@@ -438,6 +443,41 @@ public class SlotReelController : MonoBehaviour {
     // 1Gにつき1回だけ、第3停止で再生する。
     private bool thirdStopAuraPlayed;
 
+    [Header("役ストック表示（TextMeshPro）")]
+    [SerializeField] private TMP_Text missStockText;
+    [SerializeField] private TMP_Text replayStockText;
+    [SerializeField] private TMP_Text bellStockText;
+    [SerializeField] private TMP_Text suikaStockText;
+    [Tooltip("弱チェリーと強チェリーを合算して表示")]
+    [SerializeField] private TMP_Text cherryStockText;
+    [SerializeField] private TMP_Text sevenStockText;
+
+    public int MissStock { get; private set; }
+    public int ReplayStock { get; private set; }
+    public int BellStock { get; private set; }
+    public int SuikaStock { get; private set; }
+    public int CherryStock { get; private set; }
+    public int SevenStock { get; private set; }
+
+    // リセット前に開始した演出の通知を無効にする世代番号。
+    private int roleStockGeneration;
+
+    [Header("Sevenの次レバー：右上RUSHロゴ")]
+    [Tooltip("表示したいRUSHロゴのUI Image。Spriteを事前に設定してください。")]
+    [SerializeField] private Image rushLogoImage;
+    [Tooltip("ロゴを右上に配置するCanvas本体。未設定ならImageの親Canvasを使用。")]
+    [SerializeField] private Canvas rushLogoCanvas;
+    [Tooltip("Canvasの幅・高さに対するロゴ表示枠の割合")]
+    [SerializeField] private Vector2 rushLogoSizeRatio = new Vector2(0.2f, 0.15f);
+    [Tooltip("Canvasの幅・高さに対する右端・上端の余白の割合")]
+    [SerializeField] private Vector2 rushLogoMarginRatio = new Vector2(0.02f, 0.02f);
+
+    // フェイズをまたいでも次レバーまで保持。自分と相手の予約を分離する。
+    private bool localRushLogoPending;
+    private bool remoteRushLogoPending;
+
+
+
     public int stoppedReelCount = 0;
 
     private const string NoiseStrengthProperty = "_NoiseStrength";
@@ -448,6 +488,8 @@ public class SlotReelController : MonoBehaviour {
     //============================================================
 
     private void Start() {
+        HideRushLogo();
+        RefreshRoleStockTexts();
         InitializeReels();
         InitializeDebugAngles();
 
@@ -916,6 +958,9 @@ public class SlotReelController : MonoBehaviour {
             AddRole(currentSlotSymbolRole);
             slotIndex++;//G数を1G増加
         }
+        // 回転開始が成功したときだけ前ゲームの予約を消費する。
+        // 今回のSeven予約は、その表示処理の後で設定する。
+        HandleRushLogoOnSuccessfulLever();
         return true;
     }
 
@@ -1192,44 +1237,163 @@ public class SlotReelController : MonoBehaviour {
     }
 
     /// <summary>
-    /// 第3停止時の成立役に応じたランプオーラ。通常・RUSH共通。
-    /// Chance/NONEなど、指定のない役には追加演出を出さない。
+    /// 第3停止で演出を開始し、最後まで完了したときに成立役のストックを1加算。
+    /// 通常・RUSH・受信再生共通。チャンス目は色未指定のため対象外。
     /// </summary>
     private void PlayThirdStopRoleAura(PachisuroSymbolKoyakuEnum role) {
         if (thirdStopAuraPlayed) return;
         thirdStopAuraPlayed = true;
 
-        // 既存の停止処理は、オーラ未設定でも継続する。
-        if (lampAura == null) {
-            Debug.LogWarning("第3停止オーラ：InspectorのLamp AuraにLampAuraControllerを登録してください。", this);
-            return;
+        LampAuraController.LampColor color;
+        bool allColors = false;
+        switch (role) {
+            case PachisuroSymbolKoyakuEnum.Miss:
+                color = LampAuraController.LampColor.White; break;
+            case PachisuroSymbolKoyakuEnum.Replay:
+                color = LampAuraController.LampColor.Blue; break;
+            case PachisuroSymbolKoyakuEnum.Bell:
+                color = LampAuraController.LampColor.Yellow; break;
+            case PachisuroSymbolKoyakuEnum.Suika:
+                color = LampAuraController.LampColor.Green; break;
+            case PachisuroSymbolKoyakuEnum.WeakCherry:
+            case PachisuroSymbolKoyakuEnum.StrongCherry:
+                color = LampAuraController.LampColor.Red; break;
+            case PachisuroSymbolKoyakuEnum.Seven:
+                color = LampAuraController.LampColor.White;
+                allColors = true; break;
+            default:
+                return;
         }
-        if (!lampAura.isActiveAndEnabled) {
-            Debug.LogWarning("第3停止オーラ：LampAuraControllerとそのGameObjectを有効にしてください。", this);
+
+        if (lampAura == null || !lampAura.isActiveAndEnabled) {
+            Debug.LogWarning("第3停止オーラ：有効なLampAuraControllerをLamp Auraに登録してください。", this);
             return;
         }
 
-        switch (role) {
-            case PachisuroSymbolKoyakuEnum.Miss:
-                lampAura.PlayWhite();
-                break;
-            case PachisuroSymbolKoyakuEnum.Replay:
-                lampAura.PlayBlue();
-                break;
-            case PachisuroSymbolKoyakuEnum.Bell:
-                lampAura.PlayYellow();
-                break;
-            case PachisuroSymbolKoyakuEnum.Suika:
-                lampAura.PlayGreen();
-                break;
-            case PachisuroSymbolKoyakuEnum.WeakCherry:
-            case PachisuroSymbolKoyakuEnum.StrongCherry:
-                lampAura.PlayRed();
-                break;
-            case PachisuroSymbolKoyakuEnum.Seven:
-                lampAura.PlayAll();
-                break;
+        // roleは今回の成立役を保持。次ゲームでcurrentSlotSymbolRoleが変わっても影響しない。
+        int generation = roleStockGeneration;
+        System.Action onCompleted = () => {
+            if (this == null || generation != roleStockGeneration) return;
+            AddCompletedRoleStock(role);
+        };
+
+        if (allColors) lampAura.TryPlayAllWithCompletion(onCompleted);
+        else lampAura.TryPlayWithCompletion(color, onCompleted);
+    }
+
+    private void HandleRushLogoOnSuccessfulLever() {
+        bool pending = networkRemoteControl ? remoteRushLogoPending : localRushLogoPending;
+        if (pending) ShowRushLogo();
+
+        // Seven連続時も、今回の分は次の回転に予約する。
+        bool reserveNext = currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven;
+        if (networkRemoteControl) remoteRushLogoPending = reserveNext;
+        else localRushLogoPending = reserveNext;
+    }
+
+    public void ShowRushLogo() {
+        if (rushLogoImage == null) {
+            Debug.LogWarning("RUSHロゴ：InspectorのRush Logo Imageを登録してください。", this);
+            return;
         }
+        Canvas canvas = rushLogoCanvas != null
+            ? rushLogoCanvas : rushLogoImage.GetComponentInParent<Canvas>();
+        if (canvas == null) {
+            Debug.LogWarning("RUSHロゴ：Rush Logo Canvasを登録してください。", this);
+            return;
+        }
+
+        RectTransform rect = rushLogoImage.rectTransform;
+        RectTransform parent = canvas.transform as RectTransform;
+        // Canvas本体の右上を基準にする。
+        // ロゴ専用のImageを指定すること。
+        if (rect.parent != parent) rect.SetParent(parent, false);
+        LayoutElement layout = rushLogoImage.GetComponent<LayoutElement>();
+        if (layout == null) layout = rushLogoImage.gameObject.AddComponent<LayoutElement>();
+        layout.ignoreLayout = true;
+        rect.anchorMin = rect.anchorMax = Vector2.one;
+        rect.pivot = Vector2.one;
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+        Canvas.ForceUpdateCanvases();
+        Vector2 canvasSize = parent.rect.size;
+        rect.sizeDelta = new Vector2(
+            canvasSize.x * Mathf.Clamp(rushLogoSizeRatio.x, 0.01f, 1f),
+            canvasSize.y * Mathf.Clamp(rushLogoSizeRatio.y, 0.01f, 1f));
+        rect.anchoredPosition3D = new Vector3(
+            -canvasSize.x * Mathf.Clamp(rushLogoMarginRatio.x, 0f, 0.9f),
+            -canvasSize.y * Mathf.Clamp(rushLogoMarginRatio.y, 0f, 0.9f), 0f);
+        rushLogoImage.preserveAspect = true;
+        rushLogoImage.raycastTarget = false;
+        rushLogoImage.gameObject.SetActive(true);
+        rushLogoImage.enabled = true;
+        rect.SetAsLastSibling();
+    }
+
+    /// <summary>画像のみ非表示。Sevenの次レバー予約は消さない。</summary>
+    public void HideRushLogo() {
+        if (rushLogoImage != null) rushLogoImage.enabled = false;
+    }
+
+    private void AddCompletedRoleStock(PachisuroSymbolKoyakuEnum role) {
+        switch (role) {
+            case PachisuroSymbolKoyakuEnum.Miss: MissStock++; break;
+            case PachisuroSymbolKoyakuEnum.Replay: ReplayStock++; break;
+            case PachisuroSymbolKoyakuEnum.Bell: BellStock++; break;
+            case PachisuroSymbolKoyakuEnum.Suika: SuikaStock++; break;
+            case PachisuroSymbolKoyakuEnum.WeakCherry:
+            case PachisuroSymbolKoyakuEnum.StrongCherry: CherryStock++; break;
+            case PachisuroSymbolKoyakuEnum.Seven:
+                // Sevenは5色＋Sevenの全ストックを1ずつ加算。
+                MissStock++;
+                ReplayStock++;
+                BellStock++;
+                SuikaStock++;
+                CherryStock++;
+                SevenStock++;
+                break;
+            default: return;
+        }
+        RefreshRoleStockTexts();
+    }
+
+    /// <summary>チェリーは弱・強の合計を返します。</summary>
+    public int GetRoleStock(PachisuroSymbolKoyakuEnum role) {
+        switch (role) {
+            case PachisuroSymbolKoyakuEnum.Miss: return MissStock;
+            case PachisuroSymbolKoyakuEnum.Replay: return ReplayStock;
+            case PachisuroSymbolKoyakuEnum.Bell: return BellStock;
+            case PachisuroSymbolKoyakuEnum.Suika: return SuikaStock;
+            case PachisuroSymbolKoyakuEnum.WeakCherry:
+            case PachisuroSymbolKoyakuEnum.StrongCherry: return CherryStock;
+            case PachisuroSymbolKoyakuEnum.Seven: return SevenStock;
+            default: return 0;
+        }
+    }
+
+    public void RefreshRoleStockTexts() {
+        if (missStockText != null) missStockText.text = MissStock.ToString();
+        if (replayStockText != null) replayStockText.text = ReplayStock.ToString();
+        if (bellStockText != null) bellStockText.text = BellStock.ToString();
+        if (suikaStockText != null) suikaStockText.text = SuikaStock.ToString();
+        if (cherryStockText != null) cherryStockText.text = CherryStock.ToString();
+        if (sevenStockText != null) sevenStockText.text = SevenStock.ToString();
+    }
+
+    /// <summary>
+    /// フェイズ終了・開始時に呼ぶ。表示は全て0へ戻し、未完了の演出も中断。
+    /// </summary>
+    public void ResetRoleStocks() {
+        unchecked { roleStockGeneration++; }
+        if (lampAura != null) lampAura.StopAllEffects();
+        MissStock = ReplayStock = BellStock = SuikaStock = CherryStock = SevenStock = 0;
+        RefreshRoleStockTexts();
+    }
+
+    // フェイズ終了時にオブジェクト自体を非表示にする経路も保護。
+    private void OnDisable() {
+        HideRushLogo();
+        ResetRoleStocks();
     }
 
     //============================================================

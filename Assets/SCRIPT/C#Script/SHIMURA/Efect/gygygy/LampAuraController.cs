@@ -58,7 +58,17 @@ public class LampAuraController : MonoBehaviour {
     private Sprite glowSprite;
     private Texture2D glowTexture;
 
+    // 1回の演出（Sevenの場合は5色全体）をひとまとめにして完了を通知。
+    private class CompletionGroup {
+        public int remaining;
+        public bool cancelled;
+        public System.Action onCompleted;
+    }
+
+    private readonly List<CompletionGroup> completedGroups = new List<CompletionGroup>();
+
     private class AuraParticle {
+        public CompletionGroup group;
         public Image image;
         public RectTransform rect;
         public RectTransform target;
@@ -107,20 +117,56 @@ public class LampAuraController : MonoBehaviour {
     }
 
     public void Play(LampColor lampColor) {
+        TryPlayWithCompletion(lampColor, null);
+    }
+
+    /// <summary>自然終了した場合だけ1回通知。中断・設定不足では通知しない。</summary>
+    public bool TryPlayWithCompletion(LampColor lampColor, System.Action onCompleted) {
+        CompletionGroup group = new CompletionGroup { onCompleted = onCompleted };
+        return SpawnAura(lampColor, group);
+    }
+
+    /// <summary>5色を1セットとして再生し、全色の自然終了後に1回だけ通知。</summary>
+    public bool TryPlayAllWithCompletion(System.Action onCompleted) {
+        if (!Application.isPlaying || !isActiveAndEnabled || !Prepare()) return false;
+        LampColor[] colors = { LampColor.White, LampColor.Blue, LampColor.Yellow, LampColor.Red, LampColor.Green };
+        foreach (LampColor color in colors) {
+            LampSetting setting = GetSetting(color);
+            if (setting == null || setting.source == null || setting.target == null) {
+                Debug.LogWarning("全色オーラ：" + color + "のSource/Targetが未設定です。", this);
+                return false;
+            }
+        }
+        // 5色すべての粒数を確保。途中までしか出ないセットは開始しない。
+        if (maxParticles - particles.Count < Mathf.Clamp(auraLayers, 1, 60) * colors.Length) {
+            Debug.LogWarning("全色オーラ：Max Particlesの上限に達しています。", this);
+            return false;
+        }
+        CompletionGroup group = new CompletionGroup { onCompleted = onCompleted };
+        foreach (LampColor color in colors) {
+            if (!SpawnAura(color, group)) {
+                group.cancelled = true;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private bool SpawnAura(LampColor lampColor, CompletionGroup group) {
         if (!Application.isPlaying) {
             Debug.LogWarning("Unityの再生中にテストしてください。", this);
-            return;
+            return false;
         }
-        if (!isActiveAndEnabled || !Prepare()) return;
+        if (!isActiveAndEnabled || !Prepare()) return false;
 
         LampSetting setting = GetSetting(lampColor);
         if (setting == null || setting.source == null || setting.target == null) {
             Debug.LogWarning(lampColor + "のSourceとTargetを登録してください。", this);
-            return;
+            return false;
         }
 
         Rect bounds = canvasRect.rect;
-        if (bounds.width <= 0f || bounds.height <= 0f) return;
+        if (bounds.width <= 0f || bounds.height <= 0f) return false;
         Vector3 sourceLocal = canvasRect.InverseTransformPoint(GetWorldCenter(setting.source));
         float x = Mathf.Clamp(sourceLocal.x, bounds.xMin, bounds.xMax);
         float y = bounds.yMin + bounds.height * bottomInsetRatio;
@@ -128,7 +174,7 @@ public class LampAuraController : MonoBehaviour {
         Vector2 middle = CanvasToEffect(new Vector2(x, bounds.center.y));
 
         int count = Mathf.Min(Mathf.Clamp(auraLayers, 1, 60), Mathf.Max(0, maxParticles - particles.Count));
-        if (count == 0) return;
+        if (count == 0) return false;
         float baseSize = Mathf.Min(bounds.width, bounds.height) * Mathf.Max(0.001f, auraSizeRatio);
 
         // 複数の粒を重ねても、全体が不透明になりすぎないよう補正する。
@@ -154,6 +200,7 @@ public class LampAuraController : MonoBehaviour {
             color.a = layerAlpha;
 
             AuraParticle p = new AuraParticle {
+                group = group,
                 image = image,
                 rect = rect,
                 target = setting.target.rectTransform,
@@ -170,9 +217,11 @@ public class LampAuraController : MonoBehaviour {
                 move = Mathf.Max(0.01f, targetMoveDuration),
                 fade = Mathf.Max(0.01f, arrivalDuration)
             };
+            group.remaining++;
             particles.Add(p);
             Draw(p, p.start, 1f, 1f, 0f);
         }
+        return true;
     }
 
     private void Update() {
@@ -205,9 +254,19 @@ public class LampAuraController : MonoBehaviour {
             }
             else {
                 float t = (p.age - moveEnd) / p.fade;
-                if (t >= 1f) { RemoveParticle(i); continue; }
+                if (t >= 1f) { RemoveParticle(i, true); continue; }
                 Draw(p, WorldToEffect(GetWorldCenter(p.target)), Mathf.Lerp(0.6f, 1.5f, t), 1f - t, t);
             }
+        }
+        // 粒の走査が終わってから通知。コールバック内の再生・停止にも対応。
+        while (completedGroups.Count > 0) {
+            CompletionGroup group = completedGroups[0];
+            completedGroups.RemoveAt(0);
+            if (group.cancelled) continue;
+            System.Action callback = group.onCompleted;
+            group.onCompleted = null;
+            try { callback?.Invoke(); }
+            catch (System.Exception exception) { Debug.LogException(exception, this); }
         }
     }
 
@@ -264,16 +323,24 @@ public class LampAuraController : MonoBehaviour {
         glowSprite = Sprite.Create(glowTexture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
     }
 
-    private void RemoveParticle(int index) {
+    private void RemoveParticle(int index, bool completedNormally = false) {
+        CompletionGroup group = particles[index].group;
         if (particles[index].image != null) {
             particles[index].image.gameObject.SetActive(false);
             Destroy(particles[index].image.gameObject);
         }
         particles.RemoveAt(index);
+        if (group != null) {
+            if (!completedNormally) group.cancelled = true;
+            group.remaining--;
+            if (group.remaining == 0 && !group.cancelled)
+                completedGroups.Add(group);
+        }
     }
 
     public void StopAllEffects() {
         for (int i = particles.Count - 1; i >= 0; i--) RemoveParticle(i);
+        completedGroups.Clear();
     }
 
     private void OnDisable() { StopAllEffects(); }
@@ -293,6 +360,6 @@ public class LampAuraController : MonoBehaviour {
 
     [ContextMenu("テスト：全色を再生")]
     public void PlayAll() {
-        PlayWhite(); PlayBlue(); PlayYellow(); PlayRed(); PlayGreen();
+        TryPlayAllWithCompletion(null);
     }
 }

@@ -3840,6 +3840,16 @@ MonoBehaviour:
   rightCurrentAngle: 0
   stopEffectImage: {fileID: 6374059138539136467}
   lampAura: {fileID: 1889880129938329450}
+  missStockText: {fileID: 1812299134799464274}
+  replayStockText: {fileID: 7714282602751608438}
+  bellStockText: {fileID: 1901579917554648152}
+  suikaStockText: {fileID: 5517875892171095215}
+  cherryStockText: {fileID: 6860543680861496562}
+  sevenStockText: {fileID: 0}
+  rushLogoImage: {fileID: 6920637743044530318}
+  rushLogoCanvas: {fileID: 7031086652593989193}
+  rushLogoSizeRatio: {x: 0.2, y: 0.15}
+  rushLogoMarginRatio: {x: 0.02, y: 0.02}
   stoppedReelCount: 0
   rushIntro: {fileID: 0}
 --- !u!114 &1351310841687074303
