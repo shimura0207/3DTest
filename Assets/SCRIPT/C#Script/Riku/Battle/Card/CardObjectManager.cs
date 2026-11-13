@@ -51,6 +51,9 @@ public class CardObjectManager : MonoBehaviour {
     [SerializeField]
     private List<Transform> opponentFieldLaneRoot = null;
 
+    // 手札が縮小状態かどうか
+    public bool isHandShrink = false;
+
     // ある程度の生成数
     private const int CARD_OBJECT_MAX = 30;
     // 手札間隔
@@ -82,6 +85,8 @@ public class CardObjectManager : MonoBehaviour {
                 fieldObjectList[i][j] = null;
             }
         }
+
+        isHandShrink = false;
     }
 
     /// <summary>
@@ -293,6 +298,7 @@ public class CardObjectManager : MonoBehaviour {
     public void ScaleUpHand() {
         selfHandRoot.localScale = Vector3.one;
         selfHandRoot.localPosition = Vector3.zero;
+        isHandShrink = false;
     }
 
     /// <summary>
@@ -301,6 +307,7 @@ public class CardObjectManager : MonoBehaviour {
     public void ScaleDownHand() {
         selfHandRoot.localScale *= SHRINK_HAND_SCALE;
         selfHandRoot.localPosition = SHRINK_HAND_POSITION;
+        isHandShrink = true;
     }
 
     /// <summary>
