@@ -6,6 +6,8 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +15,8 @@ using UnityEngine.UI;
 public class CardDetailMenu : MenuWindowBase {
     // 受け取ったカードID
     private int cardID = -1;
+    // 消費するポイント
+    private int cardPointNum = 0;
 
     // カード名を表示するテキスト
     [SerializeField] private TMP_Text cardNameText;
@@ -40,9 +44,9 @@ public class CardDetailMenu : MenuWindowBase {
 
     // カード生成関連UI
     [SerializeField] private Button createButton;   // カード生成ボタン
-    [SerializeField] private Text pullPointText;    // 消費ポイントテキスト
-    [SerializeField] private Text havePointText;    // 現在の所持ポイント
-    [SerializeField] private Text haveCardNumText;  // 現在のカードの所持数
+    [SerializeField] private TMP_Text pullPointText;    // 消費ポイントテキスト
+    [SerializeField] private TMP_Text havePointText;    // 現在の所持ポイント
+    [SerializeField] private TMP_Text haveCardNumText;  // 現在のカードの所持数
 
 
     // ボタンが選択されるまで待機するための完了通知
@@ -56,6 +60,8 @@ public class CardDetailMenu : MenuWindowBase {
         // 処理登録
         closeButton.onClick.RemoveListener(OnCloseButton);
         closeButton.onClick.AddListener(OnCloseButton);
+        createButton.onClick.RemoveListener(OnCreateButton);
+        createButton.onClick.AddListener(OnCreateButton);
     }
 
     /// <summary>
@@ -64,47 +70,49 @@ public class CardDetailMenu : MenuWindowBase {
     /// <param name="id"></param>
     /// <returns></returns>
     public async UniTask Open(int id) {
-        // メンバ変数でIDを受け取る
+
+        // 表示するカードIDを設定する
         cardID = id;
-        // テキストの初期化を行う
+
+        // テキストを初期化する
         AllTextSetup();
-        // ID指定のカードの取得を行う
+
+        // マスターデータからカード情報を取得する
         var cardData = CardDataMasterUtility.GetCardMaster(id);
-        // すべてのテキストを更新する
+
+        // カード情報を画面に反映する
         AllTextUpdate(cardData);
-        // 対応役画像の色を更新
+
+        // 対応役画像を更新する
         SuportRoleImageUpdate(cardData.suportRoleID);
-        // カード画像を取得
+
+        // カード画像を取得する
         Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(id);
+
         // カード画像を設定する
         if (cardImage != null) {
-
-            // カード画像を設定する
             cardImage.sprite = cardSprite;
-
-            // カード画像の縦横比を維持する
             cardImage.preserveAspect = true;
 
-            // 所持カードをセーブデータから取得
-            PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
+            // 所持枚数を取得する
+            int ownedCount = GetOwnedCardCount(id);
 
-            // 指定IDのカードを所持しているか確認
-            bool isOwned = saveData != null &&
-                           saveData.cardID != null &&
-                           saveData.cardID.Contains(id);
+            // 所持状態に応じて画像の色を変更する
+            cardImage.color = ownedCount > 0 ? Color.white : Color.gray;
 
-            // 所持していなければ灰色、所持していれば通常色
-            cardImage.color = isOwned ? Color.white : Color.gray;
+            // 3枚以上所持している場合は生成ボタンを無効化する
+            createButton.interactable = ownedCount < 3;
         }
+
+        // メニューを表示する
         await base.Open();
-        // ボタンが押されるまで待機
+
+        // ボタンが押されるまで待機する
         completionSource = new UniTaskCompletionSource<bool>();
-        // ボタンが押されるまでウィンドウを開いたままにする
         await completionSource.Task;
 
-        // ボタンが押されたらウィンドウを閉じる
+        // メニューを閉じる
         await Close();
-
 
     }
 
@@ -118,8 +126,15 @@ public class CardDetailMenu : MenuWindowBase {
         cardStatusText.text = string.Empty;
         cardSuportRoleText.text = string.Empty;
         cardAbilittyText.text = string.Empty;
+        pullPointText.text = string.Empty;
+        havePointText.text = string.Empty;
+        haveCardNumText.text = string.Empty;
     }
 
+    /// <summary>
+    /// テキストの更新
+    /// </summary>
+    /// <param name="cardData"></param>
     private void AllTextUpdate(Entity_CardData.Param cardData) {
         cardNameText.text = cardData.name;
         cardTypeText.text = cardData.CardType == 0 ? "モンスター" : "スペル";
@@ -127,6 +142,11 @@ public class CardDetailMenu : MenuWindowBase {
         cardStatusText.text = $"ATK : {cardData.ATK} / HP : {cardData.HP} / SIZE : {cardData.SIZE}";
         cardSuportRoleText.text = SuportRoleChangeText(cardData.suportRoleID);
         cardAbilittyText.text = cardData.ability;
+
+        // テキストの更新
+        pullPointText.text = CardCreatePoint(cardData);
+        havePointText.text = HavePoint();
+        haveCardNumText.text = HaveCardNum(cardData.cardID);
     }
 
     /// <summary>
@@ -205,9 +225,13 @@ public class CardDetailMenu : MenuWindowBase {
     private void OnCreateButton() {
         // カード生成を行う
         SaveManager.Instance.AcquireCard(cardID);
+
+        // UIを更新する
+        CreateUIUpdate();
+
     }
 
-    
+
 
     /// <summary>
     /// 対応役の画像を初期化する
@@ -284,6 +308,110 @@ public class CardDetailMenu : MenuWindowBase {
                 suikaImage.color = Color.white;
                 break;
         }
+    }
+
+    /// <summary>
+    /// カード生成のポイントを決定する
+    /// </summary>
+    /// <param name="cardData"></param>
+    private string CardCreatePoint(Entity_CardData.Param cardData) {
+
+        CardRearity realityID = (CardRearity)cardData.rarityID;
+        switch (realityID) {
+            case CardRearity.N:
+                cardPointNum = 5;
+                break;
+            case CardRearity.R:
+                cardPointNum = 10;
+                break;
+            case CardRearity.SR:
+                cardPointNum = 50;
+                break;
+            case CardRearity.LR:
+                cardPointNum = 100;
+                break;
+        }
+
+        // 値をstring型で返す
+        return cardPointNum.ToString();
+    }
+
+    /// <summary>
+    /// 現在所持しているポイント数
+    /// </summary>
+    /// <returns></returns>
+    private string HavePoint() {
+        // プレイヤーのセーブデータを取得
+        var player = SaveManager.Instance.Load();
+        // セーブデータからポイントを取得
+        int point = player.ownedPoint;
+        return point.ToString();
+    }
+
+    /// <summary>
+    /// ID番の所持しているカード数の取得
+    /// </summary>
+    /// <param name="cardID"></param>
+    /// <returns></returns>
+    private string HaveCardNum(int cardID) {
+        // 所持カードデータを読み込む
+        PossessionCardSaveData cardSaveData = SaveManager.Instance.LoadCards();
+        // 同じカードIDの取得枚数を確認する
+        int ownerCount = 0;
+        // 取得したカードとセーブデータを使用して走査
+        foreach (int id in cardSaveData.cardID) {
+            // 入手対象と同じカードIDなら枚数を増やす
+            if (id == cardID) {
+                ownerCount++;
+            }
+        }
+
+        // 登録枚数 / 最大枚数を表示する
+        return $"{ownerCount}/{3}";
+
+    }
+
+    /// <summary>
+    /// カード生成関連UIを更新する
+    /// </summary>
+    private void CreateUIUpdate() {
+
+        // 現在の所持ポイントを更新
+        havePointText.text = HavePoint();
+
+        // 現在のカード所持枚数を更新
+        haveCardNumText.text = HaveCardNum(cardID);
+
+        // カードを所持済みの色に変更
+        cardImage.color = Color.white;
+    }
+
+    /// <summary>
+    /// 指定したカードの所持枚数を取得する
+    /// </summary>
+    private int GetOwnedCardCount(int targetCardID) {
+
+        // 所持カードデータを取得する
+        PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
+
+        // セーブデータが存在しない場合は0枚を返す
+        if (saveData == null || saveData.cardID == null) {
+            return 0;
+        }
+
+        // 対象カードの所持枚数を数える
+        int count = 0;
+
+        foreach (int id in saveData.cardID) {
+
+            // カードIDが一致した場合に枚数を増やす
+            if (id == targetCardID) {
+                count++;
+            }
+        }
+
+        // 所持枚数を返す
+        return count;
     }
 
     /// <summary>

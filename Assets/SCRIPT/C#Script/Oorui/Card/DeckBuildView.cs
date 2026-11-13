@@ -80,10 +80,8 @@ public class DeckBuildView : MonoBehaviour {
         // 必要な参照が設定されているか確認する
         if (content == null || cardPrefab == null) return;
 
-        // 所持カード情報が未読み込みなら読み込む
-        if (!isOwnedCardCountsLoaded) {
-            RefreshOwnedCardCounts();
-        }
+        // 最新の所持カード情報を読み込む
+        RefreshOwnedCardCounts();
 
         // 所持カード情報が取得できなければ終了する
         if (!isOwnedCardCountsLoaded) return;
@@ -96,7 +94,7 @@ public class DeckBuildView : MonoBehaviour {
         // 現在のデッキ登録枚数を取得する
         cardCounts.TryGetValue(cardID, out int currentCount);
 
-        // 追加可能な上限を決定する（最大3枚かつ所持枚数まで）
+        // 最大3枚と所持枚数のうち、小さい方を追加上限にする
         int maxCount = Mathf.Min(MAX_CARD_COUNT, ownedCount);
 
         // 上限枚数に達している場合は追加しない
@@ -104,7 +102,6 @@ public class DeckBuildView : MonoBehaviour {
             Debug.Log($"カードID:{cardID} は追加上限の {maxCount} 枚に達しています");
             return;
         }
-
         // カード画像を取得する
         if (ScriptableObjectManager.instance == null) return;
 
@@ -253,7 +250,7 @@ public class DeckBuildView : MonoBehaviour {
 
         // Contentのレイアウトを再構築する
         if (content != null) {
-            LayoutRebuilder.ForceRebuildLayoutImmediate (content);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
         }
     }
 

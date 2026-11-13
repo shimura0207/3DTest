@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -87,6 +89,7 @@ public class PachisuroPhase : PhaseBase {
         if (slot.slotIndex >= slot.SLOT_TEARN_MAX_G &&
             !slot.IsAnyReelRotating() &&
             !slot.NetworkReelLockRunning) {
+            
             // 相手へ終了を知らせてから自分の状態を更新する。
             // チュートリアルなら送信せず終了する。
             // || の左側がtrueの場合、右側は実行されない。
@@ -96,9 +99,7 @@ public class PachisuroPhase : PhaseBase {
 
                 // 自分のRUSH・テーブル更新は既存処理を使用する。
                 slot.DebugAAA();
-                slot.efectManager.HideTrumps();
-                slot.EndNetworkPlayback();
-                nextPhase = true;
+                UniTask uniTasks = ExecuteAsync();
             }
         }
 
@@ -125,9 +126,8 @@ public class PachisuroPhase : PhaseBase {
 
             // 相手を表示するため一時的に上書きした状態を戻す。
             // 自分のテーブルを進めないためDebugAAAは呼ばない。
-            slot.EndNetworkPlayback();
-            
-            nextPhase = true;
+            //slot.EndNetworkPlayback();
+            UniTask uniTasks = ExecuteAsync();
         }
 
         return UniTask.CompletedTask;
@@ -183,5 +183,16 @@ public class PachisuroPhase : PhaseBase {
         }
 
         base.Teardown();
+    }
+
+
+
+    public async UniTask ExecuteAsync() {
+
+        await UniTask.Delay(3000);
+        slot.efectManager.HideTrumps();
+        slot.EndNetworkPlayback();
+        slot.HideStopEffectImage();
+        nextPhase = true;
     }
 }
