@@ -162,10 +162,10 @@ public class SlotReelController : MonoBehaviour {
             //roles.Clear();
 
             //if (savedRoles != null) {
-           //     roles.AddRange(savedRoles);
-           /// }
+            //     roles.AddRange(savedRoles);
+            /// }
 
-           // savedRoles = null;
+            // savedRoles = null;
         }
 
         networkLocalControl = false;
@@ -431,6 +431,13 @@ public class SlotReelController : MonoBehaviour {
 
     private Coroutine noiseCoroutine;
 
+    [Header("第3停止：役対応ランプオーラ")]
+    [Tooltip("LampAuraControllerが付いたオブジェクトを登録します。通常・RUSH共通です。")]
+    [SerializeField] private LampAuraController lampAura;
+
+    // 1Gにつき1回だけ、第3停止で再生する。
+    private bool thirdStopAuraPlayed;
+
     public int stoppedReelCount = 0;
 
     private const string NoiseStrengthProperty = "_NoiseStrength";
@@ -501,7 +508,7 @@ public class SlotReelController : MonoBehaviour {
 
             Debug.Log("チュートリアルモードON：次の5Gの役を設定しました。");
         }
-        
+
     }
 
     //============================================================
@@ -765,7 +772,7 @@ public class SlotReelController : MonoBehaviour {
     /// </summary>
     // 変更後
     private bool StartSpinCore(
-        PachisuroSymbolKoyakuEnum? receivedRole = null) { 
+        PachisuroSymbolKoyakuEnum? receivedRole = null) {
 
         if (PachisuroPhase.Instance == null) {
             return false;
@@ -783,6 +790,7 @@ public class SlotReelController : MonoBehaviour {
             // 開始が可能なときだけ通常速度へ戻します。
             // 通常側のリールロック演出を開始する前に実行してください。
             stoppedReelCount = 0;
+            thirdStopAuraPlayed = false;
             SetAllReelSpeeds(reelSpeed);
 
             maxBet = false;
@@ -829,15 +837,16 @@ public class SlotReelController : MonoBehaviour {
             // 通常側のリールロック演出を開始する前に実行してください。
             SetAllReelSpeeds(reelSpeed);
             maxBet = false;
-            
+
             stoppedReelCount = 0;
+            thirdStopAuraPlayed = false;
             glassFlash.ResetAllGlass();
             efectManager.HideTrumps();
             HideStopEffectImage();
             // 通常側：受信した役があれば、その役を採用する。
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.DrawRole(currentTable);
-                par=Random.Range(0, 1);
+            par = Random.Range(0, 1);
             switch (currentSlotSymbolRole) {
                 case PachisuroSymbolKoyakuEnum.Miss:
                     break;
@@ -865,7 +874,7 @@ public class SlotReelController : MonoBehaviour {
                         Rnrush = true;
                     }
                     break;
-               
+
             }
             //レア役
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.WeakCherry
@@ -1083,12 +1092,16 @@ public class SlotReelController : MonoBehaviour {
             }
             else if (stoppedReelCount == 3) {
                 // 第三停止
+                // 最後のリールが実際に停止した瞬間に、成立役のオーラを再生。
+                // 通常・RUSH・受信側の停止再生で共通。
+                PlayThirdStopRoleAura(currentSlotSymbolRole);
+
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
                     ShowCleanImage();
 
 
 
-                    
+
                 }
                 if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Bell) {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.Right, Color.black, 0.9f);
@@ -1102,7 +1115,7 @@ public class SlotReelController : MonoBehaviour {
 
                 efectManager.STOP_S();
 
-                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven||Rnrush) {
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven || Rnrush) {
                     efectManager.hack();
                 }
 
@@ -1129,7 +1142,7 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(GlassPosition.CenterTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
-                    glassFlash.StartCoroutine(glassFlash.FlashStrongChary(Color.black, 5, 0.03f,0.9f));
+                    glassFlash.StartCoroutine(glassFlash.FlashStrongChary(Color.black, 5, 0.03f, 0.9f));
                     AudioManager.instance.PlaySE("チェリー");
                 }
 
@@ -1176,6 +1189,47 @@ public class SlotReelController : MonoBehaviour {
         state.ReelAngles[reelIndex] = AngleNormalizer.NormalizeAngle(state.ReelAngles[reelIndex]);
         ApplyReelRotation(reelIndex);
         efectManager.ShowTramp(reelIndex);
+    }
+
+    /// <summary>
+    /// 第3停止時の成立役に応じたランプオーラ。通常・RUSH共通。
+    /// Chance/NONEなど、指定のない役には追加演出を出さない。
+    /// </summary>
+    private void PlayThirdStopRoleAura(PachisuroSymbolKoyakuEnum role) {
+        if (thirdStopAuraPlayed) return;
+        thirdStopAuraPlayed = true;
+
+        // 既存の停止処理は、オーラ未設定でも継続する。
+        if (lampAura == null) {
+            Debug.LogWarning("第3停止オーラ：InspectorのLamp AuraにLampAuraControllerを登録してください。", this);
+            return;
+        }
+        if (!lampAura.isActiveAndEnabled) {
+            Debug.LogWarning("第3停止オーラ：LampAuraControllerとそのGameObjectを有効にしてください。", this);
+            return;
+        }
+
+        switch (role) {
+            case PachisuroSymbolKoyakuEnum.Miss:
+                lampAura.PlayWhite();
+                break;
+            case PachisuroSymbolKoyakuEnum.Replay:
+                lampAura.PlayBlue();
+                break;
+            case PachisuroSymbolKoyakuEnum.Bell:
+                lampAura.PlayYellow();
+                break;
+            case PachisuroSymbolKoyakuEnum.Suika:
+                lampAura.PlayGreen();
+                break;
+            case PachisuroSymbolKoyakuEnum.WeakCherry:
+            case PachisuroSymbolKoyakuEnum.StrongCherry:
+                lampAura.PlayRed();
+                break;
+            case PachisuroSymbolKoyakuEnum.Seven:
+                lampAura.PlayAll();
+                break;
+        }
     }
 
     //============================================================
@@ -1416,7 +1470,7 @@ public class SlotReelController : MonoBehaviour {
         Debug.Log("slotIndex = " + slotIndex);
         Debug.Log("SLOT_TEARN_MAX_G = " + SLOT_TEARN_MAX_G);
 
-        if (nrush||Rnrush) {
+        if (nrush || Rnrush) {
             rush = true;
             nrush = false;
             Rnrush = false;
@@ -1558,7 +1612,7 @@ public class SlotReelController : MonoBehaviour {
     }
 
 
-    
-        
-    
+
+
+
 }
