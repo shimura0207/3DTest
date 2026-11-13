@@ -596,7 +596,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\u30C7\u30C3\u30AD\u3092\u767B\u9332"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 39340f2c5864a1e4a8e18aa76e5a5092, type: 2}
   m_sharedMaterial: {fileID: 5188951547334976472, guid: 39340f2c5864a1e4a8e18aa76e5a5092, type: 2}
