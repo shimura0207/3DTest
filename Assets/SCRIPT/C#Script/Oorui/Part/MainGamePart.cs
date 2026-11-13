@@ -129,14 +129,14 @@ public class MainGamePart : PartBase {
     /// </summary>
     /// <returns></returns>
     private async UniTask TutorialGameExecute() {
-        // チュートリアルデッキを取得
-        List<int> deck = DeckDataMasterUtility.GetDeckMaster(1);
-        // レンタルデッキが取得できなければ処理を終了する
-        if (deck == null) return;
-
-
-
-
+        // チュートリアルの準備を行う
+        await BattleSystemManager.instance.TutorialSetup();
+        // UIの進行処理
+        UniTask task = UIExecute();
+        // チュートリアルの実行処理
+        await BattleSystemManager.instance.TutorialExecute();
+        // 片付け処理
+        BattleSystemManager.instance.BattleTeardown();
         // メインメニューパートに遷移
         await PartManager.Instance.TransitionPart(GamePart.MainMenu);
     }

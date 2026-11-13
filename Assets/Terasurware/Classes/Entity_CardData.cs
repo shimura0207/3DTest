@@ -30,6 +30,7 @@ public class Entity_CardData : ScriptableObject
 		public int HP;
 		public int CardType;
 		public string ability;
+		public int PlayID;
 	}
 }
 

@@ -19,7 +19,7 @@ public class NextPhaseButton : MonoBehaviour
     /// パチスロフェイズ移行処理呼び出し
     /// </summary>
     public void OnClickPachisuroGo() {
-        if (BattleSystemManager.instance.turnPlayer == PlayerType.Self && BattleSystemManager.instance.currentPhase == BattlePhase.MainPhase) {
+        if (BattleSystemManager.instance.pachisuroGoActive) {
             UniTask task = PachisuroGo();
         }
     }
@@ -28,7 +28,7 @@ public class NextPhaseButton : MonoBehaviour
     /// エンドフェイズ移行処理呼び出し
     /// </summary>
     public void OnClickTurnEnd() {
-        if (BattleSystemManager.instance.turnPlayer == PlayerType.Self && BattleSystemManager.instance.currentPhase == BattlePhase.MainPhase) {
+        if (BattleSystemManager.instance.turnEndActive) {
             UniTask task = TurnEnd();
         }
     }

@@ -22,6 +22,8 @@ public class CardDataMasterUtility {
         var cardMasterList = MasterDataManager.cardData[0];
         // IDが一致するものを返す
         for (int i = 0, max = cardMasterList.Count; i < max; i++) {
+            // 使用しないカードは無視する
+            if (cardMasterList[i].PlayID == 1) continue;
             if (cardMasterList[i].cardID != masterID) continue;
             return cardMasterList[i];
         }
@@ -46,7 +48,8 @@ public class CardDataMasterUtility {
 
         // マスターデータに登録されているIDをすべて取得
         for (int i = 0, max = cardMasterList.Count; i < max; i++) {
-
+            // 使用しないカードは無視する
+            if (cardMasterList[i].PlayID == 1) continue;
             // カードIDを取得
             int cardID = cardMasterList[i].cardID;
 
@@ -78,7 +81,8 @@ public class CardDataMasterUtility {
 
         // マスターデータから指定テーマのカードを取得
         for (int i = 0, max = cardMasterList.Count; i < max; i++) {
-
+            // 使用しないカードは無視する
+            if (cardMasterList[i].PlayID == 1) continue;
             // テーマIDが一致しなければスキップ
             if (cardMasterList[i].themeID != (int)id) continue;
 
@@ -106,7 +110,8 @@ public class CardDataMasterUtility {
 
         // カード名が完全一致するものを検索
         for (int i = 0, max = cardMasterList.Count; i < max; i++) {
-
+            // 使用しないカードは無視する
+            if (cardMasterList[i].PlayID == 1) continue;
             // 名前が一致しなければスキップ
             if (cardMasterList[i].name != cardName) continue;
 
