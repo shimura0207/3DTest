@@ -459,7 +459,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u30AB\u30FC\u30C9\u3092\u3053\u3053\u306B\u3060\u305B"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 39340f2c5864a1e4a8e18aa76e5a5092, type: 2}
   m_sharedMaterial: {fileID: 5188951547334976472, guid: 39340f2c5864a1e4a8e18aa76e5a5092, type: 2}
@@ -522,7 +522,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -61.970215, y: -77.9624, z: -1031.5027, w: -81.96051}
+  m_margin: {x: -61.970215, y: -77.9624, z: -1261.3916, w: -81.96051}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
