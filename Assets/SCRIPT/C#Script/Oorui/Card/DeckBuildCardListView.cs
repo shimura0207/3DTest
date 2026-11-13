@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -242,7 +243,7 @@ public class DeckBuildCardListView : MonoBehaviour {
 
         // スクロール位置を先頭に戻す
         if (scrollRect != null) {
-            scrollRect.verticalNormalizedPosition = 1f;
+            scrollRect.horizontalNormalizedPosition= 0f;
         }
     }
 
