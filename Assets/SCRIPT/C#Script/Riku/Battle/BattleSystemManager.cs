@@ -60,9 +60,9 @@ public class BattleSystemManager : MonoBehaviour {
         currentTurn = -1;
         spellCastCount = -1;
         pachisuroGo = false;
-        pachisuroGoActive = true;
+        pachisuroGoActive = false;
         turnEnd = false;
-        pachisuroGoActive = true;
+        pachisuroGoActive = false;
     }
 
     /// <summary>
@@ -532,7 +532,8 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "早速始めよう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // 自身のスタートフェイズ実行
+
+        // 自身のスタートフェイズ
         await phaseList[(int)BattlePhase.StartPhase].SelfExecute();
         text = "カードの右下のマークが対応役だ！\n後で出てくるから覚えておこう。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
@@ -544,10 +545,13 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "早速モンスターを出そう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // 自身のメインフェイズ(強制操作の必要があるため手書き)
+
+        // 自身のメインフェイズ
         MainPhase mainPhase = (MainPhase)phaseList[(int)BattlePhase.MainPhase];
+        CardObject raymond = CardObjectManager.instance.GetUseCardObject(0);
+        // レイモンドを出すまで待つ
         while (true) {
-            if (await mainPhase.CardControl())
+            if (await mainPhase.CardControl(raymond))
                 break;
             await UniTask.Yield();
         }
@@ -564,30 +568,106 @@ public class BattleSystemManager : MonoBehaviour {
         }
         turnEndActive = false;
         turnEnd = false;
-        // 相手のスタートフェイズ実行
+
+        // 相手のスタートフェイズ
         await phaseList[(int)BattlePhase.StartPhase].OpponentExecute();
+
+        // 相手のメインフェイズ
         // 出されたレーンの対面に出す
-        //FieldLane frontLane = FieldLane.None;
-        //// 0除算回避
-        //if (card.laneID == 0) {
-        //    frontLane = FieldLane.Lane5;
-        //}
-        //else {
-        //    frontLane = (FieldLane)((int)FieldLane.Max % card.laneID + 1);
-        //}
-        //await SummonMonster(PlayerType.Opponent, obj, laneID);
-        text = "";
+        FieldLane frontLane = FieldLane.None;
+        if (raymond.laneID == 0) {
+            frontLane = FieldLane.Lane5;
+        }
+        else {
+            frontLane = (FieldLane)((int)FieldLane.Max % raymond.laneID + 1);
+        }
+        // リヴァイブドラゴンを出す
+        CardObject revive = CardObjectManager.instance.GetUseCardObject(5);
+        await SummonMonster(PlayerType.Opponent, revive, frontLane);
+        text = "相手もモンスターを出してきたね。\n相手のターン終了！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
+        
+        // 自身のメインフェイズ
+        text = "このターンからさっき出したモンスターは攻撃可能だ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
+        text = "ターンが進むとフィールドに出せるサイズも大きくなるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
+        text = "2体目のモンスターを出そう";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
+        CardObject lank = CardObjectManager.instance.GetUseCardObject(4);
+        // ランクを出すまで待つ
+        while (true) {
+            if (await mainPhase.CardControl(lank))
+                break;
+            await UniTask.Yield();
+        }
+        text = "攻撃するときはボタンを押してパチスロGO！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
+        text = "引いた役とモンスターの対応役が一致していたら攻撃するよ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "Raymond Blankの対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // パチスロボタン
+        pachisuroGoActive = true;
+        while (!pachisuroGo) {
+            await UniTask.Yield();
+        }
+        pachisuroGoActive = false;
+        pachisuroGo = false;
+        Camera camera = Camera.main;
+        camera.transform.position = new Vector3(0f, 1.16f, -1.27f);
+        camera.transform.eulerAngles = new Vector3(3f, 0f, 0f);
+
+        // 自身のパチスロフェイズ
+        text = "パチスロを回そう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "Ctrlでbet！上矢印でリールを回せるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "基本的には横か斜めに絵が揃うと役の成立だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // ハズレを引く
+        text = "今回は何も絵がそろっていないのでハズレ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "これでパチスロフェイズの終わりに攻撃ができるね。";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 弱チェを引く
+        text = "チェリーは左のリールに一つでも止まったら役として成立するよ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // スイカを引く
+        text = "レアな役を引いたみたいだね。レアな役は出にくいぶん、\n対応モンスターの破壊力はすごいぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // チャンス目を引く
+        text = "おっとチャンス目だ！この役はチェリーとスイカ両方の性質を併せ持つ...♤﻿";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // ハズレを引く
+        text = "また対応役を引いたね！\nこれで2回攻撃ができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
+        // 自身のアタックフェイズ
+        text = "対応役を引いたので攻撃ができるぞ！目の前のモンスターに攻撃だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 1回目の攻撃
+        text = "やった！ダメージだ！\n相手のモンスターを破壊したぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "続けて2回目の攻撃！\n目の前のモンスターはいなくなったからプレイヤーに攻撃だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
     }
 }
