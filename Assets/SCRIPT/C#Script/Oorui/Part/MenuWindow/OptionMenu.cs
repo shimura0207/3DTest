@@ -63,12 +63,6 @@ public class OptionMenu : MenuWindowBase {
 
     // ミュート前のSE音量
     private int seVolumeBeforeMute = 10;
-
-    // BGMがミュートされているか
-    private bool isBgmMuted = false;
-
-    // SEがミュートされているか
-    private bool isSeMuted = false;
     /// <summary>
     /// 初期化処理
     /// </summary>
