@@ -45,6 +45,12 @@ public class UIManager : SystemObject {
     // マウスの左右クリック判定
     public bool mouseButton { get; private set; } = true;
 
+    // ダメージUI
+    [SerializeField] private GameObject damageUI = null;
+
+    // ダメージの値を渡すために一時的に保存する用
+    public int damageValue = 0;
+
     public override async UniTask Initialize() {
         instance = this;
 
@@ -132,6 +138,40 @@ public class UIManager : SystemObject {
         opponentMaxSize = battleSystem.playerSizeLimit[PlayerType.Opponent];
         restSize = battleSystem.GetRemainingSize(PlayerType.Self);
         opponentRestSize = battleSystem.GetRemainingSize(PlayerType.Opponent);
+    }
+
+    /// <summary>
+    /// ダメージUIを生成する
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <param name="card"></param>
+    /// <param name="player"></param>
+    public void GenerateDamageUI(int damage, CardObject card, PlayerType player = PlayerType.None) {
+        // 生成する位置
+        Vector3 position = Vector3.zero;
+        // カードオブジェクトがないならプレイヤータイプで位置を合わせる
+        if (card == null) {
+            // 自分
+            if (player == PlayerType.Self) {
+                // 後で
+            }
+            // 相手
+            else if (player == PlayerType.Opponent) {
+                // 後で
+            }
+            // 情報が足りない場合は抜ける
+            else {
+                return;
+            }
+        }
+        // カードのポジションに合わせる
+        else {
+            position = card.transform.position;
+        }
+        // ダメージを保存する
+        damageValue = damage;
+        // 生成する
+        Instantiate(damageUI, position, Quaternion.identity);
     }
 }
 
