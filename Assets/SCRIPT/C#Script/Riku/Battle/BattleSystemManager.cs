@@ -4,6 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
+using Edgegap;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -30,15 +31,19 @@ public class BattleSystemManager : MonoBehaviour {
     // プレイヤーの体力
     public Dictionary<PlayerType, int> playerHP { get; private set; } = null;
     // プレイヤーのサイズ上限
-    public Dictionary <PlayerType, int> playerSizeLimit { get; private set; } = null;
+    public Dictionary<PlayerType, int> playerSizeLimit { get; private set; } = null;
     // 現在のターン
     private int currentTurn = -1;
     // スペルを唱えた回数
     public int spellCastCount { get; private set; } = -1;
     // バチスロ移行フラグ
     private bool pachisuroGo = false;
+    // パチスロボタンが有効かどうか
+    public bool pachisuroGoActive { get; private set; } = false;
     // ターンエンドフラグ
     private bool turnEnd = false;
+    // ターンエンドボタンが有効かどうか
+    public bool turnEndActive { get; private set; } = false;
 
     /// <summary>
     /// 初期化処理
@@ -55,7 +60,9 @@ public class BattleSystemManager : MonoBehaviour {
         currentTurn = -1;
         spellCastCount = -1;
         pachisuroGo = false;
+        pachisuroGoActive = true;
         turnEnd = false;
+        pachisuroGoActive = true;
     }
 
     /// <summary>
@@ -79,6 +86,8 @@ public class BattleSystemManager : MonoBehaviour {
             // メインフェイズを次のフェイズへ
             phaseList[(int)currentPhase].NextPhase();
             pachisuroGo = false;
+            pachisuroGoActive = false;
+            turnEndActive = false;
         }
         // ターンエンド
         if (turnEnd) {
@@ -89,6 +98,8 @@ public class BattleSystemManager : MonoBehaviour {
             // フェイズの準備
             phaseList[(int)currentPhase].Setup();
             turnEnd = false;
+            pachisuroGoActive = false;
+            turnEndActive = false;
         }
 
         // 次のフェイズへの移行
@@ -112,13 +123,20 @@ public class BattleSystemManager : MonoBehaviour {
             spellCastCount = 0;
             // スタートフェイズに戻る
             currentPhase = BattlePhase.StartPhase;
-            
+
             Debug.Log("スタートフェイズ");
         }
         else {
             // フェイズを一つ進める
             currentPhase++;
-            
+
+            // ボタンの有効化無効化
+            if (turnPlayer == PlayerType.Self &&
+                currentPhase == BattlePhase.MainPhase) {
+                pachisuroGoActive = true;
+                turnEndActive = true;
+            }
+
             switch (currentPhase) {
                 case BattlePhase.StartPhase:
                     Debug.Log("スタートフェイズ");
@@ -171,14 +189,13 @@ public class BattleSystemManager : MonoBehaviour {
             await UniTask.Yield();
         }
         AreaCardManager.instance.SetCatchOpponentDeck(false);
-        
+
         // 各プレイヤーの初期化
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
             // HPの初期化
             playerHP[i] = PLAYER_HP;
             // サイズ上限を最小値に
             playerSizeLimit[i] = SIZE_LIMIT_MIN;
-            //playerSizeLimit[i] = 10;// デバッグ用仮
 
             // 手札5枚用意
             for (int f = 0; f < START_HAND_COUNT; f++) {
@@ -283,7 +300,8 @@ public class BattleSystemManager : MonoBehaviour {
         if (HAND_COUNT_MAX <= handCount) {
             // 山札トップから墓地へ
             AreaCardManager.instance.DeckToGrave(player);
-        } else {
+        }
+        else {
             // 山札からIDを抜く
             int card = AreaCardManager.instance.DrawCard(player);
             // オブジェクトの使用化
@@ -323,7 +341,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 効果発動中ならここで終了
         if (isAbility) await UniTask.CompletedTask;
-        
+
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
 
@@ -398,7 +416,6 @@ public class BattleSystemManager : MonoBehaviour {
     /// パチスロフェイズへ移行
     /// </summary>
     public void PachisuroGo() {
-        if (currentPhase != BattlePhase.MainPhase) return;
         pachisuroGo = true;
     }
 
@@ -406,7 +423,6 @@ public class BattleSystemManager : MonoBehaviour {
     /// ターンエンド
     /// </summary>
     public void TurnEnd() {
-        if (currentPhase != BattlePhase.MainPhase) return;
         turnEnd = true;
     }
 
@@ -461,5 +477,117 @@ public class BattleSystemManager : MonoBehaviour {
         CardObjectManager.instance.UnuseCardObject(card);
         // 手札の整列
         CardObjectManager.instance.ArrangeHand(player);
+    }
+
+    /// <summary>
+    /// チュートリアル準備
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask TutorialSetup() {
+        // 自身ののチュートリアルデッキを取得
+        List<int> deck = DeckDataMasterUtility.GetDeckMaster(1);
+        // チュートリアルデッキが取得できなければ処理を終了する
+        if (deck == null) return;
+        // 自身の使用デッキ登録
+        AreaCardManager.instance.SetDeck(PlayerType.Self, deck);
+        // 相手のチュートリアルデッキを取得
+        deck = DeckDataMasterUtility.GetDeckMaster(2);
+        // チュートリアルデッキが取得できなければ処理を終了する
+        if (deck == null) return;
+        // 相手の使用デッキ登録
+        AreaCardManager.instance.SetDeck(PlayerType.Opponent, deck);
+        // 先攻プレイヤーは自身
+        firstPlayer = PlayerType.Self;
+        // 現在のターンプレイヤーを先攻プレイヤーに
+        turnPlayer = firstPlayer;
+        // フェイズをスタートに
+        currentPhase = BattlePhase.StartPhase;
+        // 対戦中状態に切り替え
+        battleState = BattleState.InProgress;
+        // 現在のターンを1に
+        currentTurn = 1;
+
+        // 各プレイヤーの初期化
+        for (PlayerType i = 0; i < PlayerType.Max; i++) {
+            // HPの初期化
+            playerHP[i] = PLAYER_HP;
+            // サイズ上限を最小値に
+            playerSizeLimit[i] = SIZE_LIMIT_MIN;
+
+            // 手札5枚用意
+            for (int f = 0; f < START_HAND_COUNT; f++) {
+                DrawCard(i);
+            }
+        }
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// チュートリアルの実行処理
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask TutorialExecute() {
+        await UniTask.DelayFrame(30);
+        string text = "このゲームはパチスロとカードゲームで相手のHPを\nゼロにすることで勝利するゲームです！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "早速始めよう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 自身のスタートフェイズ実行
+        await phaseList[(int)BattlePhase.StartPhase].SelfExecute();
+        text = "カードの右下のマークが対応役だ！\n後で出てくるから覚えておこう。";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "対応役がSのカードはスペルだ！\n使えば様々な効果が発動する！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "対応役が設定されているカードがモンスターだ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "右クリックでカードの詳細が確認できるから\n困ったらチェックだ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "早速モンスターを出そう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 自身のメインフェイズ(強制操作の必要があるため手書き)
+        MainPhase mainPhase = (MainPhase)phaseList[(int)BattlePhase.MainPhase];
+        while (true) {
+            if (await mainPhase.CardControl())
+                break;
+            await UniTask.Yield();
+        }
+        text = "フィールドにはサイズ上限があるから、モンスターを出すときは注意するんだ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "そのターン中に出したばかりのモンスターは疲労するぞ！\n疲労中は攻撃ができないから注意だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "ボタンを押してターンを終わろう。";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // ターンエンドボタン
+        turnEndActive = true;
+        while (!turnEnd) {
+            await UniTask.Yield();
+        }
+        turnEndActive = false;
+        turnEnd = false;
+        // 相手のスタートフェイズ実行
+        await phaseList[(int)BattlePhase.StartPhase].OpponentExecute();
+        // 出されたレーンの対面に出す
+        //FieldLane frontLane = FieldLane.None;
+        //// 0除算回避
+        //if (card.laneID == 0) {
+        //    frontLane = FieldLane.Lane5;
+        //}
+        //else {
+        //    frontLane = (FieldLane)((int)FieldLane.Max % card.laneID + 1);
+        //}
+        //await SummonMonster(PlayerType.Opponent, obj, laneID);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+
     }
 }

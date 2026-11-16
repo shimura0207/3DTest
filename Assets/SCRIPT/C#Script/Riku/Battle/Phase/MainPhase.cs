@@ -4,10 +4,13 @@
  */
 
 using Cysharp.Threading.Tasks;
+using Mirror.BouncyCastle.Bcpg;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Collections;
+using Unity.VisualScripting;
+
 //using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 //using UnityEngine.InputSystem;
@@ -32,7 +35,7 @@ public class MainPhase : PhaseBase {
     /// <returns></returns>
     public override async UniTask SelfExecute() {
         // カード操作
-        CardControl();
+        await CardControl();
 
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
@@ -54,7 +57,9 @@ public class MainPhase : PhaseBase {
     /// <summary>
     /// カード操作
     /// </summary>
-    private void CardControl() {
+    /// <param name="selectCard">指定したいカード(指定なしなら自由に操作)</param>
+    /// <returns>カードをプレイかレーン移動したらtrueを返す</returns>
+    public async UniTask<bool> CardControl(CardObject selectCard = null) {
         // マウスカーソルのスクリーン座標取得
         Vector3 mousePos = Input.mousePosition;
         // スクリーン座標からレイを取得
@@ -63,9 +68,15 @@ public class MainPhase : PhaseBase {
         if (Input.GetMouseButtonDown(0)) {
             // 掴む
             CardCatch(ray);
+            // 指定カードがあり、そのカードでないなら掴まない
+            if (selectCard && selectCard != cardObject) {
+                catchObject = null;
+                cardObject = null;
+            }
         }
 
         // 掴んでいる時の処理
+        bool cardAction = false;
         if (catchObject) {
             // 掴んでいるオブジェクトをマウスに追従
             CardChaseMouse(ray);
@@ -80,13 +91,18 @@ public class MainPhase : PhaseBase {
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
                         // レーン交換
-                        if (!LaneChange(ray))
+                        if (LaneChange(ray)) {
+                            cardAction = true;
+                        }
+                        else {
                             resetPos = true;
+                        }
                     }
                     // カードが手札のものだった場合の処理
                     else if (cardObject.handID > -1) {
                         // カードを使用
-                        UniTask task = PlayCard(cardObject);
+                        await PlayCard(cardObject);
+                        cardAction = true;
                     }
                 }
                 // フィールド外で離したら元の位置に戻る
@@ -104,8 +120,11 @@ public class MainPhase : PhaseBase {
                 catchObject = null;
                 cardObject = null;
                 catchStartPos = Vector3.zero;
+
+                return cardAction;
             }
         }
+        return false;
     }
 
     /// <summary>
@@ -153,6 +172,8 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <param name="ray"></param>
     private void CardCatch(Ray ray) {
+        // 手札が縮小状態なら掴めない
+        if (CardObjectManager.instance.isHandShrink) return;
         // カードオブジェクトレイヤー取得
         int cardLayer = LayerMask.GetMask("CardObject");
         // レイキャストでカードを触れているか判定
