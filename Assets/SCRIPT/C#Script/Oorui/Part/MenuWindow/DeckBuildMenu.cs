@@ -4,6 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,6 +62,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
     // 保存ボタン内のテキストの元の色
     private Color defaultSaveButtonTextColor;
+    // カードクリック時に実行する処理
+    private Action<int, Image> onCardClicked = null;
 
     /// <summary>
     /// 初期化処理
@@ -94,6 +97,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // カードクリック時の処理を登録する
         deckBuildCardListView.SetCardClickAction(OnPossessionCardClicked);
+        deckBuildView.SetCardClickAction(OnPossessionCardClicked);
+
         // 保存ボタンの色を更新する
         UpdateSaveButtonColor();
         // 選択状態を初期化する
