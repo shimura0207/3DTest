@@ -110,8 +110,6 @@ public class UIManager : SystemObject {
 
         // 手札を左クリックで拡大縮小
         if (Input.GetMouseButtonDown(0)) {
-            //// カードを掴んでいたらダメ
-            //if (cardHold) return;
             int handLayer = LayerMask.GetMask("Hand");
             // レイキャストで手札に触れているか判定
             if (Physics.Raycast(
@@ -125,9 +123,9 @@ public class UIManager : SystemObject {
                     CardObjectManager.instance.ScaleUpHand();
                 }
             }
-            // 手札以外なら縮小
+            // 手札以外でカードを掴んでいないなら縮小
             else {
-                if (!CardObjectManager.instance.isHandShrink) {
+                if (!CardObjectManager.instance.isHandShrink && cardData == null) {
                     CardObjectManager.instance.ScaleDownHand();
                 }
             }

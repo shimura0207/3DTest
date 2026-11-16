@@ -2,9 +2,6 @@
  * @file    DamageUI.cs
  * @author  kuu
  */
-using IO.Swagger.Model;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -14,10 +11,10 @@ public class DamageUI : MonoBehaviour
     [SerializeField] private TMP_Text damageText = null;
 
     // アルファ値の上げ幅の定数
-    private const float ALPHA_UPPER = 0.005f;
+    private const float ALPHA_UPPER = 0.01f;
 
     // position.yの上げ幅の定数
-    private const float YPOS_UPPER = 0.0003f;
+    private const float YPOS_UPPER = 3.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +31,7 @@ public class DamageUI : MonoBehaviour
         damageText.alpha -= ALPHA_UPPER;
         // 徐々に上げる
         damageText.transform.position += new Vector3(0.0f, YPOS_UPPER, 0.0f);
+        Debug.Log(damageText.transform.position);
         // アルファ値が0以下なら削除
         if (damageText.alpha < 0.0f) {
             Destroy(this);
