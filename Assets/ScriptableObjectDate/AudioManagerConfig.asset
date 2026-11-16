@@ -22,7 +22,10 @@ MonoBehaviour:
   seList:
   - soundName: "\u30C1\u30A7\u30EA\u30FC"
     clip: {fileID: 8300000, guid: 20bfdddf6f7759c40b0968f89b671b09, type: 3}
-    volume: 0
+    volume: 1
   - soundName: "\u30C1\u30E3\u30F3\u30B9"
-    clip: {fileID: 8300000, guid: a3abf786d35e39844ab64e193f3731ba, type: 3}
-    volume: 0
+    clip: {fileID: 8300000, guid: 0db7a48088cc43a44bf38cbbc5fea930, type: 3}
+    volume: 1
+  - soundName: suika
+    clip: {fileID: 8300000, guid: b05da17d8ce019f4a969ce722b5b3b93, type: 3}
+    volume: 1
