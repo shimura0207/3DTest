@@ -14,7 +14,7 @@ public class DamageUI : MonoBehaviour
     private const float ALPHA_UPPER = 0.01f;
 
     // position.yの上げ幅の定数
-    private const float YPOS_UPPER = 3.0f;
+    private const float YPOS_UPPER = 0.003f;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +28,7 @@ public class DamageUI : MonoBehaviour
         // ダメージを参照する
         damageText.text = "" + UIManager.instance.damageValue;
         // 徐々に透明にする
-        damageText.alpha -= ALPHA_UPPER;
+        //damageText.alpha -= ALPHA_UPPER;
         // 徐々に上げる
         damageText.transform.position += new Vector3(0.0f, YPOS_UPPER, 0.0f);
         Debug.Log(damageText.transform.position);
