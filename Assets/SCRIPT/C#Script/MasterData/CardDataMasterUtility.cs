@@ -30,10 +30,10 @@ public class CardDataMasterUtility {
         return null;
     }
 
+
     /// <summary>
-    /// マスターデータに登録されているすべてのカードIDを取得
+    /// マスターデータに登録されている使用可能なカードIDを取得
     /// </summary>
-    /// <returns>カードID一覧</returns>
     public static List<int> GetAllCardIDs() {
 
         // 取得結果を格納するリスト
@@ -41,25 +41,33 @@ public class CardDataMasterUtility {
 
         // マスターデータが存在するか確認
         if (MasterDataManager.cardData == null ||
-            MasterDataManager.cardData.Count == 0) return cardIDList;
+            MasterDataManager.cardData.Count == 0) {
+            return cardIDList;
+        }
 
-        // カードのマスターデータ取得
+        // カードのマスターデータを取得
         var cardMasterList = MasterDataManager.cardData[0];
 
-        // マスターデータに登録されているIDをすべて取得
-        for (int i = 0, max = cardMasterList.Count; i < max; i++) {
-            // 使用しないカードは無視する
+        // マスターデータから使用可能なカードを取得
+        for (int i = 0; i < cardMasterList.Count; i++) {
+
+            // 使用しないカードは除外
             if (cardMasterList[i].PlayID == 1) continue;
+
+            // 不正なカードIDは除外
+            if (cardMasterList[i].cardID <= 0) continue;
+
             // カードIDを取得
             int cardID = cardMasterList[i].cardID;
 
-            // 重複しているIDは追加しない
+            // 重複しているIDは除外
             if (cardIDList.Contains(cardID)) continue;
 
-            // IDをリストに追加
+            // カードIDを追加
             cardIDList.Add(cardID);
         }
 
+        // カードID一覧を返す
         return cardIDList;
     }
 
