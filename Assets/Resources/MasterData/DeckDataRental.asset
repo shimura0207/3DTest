@@ -16,47 +16,47 @@ MonoBehaviour:
   - name: rental
     list:
     - DeckID: 1
-      CardID: 104
-      Count: 2
+      CardID: 110
+      Count: 1
     - DeckID: 1
-      CardID: 107
-      Count: 2
+      CardID: 122
+      Count: 1
+    - DeckID: 1
+      CardID: 115
+      Count: 1
+    - DeckID: 1
+      CardID: 124
+      Count: 1
+    - DeckID: 1
+      CardID: 109
+      Count: 1
+    - DeckID: 1
+      CardID: 128
+      Count: 1
     - DeckID: 1
       CardID: 108
       Count: 2
-    - DeckID: 1
-      CardID: 109
+    - DeckID: 2
+      CardID: 202
       Count: 2
-    - DeckID: 1
-      CardID: 110
+    - DeckID: 2
+      CardID: 209
       Count: 2
-    - DeckID: 1
-      CardID: 117
+    - DeckID: 2
+      CardID: 201
       Count: 3
-    - DeckID: 1
-      CardID: 118
+    - DeckID: 2
+      CardID: 204
       Count: 3
-    - DeckID: 1
-      CardID: 119
-      Count: 2
-    - DeckID: 1
-      CardID: 120
-      Count: 2
-    - DeckID: 1
-      CardID: 121
-      Count: 2
-    - DeckID: 1
-      CardID: 101
-      Count: 2
-    - DeckID: 1
-      CardID: 112
-      Count: 2
-    - DeckID: 1
-      CardID: 111
-      Count: 2
-    - DeckID: 1
-      CardID: 113
-      Count: 2
+    - DeckID: 0
+      CardID: 0
+      Count: 0
+    - DeckID: 0
+      CardID: 0
+      Count: 0
+    - DeckID: 0
+      CardID: 0
+      Count: 0
     - DeckID: 0
       CardID: 0
       Count: 0
