@@ -43,25 +43,28 @@ public class ArrowCreate {
     /// <summary>
     /// 上下に動く矢印を生成する
     /// </summary>
-    public void CreateVerticalArrow(Vector2 localPosition) {
-        CreateArrow(localPosition, Vector2.up);
+    /// <param name="localPosition">生成位置</param>
+    /// <param name="rotationZ">Z軸の回転角度</param>
+    public void CreateVerticalArrow(Vector2 localPosition, float rotationZ = 0f) {
+        CreateArrow(localPosition, Vector2.up, rotationZ);
     }
 
     /// <summary>
     /// 左右に動く矢印を生成する
     /// </summary>
-    public void CreateHorizontalArrow(Vector2 localPosition) {
-        CreateArrow(localPosition, Vector2.right);
+    /// <param name="localPosition">生成位置</param>
+    /// <param name="rotationZ">Z軸の回転角度</param>
+    public void CreateHorizontalArrow(Vector2 localPosition, float rotationZ = 0f) {
+        CreateArrow(localPosition, Vector2.right, rotationZ);
     }
-
     /// <summary>
     /// 矢印を生成する共通処理
     /// </summary>
-    private void CreateArrow(Vector2 localPosition, Vector2 direction) {
+    private void CreateArrow(Vector2 localPosition, Vector2 direction, float rotationZ) {
         // 既存の矢印を削除
         DeleteArrow();
 
-        // 親を指定して矢印を生成（RectTransformの座標を親基準にする）
+        // 親を指定して矢印を生成
         arrowObject = Object.Instantiate(arrowPrefab, arrowParent, false);
 
         // RectTransformを取得
@@ -73,8 +76,8 @@ public class ArrowCreate {
         // スケールを初期化
         rectTransform.localScale = Vector3.one;
 
-        // 回転を初期化
-        rectTransform.localRotation = Quaternion.identity;
+        // 指定された角度で回転
+        rectTransform.localRotation = Quaternion.Euler(0f, 0f, rotationZ);
 
         // 最前面に表示
         arrowObject.transform.SetAsLastSibling();
@@ -107,7 +110,7 @@ public class ArrowCreate {
                 // RectTransformが破棄されていたら終了
                 if (rectTransform == null) break;
 
-                // サイン波によって矢印を往復移動させる
+                // サインによって矢印を往復移動させる
                 float offset = Mathf.Sin(Time.unscaledTime * MOVE_SPEED) * MOVE_DISTANCE;
 
                 // UI座標を更新

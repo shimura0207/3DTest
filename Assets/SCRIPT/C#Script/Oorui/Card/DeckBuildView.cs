@@ -3,6 +3,7 @@
  *  @author oorui
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,9 +34,19 @@ public class DeckBuildView : MonoBehaviour {
     // デッキに登録されているカードID
     private readonly List<int> deckCardIDs = new List<int>();
 
+    // カードクリック時に実行する処理
+    private Action<int, Image> onCardClicked = null;
+    
     // 所持カード情報を読み込み済みかどうか
     private bool isOwnedCardCountsLoaded = false;
+    /// <summary>
+    /// カードクリック時の処理を設定する
+    /// </summary>
+    public void SetCardClickAction(Action<int, Image> action) {
 
+        // クリック時の処理を登録する
+        onCardClicked = action;
+    }
     /// <summary>
     /// 所持カード情報を読み込む
     /// </summary>
@@ -131,6 +142,14 @@ public class DeckBuildView : MonoBehaviour {
 
             // カード画像と枚数を設定する
             cardItem.SetCard(cardID, cardSprite, 1);
+
+            // クリック処理クラスを取得する
+            PossessionCardClick cardClick = cardItem.GetComponent<PossessionCardClick>();
+
+            // クリック時の処理を登録する
+            if (cardClick != null) {
+                cardClick.SetClickAction(onCardClicked);
+            }
 
             // カード表示を管理する
             cardItems.Add(cardID, cardItem);

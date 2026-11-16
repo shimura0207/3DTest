@@ -54,6 +54,9 @@ public class AudioManager : SystemObject {
     [SerializeField] private bool isMuted = false;
 
     private AudioSource bgmSource;
+
+    /// <summary>PlayBGM専用の再生元。ランプ演出が実行時に自動取得します。</summary>
+    public AudioSource BGMSource => bgmSource;
     private AudioSource seSource;
 
     // 名前から音声を取得するための辞書。

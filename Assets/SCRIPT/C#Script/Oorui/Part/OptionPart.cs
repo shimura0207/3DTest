@@ -85,7 +85,7 @@ public class OptionPart : PartBase {
         while (true) {
             // 設定メニューを開く
             await MenuWindowManager.Instance.Open<OptionMenu>();
-            arrowCreate.CreateVerticalArrow(new Vector2(500,500));
+            arrowCreate.CreateHorizontalArrow(new Vector2(500,500),90f);
             // いずれかのボタンが押されるまで待機
             await UniTask.WaitUntil(() => selectMenu != OptionMenuSelect.None);
 

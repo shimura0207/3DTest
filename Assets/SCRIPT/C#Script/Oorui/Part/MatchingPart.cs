@@ -33,8 +33,8 @@ public class MatchingPart : PartBase {
     // 選択中のデッキ名を表示するテキスト
     [SerializeField] private TMP_Text selectedDeckText;
 
-    // 選択されたデッキID（未選択は-1）
-    private int selectedDeckID = -1;
+    // 選択されたデッキID
+    private static int selectedDeckID = -1;
 
     // デッキ選択ボタンが押されたか
     private bool isDeckSelect = false;
@@ -60,8 +60,28 @@ public class MatchingPart : PartBase {
         isRandomMatch = false;
         isPrivateMatch = false;
         isReturn = false;
-        selectedDeckID = -1;
+        isDeckSelect = false;
 
+        // 前回選択したデッキが存在するか確認する
+        DeckSaveData deckData = null;
+
+        if (selectedDeckID >= 0) {
+            deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
+        }
+
+        // デッキが存在しない場合は未選択状態にする
+        if (deckData == null) {
+            selectedDeckID = -1;
+
+            // 未選択状態の表示
+            if (selectedDeckText != null) {
+                selectedDeckText.text = "未選択";
+            }
+        }
+        else {
+            // 前回選択したデッキ名を表示する
+            selectedDeckText.text = deckData.deckName;
+        }
         // ボタンイベントを登録する
         randomButton.onClick.RemoveListener(OnClickRandomButton);
         randomButton.onClick.AddListener(OnClickRandomButton);
@@ -131,54 +151,8 @@ public class MatchingPart : PartBase {
                 }
 
                 // 選択されたデッキIDを渡して対戦画面へ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID,MainGamePartType.Matching);
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID, MainGamePartType.Matching);
 
-                return;
-            }
-
-            // プライベートマッチが選択された場合
-            if (isPrivateMatch) {
-                // // ホストまたはクライアントを選択するメニューを開く
-                // Debug.Log("プライベートマッチを選択");
-                // conection = await MenuWindowManager.Instance.ConnectMenuOpen(conection);
-                // 
-                // // キャンセルされた場合
-                // if (conection == ConnectionState.None) {
-                //     // プライベートマッチの選択状態を解除
-                //     isPrivateMatch = false;
-                // 
-                //     // ランダムマッチの選択状態も初期化
-                //     isRandomMatch = false;
-                // 
-                //     // 再度ボタン選択を待つ
-                //     continue;
-                // }
-                // // クライアントで接続された場合
-                // else if (conection == ConnectionState.Client) {
-                //     // クライアント接続の確認画面を表示し、選択結果を取得
-                //     bool isAccepted = await MenuWindowManager.Instance.ClientConnectionConfirm();
-                // 
-                //     // 「いいえ」が選択された場合
-                //     if (!isAccepted) {
-                // 
-                //         // 接続状態を初期化
-                //         conection = ConnectionState.None;
-                // 
-                //         // プライベートマッチの選択状態を解除
-                //         isPrivateMatch = false;
-                // 
-                //         // ランダムマッチの選択状態も初期化
-                //         isRandomMatch = false;
-                // 
-                //         // 最初の選択画面に戻り、再度ボタン入力を待つ
-                //         continue;
-                //     }
-                // }
-                // 
-                // // ホストまたはクライアントが選択された場合
-                // // プライベートマッチパートに遷移
-                // await PartManager.Instance.TransitionPart(GamePart.PrivateMatch, conection);
-                await PartManager.Instance.TransitionPart(GamePart.MainGame, 1, MainGamePartType.Matching);
                 return;
             }
 
