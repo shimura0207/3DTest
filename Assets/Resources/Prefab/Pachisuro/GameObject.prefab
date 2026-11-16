@@ -16088,6 +16088,7 @@ GameObject:
   m_Component:
   - component: {fileID: 94327323174116102}
   - component: {fileID: 8209885997395448152}
+  - component: {fileID: 1063389463564586952}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -16149,6 +16150,47 @@ MonoBehaviour:
   emissionIntensity: 6
   darkBrightness: 0.02
   useUnscaledTime: 0
+--- !u!114 &1063389463564586952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3472355725188325712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33fae51ba100a1242acad160a536191f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lampObjects:
+  - {fileID: 1789385246999313344}
+  - {fileID: 571397466965070694}
+  - {fileID: 5731067797037766085}
+  - {fileID: 2238790177774277668}
+  - {fileID: 1214865983681152766}
+  - {fileID: 6747837733618267613}
+  - {fileID: 6101197536490044906}
+  - {fileID: 6101197536490044906}
+  pattern: 1
+  bpm: 120
+  flashesPerBeat: 4
+  beatOffsetSeconds: 0
+  litFraction: 0.25
+  flashWhenMusicStopped: 1
+  fadeInDuration: 0.06
+  fadeOutDuration: 0.03
+  minimumEmission: 4.1
+  musicEmissionBoost: 16
+  darkBrightness: 0.015
+  overrideLampColor: 0
+  lampColor: {r: 1, g: 0.08962262, b: 0.08962262, a: 1}
+  bassFrequencyRange: {x: 35.6, y: 165.1}
+  bassSensitivity: 12
+  bassHitFlash: 1
+  bassRiseThreshold: 0.12
+  hitFlashDuration: 0.045
+  hitCooldown: 0.12
+  currentBassLevel: 0
 --- !u!1 &3487414987350258091
 GameObject:
   m_ObjectHideFlags: 0
@@ -42756,7 +42798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9bb9185b4806a3d459e226a8e998ecff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9bb9185b4806a3d459e226a8e998ecff, type: 3}
       propertyPath: m_LocalRotation.w
@@ -43453,6 +43495,11 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &6101197536490044906 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3410185793394415013, guid: 9bb9185b4806a3d459e226a8e998ecff, type: 3}
+  m_PrefabInstance: {fileID: 290298298825070513}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6747837733618267613 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2764512629625626004, guid: 9bb9185b4806a3d459e226a8e998ecff, type: 3}
