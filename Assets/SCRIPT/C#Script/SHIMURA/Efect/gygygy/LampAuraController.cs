@@ -134,12 +134,12 @@ public class LampAuraController : MonoBehaviour {
     }
 
     /// <summary>指定した複数色を同時再生し、全色終了時に1回だけ通知。</summary>
-    public bool TryPlayColorsWithCompletion(LampColor[] colors, System.Action onCompleted, System.Action onCancelled = null) {
+    public bool TryPlayColorsWithCompletion(LampColor[] colors, System.Action onCompleted, System.Action onCancelled = null, Image targetOverride = null) {
         if (colors == null || colors.Length == 0) return false;
         if (!Application.isPlaying || !isActiveAndEnabled || !Prepare()) return false;
         foreach (LampColor color in colors) {
             LampSetting setting = GetSetting(color);
-            if (setting == null || setting.source == null || setting.target == null) {
+            if (setting == null || setting.source == null || (targetOverride == null && setting.target == null)) {
                 Debug.LogWarning("複数色オーラ：" + color + "のSource/Targetが未設定です。", this);
                 return false;
             }
@@ -151,7 +151,7 @@ public class LampAuraController : MonoBehaviour {
         }
         CompletionGroup group = new CompletionGroup { onCompleted = onCompleted, onCancelled = onCancelled };
         foreach (LampColor color in colors) {
-            if (!SpawnAura(color, group)) {
+            if (!SpawnAura(color, group, targetOverride)) {
                 group.cancelled = true;
                 return false;
             }
@@ -159,7 +159,7 @@ public class LampAuraController : MonoBehaviour {
         return true;
     }
 
-    private bool SpawnAura(LampColor lampColor, CompletionGroup group) {
+    private bool SpawnAura(LampColor lampColor, CompletionGroup group, Image targetOverride = null) {
         if (!Application.isPlaying) {
             Debug.LogWarning("Unityの再生中にテストしてください。", this);
             return false;
@@ -167,7 +167,7 @@ public class LampAuraController : MonoBehaviour {
         if (!isActiveAndEnabled || !Prepare()) return false;
 
         LampSetting setting = GetSetting(lampColor);
-        if (setting == null || setting.source == null || setting.target == null) {
+        if (setting == null || setting.source == null || (targetOverride == null && setting.target == null)) {
             Debug.LogWarning(lampColor + "のSourceとTargetを登録してください。", this);
             return false;
         }
@@ -210,7 +210,7 @@ public class LampAuraController : MonoBehaviour {
                 group = group,
                 image = image,
                 rect = rect,
-                target = setting.target.rectTransform,
+                target = (targetOverride != null ? targetOverride : setting.target).rectTransform,
                 start = start + layerOffset,
                 middle = middle + layerOffset,
                 color = color,
