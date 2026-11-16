@@ -85,9 +85,10 @@ public enum OptionMenuSelect {
 /// リザルト画面から遷移するパート
 /// </summary>
 public enum ResultSelectMenu {
-    None,
-    MainMenu,   //メインメニュー画面
-    Matching    // マッチング画面
+    None,           // 未選択
+    MainMenu,       // メインメニュー
+    Matching,       // 再マッチング
+    DeckBuilding    // デッキ変更
 }
 
 /// <summary>
