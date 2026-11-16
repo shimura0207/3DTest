@@ -63,6 +63,7 @@ public class LampAuraController : MonoBehaviour {
         public int remaining;
         public bool cancelled;
         public System.Action onCompleted;
+        public System.Action onCancelled;
     }
 
     private readonly List<CompletionGroup> completedGroups = new List<CompletionGroup>();
@@ -121,28 +122,34 @@ public class LampAuraController : MonoBehaviour {
     }
 
     /// <summary>自然終了した場合だけ1回通知。中断・設定不足では通知しない。</summary>
-    public bool TryPlayWithCompletion(LampColor lampColor, System.Action onCompleted) {
-        CompletionGroup group = new CompletionGroup { onCompleted = onCompleted };
+    public bool TryPlayWithCompletion(LampColor lampColor, System.Action onCompleted, System.Action onCancelled = null) {
+        CompletionGroup group = new CompletionGroup { onCompleted = onCompleted, onCancelled = onCancelled };
         return SpawnAura(lampColor, group);
     }
 
     /// <summary>5色を1セットとして再生し、全色の自然終了後に1回だけ通知。</summary>
-    public bool TryPlayAllWithCompletion(System.Action onCompleted) {
-        if (!Application.isPlaying || !isActiveAndEnabled || !Prepare()) return false;
+    public bool TryPlayAllWithCompletion(System.Action onCompleted, System.Action onCancelled = null) {
         LampColor[] colors = { LampColor.White, LampColor.Blue, LampColor.Yellow, LampColor.Red, LampColor.Green };
+        return TryPlayColorsWithCompletion(colors, onCompleted, onCancelled);
+    }
+
+    /// <summary>指定した複数色を同時再生し、全色終了時に1回だけ通知。</summary>
+    public bool TryPlayColorsWithCompletion(LampColor[] colors, System.Action onCompleted, System.Action onCancelled = null) {
+        if (colors == null || colors.Length == 0) return false;
+        if (!Application.isPlaying || !isActiveAndEnabled || !Prepare()) return false;
         foreach (LampColor color in colors) {
             LampSetting setting = GetSetting(color);
             if (setting == null || setting.source == null || setting.target == null) {
-                Debug.LogWarning("全色オーラ：" + color + "のSource/Targetが未設定です。", this);
+                Debug.LogWarning("複数色オーラ：" + color + "のSource/Targetが未設定です。", this);
                 return false;
             }
         }
-        // 5色すべての粒数を確保。途中までしか出ないセットは開始しない。
+        // 指定色すべての粒数を確保。途中までしか出ないセットは開始しない。
         if (maxParticles - particles.Count < Mathf.Clamp(auraLayers, 1, 60) * colors.Length) {
-            Debug.LogWarning("全色オーラ：Max Particlesの上限に達しています。", this);
+            Debug.LogWarning("複数色オーラ：Max Particlesの上限に達しています。", this);
             return false;
         }
-        CompletionGroup group = new CompletionGroup { onCompleted = onCompleted };
+        CompletionGroup group = new CompletionGroup { onCompleted = onCompleted, onCancelled = onCancelled };
         foreach (LampColor color in colors) {
             if (!SpawnAura(color, group)) {
                 group.cancelled = true;
@@ -258,13 +265,17 @@ public class LampAuraController : MonoBehaviour {
                 Draw(p, WorldToEffect(GetWorldCenter(p.target)), Mathf.Lerp(0.6f, 1.5f, t), 1f - t, t);
             }
         }
-        // 粒の走査が終わってから通知。コールバック内の再生・停止にも対応。
+        // 粒の走査が終わってから通知。
+        FlushCompletionCallbacks();
+    }
+
+    private void FlushCompletionCallbacks() {
         while (completedGroups.Count > 0) {
             CompletionGroup group = completedGroups[0];
             completedGroups.RemoveAt(0);
-            if (group.cancelled) continue;
-            System.Action callback = group.onCompleted;
+            System.Action callback = group.cancelled ? group.onCancelled : group.onCompleted;
             group.onCompleted = null;
+            group.onCancelled = null;
             try { callback?.Invoke(); }
             catch (System.Exception exception) { Debug.LogException(exception, this); }
         }
@@ -333,14 +344,16 @@ public class LampAuraController : MonoBehaviour {
         if (group != null) {
             if (!completedNormally) group.cancelled = true;
             group.remaining--;
-            if (group.remaining == 0 && !group.cancelled)
+            if (group.remaining == 0)
                 completedGroups.Add(group);
         }
     }
 
     public void StopAllEffects() {
         for (int i = particles.Count - 1; i >= 0; i--) RemoveParticle(i);
-        completedGroups.Clear();
+        // 同フレームに完了待ちのものも、停止要求があれば加算せずキャンセル。
+        foreach (CompletionGroup group in completedGroups) group.cancelled = true;
+        FlushCompletionCallbacks();
     }
 
     private void OnDisable() { StopAllEffects(); }

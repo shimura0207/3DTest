@@ -439,6 +439,8 @@ public class SlotReelController : MonoBehaviour {
     [Header("第3停止：役対応ランプオーラ")]
     [Tooltip("LampAuraControllerが付いたオブジェクトを登録します。通常・RUSH共通です。")]
     [SerializeField] private LampAuraController lampAura;
+    [Tooltip("役別の3Dランプ点滅を管理するRoleLampFlashController")]
+    [SerializeField] private RoleLampFlashController roleLampFlash;
 
     // 1Gにつき1回だけ、第3停止で再生する。
     private bool thirdStopAuraPlayed;
@@ -448,15 +450,20 @@ public class SlotReelController : MonoBehaviour {
     [SerializeField] private TMP_Text replayStockText;
     [SerializeField] private TMP_Text bellStockText;
     [SerializeField] private TMP_Text suikaStockText;
-    [Tooltip("弱チェリーと強チェリーを合算して表示")]
+    [Tooltip("弱チェリーのストック表示（従来の登録先を引き継ぎます）")]
     [SerializeField] private TMP_Text cherryStockText;
+    [Tooltip("強チェリー専用のストック表示")]
+    [SerializeField] private TMP_Text strongCherryStockText;
     [SerializeField] private TMP_Text sevenStockText;
 
     public int MissStock { get; private set; }
     public int ReplayStock { get; private set; }
     public int BellStock { get; private set; }
     public int SuikaStock { get; private set; }
+    /// <summary>弱チェリーのみ。既存の参照名を維持。</summary>
     public int CherryStock { get; private set; }
+    public int WeakCherryStock => CherryStock;
+    public int StrongCherryStock { get; private set; }
     public int SevenStock { get; private set; }
 
     // リセット前に開始した演出の通知を無効にする世代番号。
@@ -1216,6 +1223,7 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashSUIKA(Color.black, 5, 0.03f, 0.9f));
+                    AudioManager.instance.PlaySE("suika");
                 }
 
             }
@@ -1238,7 +1246,7 @@ public class SlotReelController : MonoBehaviour {
 
     /// <summary>
     /// 第3停止で演出を開始し、最後まで完了したときに成立役のストックを1加算。
-    /// 通常・RUSH・受信再生共通。チャンス目は色未指定のため対象外。
+    /// 通常・RUSH・受信再生共通。チャンス目は緑＋赤を同時再生。
     /// </summary>
     private void PlayThirdStopRoleAura(PachisuroSymbolKoyakuEnum role) {
         if (thirdStopAuraPlayed) return;
@@ -1246,6 +1254,7 @@ public class SlotReelController : MonoBehaviour {
 
         LampAuraController.LampColor color;
         bool allColors = false;
+        bool chanceColors = false;
         switch (role) {
             case PachisuroSymbolKoyakuEnum.Miss:
                 color = LampAuraController.LampColor.White; break;
@@ -1258,6 +1267,9 @@ public class SlotReelController : MonoBehaviour {
             case PachisuroSymbolKoyakuEnum.WeakCherry:
             case PachisuroSymbolKoyakuEnum.StrongCherry:
                 color = LampAuraController.LampColor.Red; break;
+            case PachisuroSymbolKoyakuEnum.Chance:
+                color = LampAuraController.LampColor.Green;
+                chanceColors = true; break;
             case PachisuroSymbolKoyakuEnum.Seven:
                 color = LampAuraController.LampColor.White;
                 allColors = true; break;
@@ -1272,13 +1284,30 @@ public class SlotReelController : MonoBehaviour {
 
         // roleは今回の成立役を保持。次ゲームでcurrentSlotSymbolRoleが変わっても影響しない。
         int generation = roleStockGeneration;
+        RoleLampFlashController flashController = roleLampFlash;
+        int flashId = flashController != null ? flashController.BeginFlash(role) : 0;
+        System.Action stopFlash = () => {
+            if (flashController != null) flashController.StopFlash(flashId);
+        };
         System.Action onCompleted = () => {
+            stopFlash();
             if (this == null || generation != roleStockGeneration) return;
             AddCompletedRoleStock(role);
         };
 
-        if (allColors) lampAura.TryPlayAllWithCompletion(onCompleted);
-        else lampAura.TryPlayWithCompletion(color, onCompleted);
+        bool started;
+        if (allColors) {
+            started = lampAura.TryPlayAllWithCompletion(onCompleted, stopFlash);
+        }
+        else if (chanceColors) {
+            started = lampAura.TryPlayColorsWithCompletion(
+                new[] { LampAuraController.LampColor.Green, LampAuraController.LampColor.Red },
+                onCompleted, stopFlash);
+        }
+        else {
+            started = lampAura.TryPlayWithCompletion(color, onCompleted, stopFlash);
+        }
+        if (!started) stopFlash();
     }
 
     private void HandleRushLogoOnSuccessfulLever() {
@@ -1341,15 +1370,20 @@ public class SlotReelController : MonoBehaviour {
             case PachisuroSymbolKoyakuEnum.Replay: ReplayStock++; break;
             case PachisuroSymbolKoyakuEnum.Bell: BellStock++; break;
             case PachisuroSymbolKoyakuEnum.Suika: SuikaStock++; break;
-            case PachisuroSymbolKoyakuEnum.WeakCherry:
-            case PachisuroSymbolKoyakuEnum.StrongCherry: CherryStock++; break;
+            case PachisuroSymbolKoyakuEnum.WeakCherry: CherryStock++; break;
+            case PachisuroSymbolKoyakuEnum.StrongCherry: StrongCherryStock++; break;
+            case PachisuroSymbolKoyakuEnum.Chance:
+                SuikaStock++;
+                CherryStock++;
+                break;
             case PachisuroSymbolKoyakuEnum.Seven:
-                // Sevenは5色＋Sevenの全ストックを1ずつ加算。
+                // Sevenは弱・強チェリーを含む全7種類のストックを1ずつ加算。
                 MissStock++;
                 ReplayStock++;
                 BellStock++;
                 SuikaStock++;
                 CherryStock++;
+                StrongCherryStock++;
                 SevenStock++;
                 break;
             default: return;
@@ -1357,15 +1391,15 @@ public class SlotReelController : MonoBehaviour {
         RefreshRoleStockTexts();
     }
 
-    /// <summary>チェリーは弱・強の合計を返します。</summary>
+    /// <summary>指定役のストックを返します。弱チェリーと強チェリーは別カウント。</summary>
     public int GetRoleStock(PachisuroSymbolKoyakuEnum role) {
         switch (role) {
             case PachisuroSymbolKoyakuEnum.Miss: return MissStock;
             case PachisuroSymbolKoyakuEnum.Replay: return ReplayStock;
             case PachisuroSymbolKoyakuEnum.Bell: return BellStock;
             case PachisuroSymbolKoyakuEnum.Suika: return SuikaStock;
-            case PachisuroSymbolKoyakuEnum.WeakCherry:
-            case PachisuroSymbolKoyakuEnum.StrongCherry: return CherryStock;
+            case PachisuroSymbolKoyakuEnum.WeakCherry: return CherryStock;
+            case PachisuroSymbolKoyakuEnum.StrongCherry: return StrongCherryStock;
             case PachisuroSymbolKoyakuEnum.Seven: return SevenStock;
             default: return 0;
         }
@@ -1377,6 +1411,7 @@ public class SlotReelController : MonoBehaviour {
         if (bellStockText != null) bellStockText.text = BellStock.ToString();
         if (suikaStockText != null) suikaStockText.text = SuikaStock.ToString();
         if (cherryStockText != null) cherryStockText.text = CherryStock.ToString();
+        if (strongCherryStockText != null) strongCherryStockText.text = StrongCherryStock.ToString();
         if (sevenStockText != null) sevenStockText.text = SevenStock.ToString();
     }
 
@@ -1386,7 +1421,8 @@ public class SlotReelController : MonoBehaviour {
     public void ResetRoleStocks() {
         unchecked { roleStockGeneration++; }
         if (lampAura != null) lampAura.StopAllEffects();
-        MissStock = ReplayStock = BellStock = SuikaStock = CherryStock = SevenStock = 0;
+        if (roleLampFlash != null) roleLampFlash.StopAllFlashes();
+        MissStock = ReplayStock = BellStock = SuikaStock = CherryStock = StrongCherryStock = SevenStock = 0;
         RefreshRoleStockTexts();
     }
 
