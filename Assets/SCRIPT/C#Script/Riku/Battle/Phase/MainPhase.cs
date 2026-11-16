@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Collections;
 using Unity.VisualScripting;
+using UnityEditor.ShaderKeywordFilter;
+
 
 //using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -58,8 +60,9 @@ public class MainPhase : PhaseBase {
     /// カード操作
     /// </summary>
     /// <param name="selectCard">指定したいカード(指定なしなら自由に操作)</param>
+    /// <param name="selectLane">指定したいレーン(指定なしなら自由に操作)</param>
     /// <returns>カードをプレイかレーン移動したらtrueを返す</returns>
-    public async UniTask<bool> CardControl(CardObject selectCard = null) {
+    public async UniTask<bool> CardControl(CardObject selectCard = null, FieldLane selectLane = FieldLane.None) {
         // マウスカーソルのスクリーン座標取得
         Vector3 mousePos = Input.mousePosition;
         // スクリーン座標からレイを取得
@@ -91,7 +94,7 @@ public class MainPhase : PhaseBase {
                     // カードがレーン上のものかどうか判定
                     if (cardObject.laneID > -1) {
                         // レーン交換
-                        if (LaneChange(ray)) {
+                        if (LaneChange(ray, selectLane)) {
                             cardAction = true;
                         }
                         else {
@@ -101,7 +104,7 @@ public class MainPhase : PhaseBase {
                     // カードが手札のものだった場合の処理
                     else if (cardObject.handID > -1) {
                         // カードを使用
-                        await PlayCard(cardObject);
+                        await PlayCard(cardObject, selectLane);
                         cardAction = true;
                     }
                 }
@@ -131,8 +134,9 @@ public class MainPhase : PhaseBase {
     /// カードの使用
     /// </summary>
     /// <param name="card">使用するオブジェクトのID</param>
+    /// <param name="selectLane">指定したいレーン(指定なしなら自由に操作)</param>
     /// <returns></returns>
-    private async UniTask PlayCard(CardObject card) {
+    private async UniTask PlayCard(CardObject card, FieldLane selectLane = FieldLane.None) {
         if (!card) return;
         // カードタイプによって分岐
         switch (card.cardType) {
@@ -141,8 +145,16 @@ public class MainPhase : PhaseBase {
                 int remainingSize = BattleSystemManager.instance.GetRemainingSize(PlayerType.Self);
                 // サイズが上限超過しないか
                 if (card.currentStatus[MonsterStatus.SIZE] <= remainingSize) {
-                    // レーン設置ウィンドウを出す
-                    FieldLane lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
+                    FieldLane lane = FieldLane.None;
+                    // レーンの指定がある場合はそのレーンを選ぶまで繰り返す
+                    while (lane == FieldLane.None) {
+                        // レーン設置ウィンドウを出す
+                        lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
+                        // 違うレーンを選んだらクリア
+                        if (selectLane != FieldLane.None && lane != selectLane) {
+                            lane = FieldLane.None;
+                        }
+                    }
                     // モンスター召喚
                     await BattleSystemManager.instance.SummonMonster(PlayerType.Self, card, lane);
                     Debug.Log("モンスター召喚！！");
@@ -219,7 +231,8 @@ public class MainPhase : PhaseBase {
     /// レーン交換
     /// </summary>
     /// <param name="ray"></param>
-    private bool LaneChange(Ray ray) {
+    /// <param name="selectLane">指定したいレーン(指定なしなら自由に操作)</param>
+    private bool LaneChange(Ray ray, FieldLane selectLane = FieldLane.None) {
         // レーンレイヤー取得
         int laneLayer = LayerMask.GetMask("Lane");
         // レーンのレイキャスト
@@ -228,6 +241,8 @@ public class MainPhase : PhaseBase {
         GameConst.RAY_RANGE_MAX, laneLayer)) {
             // レーン番号の取得
             FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
+            // レーンの指定がある場合はそのレーン以外なら交換しない
+            if (selectLane != FieldLane.None && selectLane != lane) return false;
             // レーンの位置変更
             BattleSystemManager.instance.LaneChange(PlayerType.Self, (FieldLane)cardObject.laneID, lane);
             return true;
