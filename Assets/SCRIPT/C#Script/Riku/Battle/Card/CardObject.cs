@@ -245,6 +245,11 @@ public class CardObject : MonoBehaviour {
     /// <param name="giveValue">与える値</param>
     public void GiveStatus(MonsterStatus giveStatus, int giveValue) {
         currentStatus[giveStatus] += giveValue;
+        
+        // ダメージをくらったら表示
+        if (giveStatus == MonsterStatus.HP && giveValue < 0) {
+            UIManager.instance.GenerateDamageUI(giveValue, this);
+        }
 
         // ATKが0以下の場合は0にする
         if (currentStatus[MonsterStatus.ATK] <= 0) {

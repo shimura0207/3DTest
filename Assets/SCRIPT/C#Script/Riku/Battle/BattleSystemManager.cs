@@ -6,6 +6,7 @@
 using Cysharp.Threading.Tasks;
 using Edgegap;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -273,6 +274,11 @@ public class BattleSystemManager : MonoBehaviour {
     public void PlayerGiveHP(PlayerType player, int giveHP) {
         // HP付与
         playerHP[player] += giveHP;
+
+        // ダメージをくらったら表示
+        if (giveHP < 0) {
+            UIManager.instance.GenerateDamageUI(giveHP, null, player);
+        }
 
         // HPが0以下なら勝敗がつく
         if (playerHP[player] > 0) return;
