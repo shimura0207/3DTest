@@ -46,6 +46,15 @@ public class BattleSystemManager : MonoBehaviour {
     // ターンエンドボタンが有効かどうか
     public bool turnEndActive { get; private set; } = false;
 
+    // チュートリアルの矢印のオリジナル
+    [SerializeField]
+    private GameObject tutorialArrowPrefab = null;
+    // チュートリアルの矢印の親
+    [SerializeField]
+    private Transform tutorialArrowRoot = null;
+    // チュートリアルの矢印
+    private ArrowCreate tutorialArrow = null;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -64,6 +73,8 @@ public class BattleSystemManager : MonoBehaviour {
         pachisuroGoActive = false;
         turnEnd = false;
         pachisuroGoActive = false;
+
+        tutorialArrow = new ArrowCreate(tutorialArrowPrefab, tutorialArrowRoot);
     }
 
     /// <summary>
@@ -558,11 +569,13 @@ public class BattleSystemManager : MonoBehaviour {
         MainPhase mainPhase = (MainPhase)phaseList[(int)currentPhase];
         CardObject raymond = CardObjectManager.instance.GetUseCardObject(0);
         // Professor:Raymondを出すまで待つ
+        tutorialArrow.CreateVerticalArrow(new Vector2(570, 250));
         while (true) {
             if (await mainPhase.CardControl(raymond, FieldLane.Lane3))
                 break;
             await UniTask.Yield();
         }
+        tutorialArrow.DeleteArrow();
         text = "フィールドにはサイズ上限があるから、\nモンスターを出すときは注意するんだ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "そのターン中に出したばかりのモンスターは疲労するぞ！\n疲労中は攻撃ができないから注意だ！";
