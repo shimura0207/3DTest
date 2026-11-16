@@ -143,9 +143,9 @@ public class UIManager : SystemObject {
     /// <summary>
     /// ダメージUIを生成する
     /// </summary>
-    /// <param name="damage"></param>
-    /// <param name="card"></param>
-    /// <param name="player"></param>
+    /// <param name="damage">表示したいダメージ</param>
+    /// <param name="card">表示したいカード(プレイヤー指定ならnull)</param>
+    /// <param name="player">表示したいプレイヤー</param>
     public void GenerateDamageUI(int damage, CardObject card, PlayerType player = PlayerType.None) {
         // 生成する位置
         Vector3 position = Vector3.zero;
