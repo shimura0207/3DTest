@@ -487,6 +487,86 @@ public class SaveManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 対戦報酬としてカードを取得する
+    /// ※この時点ではポイント変換しない
+    /// </summary>
+    public void AcquireCardForReward(int cardID) {
+
+        // 不正なカードIDなら終了する
+        if (cardID <= 0) {
+            return;
+        }
+
+        // 所持カードデータを読み込む
+        PossessionCardSaveData saveData = LoadCards();
+
+        // カードを追加する
+        saveData.cardID.Add(cardID);
+
+        // 所持カードデータを保存する
+        SaveCards(saveData);
+    }
+
+    /// <summary>
+    /// 所持上限を超えたカードをポイントに変換する
+    /// </summary>
+    public void ConvertExcessCardsToPoints() {
+
+        // 所持カードデータを読み込む
+        PossessionCardSaveData saveData = LoadCards();
+
+        // 所持カードデータが存在しなければ終了する
+        if (saveData == null || saveData.cardID == null) {
+            return;
+        }
+
+        // カードIDごとの所持枚数を管理する
+        Dictionary<int, int> ownedCounts = new Dictionary<int, int>();
+
+        // 上限以内のカードを保持するリスト
+        List<int> retainedCards = new List<int>();
+
+        // 変換するカード枚数
+        int convertedCount = 0;
+
+        // 所持カードを順番に確認する
+        foreach (int cardID in saveData.cardID) {
+
+            // 現在の所持枚数を取得する
+            int count = ownedCounts.ContainsKey(cardID)
+                ? ownedCounts[cardID]
+                : 0;
+
+            // 3枚未満ならカードとして保持する
+            if (count < 3) {
+
+                retainedCards.Add(cardID);
+
+                // 所持枚数を更新する
+                ownedCounts[cardID] = count + 1;
+            }
+            else {
+
+                // 4枚目以降はポイント変換対象にする
+                convertedCount++;
+            }
+        }
+
+        // 所持カードデータを上限以内に整理する
+        saveData.cardID = retainedCards;
+
+        // 整理したカードデータを保存する
+        SaveCards(saveData);
+
+        // 変換対象が存在する場合のみポイントを加算する
+        if (convertedCount > 0) {
+
+            // 4枚目以降1枚につき10ポイントを加算する
+            CreatePointManager.Instance.AddPoint(convertedCount * 10);
+        }
+    }
+
+    /// <summary>
     /// 所持カードのセーブファイルが存在するか確認する
     /// </summary>
     /// <returns>セーブファイルが存在するか</returns>

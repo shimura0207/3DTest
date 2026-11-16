@@ -481,6 +481,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameEnd: {fileID: 4796232094919460902}
   returnMenu: {fileID: 4520825746799288630}
+  arrowPrefab: {fileID: 76552769266445703, guid: 3db4ed6698c56924eaf6b7673b565247, type: 3}
+  arrowParent: {fileID: 7121317323751926343}
 --- !u!1 &6408564270521957930
 GameObject:
   m_ObjectHideFlags: 0
