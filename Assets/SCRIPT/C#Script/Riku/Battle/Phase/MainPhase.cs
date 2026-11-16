@@ -236,10 +236,6 @@ public class MainPhase : PhaseBase {
         if (Physics.Raycast(
         ray, out RaycastHit hit,
         GameConst.RAY_RANGE_MAX, laneLayer)) {
-            // レーンの指定がある場合は矢印を出す
-            if (selectLane != FieldLane.None) {
-                BattleSystemManager.instance.TutorialLaneArrow(selectLane);
-            }
             // レーン番号の取得
             FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
             // レーンの指定がある場合はそのレーン以外なら交換しない

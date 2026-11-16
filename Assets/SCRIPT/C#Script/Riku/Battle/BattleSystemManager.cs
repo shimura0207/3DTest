@@ -587,6 +587,8 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "早速モンスターを出そう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "手札のモンスターを左クリックで掴んで、\nフィールドまで移動させると召喚できるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         NextPhaseSetup();
 
         // 自身のメインフェイズ
@@ -685,7 +687,7 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "引いた役とモンスターの対応役が一致していたら攻撃するよ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "Raymond Blankの対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
+        text = "Professor:Raymondの対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 矢印出す
         tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 600), 90);
@@ -719,7 +721,7 @@ public class BattleSystemManager : MonoBehaviour {
         text = "レアな役を引いたみたいだね。レアな役は出にくいぶん、\n対応モンスターの破壊力はすごいぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // チャンス目を引く
-        text = "おっとチャンス目だ！この役はチェリーとスイカ\n両方の性質を併せ持つ...﻿";
+        text = "おっとチャンス目だ！この役はチェリーとスイカ\n両方の役が成立したとみなされるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // ハズレを引く
         text = "また対応役を引いたね！\nこれで2回攻撃ができるぞ！";
@@ -810,8 +812,10 @@ public class BattleSystemManager : MonoBehaviour {
         // 自身のメインフェイズ
         text = "このままだと相手の攻撃を受けてしまうね。\nそんなときはモンスターを移動させて攻撃を防ごう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "移動させたいモンスターを左クリックで掴み、\n移動させたい場所まで持っていけば移動できるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 矢印出す
-        tutorialArrow.CreateVerticalArrow(new Vector2(960, 560));
+        tutorialArrow.CreateHorizontalArrow(new Vector2(1075, 390), 90);
         // モンスターを移動させるまで待つ
         while (true) {
             if (await mainPhase.CardControl(raymond, FieldLane.Lane4))
@@ -831,7 +835,7 @@ public class BattleSystemManager : MonoBehaviour {
         // RG:CRASSAを出すまで待つ
         CardObject crassa = CardObjectManager.instance.GetUseCardObject(3);
         // 矢印出す
-        tutorialArrow.CreateVerticalArrow(new Vector2(880, 250));
+        tutorialArrow.CreateVerticalArrow(new Vector2(880, 250), 180);
         while (true) {
             if (await mainPhase.CardControl(crassa, FieldLane.Lane3))
                 break;
@@ -846,13 +850,14 @@ public class BattleSystemManager : MonoBehaviour {
         // PERFECT・STOPを使うまで待つ
         CardObject perfect = CardObjectManager.instance.GetUseCardObject(1);
         // 矢印出す
-        tutorialArrow.CreateVerticalArrow(new Vector2(650, 250));
+        tutorialArrow.CreateVerticalArrow(new Vector2(650, 250), 180);
         while (true) {
             if (await mainPhase.CardControl(perfect))
                 break;
             await UniTask.Yield();
         }
         // 矢印消す
+        tutorialArrow.DeleteArrow();
         text = "これでみんな攻撃できるね！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         NextPhaseSetup();
@@ -916,13 +921,17 @@ public class BattleSystemManager : MonoBehaviour {
         text = "今はラッシュ中で相手のモンスターは少ない。\nこのまま押し切っちゃおう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // RG:REIを2体出す
-        CardObject rei = CardObjectManager.instance.GetUseCardObject(12);
+        CardObject rei = CardObjectManager.instance.GetUseCardObject(11);
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(1030, 250), 180);
         while (true) {
             if (await mainPhase.CardControl(rei, FieldLane.Lane5))
                 break;
             await UniTask.Yield();
         }
-        rei = CardObjectManager.instance.GetUseCardObject(14);
+        rei = CardObjectManager.instance.GetUseCardObject(13);
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(1170, 250), 180);
         while (true) {
             if (await mainPhase.CardControl(rei, FieldLane.Lane2))
                 break;
