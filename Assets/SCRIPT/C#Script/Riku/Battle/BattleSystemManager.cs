@@ -6,6 +6,7 @@
 using Cysharp.Threading.Tasks;
 using Edgegap;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -60,9 +61,9 @@ public class BattleSystemManager : MonoBehaviour {
         currentTurn = -1;
         spellCastCount = -1;
         pachisuroGo = false;
-        pachisuroGoActive = true;
+        pachisuroGoActive = false;
         turnEnd = false;
-        pachisuroGoActive = true;
+        pachisuroGoActive = false;
     }
 
     /// <summary>
@@ -273,6 +274,11 @@ public class BattleSystemManager : MonoBehaviour {
     public void PlayerGiveHP(PlayerType player, int giveHP) {
         // HP付与
         playerHP[player] += giveHP;
+
+        // ダメージをくらったら表示
+        if (giveHP < 0) {
+            UIManager.instance.GenerateDamageUI(giveHP, null, player);
+        }
 
         // HPが0以下なら勝敗がつく
         if (playerHP[player] > 0) return;
@@ -528,12 +534,14 @@ public class BattleSystemManager : MonoBehaviour {
     /// <returns></returns>
     public async UniTask TutorialExecute() {
         await UniTask.DelayFrame(30);
-        string text = "このゲームはパチスロとカードゲームで相手のHPを\nゼロにすることで勝利するゲームです！";
+        string text = "このゲームはパチスロとカードゲームで\n相手のHPをゼロにすることで勝利するゲームです！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "早速始めよう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // 自身のスタートフェイズ実行
-        await phaseList[(int)BattlePhase.StartPhase].SelfExecute();
+
+        // 自身のスタートフェイズ
+        currentPhase = BattlePhase.StartPhase;
+        await phaseList[(int)currentPhase].SelfExecute();
         text = "カードの右下のマークが対応役だ！\n後で出てくるから覚えておこう。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "対応役がSのカードはスペルだ！\n使えば様々な効果が発動する！";
@@ -544,14 +552,18 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "早速モンスターを出そう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // 自身のメインフェイズ(強制操作の必要があるため手書き)
-        MainPhase mainPhase = (MainPhase)phaseList[(int)BattlePhase.MainPhase];
+        NextPhaseSetup();
+
+        // 自身のメインフェイズ
+        MainPhase mainPhase = (MainPhase)phaseList[(int)currentPhase];
+        CardObject raymond = CardObjectManager.instance.GetUseCardObject(0);
+        // Professor:Raymondを出すまで待つ
         while (true) {
-            if (await mainPhase.CardControl())
+            if (await mainPhase.CardControl(raymond, FieldLane.Lane3))
                 break;
             await UniTask.Yield();
         }
-        text = "フィールドにはサイズ上限があるから、モンスターを出すときは注意するんだ！";
+        text = "フィールドにはサイズ上限があるから、\nモンスターを出すときは注意するんだ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "そのターン中に出したばかりのモンスターは疲労するぞ！\n疲労中は攻撃ができないから注意だ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
@@ -564,30 +576,304 @@ public class BattleSystemManager : MonoBehaviour {
         }
         turnEndActive = false;
         turnEnd = false;
-        // 相手のスタートフェイズ実行
-        await phaseList[(int)BattlePhase.StartPhase].OpponentExecute();
-        // 出されたレーンの対面に出す
-        //FieldLane frontLane = FieldLane.None;
-        //// 0除算回避
-        //if (card.laneID == 0) {
-        //    frontLane = FieldLane.Lane5;
-        //}
-        //else {
-        //    frontLane = (FieldLane)((int)FieldLane.Max % card.laneID + 1);
-        //}
-        //await SummonMonster(PlayerType.Opponent, obj, laneID);
-        text = "";
-        await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
-        await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
-        await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
-        await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
-        await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "";
-        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // フェイズの片付け
+        phaseList[(int)currentPhase].Teardown();
+        // フェイズをエンドフェイズに
+        currentPhase = BattlePhase.EndPhase;
+        // フェイズの準備
+        phaseList[(int)currentPhase].Setup();
 
+        // 自身のエンドフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
+
+        // 相手のスタートフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 相手のメインフェイズ
+        // 出されたレーンの対面に出す
+        FieldLane frontLane = FieldLane.None;
+        if (raymond.laneID == 0) {
+            frontLane = FieldLane.Lane5;
+        }
+        else {
+            frontLane = (FieldLane)((int)FieldLane.Max % raymond.laneID + 1);
+        }
+        // リヴァイブドラゴンを出す
+        CardObject revive = CardObjectManager.instance.GetUseCardObject(5);
+        await SummonMonster(PlayerType.Opponent, revive, frontLane);
+        text = "相手もモンスターを出してきたね。\n相手のターン終了！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // フェイズの片付け
+        phaseList[(int)currentPhase].Teardown();
+        // フェイズをエンドフェイズに
+        currentPhase = BattlePhase.EndPhase;
+        // フェイズの準備
+        phaseList[(int)currentPhase].Setup();
+
+        // 相手のエンドフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 自身のスタートフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
+
+        // 自身のメインフェイズ
+        text = "このターンからさっき出したモンスターは攻撃可能だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "ターンが進むとフィールドに出せるサイズも大きくなるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "2体目のモンスターを出そう";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        CardObject lank = CardObjectManager.instance.GetUseCardObject(4);
+        // RG:LANKを出すまで待つ
+        while (true) {
+            if (await mainPhase.CardControl(lank, FieldLane.Lane4))
+                break;
+            await UniTask.Yield();
+        }
+        text = "攻撃するときはボタンを押してパチスロGO！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "引いた役とモンスターの対応役が一致していたら攻撃するよ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "Raymond Blankの対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // パチスロボタン
+        pachisuroGoActive = true;
+        while (!pachisuroGo) {
+            await UniTask.Yield();
+        }
+        pachisuroGoActive = false;
+        pachisuroGo = false;
+        NextPhaseSetup();
+
+        // 自身のパチスロフェイズ
+        text = "パチスロを回そう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "Ctrlでbet！上矢印でリールを回せるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "基本的には横か斜めに絵柄が揃うと役の成立だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // ハズレを引く
+        text = "今回は何も絵柄がそろっていないのでハズレ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "これでパチスロフェイズの終わりに攻撃ができるね。";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 弱チェを引く
+        text = "チェリーは左のリールに一つでも止まったら\n役として成立するよ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // スイカを引く
+        text = "レアな役を引いたみたいだね。レアな役は出にくいぶん、\n対応モンスターの破壊力はすごいぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // チャンス目を引く
+        text = "おっとチャンス目だ！この役はチェリーとスイカ\n両方の性質を併せ持つ...﻿";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // ハズレを引く
+        text = "また対応役を引いたね！\nこれで2回攻撃ができるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        NextPhaseSetup();
+
+        // 自身のアタックフェイズ
+        AttackPhase attackPhase = (AttackPhase)phaseList[(int)BattlePhase.AttackPhase];
+        text = "対応役を引いたので攻撃ができるぞ！\n目の前のモンスターに攻撃だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 途中で解説を挟みたいので直接処理
+        // 当選役取得
+        List<PachisuroSymbolKoyakuEnum> koyakuList = SlotReelController.Instance.GetRoles();
+        // フィールドのカード取得
+        var fieldCards = CardObjectManager.instance.fieldObjectList[PlayerType.Self];
+        // 当選役の数分の対応役チェック
+        bool firstAttack = true;
+        foreach (var koyaku in koyakuList) {
+            // Professor:Raymondの役チェック
+            attackPhase.CardAttack(PlayerType.Opponent, koyaku, raymond,
+                SlotReelController.Instance.AttackRush,
+                SlotReelController.Instance.AttackNextRush);
+
+            // UIに反映
+            PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
+            GameObject player = GameObject.Find("Player2HP");
+            hp = player.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
+            hp.SetCurrentHP(playerHP[PlayerType.Opponent]);
+            await UniTask.DelayFrame(10);
+            if (koyaku == PachisuroSymbolKoyakuEnum.Miss) {
+                if (firstAttack) {
+                    // 1回目の攻撃
+                    text = "やった！ダメージだ！\n相手のモンスターを破壊したぞ！";
+                    await MenuWindowManager.Instance.TutorialTextWindow(text);
+                    firstAttack = false;
+                } else {
+                    text = "続けて2回目の攻撃！目の前のモンスターは\nいなくなったからプレイヤーに攻撃だ！";
+                    await MenuWindowManager.Instance.TutorialTextWindow(text);
+                }
+            }
+        }
+        NextPhaseSetup();
+
+        // 自身のエンドフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
+
+        // 相手のスタートフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 相手のメインフェイズ
+        // 出されたレーンの対面に出す
+        frontLane = FieldLane.None;
+        if (raymond.laneID == 0) {
+            frontLane = FieldLane.Lane5;
+        }
+        else {
+            frontLane = (FieldLane)((int)FieldLane.Max % lank.laneID + 1);
+        }
+        // リーンドラゴンを出す
+        CardObject rein = CardObjectManager.instance.GetUseCardObject(5);
+        await SummonMonster(PlayerType.Opponent, rein, frontLane);
+        text = "強力なモンスターが出たぞ！\n今出たリーンドラゴンは疲労しない効果を持っている。";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "つまり出たターンからいきなり攻撃できるんだ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        NextPhaseSetup();
+
+        // 相手のパチスロフェイズ
+        // ハズレ、ハズレ、リプ、ベル、リプを引く
+        NextPhaseSetup();
+
+        // 相手のアタックフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        text = "モンスターが1体やられてしまったね。";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        NextPhaseSetup();
+
+        // 相手のエンドフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 自身のスタートフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
+
+        // 自身のメインフェイズ
+        text = "このままだと相手の攻撃を受けてしまうね。\nそんなときはモンスターを移動させて攻撃を防ごう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // モンスターを移動させるまで待つ
+        while (true) {
+            if (await mainPhase.CardControl(raymond, FieldLane.Lane4))
+                break;
+            await UniTask.Yield();
+        }
+        text = "移動させたモンスターは疲労してしまうので注意だ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "もし移動先にモンスターがいる場合は\nそのモンスターと位置を交換するぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "両方のモンスターが疲労してしまうから\n慎重に判断するべきだな！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "サイズに空きがあるね。\n少し強力なモンスターを出そう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // RG:CRASSAを出すまで待つ
+        CardObject crassa = CardObjectManager.instance.GetUseCardObject(3);
+        while (true) {
+            if (await mainPhase.CardControl(crassa, FieldLane.Lane3))
+                break;
+            await UniTask.Yield();
+        }
+        text = "さらにスペルを使ってみよう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "PERFECT・STOPは自分のモンスターの\n疲労をいやすことができるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // PERFECT・STOPを使うまで待つ
+        CardObject perfect = CardObjectManager.instance.GetUseCardObject(1);
+        while (true) {
+            if (await mainPhase.CardControl(perfect))
+                break;
+            await UniTask.Yield();
+        }
+        text = "これでみんな攻撃できるね！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        NextPhaseSetup();
+
+        // 自身のパチスロフェイズ
+        // リプ、弱チェ、ベル、強チェを引く
+        text = "特別なチェリーを引いたね！\nチェリーが揃ったら2倍の攻撃力で攻撃するぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 7を引く
+        text = "すごい演出が出て7が揃ったね。\n7が揃うと全員で攻撃できるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "さらに、ラッシュに当選！\n次のパチスロフェイズで7が揃う確率が大幅にアップするぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        NextPhaseSetup();
+
+        // 自身のアタックフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        text = "相手に大きなダメージを与えたね！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        NextPhaseSetup();
+
+        // 自身のエンドフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
+
+        // 相手のスタートフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 相手のメインフェイズ
+        // 出されたレーンの対面に出す
+        frontLane = FieldLane.None;
+        if (raymond.laneID == 0) {
+            frontLane = FieldLane.Lane5;
+        }
+        else {
+            frontLane = (FieldLane)((int)FieldLane.Max % crassa.laneID + 1);
+        }
+        // ジングルドラゴンを出す
+        CardObject jingle = CardObjectManager.instance.GetUseCardObject(9);
+        await SummonMonster(PlayerType.Opponent, jingle, frontLane);
+        NextPhaseSetup();
+
+        // 相手のパチスロフェイズ
+        // スイカ、リプ、リプ、リプ、ハズレを引く
+        NextPhaseSetup();
+
+        // 相手のアタックフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 相手のエンドフェイズ
+        await phaseList[(int)currentPhase].OpponentExecute();
+        NextPhaseSetup();
+
+        // 自身のスタートフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
+
+        // 自身のメインフェイズ
+        text = "今はラッシュ中で相手のモンスターは少ない。\nこのまま押し切っちゃおう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // RG:REIを2体出す
+        CardObject rei = CardObjectManager.instance.GetUseCardObject(12);
+        while (true) {
+            if (await mainPhase.CardControl(rei, FieldLane.Lane5))
+                break;
+            await UniTask.Yield();
+        }
+        rei = CardObjectManager.instance.GetUseCardObject(14);
+        while (true) {
+            if (await mainPhase.CardControl(rei, FieldLane.Lane2))
+                break;
+            await UniTask.Yield();
+        }
+        NextPhaseSetup();
+
+        // 自身のパチスロフェイズ
+        // 7、弱チェ、ハズレ、7、7を引く
+        NextPhaseSetup();
+
+        // 自身のアタックフェイズ
+        await phaseList[(int)currentPhase].SelfExecute();
+        NextPhaseSetup();
     }
 }

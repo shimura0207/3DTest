@@ -44,3 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e02baa2e08e0de4e8b18f792a5de4d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentMaxSize: 0
+  opponentMaxSize: 0
+  restSize: 0
+  opponentRestSize: 0
+  damageUI: {fileID: 3758572227107497216, guid: 525570a785dc00c45a2fd314607a7bb5, type: 3}
+  damageValue: 0

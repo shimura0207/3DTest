@@ -22,10 +22,7 @@ public class AttackPhase : PhaseBase {
     /// <returns></returns>
     public override async UniTask SelfExecute() {
         // 当選役取得
-        SlotReelController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-        List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
+        List<PachisuroSymbolKoyakuEnum> koyakuList = SlotReelController.Instance.GetRoles();
 
         // フィールドのカード取得
         var fieldCards = CardObjectManager.instance.fieldObjectList[PlayerType.Self];
@@ -37,7 +34,9 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(PlayerType.Opponent, koyaku, card.Value, slot.AttackRush, slot.AttackNextRush);
+                CardAttack(PlayerType.Opponent, koyaku, card.Value, 
+                    SlotReelController.Instance.AttackRush, 
+                    SlotReelController.Instance.AttackNextRush);
                 
                 // UIに反映
                 PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
@@ -61,10 +60,7 @@ public class AttackPhase : PhaseBase {
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
         // 当選役取得
-        SlotReelController slot; //呼ぶスクリプトにあだなつける
-        GameObject obj = GameObject.Find("Manager"); //Mangerっていうオブジェクトを探す
-        slot = obj.GetComponent<SlotReelController>(); //付いているスクリプトを取得
-        List<PachisuroSymbolKoyakuEnum> koyakuList = slot.GetRoles();
+        List<PachisuroSymbolKoyakuEnum> koyakuList = SlotReelController.Instance.GetRoles();
 
         // フィールドのカード取得
         var fieldCards = CardObjectManager.instance.fieldObjectList[PlayerType.Opponent];
@@ -76,7 +72,9 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(PlayerType.Self, koyaku, card.Value, slot.AttackRush, slot.AttackNextRush);
+                CardAttack(PlayerType.Self, koyaku, card.Value, 
+                    SlotReelController.Instance.AttackRush, 
+                    SlotReelController.Instance.AttackNextRush);
 
                 // UIに反映
                 PlayerHPUIControllere hp;
@@ -110,7 +108,7 @@ public class AttackPhase : PhaseBase {
     /// <param name="card">確認するカード</param>
     /// <param name="rush">ラッシュ中か否か</param>
     /// <param name="nextRush">ラッシュ当選中かどうか</param>
-    private void CardAttack(PlayerType player, PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush, bool nextRush) {
+    public void CardAttack(PlayerType player, PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush, bool nextRush) {
         // 疲労中は攻撃できない
         if (card.isFatigue) return;
         // カードの対応役の型を変換
