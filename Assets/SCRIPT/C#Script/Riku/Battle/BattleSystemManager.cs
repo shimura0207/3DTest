@@ -540,6 +540,30 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// チュートリアルの矢印をレーンの位置に出す
+    /// </summary>
+    /// <param name="lane">出すレーン</param>
+    public void TutorialLaneArrow(FieldLane lane) {
+        switch (lane) {
+            case FieldLane.Lane1:
+                tutorialArrow.CreateVerticalArrow(new Vector2(460, 560));
+                break;
+            case FieldLane.Lane2:
+                tutorialArrow.CreateVerticalArrow(new Vector2(710, 560));
+                break;
+            case FieldLane.Lane3:
+                tutorialArrow.CreateVerticalArrow(new Vector2(960, 560));
+                break;
+            case FieldLane.Lane4:
+                tutorialArrow.CreateVerticalArrow(new Vector2(1210, 560));
+                break;
+            case FieldLane.Lane5:
+                tutorialArrow.CreateVerticalArrow(new Vector2(1460, 560));
+                break;
+        }
+    }
+
+    /// <summary>
     /// チュートリアルの実行処理
     /// </summary>
     /// <returns></returns>
@@ -568,13 +592,15 @@ public class BattleSystemManager : MonoBehaviour {
         // 自身のメインフェイズ
         MainPhase mainPhase = (MainPhase)phaseList[(int)currentPhase];
         CardObject raymond = CardObjectManager.instance.GetUseCardObject(0);
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(570, 250), 180);
         // Professor:Raymondを出すまで待つ
-        tutorialArrow.CreateVerticalArrow(new Vector2(570, 250));
         while (true) {
             if (await mainPhase.CardControl(raymond, FieldLane.Lane3))
                 break;
             await UniTask.Yield();
         }
+        // 矢印消す
         tutorialArrow.DeleteArrow();
         text = "フィールドにはサイズ上限があるから、\nモンスターを出すときは注意するんだ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
@@ -582,6 +608,8 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "ボタンを押してターンを終わろう。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 矢印出す
+        tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 490), 90);
         // ターンエンドボタン
         turnEndActive = true;
         while (!turnEnd) {
@@ -595,6 +623,8 @@ public class BattleSystemManager : MonoBehaviour {
         currentPhase = BattlePhase.EndPhase;
         // フェイズの準備
         phaseList[(int)currentPhase].Setup();
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
 
         // 自身のエンドフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
@@ -642,17 +672,23 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         CardObject lank = CardObjectManager.instance.GetUseCardObject(4);
         // RG:LANKを出すまで待つ
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
         while (true) {
             if (await mainPhase.CardControl(lank, FieldLane.Lane4))
                 break;
             await UniTask.Yield();
         }
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
         text = "攻撃するときはボタンを押してパチスロGO！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "引いた役とモンスターの対応役が一致していたら攻撃するよ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "Raymond Blankの対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 矢印出す
+        tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 600), 90);
         // パチスロボタン
         pachisuroGoActive = true;
         while (!pachisuroGo) {
@@ -660,6 +696,8 @@ public class BattleSystemManager : MonoBehaviour {
         }
         pachisuroGoActive = false;
         pachisuroGo = false;
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
         NextPhaseSetup();
 
         // 自身のパチスロフェイズ
@@ -736,14 +774,14 @@ public class BattleSystemManager : MonoBehaviour {
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
         frontLane = FieldLane.None;
-        if (raymond.laneID == 0) {
+        if (lank.laneID == 0) {
             frontLane = FieldLane.Lane5;
         }
         else {
             frontLane = (FieldLane)((int)FieldLane.Max % lank.laneID + 1);
         }
         // リーンドラゴンを出す
-        CardObject rein = CardObjectManager.instance.GetUseCardObject(5);
+        CardObject rein = CardObjectManager.instance.GetUseCardObject(7);
         await SummonMonster(PlayerType.Opponent, rein, frontLane);
         text = "強力なモンスターが出たぞ！\n今出たリーンドラゴンは疲労しない効果を持っている。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
@@ -772,12 +810,16 @@ public class BattleSystemManager : MonoBehaviour {
         // 自身のメインフェイズ
         text = "このままだと相手の攻撃を受けてしまうね。\nそんなときはモンスターを移動させて攻撃を防ごう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(960, 560));
         // モンスターを移動させるまで待つ
         while (true) {
             if (await mainPhase.CardControl(raymond, FieldLane.Lane4))
                 break;
             await UniTask.Yield();
         }
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
         text = "移動させたモンスターは疲労してしまうので注意だ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "もし移動先にモンスターがいる場合は\nそのモンスターと位置を交換するぞ！";
@@ -788,22 +830,29 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // RG:CRASSAを出すまで待つ
         CardObject crassa = CardObjectManager.instance.GetUseCardObject(3);
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(880, 250));
         while (true) {
             if (await mainPhase.CardControl(crassa, FieldLane.Lane3))
                 break;
             await UniTask.Yield();
         }
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
         text = "さらにスペルを使ってみよう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "PERFECT・STOPは自分のモンスターの\n疲労をいやすことができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // PERFECT・STOPを使うまで待つ
         CardObject perfect = CardObjectManager.instance.GetUseCardObject(1);
+        // 矢印出す
+        tutorialArrow.CreateVerticalArrow(new Vector2(650, 250));
         while (true) {
             if (await mainPhase.CardControl(perfect))
                 break;
             await UniTask.Yield();
         }
+        // 矢印消す
         text = "これでみんな攻撃できるね！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         NextPhaseSetup();
