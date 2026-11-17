@@ -159,7 +159,7 @@ public class DeckBuildView : MonoBehaviour {
             cardCounts.Add(cardID, 1);
         }
 
-        // カードIDをデッキに追加する（重複を許可）
+        // カードIDをデッキに追加する
         deckCardIDs.Add(cardID);
 
         // レイアウトを更新する

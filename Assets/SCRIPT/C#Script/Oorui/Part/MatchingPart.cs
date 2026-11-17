@@ -65,17 +65,22 @@ public class MatchingPart : PartBase {
         isReturn = false;
         isDeckSelect = false;
 
+        // 最初はキーカード画像を非表示にする
+        if (deckImage != null) {
+            deckImage.sprite = null;
+            deckImage.enabled = false;
+            deckImage.preserveAspect = true;
+        }
+
+
         // 前回選択したデッキが存在するか確認する
         DeckSaveData deckData = null;
 
         if (selectedDeckID >= 0) {
-            // デッキのデータを取得
             deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
-            // デッキに登録されているキーカードIDを取得
-            int keyCardID = deckData.keyCardID;
         }
 
-        // デッキが存在しない場合は未選択状態にする
+        // デッキが存在しない場合
         if (deckData == null) {
             selectedDeckID = -1;
 
@@ -83,20 +88,24 @@ public class MatchingPart : PartBase {
             if (selectedDeckText != null) {
                 selectedDeckText.text = "未選択";
             }
-            // 未選択状態の表示
-            if(deckImage != null) {
-                deckImage.sprite = null;
-            }
         }
         else {
             // 前回選択したデッキ名を表示する
             selectedDeckText.text = deckData.deckName;
-            // デッキに登録されているキーカードIDを取得
+
+            // キーカードIDを取得する
             int keyCardID = deckData.keyCardID;
-            // カード画像を取得
+
+            // カード画像を取得する
             Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(keyCardID);
 
-            deckImage.sprite = cardSprite;
+            // カード画像を設定する
+            if (deckImage != null) {
+                deckImage.sprite = cardSprite;
+
+                // 画像が取得できた場合のみ表示する
+                deckImage.enabled = cardSprite != null;
+            }
         }
         // ボタンイベントを登録する
         randomButton.onClick.RemoveListener(OnClickRandomButton);
@@ -139,13 +148,28 @@ public class MatchingPart : PartBase {
                 // 選択されたデッキ情報を取得する
                 DeckSaveData deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
 
-                // 選択されたデッキ情報をを表示する
-                if (deckData != null && selectedDeckText != null && deckImage != null) {
-                    selectedDeckText.text = deckData.deckName;
-                    // デッキに登録されたキーカードIDを取得
+                // 選択されたデッキ情報を表示する
+                if (deckData != null) {
+
+                    // デッキ名を表示する
+                    if (selectedDeckText != null) {
+                        selectedDeckText.text = deckData.deckName;
+                    }
+
+                    // キーカードIDを取得する
                     int keyCardID = deckData.keyCardID;
+
+                    // カード画像を取得する
                     Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(keyCardID);
-                    deckImage.sprite = cardSprite;
+
+                    // カード画像を設定する
+                    if (deckImage != null) {
+                        deckImage.sprite = cardSprite;
+
+                        // 画像が取得できた場合のみ表示する
+                        deckImage.enabled = cardSprite != null;
+                        deckImage.preserveAspect = true;
+                    }
                 }
 
                 // 選択されたデッキIDをログに表示する

@@ -863,7 +863,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 206, y: 239.8}
-  m_Spacing: {x: -25.1, y: -3.6}
+  m_Spacing: {x: -25.1, y: 22.81}
   m_Constraint: 1
   m_ConstraintCount: 10
 --- !u!1 &4005291284095018475
@@ -913,6 +913,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   content: {fileID: 4813627256079954136}
   cardPrefab: {fileID: 1819846692414181974, guid: 3bea6aeab6da37a4487d2303710e1617, type: 3}
+  isShowAllCards: 0
 --- !u!1 &4007328507773066822
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,6 +1465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuRoot: {fileID: 7198848549238471314}
+  possessionCardListView: {fileID: 939136172290563788}
   deckNameText: {fileID: 3364940712577497416}
   returnButton: {fileID: 8738106499725403895}
   content: {fileID: 4813627256079954136}
@@ -1829,8 +1831,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.0463, y: 40.13301}
-  m_SizeDelta: {x: 1875.5516, y: 721.6841}
+  m_AnchoredPosition: {x: 3.0463, y: 16.2601}
+  m_SizeDelta: {x: 1875.5516, y: 769.4298}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8804374970732946145
 CanvasRenderer:

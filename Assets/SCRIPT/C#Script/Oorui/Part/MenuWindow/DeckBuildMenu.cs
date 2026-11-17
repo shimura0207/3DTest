@@ -62,8 +62,6 @@ public class DeckBuildMenu : MenuWindowBase {
 
     // 保存ボタン内のテキストの元の色
     private Color defaultSaveButtonTextColor;
-    // カードクリック時に実行する処理
-    private Action<int, Image> onCardClicked = null;
 
     // 現在のKEYカードID
     private int keyCardID = -1;
@@ -106,7 +104,7 @@ public class DeckBuildMenu : MenuWindowBase {
         // 選択状態を初期化する
         selectMenu = DeckBuildMenuSelect.None;
         selectedCardID = -1;
-        
+
         // 選択中カードの枚数表示を初期化する
         selectedCardCountText.text = "0";
         // デッキのカードを初期化する
