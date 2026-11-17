@@ -294,6 +294,10 @@ public enum PassiveAbility {
     // 攻撃によるダメージの軽減
     AttackReduction,
 
+    //昇格
+    Upper,
+    //G数上昇
+    GOver,
     Max,
 }
 
