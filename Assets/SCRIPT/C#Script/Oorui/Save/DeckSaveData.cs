@@ -19,4 +19,6 @@ public class DeckSaveData {
 
     // デッキに登録されているカードID
     public List<int> cardIDs = new List<int>();
+    // KEYカードのID
+    public int keyCardID = -1;
 }

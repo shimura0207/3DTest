@@ -147,14 +147,7 @@ public class AttackPhase : PhaseBase {
         // 積まれた効果があれば発動
         UniTask task = AbilityManager.instance.AbilityExecute();
 
-        FieldLane frontLane = FieldLane.None;
-        // 0除算回避
-        if (card.laneID == 0) {
-            frontLane = FieldLane.Lane5;
-        }
-        else {
-            frontLane = (FieldLane)((int)FieldLane.Max % card.laneID + 1);
-        }
+        FieldLane frontLane = FieldLane.Lane5 - card.laneID;
         // 正面のモンスターを取得
         CardObject frontMonster = CardObjectManager.instance.fieldObjectList[player][frontLane];
 

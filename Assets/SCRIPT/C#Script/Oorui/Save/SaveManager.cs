@@ -90,12 +90,11 @@ public class SaveManager : MonoBehaviour {
         }
     }
 
-
     /// <summary>
     /// デッキをセーブデータに追加する
     /// </summary>
     /// <returns>作成したデッキのID</returns>
-    public int SaveDeck(string deckName, List<int> cardIDs) {
+    public int SaveDeck(string deckName, List<int> cardIDs, int keyCardID = -1) {
 
         // 保存データを読み込む
         PlayerSaveData saveData = Load();
@@ -115,10 +114,13 @@ public class SaveManager : MonoBehaviour {
             deckID = saveData.nextDeckID,
             deckName = deckName,
 
-            // 渡されたカードID一覧をコピーして保持する
+            // カードID一覧をコピーする
             cardIDs = cardIDs != null
                 ? new List<int>(cardIDs)
-                : new List<int>()
+                : new List<int>(),
+
+            // KEYカードIDを設定する
+            keyCardID = ResolveKeyCardID(cardIDs, keyCardID)
         };
 
         // デッキ一覧に追加する
@@ -152,6 +154,24 @@ public class SaveManager : MonoBehaviour {
         return saveData.deckList.Find(deck => deck != null && deck.deckID == deckID);
     }
 
+    /// <summary>
+    /// デッキIDを指定してKEYカードIDを取得する
+    /// </summary>
+    /// <param name="deckID">取得するデッキのID</param>
+    /// <returns>KEYカードのID。存在しない場合は-1</returns>
+    public int GetDeckKeyCardID(int deckID) {
+
+        // 指定されたデッキ情報を取得する
+        DeckSaveData deckData = GetDeckData(deckID);
+
+        // デッキが存在しなければ終了
+        if (deckData == null) {
+            return -1;
+        }
+
+        // 有効なKEYカードIDを返す
+        return ResolveKeyCardID(deckData.cardIDs, deckData.keyCardID);
+    }
 
     /// <summary>
     /// デッキIDを指定してカードID一覧を取得する
@@ -202,6 +222,18 @@ public class SaveManager : MonoBehaviour {
             // nullのデッキ情報はスキップする
             if (deck == null) {
                 continue;
+            }
+
+            // KEYカードが正しく設定されているか確認する
+            int validKeyCardID = ResolveKeyCardID(
+                deck.cardIDs,
+                deck.keyCardID
+            );
+
+            // KEYカードが変更されていたら更新する
+            if (deck.keyCardID != validKeyCardID) {
+                deck.keyCardID = validKeyCardID;
+                isChanged = true;
             }
 
             // IDが正しく、まだ使用されていなければ登録する
@@ -260,7 +292,7 @@ public class SaveManager : MonoBehaviour {
     /// <param name="deckName">新しいデッキ名</param>
     /// <param name="cardIDs">新しいカード一覧</param>
     /// <returns>更新できたかどうか</returns>
-    public bool UpdateDeck(int deckID, string deckName, List<int> cardIDs) {
+    public bool UpdateDeck(int deckID, string deckName, List<int> cardIDs, int keyCardID = -1) {
 
         // セーブデータを読み込む
         PlayerSaveData saveData = Load();
@@ -283,6 +315,12 @@ public class SaveManager : MonoBehaviour {
         targetDeck.cardIDs = cardIDs != null
             ? new List<int>(cardIDs)
             : new List<int>();
+
+        // KEYカードがまだ存在するなら維持し、存在しなければ変更する
+        targetDeck.keyCardID = ResolveKeyCardID(
+            targetDeck.cardIDs,
+            keyCardID >= 0 ? keyCardID : targetDeck.keyCardID
+        );
 
         // 更新したセーブデータを保存する
         Save(saveData);
@@ -574,5 +612,27 @@ public class SaveManager : MonoBehaviour {
 
         // 所持カードのセーブファイルが存在するか返す
         return File.Exists(CardDataSaveFilePath);
+    }
+
+    /// <summary>
+    /// KEYカードのIDを決定する
+    /// </summary>
+    /// <param name="cardIDs">デッキのカードID一覧</param>
+    /// <param name="keyCardID">設定したいKEYカードID</param>
+    /// <returns>有効なKEYカードID</returns>
+    private int ResolveKeyCardID(List<int> cardIDs, int keyCardID) {
+
+        // デッキが空ならKEYカードなし
+        if (cardIDs == null || cardIDs.Count == 0) {
+            return -1;
+        }
+
+        // 指定されたKEYカードがデッキに存在するか確認
+        if (cardIDs.Contains(keyCardID)) {
+            return keyCardID;
+        }
+
+        // 指定されたカードが存在しなければ先頭のカードをKEYにする
+        return cardIDs[0];
     }
 }

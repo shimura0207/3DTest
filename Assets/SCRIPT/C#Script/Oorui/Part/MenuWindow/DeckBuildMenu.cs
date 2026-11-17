@@ -65,6 +65,8 @@ public class DeckBuildMenu : MenuWindowBase {
     // カードクリック時に実行する処理
     private Action<int, Image> onCardClicked = null;
 
+    // 現在のKEYカードID
+    private int keyCardID = -1;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -113,20 +115,34 @@ public class DeckBuildMenu : MenuWindowBase {
         UpdateDeckCardCount();
         // 所持カード情報を最新の状態に更新する
         deckBuildView.RefreshOwnedCardCounts();
-        
+
         // 編集モードかどうか確認する
         if (editingDeckData != null) {
+
             // 保存されているデッキ名を入力欄に設定する
             deckNameInputField.text = editingDeckData.deckName;
 
             // 保存されているカード一覧を読み込む
             deckBuildView.SetCardIDs(editingDeckData.cardIDs);
+
+            // 保存されているKEYカードIDを取得する
+            keyCardID = SaveManager.Instance.GetDeckKeyCardID(
+                editingDeckData.deckID
+            );
+
+            // デッキのKEY表示を更新する
+            deckBuildView.RefreshKeyCardLabel(keyCardID);
+
             // デッキ全体の登録枚数を更新する
             UpdateDeckCardCount();
         }
         else {
+
             // 新規作成の場合はデッキ名を初期化する
             deckNameInputField.text = "";
+
+            // KEYカードIDを初期化する
+            keyCardID = -1;
         }
 
         // 選択カード画像を初期化する
@@ -238,7 +254,13 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
+        // KEYカードが未設定なら、最初に追加したカードをKEYにする
+        if (keyCardID < 0) {
+            keyCardID = selectedCardID;
+        }
 
+        // KEYカードの表示を更新する
+        deckBuildView.RefreshKeyCardLabel(keyCardID);
         // 現在のデッキ登録カードIDを取得する
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
 
@@ -268,7 +290,19 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // デッキからカードを1枚削除する
         deckBuildView.RemoveCard(selectedCardID);
+        // KEYカードがすべて削除されたか確認する
+        if (keyCardID >= 0 &&
+            deckBuildView.GetCardCount(keyCardID) == 0) {
 
+            // 現在のデッキ登録カードIDを取得する
+            var cardIDs = deckBuildView.GetCardIDs();
+
+            // 残っているカードの先頭を新しいKEYカードにする
+            keyCardID = cardIDs.Count > 0 ? cardIDs[0] : -1;
+        }
+
+        // KEYカードの表示を更新する
+        deckBuildView.RefreshKeyCardLabel(keyCardID);
         // 現在のデッキ登録カードIDを取得する
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
 
@@ -317,7 +351,8 @@ public class DeckBuildMenu : MenuWindowBase {
             bool isUpdated = SaveManager.Instance.UpdateDeck(
                 editingDeckData.deckID,
                 deckName,
-                cardIDs
+                cardIDs,
+                keyCardID
             );
 
             // 更新に失敗した場合は終了する
@@ -325,7 +360,11 @@ public class DeckBuildMenu : MenuWindowBase {
         }
         else {
             // 新しいデッキとして保存する
-            SaveManager.Instance.SaveDeck(deckName, cardIDs);
+            SaveManager.Instance.SaveDeck(
+                deckName,
+                cardIDs,
+                keyCardID
+            );
         }
 
         // 保存操作を設定する
