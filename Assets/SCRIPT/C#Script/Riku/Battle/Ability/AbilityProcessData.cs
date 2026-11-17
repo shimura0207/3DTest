@@ -796,6 +796,7 @@ public class AbilityProcessData {
     /// <returns></returns>
     public async UniTask SetRoleBellAbility () {
         SlotReelController.Instance.CardBellAdvent();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -804,6 +805,7 @@ public class AbilityProcessData {
     /// <returns></returns>
     public async UniTask SetRoleSuikaAbility() {
         SlotReelController.Instance.CardSuikaAdvent();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -812,6 +814,7 @@ public class AbilityProcessData {
     /// <returns></returns>
     public async UniTask SetRoleReplayAbility() {
         SlotReelController.Instance.CardReplayAdvent();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -820,6 +823,7 @@ public class AbilityProcessData {
     /// <returns></returns>
     public async UniTask SetRoleBlankAbility() {
         SlotReelController.Instance.CardBlankAdvent();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -828,6 +832,7 @@ public class AbilityProcessData {
     /// <returns></returns>
     public async UniTask SetRoleCherryAbility() {
         SlotReelController.Instance.CardCherryAdvent();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -836,6 +841,7 @@ public class AbilityProcessData {
     /// <returns></returns>
     public async UniTask UooooAbility() {
         SlotReelController.Instance.CardUoooo();
+        await UniTask.CompletedTask;
     }
 
     /// <summary>
