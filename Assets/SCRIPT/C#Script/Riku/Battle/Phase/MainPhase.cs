@@ -181,8 +181,6 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <param name="ray"></param>
     private void CardCatch(Ray ray) {
-        // 手札が縮小状態なら掴めない
-        if (CardObjectManager.instance.isHandShrink) return;
         // カードオブジェクトレイヤー取得
         int cardLayer = LayerMask.GetMask("CardObject");
         // レイキャストでカードを触れているか判定
@@ -196,7 +194,9 @@ public class MainPhase : PhaseBase {
             // オブジェクトのクラス取得
             cardObject = catchObject.GetComponent<CardObject>();
             // 相手のカードなら掴まない
-            if (cardObject.playerType != PlayerType.Self) {
+            // 手札が縮小状態で手札は掴まない
+            if (cardObject.playerType != PlayerType.Self ||
+                cardObject.handID >= 0 && CardObjectManager.instance.isHandShrink) {
                 catchObject = null;
                 cardObject = null;
                 return;

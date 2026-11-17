@@ -65,6 +65,8 @@ public class PachisuroPhase : PhaseBase {
     }
 
     public override UniTask SelfExecute() {
+
+        
         if (finished || !CanExecute()) return UniTask.CompletedTask;
         if (!entered) {
             entered = true;
