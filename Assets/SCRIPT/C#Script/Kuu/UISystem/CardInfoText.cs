@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CardInfoText : MonoBehaviour {
@@ -48,6 +49,16 @@ public class CardInfoText : MonoBehaviour {
     // 対応役アイコン
     [SerializeField] private DisplayKoyaku displayKoyaku = null;
 
+    // RG:ISUKA Lv.2の名前
+    private const string ISUKA_LV2_NAME = "RG:ISUKA LV2";
+    // RG:REACHE Lv.2の名前
+    private const string REACHE_LV2_NAME = "RG:REACHE Lv.2";
+    // RG:REACHE Lv.3の名前
+    private const string REACHE_LV3_NAME = "RG:REACHE Lv.3";
+
+    // データ保存用
+    private Entity_CardData.Param data = null;
+
     // 種族enum
     private CardRaceID cardRaceID = CardRaceID.None;
 
@@ -75,7 +86,7 @@ public class CardInfoText : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        var data = UIManager.instance.cardData;
+        data = UIManager.instance.cardData;
         
         // データがなければ非表示
         if (data == null) {
@@ -130,6 +141,54 @@ public class CardInfoText : MonoBehaviour {
         } else {
             koyakuText.enabled = false;
             cardImage.enabled = false;
+        }
+    }
+
+    /// <summary>
+    /// リンク判定
+    /// </summary>
+    /// <param name="eventData"></param>
+    public void OnPointerClick(PointerEventData eventData) {
+        // クリックした場所にリンクがあるか調べる
+        int linkIndex = TMP_TextUtilities.FindIntersectingLink(
+            abilityText,
+            eventData.position,
+            eventData.pressEventCamera
+        );
+
+        // リンクがなければ終了
+        if (linkIndex == -1)
+            return;
+
+        // クリックされたリンクの情報を取得
+        TMP_LinkInfo linkInfo = abilityText.textInfo.linkInfo[linkIndex];
+
+        // リンクIDとリンク文字を取得
+        string linkId = linkInfo.GetLinkID();
+        string linkText = linkInfo.GetLinkText();
+
+        Debug.Log("クリックされたリンクID: " + linkId);
+        Debug.Log("クリックされた文字: " + linkText);
+
+        // 名前からID取得用
+        int cardID;
+        // リンクIDによって処理を分ける
+        switch (linkId) {
+            // RG:ISUKA Lv.2の詳細表示
+            case "ISUKALV2":
+                cardID = CardDataMasterUtility.GetCardNameData(ISUKA_LV2_NAME).cardID;
+                data = CardDataMasterUtility.GetCardMaster(cardID);
+                break;
+            // RG:REACHE Lv.2の詳細表示
+            case "REACHELV2":
+                cardID = CardDataMasterUtility.GetCardNameData(REACHE_LV2_NAME).cardID;
+                data = CardDataMasterUtility.GetCardMaster(105);
+                break;
+            // RG:REACHE Lv.3の詳細表示
+            case "REACHELV3":
+                cardID = CardDataMasterUtility.GetCardNameData(REACHE_LV3_NAME).cardID;
+                data = CardDataMasterUtility.GetCardMaster(106);
+                break;
         }
     }
 
