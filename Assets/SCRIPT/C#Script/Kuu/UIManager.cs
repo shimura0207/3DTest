@@ -50,10 +50,10 @@ public class UIManager : SystemObject {
     [SerializeField] private GameObject damageUI = null;
 
     // 自分のHPTextの位置
-    private Vector3 SELFHP_POSITION = new Vector3(-400.0f, -206.0f, 0.0f);
+    private Vector3 SELFHP_POSITION = new Vector3(-0.263f, 1.123f, -0.41f);
 
     // 自分のHPTextの位置
-    private Vector3 OPPONENTHP_POSITION = new Vector3(-400.0f, 190.0f, 0.0f);
+    private Vector3 OPPONENTHP_POSITION = new Vector3(-0.263f, 1.42f, -0.41f);
 
     // ダメージの値を渡すために一時的に保存する用
     public int damageValue = 0;
