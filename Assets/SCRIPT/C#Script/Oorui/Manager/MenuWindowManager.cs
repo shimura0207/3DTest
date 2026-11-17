@@ -18,6 +18,9 @@ public class MenuWindowManager : SystemObject {
     // 生成したメニューを型ごとに管理
     private Dictionary<System.Type, MenuWindowBase> menuWindowDictionary = new Dictionary<System.Type, MenuWindowBase>();
 
+    // メニューを開いているかどうか
+    public bool isOpen { get; private set; } = false;
+
     /// <summary>
     /// メニューの参照先
     /// </summary>
@@ -102,6 +105,7 @@ public class MenuWindowManager : SystemObject {
         // メニューが存在しなければ終了
         if (menu == null) return;
 
+        isOpen = true;
         // メニューを表示
         await menu.Open();
     }
@@ -116,6 +120,7 @@ public class MenuWindowManager : SystemObject {
         if (menu == null) return;
         // メニューを非表示
         await menu.Close();
+        isOpen = false;
     }
 
     /// <summary>
@@ -134,9 +139,13 @@ public class MenuWindowManager : SystemObject {
 
         // 空いているレーンのみ表示
         laneWindow.SetupEmptyLane(playerType);
-
+        
+        isOpen = true;
         // 選択結果を返す
-        return await laneWindow.OpenAndWaitForSelection();
+        FieldLane lane = await laneWindow.OpenAndWaitForSelection();
+        isOpen = false;
+
+        return lane;
     }
 
     /// <summary>
@@ -156,8 +165,12 @@ public class MenuWindowManager : SystemObject {
         // カードが置かれているレーンのみ表示
         laneWindow.SetupPlacedLane(playerType);
 
+        isOpen = true;
         // 選択結果を返す
-        return await laneWindow.OpenAndWaitForSelection();
+        FieldLane lane = await laneWindow.OpenAndWaitForSelection();
+        isOpen = false;
+
+        return lane;
     }
 
     /// <summary>
@@ -173,8 +186,12 @@ public class MenuWindowManager : SystemObject {
         // メニューがなくてもいいえが押された状態とする
         if (menu == null) return false;
 
+        isOpen = true;
         // 選択結果を返す
-        return await menu.Open(message);
+        var select = await menu.Open(message);
+        isOpen = false;
+
+        return select;
     }
 
     /// <summary>
@@ -189,8 +206,10 @@ public class MenuWindowManager : SystemObject {
         // なかった場合は何も出さない
         if (menu == null) return;
 
+        isOpen = true;
         // メニューの表示
         await menu.Open(message);
+        isOpen = false;
     }
 
     /// <summary>
@@ -203,8 +222,10 @@ public class MenuWindowManager : SystemObject {
         CardDetailMenu menu = Get<CardDetailMenu>();
         if (menu == null) return;
 
+        isOpen = true;
         // メニューを開く
         await menu.Open(id);
+        isOpen = false;
     }
 
     /// <summary>
@@ -219,8 +240,10 @@ public class MenuWindowManager : SystemObject {
         // メニューがない場合は処理しない 
         if (menu == null) return;
 
+        isOpen = true;
         // メニューにIDを渡して開く
         await menu.Open(id);
+        isOpen = false;
     }
 
     /// <summary>
@@ -233,7 +256,11 @@ public class MenuWindowManager : SystemObject {
 
         if (menu == null) return ConnectionState.None;
 
-        return await menu.Open(connect);
+        isOpen = true;
+        var select = await menu.Open(connect);
+        isOpen = false;
+
+        return select;
     }
 
     /// <summary>
@@ -249,8 +276,12 @@ public class MenuWindowManager : SystemObject {
             return false;
         }
 
+        isOpen = true;
         // 確認画面を開き、選択結果を返す
-        return await menu.OpenAndWaitForSelection();
+        var select = await menu.OpenAndWaitForSelection();
+        isOpen = false;
+
+        return select;
     }
 
     /// <summary>
@@ -266,8 +297,10 @@ public class MenuWindowManager : SystemObject {
         // 表示する前にホスト・クライアントの役割を渡す
         menu.SetConnectionState(state);
 
+        isOpen = true;
         // 共通のルーム画面を表示する
         await menu.Open();
+        isOpen = false; 
     }
 
     /// <summary>
@@ -283,7 +316,11 @@ public class MenuWindowManager : SystemObject {
         // メニューが存在しない場合はキャンセル扱いにする
         if (menu == null) return null;
 
+        isOpen = true;
         // 現在のデッキIDを渡してメニューを開き、選択結果を返す
-        return await menu.OpenAndWaitForSelection(currentDeckID);
+        var select = await menu.OpenAndWaitForSelection(currentDeckID);
+        isOpen = false;
+
+        return select;
     }
 }

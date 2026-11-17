@@ -296,6 +296,8 @@ public class CardObjectManager : MonoBehaviour {
     /// 手札の拡大
     /// </summary>
     public void ScaleUpHand() {
+        // メニューが開いている間は拡大縮小の操作ができない
+        if (MenuWindowManager.Instance.isOpen) return;
         selfHandRoot.localScale = Vector3.one;
         selfHandRoot.localPosition = Vector3.zero;
         isHandShrink = false;
@@ -305,6 +307,8 @@ public class CardObjectManager : MonoBehaviour {
     /// 手札の縮小
     /// </summary>
     public void ScaleDownHand() {
+        // メニューが開いている間は拡大縮小の操作ができない
+        if (MenuWindowManager.Instance.isOpen) return;
         selfHandRoot.localScale *= SHRINK_HAND_SCALE;
         selfHandRoot.localPosition = SHRINK_HAND_POSITION;
         isHandShrink = true;
