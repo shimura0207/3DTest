@@ -101,3 +101,19 @@ MonoBehaviour:
     cardImage: {fileID: 21300000, guid: c5445dbf32bc91e469da2aeea564d063, type: 3}
   - cardID: 220
     cardImage: {fileID: 21300000, guid: b5efaece57578ae489d5fcd273919cb8, type: 3}
+  - cardID: 901
+    cardImage: {fileID: 21300000, guid: 4ff87d89a3f981e468f4ee7cb16c9189, type: 3}
+  - cardID: 902
+    cardImage: {fileID: 21300000, guid: 42c2d275d9154ab4fbf0829fb2ac7046, type: 3}
+  - cardID: 903
+    cardImage: {fileID: 21300000, guid: b6a367bcc8a2d2f428c4ea6c689061e1, type: 3}
+  - cardID: 904
+    cardImage: {fileID: 21300000, guid: 81ada1f5c964b174cb44c9ed0a443b06, type: 3}
+  - cardID: 905
+    cardImage: {fileID: 21300000, guid: a35e70d055fea6e44bd816e701953819, type: 3}
+  - cardID: 906
+    cardImage: {fileID: 21300000, guid: 444668a262df13e44acaa7102b667ece, type: 3}
+  - cardID: 907
+    cardImage: {fileID: 21300000, guid: d9c61b01b6b6b804994422f99f423fa6, type: 3}
+  - cardID: 908
+    cardImage: {fileID: 21300000, guid: bd9ecb3dcf8012a42b337b98e7d11e00, type: 3}
