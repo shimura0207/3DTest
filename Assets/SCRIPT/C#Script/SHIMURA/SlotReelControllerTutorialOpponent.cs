@@ -18,7 +18,7 @@ public partial class SlotReelController {
     /// 呼び出す前に、相手のパチスロフェイズのSetupを済ませること。
     /// この関数と同時にOpponentExecuteやEnemySlotUpdateを呼ばないこと。
     /// </summary>
-    public async UniTask PlayTutorialOpponentAsync(
+    public async UniTask PlayTutorialOpponentAsync( 
         params PachisuroSymbolKoyakuEnum[] roles) {
         // 再生条件を確認する。失敗時にフェイズを先へ進めない。
         if (tutorialOpponentPlaying)
