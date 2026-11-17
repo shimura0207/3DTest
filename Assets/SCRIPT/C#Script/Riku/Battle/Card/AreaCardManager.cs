@@ -155,7 +155,7 @@ public class AreaCardManager : MonoBehaviour {
         // 墓地に指定されたカードを追加
         outDeckCards[player].graveCards.Add(outDeckCards[player].fieldCards[laneID]);
         // 指定されたカードをフィールドから削除
-        outDeckCards[player].fieldCards.RemoveAt(laneID);
+        outDeckCards[player].fieldCards[laneID] = -1;
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public class AreaCardManager : MonoBehaviour {
         // 手札に指定されたカードを追加
         outDeckCards[player].handCards.Add(outDeckCards[player].fieldCards[laneID]);
         // 指定されたカードをフィールドから削除
-        outDeckCards[player].fieldCards.RemoveAt(laneID);
+        outDeckCards[player].fieldCards[laneID] = -1;
     }
 
     /// <summary>

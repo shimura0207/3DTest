@@ -29,6 +29,7 @@ public class AbilityManager : MonoBehaviour {
     public void Initialize() {
         instance = this;
         abilityProcessData = new AbilityProcessData();
+        abilityProcessData.Initialize();
 
         abilityQueue = new Queue<Func<UniTask>>();
     }
