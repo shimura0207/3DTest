@@ -61,9 +61,34 @@ public class StandbyPart : PartBase {
             PossessionCardSaveData cardSaveData =
                 SaveManager.Instance.LoadCards();
 
-            // デッキ内のカードをすべて所持カードに登録する
+            // カードIDごとの所持枚数を管理する
+            Dictionary<int, int> cardCount = new Dictionary<int, int>();
+
+            // 所持カードの最大枚数
+            const int MAX_CARD_COUNT = 3;
+
+            // すべての初期デッキを確認する
             foreach (var deck in starterDecks) {
-                cardSaveData.cardID.AddRange(deck.Value);
+
+                // デッキ内のカードIDを確認する
+                foreach (int cardID in deck.Value) {
+
+                    // カードIDが辞書に存在しなければ追加する
+                    if (!cardCount.ContainsKey(cardID)) {
+                        cardCount.Add(cardID, 0);
+                    }
+
+                    // すでに3枚所持している場合は追加しない
+                    if (cardCount[cardID] >= MAX_CARD_COUNT) {
+                        continue;
+                    }
+
+                    // 所持カードにカードIDを追加する
+                    cardSaveData.cardID.Add(cardID);
+
+                    // 所持枚数を加算する
+                    cardCount[cardID]++;
+                }
             }
 
             // 所持カードデータを保存する
