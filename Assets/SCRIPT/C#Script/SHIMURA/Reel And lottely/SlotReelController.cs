@@ -49,6 +49,25 @@ public partial class SlotReelController : MonoBehaviour {
     // 現在のパチスロフェイズ終了時の攻撃判定用状態。
     public bool AttackRush { get; private set; }
     public bool AttackNextRush { get; private set; }
+
+    // 今回の攻撃用状態を保存済みか。次回用RUSHの更新後に上書きしないための印。
+    private bool attackRushStateCaptured;
+
+    /// <summary>
+    /// 今回のパチスロの攻撃判定用RUSH状態を、一度だけ保存する。
+    /// DebugAAAによる次回状態の更新前、または相手再生終了時に呼ぶ。
+    /// </summary>
+    private void CaptureAttackRushState() {
+        // 終了処理が複数回呼ばれても、今回の攻撃用情報を維持する。
+        if (attackRushStateCaptured ||
+            (!networkLocalControl && !networkRemoteControl)) return;
+
+        AttackRush = rush;
+        // ローカルのレア役当選も保存する。
+        // 相手再生では、自分側に残るRnrushを混ぜず相手のnrushを使う。
+        AttackNextRush = nrush || (networkLocalControl && Rnrush);
+        attackRushStateCaptured = true;
+    }
     // リールロック演出中は停止入力を受け付けない。
     public bool NetworkReelLockRunning { get; private set; }
 
@@ -115,6 +134,8 @@ public partial class SlotReelController : MonoBehaviour {
     /// 自分のパチスロ操作を開始します。
     /// </summary>
     public void BeginLocalPlayback() {
+        // 新しいフェイズの攻撃用情報は、終了時に改めて保存する。
+        attackRushStateCaptured = false;
         BeginSlotCardEffects();
         ResetRoleStocks();
         networkLocalControl = true;
@@ -130,6 +151,8 @@ public partial class SlotReelController : MonoBehaviour {
     /// 自分の抽選状態は保存しておきます。
     /// </summary>
     public void BeginRemotePlayback() {
+        // 新しいフェイズの攻撃用情報は、終了時に改めて保存する。
+        attackRushStateCaptured = false;
         ResetRoleStocks();
         savedRush = rush;
         savedNextRush = nrush;
@@ -154,10 +177,9 @@ public partial class SlotReelController : MonoBehaviour {
         if (networkLocalControl) ClearSlotCardEffects();
         HideRushLogo();
         ResetRoleStocks();
-        if (networkLocalControl || networkRemoteControl) {
-            AttackRush = rush;
-            AttackNextRush = nrush;
-        }
+        // DebugAAAで保存済みなら保持する。
+        // 相手側などDebugAAAを通らない経路では、復元前の状態をここで保存する。
+        CaptureAttackRushState();
         if (networkRemoteControl) {
             rush = savedRush;
             nrush = savedNextRush;
@@ -1684,6 +1706,8 @@ public partial class SlotReelController : MonoBehaviour {
 
     //呼び出せば見れる
     public void DebugAAA() {
+        // 次回用のrush/nrushを変更する前に、今回の攻撃判定用情報を確定する。
+        CaptureAttackRushState();
 
         Debug.Log("★★★ 5G終了");
         Debug.Log("nrush = " + nrush);

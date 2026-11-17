@@ -716,29 +716,82 @@ public class BattleSystemManager : MonoBehaviour {
         NextPhaseSetup();
 
         // 自身のパチスロフェイズ
+        SlotReelController slot = SlotReelController.Instance;
+
+        // Startによるリール初期化が終わるまで待つ。
+        await UniTask.WaitUntil(() => slot.NetworkReady);
+
+        // 通信を行わないチュートリアルにする。
+        slot.SetTutorialMode(true);
+
+        // 操作状態・G数・今回の役履歴を初期化する。
+        // 5G全体の開始時に1回だけ呼ぶ。各Gの前には呼ばない。
+        slot.BeginLocalPlayback();
+
+        // 1G目から5G目までの役を順に予約する。
+        slot.SetTutorialRoles(
+            PachisuroSymbolKoyakuEnum.Miss,
+            PachisuroSymbolKoyakuEnum.WeakCherry,
+            PachisuroSymbolKoyakuEnum.Suika,
+            PachisuroSymbolKoyakuEnum.Chance,
+            PachisuroSymbolKoyakuEnum.Miss
+        );
+
         text = "パチスロを回そう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "Ctrlでbet！上矢印でリールを回せるぞ！";
+
+        text = "右CtrlでBET！上矢印でリールを回せるぞ！\n左・下・右矢印で各リールを止めよう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+
         text = "基本的には横か斜めに絵柄が揃うと役の成立だ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // ハズレを引く
+
+        // ── 1G目：ハズレ ──
+        // 操作を受け付け、第3停止が完了するまでここで待機する。
+        await WaitTutorialThirdStopAsync();
+
         text = "今回は何も絵柄がそろっていないのでハズレ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+
         text = "これでパチスロフェイズの終わりに攻撃ができるね。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // 弱チェを引く
+
+        // ── 2G目：弱チェリー ──
+        await WaitTutorialThirdStopAsync();
+
         text = "チェリーは左のリールに一つでも止まったら\n役として成立するよ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // スイカを引く
+
+        // ── 3G目：スイカ ──
+        await WaitTutorialThirdStopAsync();
+
         text = "レアな役を引いたみたいだね。レアな役は出にくいぶん、\n対応モンスターの破壊力はすごいぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // チャンス目を引く
+
+        // ── 4G目：チャンス目 ──
+        await WaitTutorialThirdStopAsync();
+
         text = "おっとチャンス目だ！この役はチェリーとスイカ\n両方の役が成立したとみなされるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // ハズレを引く
+
+        // ── 5G目：ハズレ ──
+        await WaitTutorialThirdStopAsync();
+
         text = "また対応役を引いたね！\nこれで2回攻撃ができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+
+        // 通常のSelfExecuteを使わず進行したので、終了処理もここで行う。
+        // 攻撃用のRUSH情報・テーブルなどを既存の処理で更新する。
+        slot.DebugAAA();
+
+        // 最後の演出を表示する時間を取ってから片付ける。
+        await UniTask.Delay(3000);
+
+        slot.efectManager.HideTrumps();
+        slot.EndNetworkPlayback();
+        slot.HideStopEffectImage();
+
+        // 次のフェイズへ移る。
         NextPhaseSetup();
 
         // 自身のアタックフェイズ
@@ -798,8 +851,18 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         NextPhaseSetup();
 
-        // 相手のパチスロフェイズ
-        // ハズレ、ハズレ、リプ、ベル、リプを引く
+        // 相手のパチスロフェイズ。
+        // ハズレ → ハズレ → リプレイ → ベル → リプレイの順に自動再生。
+        // 最後の第3停止と演出待機が終わるまで、ここで待つ。
+        await SlotReelController.Instance.PlayTutorialOpponentAsync(
+            PachisuroSymbolKoyakuEnum.Miss,
+            PachisuroSymbolKoyakuEnum.Miss,
+            PachisuroSymbolKoyakuEnum.Replay,
+            PachisuroSymbolKoyakuEnum.Bell,
+            PachisuroSymbolKoyakuEnum.Replay
+        );
+
+        // 相手のアタックフェイズへ。
         NextPhaseSetup();
 
         // 相手のアタックフェイズ
@@ -887,15 +950,74 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         NextPhaseSetup();
 
-        // 自身のパチスロフェイズ
-        // リプ、弱チェ、ベル、強チェを引く
+        // 自身のパチスロフェイズ（2回目）
+        // この時点で、パチスロフェイズのSetupが完了していること。
+
+        // 前の処理でもslotを宣言している可能性があるため、別名にする。
+        SlotReelController secondSlot = SlotReelController.Instance;
+
+        // リールの初期化完了を待つ。
+        await UniTask.WaitUntil(() => secondSlot.NetworkReady);
+
+        // 通信なしのチュートリアルに切り替える。
+        secondSlot.SetTutorialMode(true);
+
+        // 今回の5Gを開始する準備。
+        // G数・役履歴などを初期化する。各Gの前には呼ばない。
+        secondSlot.BeginLocalPlayback();
+
+        // 1G目から5G目までの役を予約する。
+        secondSlot.SetTutorialRoles(
+            PachisuroSymbolKoyakuEnum.Replay,
+            PachisuroSymbolKoyakuEnum.WeakCherry,
+            PachisuroSymbolKoyakuEnum.Bell,
+            PachisuroSymbolKoyakuEnum.StrongCherry,
+            PachisuroSymbolKoyakuEnum.Seven
+        );
+
+        // 1G目：リプレイ。
+        // プレイヤーがBET・レバー・停止操作を行い、第3停止まで待つ。
+        await WaitTutorialThirdStopAsync();
+
+        // 2G目：弱チェリー。
+        await WaitTutorialThirdStopAsync();
+
+        // 3G目：ベル。
+        await WaitTutorialThirdStopAsync();
+
+        // 4G目：強チェリー。
+        // 最後のリールが完全に停止してから説明を表示する。
+        await WaitTutorialThirdStopAsync();
+
         text = "特別なチェリーを引いたね！\nチェリーが揃ったら2倍の攻撃力で攻撃するぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // 7を引く
+
+        // 5G目：Seven。
+        // 説明を閉じた後に操作を再開し、第3停止まで待つ。
+        await WaitTutorialThirdStopAsync();
+
         text = "すごい演出が出て7が揃ったね。\n7が揃うと全員で攻撃できるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+
         text = "さらに、ラッシュに当選！\n次のパチスロフェイズで7が揃う確率が大幅にアップするぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+
+        // 通常のSelfExecuteを使わず進めたため、終了処理を行う。
+        // 既存のRUSH・テーブル更新を実行する。
+        secondSlot.DebugAAA();
+
+        // 最後の演出を表示してから片付ける。
+        await UniTask.Delay(3000);
+
+        if (secondSlot.efectManager != null) {
+            secondSlot.efectManager.HideTrumps();
+        }
+
+        // 攻撃判定用のRUSH情報を保存して、スロット操作を終了する。
+        secondSlot.EndNetworkPlayback();
+        secondSlot.HideStopEffectImage();
+
+        // 自身のアタックフェイズへ。
         NextPhaseSetup();
 
         // 自身のアタックフェイズ
@@ -920,8 +1042,18 @@ public class BattleSystemManager : MonoBehaviour {
         await SummonMonster(PlayerType.Opponent, jingle, frontLane);
         NextPhaseSetup();
 
-        // 相手のパチスロフェイズ
-        // スイカ、リプ、リプ、リプ、ハズレを引く
+        // 相手のパチスロフェイズ（2回目）
+        // スイカ → リプレイ → リプレイ → リプレイ → ハズレの順に自動再生。
+        // 最後の第3停止と演出の待機・終了処理まで待つ。
+        await SlotReelController.Instance.PlayTutorialOpponentAsync(
+            PachisuroSymbolKoyakuEnum.Suika,
+            PachisuroSymbolKoyakuEnum.Replay,
+            PachisuroSymbolKoyakuEnum.Replay,
+            PachisuroSymbolKoyakuEnum.Replay,
+            PachisuroSymbolKoyakuEnum.Miss
+        );
+
+        // 相手のアタックフェイズへ。
         NextPhaseSetup();
 
         // 相手のアタックフェイズ
@@ -959,11 +1091,132 @@ public class BattleSystemManager : MonoBehaviour {
         NextPhaseSetup();
 
         // 自身のパチスロフェイズ
-        // 7、弱チェ、ハズレ、7、7を引く
+        // この時点でパチスロフェイズのSetupが完了していること。
+        {
+            SlotReelController tutorialSlot = SlotReelController.Instance;
+
+            // 初期化完了を待ち、通信なしの操作に切り替える。
+            await UniTask.WaitUntil(() => tutorialSlot.NetworkReady);
+            tutorialSlot.SetTutorialMode(true);
+
+            // 今回のG数・役履歴を初期化する。
+            // 前回から引き継いだRUSH状態は維持する。
+            tutorialSlot.BeginLocalPlayback();
+
+            // 1G目から5G目までの役を予約する。
+            tutorialSlot.SetTutorialRoles(
+                PachisuroSymbolKoyakuEnum.Seven,
+                PachisuroSymbolKoyakuEnum.WeakCherry,
+                PachisuroSymbolKoyakuEnum.Miss,
+                PachisuroSymbolKoyakuEnum.Seven,
+                PachisuroSymbolKoyakuEnum.Seven
+            );
+
+            // 各Gはプレイヤーが操作する。
+            // 第3停止が完了してから次のGの操作待機へ進む。
+            await WaitTutorialThirdStopAsync(); // 1G目：Seven
+            await WaitTutorialThirdStopAsync(); // 2G目：弱チェリー
+            await WaitTutorialThirdStopAsync(); // 3G目：ハズレ
+            await WaitTutorialThirdStopAsync(); // 4G目：Seven
+            await WaitTutorialThirdStopAsync(); // 5G目：Seven
+
+            // 既存のRUSH・テーブル更新を行う。
+            tutorialSlot.DebugAAA();
+
+            // 最後の演出を見せてから片付ける。
+            await UniTask.Delay(3000);
+
+            if (tutorialSlot.efectManager != null) {
+                tutorialSlot.efectManager.HideTrumps();
+            }
+
+            // 攻撃判定用の状態を保存し、スロット操作を終了する。
+            tutorialSlot.EndNetworkPlayback();
+            tutorialSlot.HideStopEffectImage();
+        }
+
+        // 自身のアタックフェイズへ。
         NextPhaseSetup();
 
         // 自身のアタックフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
         NextPhaseSetup();
+    }
+
+    /// <summary>
+    /// チュートリアルの1Gを、最後のリールが完全に停止するまで進める。
+    ///
+    /// この関数は役の予約やフェイズの初期化は行わない。
+    /// 事前にSetTutorialRolesとBeginLocalPlaybackを呼んでおくこと。
+    ///
+    /// 待機中だけSlotUpdateを呼ぶため、説明文を表示している間は
+    /// この関数からの操作受付は止まる。
+    /// </summary>
+    private async UniTask WaitTutorialThirdStopAsync() {
+        SlotReelController slot = SlotReelController.Instance;
+
+        // 初期化されていなければ、説明を先へ進めずエラーにする。
+        if (slot == null || !slot.NetworkReady) {
+            throw new System.InvalidOperationException(
+                "SlotReelControllerの初期化が完了していません。"
+            );
+        }
+
+        // 通信ありの対戦処理を誤って進めないように確認する。
+        if (!slot.IsTutorialMode) {
+            throw new System.InvalidOperationException(
+                "先にSetTutorialMode(true)を呼んでください。"
+            );
+        }
+
+        // この関数は、1Gの開始前に呼び出す。
+        if (slot.IsAnyReelRotating() || slot.NetworkReelLockRunning) {
+            throw new System.InvalidOperationException(
+                "リールが停止している状態で呼んでください。"
+            );
+        }
+
+        // 最大G数に達している場合、次のレバーオンはできない。
+        if (slot.slotIndex >= slot.SLOT_TEARN_MAX_G) {
+            throw new System.InvalidOperationException(
+                "このパチスロフェイズの最大G数に到達しています。"
+            );
+        }
+
+        // 開始前のG数を保存する。
+        // 最初からリールが停止していても、待機が即終了しないために使う。
+        int beforeGameIndex = slot.slotIndex;
+
+        // スロットが破棄されたら待機も中止する。
+        var cancellationToken = slot.GetCancellationTokenOnDestroy();
+
+        while (true) {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // 無効化やチュートリアル解除時に待ち続けないようにする。
+            if (!slot.isActiveAndEnabled || !slot.IsTutorialMode) {
+                throw new System.OperationCanceledException(
+                    "チュートリアルのスロット操作が中断されました。"
+                );
+            }
+
+            // BET・レバー・停止入力と、リールの移動を更新する。
+            // この待機中、別の処理からSlotUpdateを重複して呼ばないこと。
+            slot.SlotUpdate();
+
+            // G数が増えた＝今回のレバーオンが成功した。
+            bool gameStarted = slot.slotIndex > beforeGameIndex;
+
+            // 回転開始後、全リールが実際に停止したら完了。
+            // 停止ボタンを押した瞬間ではなく、滑り終わるまで待つ。
+            if (gameStarted &&
+                !slot.IsAnyReelRotating() &&
+                !slot.NetworkReelLockRunning) {
+                return;
+            }
+
+            // 必ず次フレームまで待ってから、次の更新を行う。
+            await UniTask.NextFrame(cancellationToken: cancellationToken);
+        }
     }
 }
