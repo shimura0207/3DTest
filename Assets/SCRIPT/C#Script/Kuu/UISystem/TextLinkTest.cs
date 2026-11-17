@@ -9,7 +9,7 @@ public class TextLinkTest : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TMP_Text effectText;
 
     void Start() {
-        effectText.text = "この効果は<link=\"LINK\">仮</link>である。".ToString();
+        effectText.text = "この効果は<link=\"LINK\"><color=#0089FF>仮</color></link>である。";
     }
 
     void Update() {
