@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -14,6 +15,7 @@ public class MasterDataManager {
     public static List<List<Entity_CardData.Param>> cardData = null;    // カードデータ
     public static List<List<Entity_RentalDeck.Param>> rentalDeck = null;// デッキデータ
     public static List<List<Entity_ErrorWord.Param>> errorWord = null;  // 禁止ワード
+    public static List<List<Entity_StarterDeck.Param>> starterDeck = null;  // 初期デッキ
 
     /// <summary>
     /// すべてのマスターデータを読み込む
@@ -22,6 +24,7 @@ public class MasterDataManager {
         cardData = Load<Entity_CardData, Entity_CardData.Sheet, Entity_CardData.Param>("CardData");                 // カードデータ
         rentalDeck = Load<Entity_RentalDeck, Entity_RentalDeck.Sheet, Entity_RentalDeck.Param>("DeckDataRental");   // レンタルデッキ
         errorWord = Load<Entity_ErrorWord, Entity_ErrorWord.Sheet, Entity_ErrorWord.Param>("ErrorWord");            // 禁止ワード
+        starterDeck = Load<Entity_StarterDeck, Entity_StarterDeck.Sheet, Entity_StarterDeck.Param>("StarterDeckData");  // 初期デッキ
     }
 
     /// <summary>

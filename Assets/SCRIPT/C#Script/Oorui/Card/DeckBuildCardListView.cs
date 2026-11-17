@@ -31,7 +31,8 @@ public class DeckBuildCardListView : MonoBehaviour {
 
     // 現在のデッキ登録カードIDを保持する
     private List<int> currentDeckCardIDs = new List<int>();
-
+    // 現在のデッキテーマ
+    private CardTheme currentDeckTheme = CardTheme.None;
     /// <summary>
     /// カードクリック時の処理を設定する
     /// </summary>
@@ -70,7 +71,8 @@ public class DeckBuildCardListView : MonoBehaviour {
 
         // カードIDごとに表示を生成する
         foreach (KeyValuePair<int, int> entry in cardCounts) {
-
+            // デッキテーマに合わないカードは表示しない
+            if (!CanDisplayCard(entry.Key)) continue;
             // カード画像を取得する
             Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(entry.Key);
 
@@ -275,5 +277,39 @@ public class DeckBuildCardListView : MonoBehaviour {
             // 対象カードが見つかったので終了する
             return;
         }
+    }
+
+    /// <summary>
+    /// デッキテーマを設定する
+    /// </summary>
+    public void SetDeckTheme(CardTheme theme) {
+
+        // 現在のデッキテーマを更新する
+        currentDeckTheme = theme;
+    }
+
+    /// <summary>
+    /// 指定したカードが一覧に表示可能か判定する
+    /// </summary>
+    private bool CanDisplayCard(int cardID) {
+
+        // テーマが未決定ならすべて表示する
+        if (currentDeckTheme == CardTheme.None) return true;
+
+        // 汎用テーマならすべて表示する
+        if (currentDeckTheme == CardTheme.Neutral) return true;
+
+        // マスターデータを取得する
+        var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+
+        // マスターデータが存在しなければ表示しない
+        if (cardData == null) return false;
+
+        // カードのテーマを取得する
+        CardTheme cardTheme = (CardTheme)cardData.themeID;
+
+        // デッキテーマと同じテーマ、または汎用なら表示する
+        return cardTheme == currentDeckTheme ||
+               cardTheme == CardTheme.Neutral;
     }
 }

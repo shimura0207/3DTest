@@ -5,60 +5,130 @@
 
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
 /// 準備パート
 /// </summary>
 public class StandbyPart : PartBase {
+
     public override async UniTask Execute() {
 
-        // マスターデータの読み込み
+        // マスターデータを読み込む
         MasterDataManager.LoadAllData();
 
-        // 所持カードセーブデータにレンタルデッキを登録する
-        AddPossessionCardData();
+        // 初期デッキを登録する
+        RegisterStarterDecks();
 
         // デバッグログを表示する
         Debug.Log("StandbyPart通過");
-        // タイトルパートへ遷移し、遷移処理が完了するまで待機する
+
+        // タイトルパートへ遷移する
         await PartManager.Instance.TransitionPart(GamePart.Title);
     }
 
-
     /// <summary>
-    /// 所持カードセーブデータにカードを登録していく
+    /// 初期デッキと所持カードを登録する
     /// </summary>
-    private void AddPossessionCardData() {
-        // すでに所持カードのセーブファイルが存在する場合は終了する
-        if (SaveManager.Instance.HasCardSaveFile()) {
-            Debug.Log("既存の所持カードデータが存在するため登録をスキップします");
+    private void RegisterStarterDecks() {
+
+        // プレイヤーデータが存在するか確認する
+        bool hasPlayerSave = SaveManager.Instance.HasPlayerSaveFile();
+
+        // 所持カードデータが存在するか確認する
+        bool hasCardSave = SaveManager.Instance.HasCardSaveFile();
+
+        // 両方存在する場合は登録を終了する
+        if (hasPlayerSave && hasCardSave) {
+            Debug.Log("初期データが登録済みのためスキップします");
             return;
         }
 
-        // レンタルデッキを取得
-        List<int> rental = DeckDataMasterUtility.GetDeckMaster(1);
+        // 初期デッキのマスターデータを取得する
+        SortedDictionary<int, List<int>> starterDecks =
+            StarterDeckDataMasterUtility.GetStarterDecks();
 
-        // レンタルデッキが取得できなければ処理を終了する
-        if (rental == null) return;
+        // 初期デッキデータが存在しなければ終了する
+        if (starterDecks == null || starterDecks.Count == 0) {
+            Debug.LogWarning("初期デッキのマスターデータが存在しません");
+            return;
+        }
 
-        // 新規の所持カードセーブデータを取得
-        PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
+        // 所持カードデータが存在しない場合のみ登録する
+        if (!hasCardSave) {
 
-        // セーブデータが存在しなければ処理を終了する
-        if (saveData == null) return;
+            // 新規の所持カードセーブデータを取得する
+            PossessionCardSaveData cardSaveData =
+                SaveManager.Instance.LoadCards();
 
-        // レンタルデッキのカードIDをすべて追加する
-        saveData.cardID.AddRange(rental);
+            // カードIDごとの所持枚数を管理する
+            Dictionary<int, int> cardCount = new Dictionary<int, int>();
 
-        // 所持カードのセーブデータを保存する
-        SaveManager.Instance.SaveCards(saveData);
+            // 所持カードの最大枚数
+            const int MAX_CARD_COUNT = 3;
 
-        // デバッグログを表示する
-        Debug.Log($"初回レンタルデッキ登録完了：{rental.Count}枚");
+            // すべての初期デッキを確認する
+            foreach (var deck in starterDecks) {
 
+                // デッキ内のカードIDを確認する
+                foreach (int cardID in deck.Value) {
 
+                    // カードIDが辞書に存在しなければ追加する
+                    if (!cardCount.ContainsKey(cardID)) {
+                        cardCount.Add(cardID, 0);
+                    }
+
+                    // すでに3枚所持している場合は追加しない
+                    if (cardCount[cardID] >= MAX_CARD_COUNT) {
+                        continue;
+                    }
+
+                    // 所持カードにカードIDを追加する
+                    cardSaveData.cardID.Add(cardID);
+
+                    // 所持枚数を加算する
+                    cardCount[cardID]++;
+                }
+            }
+
+            // 所持カードデータを保存する
+            SaveManager.Instance.SaveCards(cardSaveData);
+
+            Debug.Log("初期カードの登録が完了しました");
+        }
+
+        // プレイヤーデータが存在しない場合のみデッキを登録する
+        if (!hasPlayerSave) {
+
+            // DeckIDごとにデッキを作成する
+            foreach (var deck in starterDecks) {
+
+                // マスターデータのDeckIDを取得する
+                int masterDeckID = deck.Key;
+
+                // デッキに含まれるカードID一覧を取得する
+                List<int> cardIDs = deck.Value;
+
+                // 空のデッキは登録しない
+                if (cardIDs == null || cardIDs.Count == 0) {
+                    continue;
+                }
+
+                // 初期デッキ名を設定する
+                string deckName = $"レンタルデッキ{masterDeckID}";
+
+                // デッキをセーブデータに登録する
+                int savedDeckID = SaveManager.Instance.SaveDeck(
+                    deckName,
+                    cardIDs
+                );
+
+                // 登録結果を表示する
+                Debug.Log(
+                    $"初期デッキ登録完了 MasterDeckID:{masterDeckID} " +
+                    $"SaveDeckID:{savedDeckID} カード枚数:{cardIDs.Count}"
+                );
+            }
+        }
     }
-
 }

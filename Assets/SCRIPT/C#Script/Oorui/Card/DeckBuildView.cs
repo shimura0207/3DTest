@@ -22,6 +22,9 @@ public class DeckBuildView : MonoBehaviour {
 
     // 1種類のカードをデッキに登録できる最大枚数
     private const int MAX_CARD_COUNT = 3;
+    // 現在のデッキテーマ
+    private CardTheme deckTheme = CardTheme.None;
+
 
     // カードIDごとの表示オブジェクト
     private readonly Dictionary<int, PossessionCardItem> cardItems = new Dictionary<int, PossessionCardItem>();
@@ -88,7 +91,16 @@ public class DeckBuildView : MonoBehaviour {
     /// デッキにカードを追加する
     /// </summary>
     public void AddCard(int cardID) {
+        // テーマが合わないカードは追加しない
+        if (!CanAddCard(cardID)) return;
 
+        // マスターデータからカード情報を取得する
+        var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+
+        // 最初のカードならデッキテーマを設定する
+        if (deckTheme == CardTheme.None) {
+            deckTheme = (CardTheme)cardData.themeID;
+        }
         // 必要な参照が設定されているか確認する
         if (content == null || cardPrefab == null) return;
 
@@ -203,7 +215,12 @@ public class DeckBuildView : MonoBehaviour {
                 cardCounts[cardID]
             );
         }
+        // デッキにカードが残っていない場合
+        if (deckCardIDs.Count == 0) {
 
+            // デッキテーマを初期化する
+            deckTheme = CardTheme.None;
+        }
         // レイアウトを更新する
         UpdateLayout();
     }
@@ -255,7 +272,8 @@ public class DeckBuildView : MonoBehaviour {
         cardItems.Clear();
         cardCounts.Clear();
         deckCardIDs.Clear();
-
+        // デッキテーマを初期化する
+        deckTheme = CardTheme.None;
         // レイアウトを更新する
         UpdateLayout();
     }
@@ -367,5 +385,36 @@ public class DeckBuildView : MonoBehaviour {
             // カードのクリック操作を妨げないようにする
             label.raycastTarget = false;
         }
+    }
+
+    /// <summary>
+    /// 現在のデッキテーマを取得する
+    /// </summary>
+    public CardTheme GetDeckTheme() {
+        return deckTheme;
+    }
+
+    /// <summary>
+    /// 指定されたカードがデッキに追加可能か判定する
+    /// </summary>
+    public bool CanAddCard(int cardID) {
+
+        // マスターデータからカード情報を取得する
+        var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+
+        // マスターデータが存在しなければ追加できない
+        if (cardData == null) return false;
+
+        // カードのテーマを取得する
+        CardTheme cardTheme = (CardTheme)cardData.themeID;
+
+        // まだデッキテーマが決まっていなければ追加可能
+        if (deckTheme == CardTheme.None) return true;
+
+        // デッキテーマが汎用なら、すべてのテーマを追加可能
+        if (deckTheme == CardTheme.Neutral) return true;
+
+        // デッキテーマと同じテーマ、または汎用なら追加可能
+        return cardTheme == deckTheme || cardTheme == CardTheme.Neutral;
     }
 }
