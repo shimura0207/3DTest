@@ -144,6 +144,10 @@ public partial class SlotReelController : MonoBehaviour {
 
         slotIndex = 0;
         RolesDelete();
+
+        // フェイズ開始時の残りG数。フィールドカードによる追加G数にも対応。
+        if (gameCountdownUI != null)
+            gameCountdownUI.Initialize(Mathf.Max(0, SLOT_TEARN_MAX_G - slotIndex));
     }
 
     /// <summary>
@@ -167,6 +171,10 @@ public partial class SlotReelController : MonoBehaviour {
 
         slotIndex = 0;
         RolesDelete();
+
+        // フェイズ開始時の残りG数。フィールドカードによる追加G数にも対応。
+        if (gameCountdownUI != null)
+            gameCountdownUI.Initialize(Mathf.Max(0, SLOT_TEARN_MAX_G - slotIndex));
     }
 
     /// <summary>
@@ -199,6 +207,9 @@ public partial class SlotReelController : MonoBehaviour {
         networkLocalControl = false;
         networkRemoteControl = false;
         maxBet = false;
+
+        // フェイズ終了待機（3秒）が終わったら常設表示・液晶演出を消去。
+        if (gameCountdownUI != null) gameCountdownUI.Clear();
     }
 
     /// <summary>
@@ -452,6 +463,10 @@ public partial class SlotReelController : MonoBehaviour {
     /// </summary>
     private float[] lastInspectorAngles = new float[3];
 
+
+    [Header("残りG数・液晶カウントダウン")]
+    [Tooltip("シーンに配置したPachisuroGameCountdownUIを指定。フェイズ本体へのInspector設定は不要です。")]
+    [SerializeField] private PachisuroGameCountdownUI gameCountdownUI;
 
     [Header("停止演出")]
     [SerializeField] private Image stopEffectImage;
@@ -1000,6 +1015,12 @@ public partial class SlotReelController : MonoBehaviour {
         // 回転開始が成功したときだけ前ゲームの予約を消費する。
         // 今回のSeven予約は、その表示処理の後で設定する。
         HandleRushLogoOnSuccessfulLever();
+
+        // 両分岐でslotIndex++された後なので、「残りG数」を正しく表示。
+        // 通常/RUSH/チュートリアル/相手の受信再生すべてこの経路を通る。
+        if (gameCountdownUI != null)
+            gameCountdownUI.PlayLeverOn(Mathf.Max(0, SLOT_TEARN_MAX_G - slotIndex));
+
         return true;
     }
 
@@ -1472,6 +1493,7 @@ public partial class SlotReelController : MonoBehaviour {
         ClearSlotCardEffects();
         HideRushLogo();
         ResetRoleStocks();
+        if (gameCountdownUI != null) gameCountdownUI.Clear();
     }
 
     //============================================================
