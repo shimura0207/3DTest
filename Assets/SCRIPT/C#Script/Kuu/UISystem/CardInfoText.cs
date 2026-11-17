@@ -77,6 +77,9 @@ public class CardInfoText : MonoBehaviour {
     // マウスの右クリックと左クリックを判別する用
     private bool mouseButton = true;
 
+    // ウィンドウに触れているか判定を保存する用
+    private bool touchWindow = false;
+
 
     // Start is called before the first frame update
     void Start() {
@@ -96,18 +99,22 @@ public class CardInfoText : MonoBehaviour {
         }
 
         mouseButton = UIManager.instance.mouseButton;
+        touchWindow = UIManager.instance.touchWindow;
         // マウスボタン左右判定
         if (mouseButton) {
-            simpleText.enabled = true;
-            detaileText.enabled = false;
+            // ウィンドウに触っていないなら簡易ウィンドウ表示
+            if (!touchWindow) {
+                simpleText.enabled = true;
+                detaileText.enabled = false;
+            }
         }
         else {
             simpleText.enabled = false;
             detaileText.enabled = true;
-        }
+            }
 
-        // 各データをテキストにする
-        nameText.text = data.name;
+            // 各データをテキストにする
+            nameText.text = data.name;
         cardTypeText.text = TypeIDChangeText(data.CardType);
         raceText.text = RaceIDChangeText(data.FirstRaceID, data.SecondRaceID, data.ThildRaceID);
         // モンスター以外ステータスは表示しない
@@ -125,7 +132,9 @@ public class CardInfoText : MonoBehaviour {
                 SIZEText.text = "";
             }
             else {
-                status.enabled = false;
+                if (!touchWindow) {
+                    status.enabled = false;
+                }
             }
         }
         abilityText.text = data.ability;
@@ -139,8 +148,10 @@ public class CardInfoText : MonoBehaviour {
             cardImage.enabled = true;
             cardImage.sprite = ScriptableObjectManager.instance.GetCardImage(data.cardID);
         } else {
-            koyakuText.enabled = false;
-            cardImage.enabled = false;
+            if (!touchWindow) {
+                koyakuText.enabled = false;
+                cardImage.enabled = false;
+            }
         }
     }
 
