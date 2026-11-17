@@ -597,7 +597,17 @@ public class BattleSystemManager : MonoBehaviour {
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(570, 250), 180);
         // Professor:Raymondを出すまで待つ
+        bool currentShrink = false;
         while (true) {
+            if (currentShrink != CardObjectManager.instance.isHandShrink) {
+                if (CardObjectManager.instance.isHandShrink) {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
+                }
+                else {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(570, 250), 180);
+                }
+            }
+            currentShrink = CardObjectManager.instance.isHandShrink;
             if (await mainPhase.CardControl(raymond, FieldLane.Lane3))
                 break;
             await UniTask.Yield();
@@ -667,10 +677,19 @@ public class BattleSystemManager : MonoBehaviour {
         text = "2体目のモンスターを出そう";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         CardObject lank = CardObjectManager.instance.GetUseCardObject(4);
-        // RG:LANKを出すまで待つ
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
+        // RG:LANKを出すまで待つ
         while (true) {
+            if (currentShrink != CardObjectManager.instance.isHandShrink) {
+                if (CardObjectManager.instance.isHandShrink) {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
+                }
+                else {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
+                }
+            }
+            currentShrink = CardObjectManager.instance.isHandShrink;
             if (await mainPhase.CardControl(lank, FieldLane.Lane4))
                 break;
             await UniTask.Yield();
@@ -820,11 +839,20 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "サイズに空きがあるね。\n少し強力なモンスターを出そう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // RG:CRASSAを出すまで待つ
-        CardObject crassa = CardObjectManager.instance.GetUseCardObject(3);
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(880, 250), 180);
+        // RG:CRASSAを出すまで待つ
+        CardObject crassa = CardObjectManager.instance.GetUseCardObject(3);
         while (true) {
+            if (currentShrink != CardObjectManager.instance.isHandShrink) {
+                if (CardObjectManager.instance.isHandShrink) {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
+                }
+                else {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(880, 250), 180);
+                }
+            }
+            currentShrink = CardObjectManager.instance.isHandShrink;
             if (await mainPhase.CardControl(crassa, FieldLane.Lane3))
                 break;
             await UniTask.Yield();
@@ -835,11 +863,20 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "PERFECT・STOPは自分のモンスターの\n疲労をいやすことができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // PERFECT・STOPを使うまで待つ
-        CardObject perfect = CardObjectManager.instance.GetUseCardObject(1);
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(650, 250), 180);
+        // PERFECT・STOPを使うまで待つ
+        CardObject perfect = CardObjectManager.instance.GetUseCardObject(1);
         while (true) {
+            if (currentShrink != CardObjectManager.instance.isHandShrink) {
+                if (CardObjectManager.instance.isHandShrink) {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
+                }
+                else {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(650, 250), 180);
+                }
+            }
+            currentShrink = CardObjectManager.instance.isHandShrink;
             if (await mainPhase.CardControl(perfect))
                 break;
             await UniTask.Yield();
