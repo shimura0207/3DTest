@@ -638,13 +638,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
-        FieldLane frontLane = FieldLane.None;
-        if (raymond.laneID == 0) {
-            frontLane = FieldLane.Lane5;
-        }
-        else {
-            frontLane = (FieldLane)((int)FieldLane.Max % raymond.laneID + 1);
-        }
+        FieldLane frontLane = FieldLane.Lane5 - raymond.laneID;
         // リヴァイブドラゴンを出す
         CardObject revive = CardObjectManager.instance.GetUseCardObject(5);
         await SummonMonster(PlayerType.Opponent, revive, frontLane);
@@ -775,13 +769,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
-        frontLane = FieldLane.None;
-        if (lank.laneID == 0) {
-            frontLane = FieldLane.Lane5;
-        }
-        else {
-            frontLane = (FieldLane)((int)FieldLane.Max % lank.laneID + 1);
-        }
+        frontLane = FieldLane.Lane5 - lank.laneID;
         // リーンドラゴンを出す
         CardObject rein = CardObjectManager.instance.GetUseCardObject(7);
         await SummonMonster(PlayerType.Opponent, rein, frontLane);
@@ -889,13 +877,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
-        frontLane = FieldLane.None;
-        if (raymond.laneID == 0) {
-            frontLane = FieldLane.Lane5;
-        }
-        else {
-            frontLane = (FieldLane)((int)FieldLane.Max % crassa.laneID + 1);
-        }
+        frontLane = FieldLane.Lane5 - crassa.laneID;
         // ジングルドラゴンを出す
         CardObject jingle = CardObjectManager.instance.GetUseCardObject(9);
         await SummonMonster(PlayerType.Opponent, jingle, frontLane);
