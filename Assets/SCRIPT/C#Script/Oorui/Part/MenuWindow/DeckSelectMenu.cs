@@ -66,12 +66,16 @@ public class DeckSelectMenu : MenuWindowBase {
         // キャンセルボタンのイベントを登録する
         cancelButton.onClick.RemoveListener(OnClickCancelButton);
         cancelButton.onClick.AddListener(OnClickCancelButton);
-
+        // メニューを表示する前にキーカード画像を非表示にする
+        if (keyCardImage != null) {
+            keyCardImage.sprite = null;
+            keyCardImage.enabled = false;
+            keyCardImage.preserveAspect = true;
+            deckNameText.text = "";
+        }
         // メニューを表示する
         await base.Open();
-        keyCardImage.sprite = null;
-        keyCardImage.preserveAspect = false;
-        deckNameText.text = "";
+
         // 決定またはキャンセルされるまで待機する
         await UniTask.WaitUntil(() => isDecided || isCancelled);
 
@@ -166,7 +170,11 @@ public class DeckSelectMenu : MenuWindowBase {
                 Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(keyCardID);
                 // カード画像を設定する
                 if(keyCardImage != null) {
+                    // 画像を設定する
                     keyCardImage.sprite = cardSprite;
+                    // 画像が取得できた場合のみ表示する
+                    keyCardImage.enabled = cardSprite != null;
+                    // アスペクト比を維持する
                     keyCardImage.preserveAspect = true;
                 }
                 // デッキ名を表示

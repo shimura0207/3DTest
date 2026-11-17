@@ -29,8 +29,7 @@ using static grassFlash;
 /// ・roleStopAngleSettings → 役ごとの停止可能角度
 /// ・stopKeys          → 停止ボタン
 /// </summary>
-public class SlotReelController : MonoBehaviour {
-
+public partial class SlotReelController : MonoBehaviour {
     public static SlotReelController Instance { get; private set; }
 
     private void Awake() {
@@ -116,6 +115,7 @@ public class SlotReelController : MonoBehaviour {
     /// 自分のパチスロ操作を開始します。
     /// </summary>
     public void BeginLocalPlayback() {
+        BeginSlotCardEffects();
         ResetRoleStocks();
         networkLocalControl = true;
         networkRemoteControl = false;
@@ -151,6 +151,7 @@ public class SlotReelController : MonoBehaviour {
     /// 相手を再生していた場合は、自分の状態へ戻します。
     /// </summary>
     public void EndNetworkPlayback() {
+        if (networkLocalControl) ClearSlotCardEffects();
         HideRushLogo();
         ResetRoleStocks();
         if (networkLocalControl || networkRemoteControl) {
@@ -240,7 +241,8 @@ public class SlotReelController : MonoBehaviour {
 
     //G数
     public int slotIndex = 0;
-    public readonly int SLOT_TEARN_MAX_G = 5;
+    public int SLOT_TEARN_MAX_G => 5 + GetFieldCardExtraGames(
+        networkRemoteControl ? PlayerType.Opponent : PlayerType.Self);
 
     //引いた役保存LIST
     private List<PachisuroSymbolKoyakuEnum> roles = new List<PachisuroSymbolKoyakuEnum>();
@@ -855,6 +857,7 @@ public class SlotReelController : MonoBehaviour {
             // RUSH側：受信した役があれば、その役を採用する。
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.RUSHDrawRole(currentTable);
+            currentSlotSymbolRole = ApplySlotCardEffects(currentSlotSymbolRole);
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
 
@@ -901,6 +904,7 @@ public class SlotReelController : MonoBehaviour {
             // 通常側：受信した役があれば、その役を採用する。
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.DrawRole(currentTable);
+            currentSlotSymbolRole = ApplySlotCardEffects(currentSlotSymbolRole);
             par = Random.Range(0, 1);
             switch (currentSlotSymbolRole) {
                 case PachisuroSymbolKoyakuEnum.Miss:
@@ -1229,7 +1233,6 @@ public class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashSUIKA(Color.black, 5, 0.03f, 0.9f));
-                    AudioManager.instance.PlaySE("suika");
                 }
 
             }
@@ -1393,11 +1396,11 @@ public class SlotReelController : MonoBehaviour {
             case PachisuroSymbolKoyakuEnum.WeakCherry: CherryStock++; break;
             case PachisuroSymbolKoyakuEnum.StrongCherry: StrongCherryStock++; break;
             case PachisuroSymbolKoyakuEnum.Chance:
-                // 通常カウントへは加算せず、紫の+Nとして独立管理。
+                // チャンス目自身のカウントのみ加算。
                 ChanceStock++;
                 break;
             case PachisuroSymbolKoyakuEnum.Seven:
-                // Sevenアイコンのストックのみ増加。5役には虹の+Nを表示。
+                // Seven自身のカウントのみ加算。
                 SevenStock++;
                 break;
             default: return;
@@ -1421,21 +1424,14 @@ public class SlotReelController : MonoBehaviour {
     }
 
     public void RefreshRoleStockTexts() {
-        SetBonusStockText(missStockText, MissStock, SevenStock, 0);
-        SetBonusStockText(replayStockText, ReplayStock, SevenStock, 0);
-        SetBonusStockText(bellStockText, BellStock, SevenStock, 0);
-        SetBonusStockText(suikaStockText, SuikaStock, SevenStock, ChanceStock);
-        SetBonusStockText(cherryStockText, CherryStock, SevenStock, ChanceStock);
+        if (missStockText != null) missStockText.text = MissStock.ToString();
+        if (replayStockText != null) replayStockText.text = ReplayStock.ToString();
+        if (bellStockText != null) bellStockText.text = BellStock.ToString();
+        if (suikaStockText != null) suikaStockText.text = SuikaStock.ToString();
+        if (cherryStockText != null) cherryStockText.text = CherryStock.ToString();
         if (strongCherryStockText != null) strongCherryStockText.text = StrongCherryStock.ToString();
         if (sevenStockText != null) sevenStockText.text = SevenStock.ToString();
         if (chanceStockText != null) chanceStockText.text = ChanceStock.ToString();
-    }
-
-    private void SetBonusStockText(TMP_Text label, int stock, int seven, int chance) {
-        if (label == null) return;
-        RoleStockBonusText view = label.GetComponent<RoleStockBonusText>();
-        if (view == null) view = label.gameObject.AddComponent<RoleStockBonusText>();
-        view.SetCounts(label, stock, seven, chance);
     }
 
     /// <summary>
@@ -1451,6 +1447,7 @@ public class SlotReelController : MonoBehaviour {
 
     // フェイズ終了時にオブジェクト自体を非表示にする経路も保護。
     private void OnDisable() {
+        ClearSlotCardEffects();
         HideRushLogo();
         ResetRoleStocks();
     }

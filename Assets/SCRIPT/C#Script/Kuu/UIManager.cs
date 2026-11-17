@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -47,6 +48,12 @@ public class UIManager : SystemObject {
 
     // ダメージUI
     [SerializeField] private GameObject damageUI = null;
+
+    // 自分のHPTextの位置
+    private Vector3 SELFHP_POSITION = new Vector3(-0.263f, 1.123f, -0.41f);
+
+    // 自分のHPTextの位置
+    private Vector3 OPPONENTHP_POSITION = new Vector3(-0.263f, 1.42f, -0.41f);
 
     // ダメージの値を渡すために一時的に保存する用
     public int damageValue = 0;
@@ -151,11 +158,11 @@ public class UIManager : SystemObject {
         if (card == null) {
             // 自分
             if (player == PlayerType.Self) {
-                // 後で
+                position = SELFHP_POSITION;
             }
             // 相手
             else if (player == PlayerType.Opponent) {
-                // 後で
+                position = OPPONENTHP_POSITION;
             }
             // 情報が足りない場合は抜ける
             else {
