@@ -193,7 +193,8 @@ public enum CardTheme {
     None = -1,
     RG = 1,         // RG
     MagicalBard = 2,// マジカルバード
-    Doragon = 3     // ドラゴン
+    Doragon = 3,    // ドラゴン
+    Neutral = 4     // 汎用
 }
 /// <summary>
 /// カードのタイプ
