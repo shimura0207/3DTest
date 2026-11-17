@@ -49,6 +49,8 @@ public class AbilityProcessData {
         RegisterDeleteMonster();
         // モンスターを手札に戻す効果の登録
         RegisterReturnMonster();
+        // モンスターの疲労関連効果
+        RegisterFatigueMonster();
     }
 
     /// <summary>
