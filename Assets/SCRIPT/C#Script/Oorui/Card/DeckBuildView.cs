@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,7 +37,7 @@ public class DeckBuildView : MonoBehaviour {
 
     // カードクリック時に実行する処理
     private Action<int, Image> onCardClicked = null;
-    
+
     // 所持カード情報を読み込み済みかどうか
     private bool isOwnedCardCountsLoaded = false;
     /// <summary>
@@ -285,5 +286,86 @@ public class DeckBuildView : MonoBehaviour {
 
         // まだ1枚も登録されていなければ0を返す
         return 0;
+    }
+
+    /// <summary>
+    /// KEYカードの表示を更新する
+    /// </summary>
+    /// <param name="keyCardID">KEYカードのID</param>
+    public void RefreshKeyCardLabel(int keyCardID) {
+
+        // Content内に存在するカードをすべて取得する
+        PossessionCardItem[] cardItems = content.GetComponentsInChildren<PossessionCardItem>(true);
+
+        // 各カードのKEY表示を更新する
+        foreach (PossessionCardItem item in cardItems) {
+
+            // KEYカードかどうか確認する
+            bool isKeyCard = item.CardID == keyCardID && keyCardID >= 0;
+
+            // 既存のKEY表示を探す
+            Transform labelTransform = item.transform.Find("KeyLabel");
+
+            // KEYカードではない場合
+            if (!isKeyCard) {
+
+                // 既存のKEY表示があれば削除する
+                if (labelTransform != null) {
+                    Destroy(labelTransform.gameObject);
+                }
+
+                continue;
+            }
+
+            // すでにKEY表示が存在する場合は再生成しない
+            if (labelTransform != null) {
+                continue;
+            }
+
+            // KEY表示用のオブジェクトを生成する
+            GameObject labelObject = new GameObject(
+                "KeyLabel",
+                typeof(RectTransform),
+                typeof(TextMeshProUGUI)
+            );
+
+            // カードの子オブジェクトにする
+            labelObject.transform.SetParent(item.transform, false);
+
+            // RectTransformを取得する
+            RectTransform rect = labelObject.GetComponent<RectTransform>();
+
+            // 左下に配置する
+            rect.anchorMin = new Vector2(0f, 0f);
+            rect.anchorMax = new Vector2(0f, 0f);
+            rect.pivot = new Vector2(0f, 0f);
+
+            // 左下からの位置を設定する
+            rect.anchoredPosition = new Vector2(-10f, -30f);
+
+            // 表示サイズを設定する
+            rect.sizeDelta = new Vector2(55f, 25f);
+
+            // TextMeshProを取得する
+            TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
+
+            // 表示する文字列を設定する
+            label.text = "KEY";
+
+            // フォントサイズを設定する
+            label.fontSize = 20;
+
+            // 太字にする
+            label.fontStyle = FontStyles.Bold;
+
+            // 右上に文字を配置する
+            label.alignment = TextAlignmentOptions.TopRight;
+
+            // 文字色を設定する
+            label.color = Color.yellow;
+
+            // カードのクリック操作を妨げないようにする
+            label.raycastTarget = false;
+        }
     }
 }

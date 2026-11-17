@@ -25,6 +25,12 @@ public class DeckSelectMenu : MenuWindowBase {
 
     // キャンセルボタン
     [SerializeField] private Button cancelButton;
+    
+    // キーカードの画像
+    [SerializeField] private Image keyCardImage;
+
+    // デッキ名の表示
+    [SerializeField] private TMP_Text deckNameText;
 
     // 生成したデッキボタン一覧
     private List<Button> deckButtons = new List<Button>();
@@ -63,7 +69,9 @@ public class DeckSelectMenu : MenuWindowBase {
 
         // メニューを表示する
         await base.Open();
-
+        keyCardImage.sprite = null;
+        keyCardImage.preserveAspect = false;
+        deckNameText.text = "";
         // 決定またはキャンセルされるまで待機する
         await UniTask.WaitUntil(() => isDecided || isCancelled);
 
@@ -152,6 +160,17 @@ public class DeckSelectMenu : MenuWindowBase {
                 // 選択されたデッキIDを保持する
                 selectedDeckID = targetDeckID;
 
+                // 選択されたデッキのキーカードIDを取得
+                int keyCardID = SaveManager.Instance.GetDeckKeyCardID(selectedDeckID);
+                // カード画像を取得
+                Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(keyCardID);
+                // カード画像を設定する
+                if(keyCardImage != null) {
+                    keyCardImage.sprite = cardSprite;
+                    keyCardImage.preserveAspect = true;
+                }
+                // デッキ名を表示
+                deckNameText.text = deckData.deckName;
                 // 選択されたデッキIDをログに表示する
                 Debug.Log($"選択されたデッキID：{selectedDeckID}");
             });

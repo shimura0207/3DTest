@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.U2D;
 
 /// <summary>
 /// マッチングパート
@@ -32,6 +33,8 @@ public class MatchingPart : PartBase {
 
     // 選択中のデッキ名を表示するテキスト
     [SerializeField] private TMP_Text selectedDeckText;
+    // デッキのKEYカードを表示する
+    [SerializeField] private Image deckImage;
 
     // 選択されたデッキID
     private static int selectedDeckID = -1;
@@ -66,7 +69,10 @@ public class MatchingPart : PartBase {
         DeckSaveData deckData = null;
 
         if (selectedDeckID >= 0) {
+            // デッキのデータを取得
             deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
+            // デッキに登録されているキーカードIDを取得
+            int keyCardID = deckData.keyCardID;
         }
 
         // デッキが存在しない場合は未選択状態にする
@@ -77,10 +83,20 @@ public class MatchingPart : PartBase {
             if (selectedDeckText != null) {
                 selectedDeckText.text = "未選択";
             }
+            // 未選択状態の表示
+            if(deckImage != null) {
+                deckImage.sprite = null;
+            }
         }
         else {
             // 前回選択したデッキ名を表示する
             selectedDeckText.text = deckData.deckName;
+            // デッキに登録されているキーカードIDを取得
+            int keyCardID = deckData.keyCardID;
+            // カード画像を取得
+            Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(keyCardID);
+
+            deckImage.sprite = cardSprite;
         }
         // ボタンイベントを登録する
         randomButton.onClick.RemoveListener(OnClickRandomButton);
@@ -123,9 +139,13 @@ public class MatchingPart : PartBase {
                 // 選択されたデッキ情報を取得する
                 DeckSaveData deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
 
-                // 選択されたデッキ名を表示する
-                if (deckData != null && selectedDeckText != null) {
+                // 選択されたデッキ情報をを表示する
+                if (deckData != null && selectedDeckText != null && deckImage != null) {
                     selectedDeckText.text = deckData.deckName;
+                    // デッキに登録されたキーカードIDを取得
+                    int keyCardID = deckData.keyCardID;
+                    Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(keyCardID);
+                    deckImage.sprite = cardSprite;
                 }
 
                 // 選択されたデッキIDをログに表示する
