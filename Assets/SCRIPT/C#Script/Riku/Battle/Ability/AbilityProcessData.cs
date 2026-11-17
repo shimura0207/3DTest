@@ -791,6 +791,60 @@ public class AbilityProcessData {
     }
 
     /// <summary>
+    /// 次のパチスロフェイズの1ゲーム目の役をベルにする効果
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask SetRoleBellAbility () {
+        SlotReelController.Instance.CardBellAdvent();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 次のパチスロフェイズの1ゲーム目の役をスイカにする効果
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask SetRoleSuikaAbility() {
+        SlotReelController.Instance.CardSuikaAdvent();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 次のパチスロフェイズの1ゲーム目の役をリプレイにする効果
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask SetRoleReplayAbility() {
+        SlotReelController.Instance.CardReplayAdvent();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 次のパチスロフェイズの1ゲーム目の役をハズレにする効果
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask SetRoleBlankAbility() {
+        SlotReelController.Instance.CardBlankAdvent();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// 次のパチスロフェイズの1ゲーム目の役をチェリーにする効果
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask SetRoleCherryAbility() {
+        SlotReelController.Instance.CardCherryAdvent();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// パチスロフェイズのテーブル上昇(うおおおおの専用効果)
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask UooooAbility() {
+        SlotReelController.Instance.CardUoooo();
+        await UniTask.CompletedTask;
+    }
+
+    /// <summary>
     /// なかまよび効果(マジカルバードの特殊効果)
     /// </summary>
     /// <param name="player"></param>
