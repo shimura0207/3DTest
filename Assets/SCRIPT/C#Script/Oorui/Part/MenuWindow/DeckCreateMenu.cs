@@ -10,6 +10,9 @@ using UnityEngine.UI;
 /// </summary>
 public class DeckCreateMenu : MenuWindowBase {
 
+    // 所持カード一覧の表示を管理するクラス
+    [SerializeField]
+    private PossessionCardListView possessionCardListView = null;
     // デッキ名を表示するテキスト
     [SerializeField] private TMP_Text deckNameText;
 
@@ -74,6 +77,11 @@ public class DeckCreateMenu : MenuWindowBase {
 
         // デッキのカード一覧を更新する
         RefreshDeckCards();
+
+        // キーカードIDを取得
+        int keyCardID = deckData.keyCardID;
+        // キーカードを更新
+        possessionCardListView.RefreshKeyCardLabel(keyCardID);
 
         // 戻るボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu == DeckBuildMenuSelect.DeckBuild);
