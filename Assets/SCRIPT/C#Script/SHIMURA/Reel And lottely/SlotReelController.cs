@@ -465,6 +465,12 @@ public class SlotReelController : MonoBehaviour {
     public int WeakCherryStock => CherryStock;
     public int StrongCherryStock { get; private set; }
     public int SevenStock { get; private set; }
+    public int ChanceStock { get; private set; }
+
+    [Header("Seven・チャンス目の集束先アイコン")]
+    [SerializeField] private Image sevenAuraTarget;
+    [SerializeField] private Image chanceAuraTarget;
+    [SerializeField] private TMP_Text chanceStockText;
 
     // リセット前に開始した演出の通知を無効にする世代番号。
     private int roleStockGeneration;
@@ -1297,12 +1303,26 @@ public class SlotReelController : MonoBehaviour {
 
         bool started;
         if (allColors) {
-            started = lampAura.TryPlayAllWithCompletion(onCompleted, stopFlash);
+            if (sevenAuraTarget == null) {
+                Debug.LogWarning("Seven Aura TargetにSevenアイコンを指定してください。", this);
+                stopFlash();
+                return;
+            }
+            started = lampAura.TryPlayColorsWithCompletion(
+                new[] { LampAuraController.LampColor.White, LampAuraController.LampColor.Blue,
+                    LampAuraController.LampColor.Yellow, LampAuraController.LampColor.Red,
+                    LampAuraController.LampColor.Green },
+                onCompleted, stopFlash, sevenAuraTarget);
         }
         else if (chanceColors) {
+            if (chanceAuraTarget == null) {
+                Debug.LogWarning("Chance Aura Targetにチャンス目アイコンを指定してください。", this);
+                stopFlash();
+                return;
+            }
             started = lampAura.TryPlayColorsWithCompletion(
                 new[] { LampAuraController.LampColor.Green, LampAuraController.LampColor.Red },
-                onCompleted, stopFlash);
+                onCompleted, stopFlash, chanceAuraTarget);
         }
         else {
             started = lampAura.TryPlayWithCompletion(color, onCompleted, stopFlash);
@@ -1373,17 +1393,11 @@ public class SlotReelController : MonoBehaviour {
             case PachisuroSymbolKoyakuEnum.WeakCherry: CherryStock++; break;
             case PachisuroSymbolKoyakuEnum.StrongCherry: StrongCherryStock++; break;
             case PachisuroSymbolKoyakuEnum.Chance:
-                SuikaStock++;
-                CherryStock++;
+                // 通常カウントへは加算せず、紫の+Nとして独立管理。
+                ChanceStock++;
                 break;
             case PachisuroSymbolKoyakuEnum.Seven:
-                // Sevenは弱・強チェリーを含む全7種類のストックを1ずつ加算。
-                MissStock++;
-                ReplayStock++;
-                BellStock++;
-                SuikaStock++;
-                CherryStock++;
-                StrongCherryStock++;
+                // Sevenアイコンのストックのみ増加。5役には虹の+Nを表示。
                 SevenStock++;
                 break;
             default: return;
@@ -1401,18 +1415,27 @@ public class SlotReelController : MonoBehaviour {
             case PachisuroSymbolKoyakuEnum.WeakCherry: return CherryStock;
             case PachisuroSymbolKoyakuEnum.StrongCherry: return StrongCherryStock;
             case PachisuroSymbolKoyakuEnum.Seven: return SevenStock;
+            case PachisuroSymbolKoyakuEnum.Chance: return ChanceStock;
             default: return 0;
         }
     }
 
     public void RefreshRoleStockTexts() {
-        if (missStockText != null) missStockText.text = MissStock.ToString();
-        if (replayStockText != null) replayStockText.text = ReplayStock.ToString();
-        if (bellStockText != null) bellStockText.text = BellStock.ToString();
-        if (suikaStockText != null) suikaStockText.text = SuikaStock.ToString();
-        if (cherryStockText != null) cherryStockText.text = CherryStock.ToString();
+        SetBonusStockText(missStockText, MissStock, SevenStock, 0);
+        SetBonusStockText(replayStockText, ReplayStock, SevenStock, 0);
+        SetBonusStockText(bellStockText, BellStock, SevenStock, 0);
+        SetBonusStockText(suikaStockText, SuikaStock, SevenStock, ChanceStock);
+        SetBonusStockText(cherryStockText, CherryStock, SevenStock, ChanceStock);
         if (strongCherryStockText != null) strongCherryStockText.text = StrongCherryStock.ToString();
         if (sevenStockText != null) sevenStockText.text = SevenStock.ToString();
+        if (chanceStockText != null) chanceStockText.text = ChanceStock.ToString();
+    }
+
+    private void SetBonusStockText(TMP_Text label, int stock, int seven, int chance) {
+        if (label == null) return;
+        RoleStockBonusText view = label.GetComponent<RoleStockBonusText>();
+        if (view == null) view = label.gameObject.AddComponent<RoleStockBonusText>();
+        view.SetCounts(label, stock, seven, chance);
     }
 
     /// <summary>
@@ -1422,7 +1445,7 @@ public class SlotReelController : MonoBehaviour {
         unchecked { roleStockGeneration++; }
         if (lampAura != null) lampAura.StopAllEffects();
         if (roleLampFlash != null) roleLampFlash.StopAllFlashes();
-        MissStock = ReplayStock = BellStock = SuikaStock = CherryStock = StrongCherryStock = SevenStock = 0;
+        MissStock = ReplayStock = BellStock = SuikaStock = CherryStock = StrongCherryStock = SevenStock = ChanceStock = 0;
         RefreshRoleStockTexts();
     }
 

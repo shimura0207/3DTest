@@ -4,13 +4,6 @@
  */
 
 using Cysharp.Threading.Tasks;
-using Mirror.BouncyCastle.Bcpg;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.Collections;
-using Unity.VisualScripting;
-using UnityEditor.ShaderKeywordFilter;
 
 
 //using UnityEditor.Experimental.GraphView;
@@ -148,6 +141,10 @@ public class MainPhase : PhaseBase {
                     FieldLane lane = FieldLane.None;
                     // レーンの指定がある場合はそのレーンを選ぶまで繰り返す
                     while (lane == FieldLane.None) {
+                        // レーンの指定がある場合は矢印を出す
+                        if (selectLane != FieldLane.None) {
+                            BattleSystemManager.instance.TutorialLaneArrow(selectLane);
+                        }
                         // レーン設置ウィンドウを出す
                         lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
                         // 違うレーンを選んだらクリア
