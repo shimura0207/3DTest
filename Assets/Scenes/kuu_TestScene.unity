@@ -997,7 +997,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4294936832
   m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1078,8 +1078,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectText: {fileID: 442201211}
-  uiCamera: {fileID: 580608311}
-  text: {fileID: 442201211}
 --- !u!1 &454836396
 GameObject:
   m_ObjectHideFlags: 0
@@ -1470,6 +1468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 555453629}
+  HPBar: {fileID: 0}
   playerHP: 50
 --- !u!1 &580608309
 GameObject:
@@ -2091,6 +2090,10 @@ PrefabInstance:
       propertyPath: waitBeforeFirstStop
       value: 0.001
       objectReference: {fileID: 0}
+    - target: {fileID: 2683690801014253954, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4021506598673460231, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -2141,6 +2144,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4158583410018202540, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5140860574707454244, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6323060263336037180, guid: bf37970f4a5340942a1eae4e5aa3b15b, type: 3}
@@ -2551,7 +2558,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1049166711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3198,7 +3205,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1417974409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3565,6 +3572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1428368888}
+  HPBar: {fileID: 0}
   playerHP: 50
 --- !u!1 &1441759561
 GameObject:
@@ -3716,7 +3724,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1534225823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3897,7 +3905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1675324203
 MonoBehaviour:
   m_ObjectHideFlags: 0

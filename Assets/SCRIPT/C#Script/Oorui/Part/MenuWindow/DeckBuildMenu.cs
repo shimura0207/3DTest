@@ -154,11 +154,8 @@ public class DeckBuildMenu : MenuWindowBase {
         // 現在デッキに登録されているカードIDを取得する
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
 
-        // デッキ登録情報を一覧側に反映する
-        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
-
-        // デッキ登録済み枚数を差し引いて所持カード一覧を更新する
-        deckBuildCardListView.RefreshCards();
+        // デッキ登録情報とテーマを一覧側に反映する
+        RefreshDeckBuildCardList();
 
         // 保存ボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
@@ -249,6 +246,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // 所持枚数を超える場合は追加しない
         if (deckCount >= ownedCount) return;
+        // デッキテーマに合わないカードは追加しない
+        if (!deckBuildView.CanAddCard(selectedCardID)) return;
 
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
@@ -259,11 +258,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // KEYカードの表示を更新する
         deckBuildView.RefreshKeyCardLabel(keyCardID);
-        // 現在のデッキ登録カードIDを取得する
-        var currentDeckCardIDs = deckBuildView.GetCardIDs();
-
-        // デッキ登録情報を一覧側に反映する
-        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
+        // デッキ登録情報とテーマを一覧側に反映する
+        RefreshDeckBuildCardList();
 
         // デッキ全体の登録枚数を更新する
         UpdateDeckCardCount();
@@ -301,11 +297,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // KEYカードの表示を更新する
         deckBuildView.RefreshKeyCardLabel(keyCardID);
-        // 現在のデッキ登録カードIDを取得する
-        var currentDeckCardIDs = deckBuildView.GetCardIDs();
-
-        // デッキ登録情報を一覧側に反映する
-        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
+        // デッキ登録情報とテーマを一覧側に反映する
+        RefreshDeckBuildCardList();
 
         // デッキ全体の登録枚数を更新する
         UpdateDeckCardCount();
@@ -464,5 +457,23 @@ public class DeckBuildMenu : MenuWindowBase {
 
         // 登録枚数 / 最大枚数を表示する
         deckCardCountText.text = $"{count}/{_DECKCARD_MAXNUM}";
+    }
+
+    /// <summary>
+    /// デッキの登録情報とテーマを一覧側に反映する
+    /// </summary>
+    private void RefreshDeckBuildCardList() {
+
+        // 現在のデッキ登録カードIDを取得する
+        var currentDeckCardIDs = deckBuildView.GetCardIDs();
+
+        // デッキ登録情報を一覧側に反映する
+        deckBuildCardListView.SetCurrentDeckCardIDs(currentDeckCardIDs);
+
+        // デッキテーマを一覧側に反映する
+        deckBuildCardListView.SetDeckTheme(deckBuildView.GetDeckTheme());
+
+        // 所持カード一覧を更新する
+        deckBuildCardListView.RefreshCards();
     }
 }

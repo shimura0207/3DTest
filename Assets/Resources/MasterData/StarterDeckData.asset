@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95e84031e7cf62408dd05a771d59e5b, type: 3}
+  m_Name: StarterDeckData
+  m_EditorClassIdentifier: 
+  sheets:
+  - name: StarterDeck
+    list:
+    - DeckID: 1
+      CardID: 101
+      Count: 2
+    - DeckID: 1
+      CardID: 110
+      Count: 1
+    - DeckID: 1
+      CardID: 117
+      Count: 2
+    - DeckID: 1
+      CardID: 118
+      Count: 3
+    - DeckID: 1
+      CardID: 121
+      Count: 3
+    - DeckID: 1
+      CardID: 122
+      Count: 3
+    - DeckID: 1
+      CardID: 123
+      Count: 2
+    - DeckID: 1
+      CardID: 124
+      Count: 2
+    - DeckID: 1
+      CardID: 125
+      Count: 2
+    - DeckID: 1
+      CardID: 126
+      Count: 2
+    - DeckID: 1
+      CardID: 127
+      Count: 2
+    - DeckID: 1
+      CardID: 407
+      Count: 2
+    - DeckID: 1
+      CardID: 404
+      Count: 2
+    - DeckID: 1
+      CardID: 408
+      Count: 2
+    - DeckID: 2
+      CardID: 201
+      Count: 2
+    - DeckID: 2
+      CardID: 204
+      Count: 2
+    - DeckID: 2
+      CardID: 205
+      Count: 3
+    - DeckID: 2
+      CardID: 206
+      Count: 3
+    - DeckID: 2
+      CardID: 207
+      Count: 2
+    - DeckID: 2
+      CardID: 208
+      Count: 3
+    - DeckID: 2
+      CardID: 211
+      Count: 2
+    - DeckID: 2
+      CardID: 213
+      Count: 1
+    - DeckID: 2
+      CardID: 217
+      Count: 2
+    - DeckID: 2
+      CardID: 218
+      Count: 2
+    - DeckID: 2
+      CardID: 220
+      Count: 2
+    - DeckID: 2
+      CardID: 407
+      Count: 3
+    - DeckID: 2
+      CardID: 406
+      Count: 2
+    - DeckID: 2
+      CardID: 408
+      Count: 1
+    - DeckID: 3
+      CardID: 301
+      Count: 2
+    - DeckID: 3
+      CardID: 302
+      Count: 2
+    - DeckID: 3
+      CardID: 303
+      Count: 3
+    - DeckID: 3
+      CardID: 304
+      Count: 2
+    - DeckID: 3
+      CardID: 305
+      Count: 3
+    - DeckID: 3
+      CardID: 306
+      Count: 2
+    - DeckID: 3
+      CardID: 309
+      Count: 2
+    - DeckID: 3
+      CardID: 310
+      Count: 2
+    - DeckID: 3
+      CardID: 311
+      Count: 2
+    - DeckID: 3
+      CardID: 318
+      Count: 1
+    - DeckID: 3
+      CardID: 319
+      Count: 3
+    - DeckID: 3
+      CardID: 408
+      Count: 2
+    - DeckID: 3
+      CardID: 407
+      Count: 2
+    - DeckID: 3
+      CardID: 405
+      Count: 2

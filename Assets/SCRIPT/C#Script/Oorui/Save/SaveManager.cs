@@ -635,4 +635,14 @@ public class SaveManager : MonoBehaviour {
         // 指定されたカードが存在しなければ先頭のカードをKEYにする
         return cardIDs[0];
     }
+
+    /// <summary>
+    /// プレイヤーのセーブファイルが存在するか確認する
+    /// </summary>
+    /// <returns>セーブファイルが存在するか</returns>
+    public bool HasPlayerSaveFile() {
+
+        // プレイヤーデータのセーブファイルが存在するか返す
+        return File.Exists(PlayerDataSaveFilePath);
+    }
 }
