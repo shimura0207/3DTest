@@ -8,10 +8,6 @@ public class TextLinkTest : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private TMP_Text effectText;
 
-    [SerializeField] private Camera uiCamera;
-
-    [SerializeField] private TextMeshProUGUI text;
-
     void Start() {
         effectText.text = "この効果は<link=\"LINK\">仮</link>である。".ToString();
     }
@@ -21,21 +17,32 @@ public class TextLinkTest : MonoBehaviour, IPointerClickHandler
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        // その場所にリンクがあるか判定
-        int linkIndex = TMP_TextUtilities.FindIntersectingLink(effectText, eventData.position,null);
+        // クリックした場所にリンクがあるか調べる
+        int linkIndex = TMP_TextUtilities.FindIntersectingLink(
+            effectText,
+            eventData.position,
+            eventData.pressEventCamera
+        );
 
+        // リンクがなければ終了
         if (linkIndex == -1)
             return;
 
-        // リンクの情報
+        // クリックされたリンクの情報を取得
         TMP_LinkInfo linkInfo = effectText.textInfo.linkInfo[linkIndex];
 
+        // リンクIDとリンク文字を取得
         string linkId = linkInfo.GetLinkID();
+        string linkText = linkInfo.GetLinkText();
 
-        if (linkId == "LINK") {
-            effectText.text = "これはリンクである。".ToString();
+        Debug.Log("クリックされたリンクID: " + linkId);
+        Debug.Log("クリックされた文字: " + linkText);
+
+        // リンクIDによって処理を分ける
+        switch (linkId) {
+            case "LINK":
+                effectText.text = "リンク成功";
+                break;
         }
-        //Debug.Log("クリックされたリンクID: " + linkId);
-        //Debug.Log("クリックされた文字: " + linkInfo.GetLinkText());
     }
 }
