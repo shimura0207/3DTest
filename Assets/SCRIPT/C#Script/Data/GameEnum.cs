@@ -383,6 +383,18 @@ public enum AbilityProcess {
     HealFatigue,
     // モンスターを疲労させる
     GiveFatigue,
+    // 次のパチスロフェイズの1ゲーム目の役をベルにする
+    SetRoleBell,
+    // 次のパチスロフェイズの1ゲーム目の役をスイカにする
+    SetRoleSuika,
+    // 次のパチスロフェイズの1ゲーム目の役をリプレイにする
+    SetRoleReplay,
+    // 次のパチスロフェイズの1ゲーム目の役をハズレにする
+    SetRoleBlank,
+    // 次のパチスロフェイズの1ゲーム目の役をチェリーにする
+    SetRoleCherry,
+    // パチスロフェイズのテーブル上昇(うおおおおの専用効果)
+    Uoooo,
     // なかまよび(マジカルバードの特殊効果)
     Nakamayobi,
     // レベルアップ(リールギアの特殊効果)

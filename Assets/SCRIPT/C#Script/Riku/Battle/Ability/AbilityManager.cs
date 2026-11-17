@@ -107,6 +107,24 @@ public class AbilityManager : MonoBehaviour {
             case AbilityProcess.GiveFatigue:
                 func = () => abilityProcessData.GiveFatigueAbility(card, player, target);
                 break;
+            case AbilityProcess.SetRoleBell:
+                func = () => abilityProcessData.SetRoleBellAbility();
+                break;
+            case AbilityProcess.SetRoleSuika:
+                func = () => abilityProcessData.SetRoleSuikaAbility();
+                break;
+            case AbilityProcess.SetRoleReplay:
+                func = () => abilityProcessData.SetRoleReplayAbility();
+                break;
+            case AbilityProcess.SetRoleBlank:
+                func = () => abilityProcessData.SetRoleBlankAbility();
+                break;
+            case AbilityProcess.SetRoleCherry:
+                func = () => abilityProcessData.SetRoleCherryAbility();
+                break;
+            case AbilityProcess.Uoooo:
+                func = () => abilityProcessData.UooooAbility();
+                break;
             case AbilityProcess.Nakamayobi:
                 func = () => abilityProcessData.NakamayobiAbility(player);
                 break;
