@@ -98,6 +98,9 @@ public class AttackPhase : PhaseBase {
         // カメラを液晶の方に寄せる
         Camera.main.transform.position = CAMERA_POSITION;
         Camera.main.transform.eulerAngles = Vector3.zero;
+
+        // 手札表示
+        CardObjectManager.instance.HandVisible();
     }
 
     /// <summary>

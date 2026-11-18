@@ -678,7 +678,7 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         CardObject lank = CardObjectManager.instance.GetUseCardObject(4);
         // 矢印出す
-        tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
+        tutorialArrow.CreateVerticalArrow(new Vector2(1040, 250), 180);
         // RG:LANKを出すまで待つ
         while (true) {
             if (currentShrink != CardObjectManager.instance.isHandShrink) {
@@ -686,7 +686,7 @@ public class BattleSystemManager : MonoBehaviour {
                     tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
                 }
                 else {
-                    tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1040, 250), 180);
                 }
             }
             currentShrink = CardObjectManager.instance.isHandShrink;
@@ -698,9 +698,9 @@ public class BattleSystemManager : MonoBehaviour {
         tutorialArrow.DeleteArrow();
         text = "攻撃するときはボタンを押してパチスロGO！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "引いた役とモンスターの対応役が一致していたら攻撃するよ！";
+        text = "引いた役と対応役が一致していたら攻撃するよ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "Professor:Raymondの対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
+        text = "「Professor:Raymond」の対応役はハズレだから、\nハズレを引けると攻撃ができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 矢印出す
         tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 600), 90);
@@ -746,7 +746,12 @@ public class BattleSystemManager : MonoBehaviour {
         text = "基本的には横か斜めに絵柄が揃うと役の成立だ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
+        text = "5Gパチスロを回して\n引いた対応役の数だけ攻撃できるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+
         // ── 1G目：ハズレ ──
+        text = "まずは1G目！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 操作を受け付け、第3停止が完了するまでここで待機する。
         await WaitTutorialThirdStopAsync();
 
@@ -757,24 +762,32 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
         // ── 2G目：弱チェリー ──
+        text = "続いて2G目！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         await WaitTutorialThirdStopAsync();
 
         text = "チェリーは左のリールに一つでも止まったら\n役として成立するよ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
         // ── 3G目：スイカ ──
+        text = "続いて3G目！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         await WaitTutorialThirdStopAsync();
 
         text = "レアな役を引いたみたいだね。レアな役は出にくいぶん、\n対応モンスターの破壊力はすごいぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
         // ── 4G目：チャンス目 ──
+        text = "続いて4G目！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         await WaitTutorialThirdStopAsync();
 
         text = "おっとチャンス目だ！この役はチェリーとスイカ\n両方の役が成立したとみなされるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
         // ── 5G目：ハズレ ──
+        text = "ラスト！5G目！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
         await WaitTutorialThirdStopAsync();
 
         text = "また対応役を引いたね！\nこれで2回攻撃ができるぞ！";
@@ -824,7 +837,7 @@ public class BattleSystemManager : MonoBehaviour {
                     await MenuWindowManager.Instance.TutorialTextWindow(text);
                     firstAttack = false;
                 } else {
-                    text = "続けて2回目の攻撃！目の前のモンスターは\nいなくなったからプレイヤーに攻撃だ！";
+                    text = "続けて2回目の攻撃！目の前のモンスターがいなくなったから\nプレイヤーに攻撃だ！";
                     await MenuWindowManager.Instance.TutorialTextWindow(text);
                 }
             }
@@ -845,10 +858,11 @@ public class BattleSystemManager : MonoBehaviour {
         // リーンドラゴンを出す
         CardObject rein = CardObjectManager.instance.GetUseCardObject(7);
         await SummonMonster(PlayerType.Opponent, rein, frontLane);
-        text = "強力なモンスターが出たぞ！\n今出たリーンドラゴンは疲労しない効果を持っている。";
+        text = "強力なモンスターが出たぞ！今出た\n「廻転龍 リーンドラゴン」は疲労しない効果を持っている。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "つまり出たターンからいきなり攻撃できるんだ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        await UniTask.DelayFrame(30);
         NextPhaseSetup();
 
         // 相手のパチスロフェイズ。
@@ -922,9 +936,9 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 矢印消す
         tutorialArrow.DeleteArrow();
-        text = "さらにスペルを使ってみよう！";
+        text = "さらにスペルを使ってみよう！\nスペルは1ターンに3回までつかうことができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        text = "PERFECT・STOPは自分のモンスターの\n疲労をいやすことができるぞ！";
+        text = "「PERFECT・STOP」は自分のモンスターの\n疲労をいやすことができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(650, 250), 180);
@@ -948,6 +962,19 @@ public class BattleSystemManager : MonoBehaviour {
         tutorialArrow.DeleteArrow();
         text = "これでみんな攻撃できるね！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
+        text = "パチスロを回そう！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+        // 矢印出す
+        tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 600), 90);
+        // パチスロボタン
+        pachisuroGoActive = true;
+        while (!pachisuroGo) {
+            await UniTask.Yield();
+        }
+        pachisuroGoActive = false;
+        pachisuroGo = false;
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
         NextPhaseSetup();
 
         // 自身のパチスロフェイズ（2回目）
@@ -968,14 +995,14 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 1G目から5G目までの役を予約する。
         secondSlot.SetTutorialRoles(
-            PachisuroSymbolKoyakuEnum.Replay,
+            PachisuroSymbolKoyakuEnum.Miss,
             PachisuroSymbolKoyakuEnum.WeakCherry,
             PachisuroSymbolKoyakuEnum.Bell,
             PachisuroSymbolKoyakuEnum.StrongCherry,
             PachisuroSymbolKoyakuEnum.Seven
         );
 
-        // 1G目：リプレイ。
+        // 1G目：ハズレ。
         // プレイヤーがBET・レバー・停止操作を行い、第3停止まで待つ。
         await WaitTutorialThirdStopAsync();
 
@@ -1040,25 +1067,13 @@ public class BattleSystemManager : MonoBehaviour {
         // ジングルドラゴンを出す
         CardObject jingle = CardObjectManager.instance.GetUseCardObject(9);
         await SummonMonster(PlayerType.Opponent, jingle, frontLane);
-        NextPhaseSetup();
-
-        // 相手のパチスロフェイズ（2回目）
-        // スイカ → リプレイ → リプレイ → リプレイ → ハズレの順に自動再生。
-        // 最後の第3停止と演出の待機・終了処理まで待つ。
-        await SlotReelController.Instance.PlayTutorialOpponentAsync(
-            PachisuroSymbolKoyakuEnum.Suika,
-            PachisuroSymbolKoyakuEnum.Replay,
-            PachisuroSymbolKoyakuEnum.Replay,
-            PachisuroSymbolKoyakuEnum.Replay,
-            PachisuroSymbolKoyakuEnum.Miss
-        );
-
-        // 相手のアタックフェイズへ。
-        NextPhaseSetup();
-
-        // 相手のアタックフェイズ
-        await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await UniTask.DelayFrame(30);
+        // フェイズの片付け
+        phaseList[(int)currentPhase].Teardown();
+        // フェイズをエンドフェイズに
+        currentPhase = BattlePhase.EndPhase;
+        // フェイズの準備
+        phaseList[(int)currentPhase].Setup();
 
         // 相手のエンドフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
@@ -1071,23 +1086,35 @@ public class BattleSystemManager : MonoBehaviour {
         // 自身のメインフェイズ
         text = "今はラッシュ中で相手のモンスターは少ない。\nこのまま押し切っちゃおう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        // RG:REIを2体出す
-        CardObject rei = CardObjectManager.instance.GetUseCardObject(11);
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(1030, 250), 180);
+        // RG:REIを出す
+        CardObject rei = CardObjectManager.instance.GetUseCardObject(12);
         while (true) {
-            if (await mainPhase.CardControl(rei, FieldLane.Lane5))
-                break;
-            await UniTask.Yield();
-        }
-        rei = CardObjectManager.instance.GetUseCardObject(13);
-        // 矢印出す
-        tutorialArrow.CreateVerticalArrow(new Vector2(1170, 250), 180);
-        while (true) {
+            if (currentShrink != CardObjectManager.instance.isHandShrink) {
+                if (CardObjectManager.instance.isHandShrink) {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
+                }
+                else {
+                    tutorialArrow.CreateVerticalArrow(new Vector2(1030, 250), 180);
+                }
+            }
+            currentShrink = CardObjectManager.instance.isHandShrink;
             if (await mainPhase.CardControl(rei, FieldLane.Lane2))
                 break;
             await UniTask.Yield();
         }
+        // 矢印出す
+        tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 600), 90);
+        // パチスロボタン
+        pachisuroGoActive = true;
+        while (!pachisuroGo) {
+            await UniTask.Yield();
+        }
+        pachisuroGoActive = false;
+        pachisuroGo = false;
+        // 矢印消す
+        tutorialArrow.DeleteArrow();
         NextPhaseSetup();
 
         // 自身のパチスロフェイズ

@@ -38,6 +38,9 @@ public class CardObjectManager : MonoBehaviour {
     // フィールドのカードオブジェクトのコピーリスト
     public Dictionary<PlayerType, Dictionary<FieldLane, CardObject>> fieldObjectList { get; private set; } = null;
 
+    // 手札の親オブジェクト
+    [SerializeField]
+    private Transform handRoot = null;
     // 自身の手札の親オブジェクト
     [SerializeField]
     private Transform selfHandRoot = null;
@@ -312,6 +315,20 @@ public class CardObjectManager : MonoBehaviour {
         selfHandRoot.localScale *= SHRINK_HAND_SCALE;
         selfHandRoot.localPosition = SHRINK_HAND_POSITION;
         isHandShrink = true;
+    }
+
+    /// <summary>
+    /// 手札の表示
+    /// </summary>
+    public void HandVisible() {
+        handRoot.SetParent(transform, false);
+    }
+
+    /// <summary>
+    /// 手札の非表示
+    /// </summary>
+    public void HandHidden() {
+        handRoot.SetParent(unuseObjectRoot, false);
     }
 
     /// <summary>
