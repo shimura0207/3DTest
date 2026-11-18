@@ -20,13 +20,16 @@ public class UIManager : SystemObject {
     [SerializeField] private GameObject damageUI = null;
 
     // ターン開始バナー
-    [SerializeField] Image banner = null;
+    [SerializeField] private Image banner = null;
+
+    // バナーの親Canvas
+    [SerializeField] private Canvas bannerParent = null;
 
     // 自分のターンバナー画像
-    [SerializeField] Sprite selfBanner = null;
+    [SerializeField] private Sprite selfBanner = null;
 
     // 相手のターンバナー画像
-    [SerializeField] Sprite opponentBanner = null;
+    [SerializeField] private Sprite opponentBanner = null;
 
     // 自身への参照
     public static UIManager instance { get; private set; }
@@ -201,8 +204,21 @@ public class UIManager : SystemObject {
         Instantiate(damageUI, position, Quaternion.identity);
     }
 
-    public void GenerateTurnBanner(PlayerType player) {
+    /// <summary>
+    /// ターン開始時バナーを生成する
+    /// </summary>
+    /// <param name="player"></param>
+    public async UniTask GenerateTurnBanner(PlayerType player) {
+        // ターンプレイヤーに合わせてバナーの画像を変える
+        if (player == PlayerType.Self) {
+            banner.sprite = selfBanner;
+        }
+        else if (player == PlayerType.Opponent) {
+            banner.sprite = opponentBanner;
+        }
 
+        // 生成する
+        var turnPlayerBanner = Object.Instantiate(banner, bannerParent.transform, false);
     }
 }
 
