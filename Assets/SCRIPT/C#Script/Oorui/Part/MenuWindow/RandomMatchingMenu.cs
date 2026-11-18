@@ -100,7 +100,25 @@ public class RandomMatchingMenu : MenuWindowBase {
 
         // 対戦相手が見つかったことを表示する
         ShowMessage("対戦相手が見つかりました");
+        // 自分のプレイヤー名を取得する
 
+        // セーブデータを取得
+        PlayerSaveData saveData = SaveManager.Instance.Load();
+        string playerName = saveData.playerName;
+
+        // 自分の名前を対戦相手へ送信する
+        PlayerNameManager.SendPlayerName(playerName);
+
+        // 対戦相手の名前を受信するまで待機する
+        await UniTask.WaitUntil(() =>
+            !IsCurrentSession(sessionId) ||
+            !isMenuOpen ||
+            CustomNetworkManager.instance == null ||
+            PlayerNameManager.isOpponentNameReceived
+        );
+
+        // 古い処理やメニューが閉じられている場合は終了する
+        if (!IsCurrentSession(sessionId) || !isMenuOpen) return;
         // ホストが先攻を決定し、クライアントへ送信する
         DecideFirstPlayer();
 
@@ -131,6 +149,10 @@ public class RandomMatchingMenu : MenuWindowBase {
 
         // 前回の先攻決定情報をリセットする
         FirstPlayerManager.Reset();
+        // 前回の対戦相手情報を初期化する
+        PlayerNameManager.Reset();
+        // 自分と対戦相手のデッキ情報を初期化する
+        PlayerDeckInfoManager.Reset();
     }
 
     /// <summary>

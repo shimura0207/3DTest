@@ -1004,6 +1004,14 @@ public class CustomNetworkManager : NetworkManager {
             case NetworkUseID.AbilityTargetCard:
                 AbilityManager.instance.ReceiveOpponentAbilityTargetCard(values);
                 break;
+            case NetworkUseID.OpponentName:
+                // プレイヤーネームを共有
+                PlayerNameManager.ReceiveOpponentName(values);
+                break;
+            case NetworkUseID.OpponentKeyCardID:
+                // KEYカードIDを共有
+                PlayerDeckInfoManager.ReceiveOpponentKeyCardID(values);
+                break;
         }
     }
 }
