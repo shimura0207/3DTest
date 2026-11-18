@@ -13,6 +13,95 @@ MonoBehaviour:
   m_Name: CardAbilityDatabase
   m_EditorClassIdentifier: 
   cardAbilityDataList:
+  - cardID: 101
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 3
+      abilityTarget: 8
+      abilityProcess: 17
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 102
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 3
+      abilityTarget: 6
+      abilityProcess: 2
+      passiveAbility: -1
+      abilityValue: 1
+    - abilityID: 2
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+  - cardID: 104
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 3
+      abilityTarget: 8
+      abilityProcess: 17
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 105
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 5
+      abilityTarget: 9
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 3
+    - abilityID: 2
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+    - abilityID: 3
+      abilityType: 0
+      abilityTiming: 3
+      abilityTarget: 8
+      abilityProcess: 17
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 106
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 0
+      abilityTarget: 8
+      abilityProcess: 4
+      passiveAbility: -1
+      abilityValue: 7
+    - abilityID: 2
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+  - cardID: 107
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 1
+      abilityValue: 2
   - cardID: 108
     abilityList:
     - abilityID: 1
@@ -31,6 +120,83 @@ MonoBehaviour:
       abilityProcess: 0
       passiveAbility: -1
       abilityValue: 1
+  - cardID: 115
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 4
+      passiveAbility: 2
+      abilityValue: 2
+  - cardID: 116
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 5
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 3
+  - cardID: 117
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 2
+      passiveAbility: -1
+      abilityValue: 3
+  - cardID: 118
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 3
+      passiveAbility: -1
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 5
+      abilityProcess: 7
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 119
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 6
+      passiveAbility: -1
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 6
+      abilityProcess: 2
+      passiveAbility: -1
+      abilityValue: 2
+  - cardID: 120
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 7
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 121
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 2
   - cardID: 122
     abilityList:
     - abilityID: 1
@@ -39,6 +205,33 @@ MonoBehaviour:
       abilityTarget: 6
       abilityProcess: 8
       passiveAbility: -1
+      abilityValue: -1
+  - cardID: 206
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+  - cardID: 207
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+  - cardID: 208
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
       abilityValue: -1
   - cardID: 209
     abilityList:
@@ -49,6 +242,350 @@ MonoBehaviour:
       abilityProcess: -1
       passiveAbility: 0
       abilityValue: -1
+  - cardID: 210
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+  - cardID: 211
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 2
+  - cardID: 212
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 1
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 3
+  - cardID: 213
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 3
+      passiveAbility: -1
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 3
+  - cardID: 214
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 6
+      abilityProcess: 4
+      passiveAbility: -1
+      abilityValue: 1
+  - cardID: 215
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 3
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 5
+  - cardID: 216
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 6
+      abilityProcess: 8
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 217
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 2
+  - cardID: 218
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 4
+      passiveAbility: -1
+      abilityValue: 2
+  - cardID: 219
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 7
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 5
+  - cardID: 220
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: -1
+      abilityProcess: 18
+      passiveAbility: -1
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 2
+      abilityTarget: 6
+      abilityProcess: 6
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 303
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 7
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 3
+  - cardID: 305
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 2
+      abilityTarget: 7
+      abilityProcess: 9
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 306
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: -1
+      abilityProcess: 16
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 307
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 5
+      abilityTarget: -1
+      abilityProcess: 16
+      passiveAbility: -1
+      abilityValue: -1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 4
+      abilityTarget: -1
+      abilityProcess: 16
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 308
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 5
+      abilityTarget: 8
+      abilityProcess: 2
+      passiveAbility: -1
+      abilityValue: 3
+  - cardID: 309
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 5
+      abilityProcess: 7
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 310
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 0
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 1
+  - cardID: 311
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 0
+      abilityTarget: 3
+      abilityProcess: 3
+      passiveAbility: -1
+      abilityValue: 1
+  - cardID: 314
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 4
+      abilityTarget: 3
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 5
+  - cardID: 315
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 9
+      abilityProcess: 6
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 316
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 3
+      passiveAbility: -1
+      abilityValue: 1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 2
+      passiveAbility: -1
+      abilityValue: 5
+  - cardID: 317
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 4
+      abilityProcess: 7
+      passiveAbility: -1
+      abilityValue: 1
+    - abilityID: 2
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 1
+  - cardID: 318
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 7
+      abilityProcess: 5
+      passiveAbility: -1
+      abilityValue: 2
+  - cardID: 319
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 2
+  - cardID: 320
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 9
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 7
+  - cardID: 401
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 13
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 402
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 12
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 403
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 10
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 404
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 11
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 405
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 14
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 406
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 0
+      abilityProcess: 15
+      passiveAbility: -1
+      abilityValue: -1
   - cardID: 407
     abilityList:
     - abilityID: 1
@@ -57,4 +594,13 @@ MonoBehaviour:
       abilityTarget: -1
       abilityProcess: -1
       passiveAbility: 3
+      abilityValue: -1
+  - cardID: 408
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 2
       abilityValue: -1
