@@ -630,6 +630,7 @@ MonoBehaviour:
   useObjectRoot: {fileID: 6143034204580867602}
   unuseObjectRoot: {fileID: 1859029070654280379}
   originObject: {fileID: 8761888792021252839, guid: 8c2a6bbb51f27b34ebf81b59f94a653f, type: 3}
+  handRoot: {fileID: 6399219677172416688}
   selfHandRoot: {fileID: 5259985608796508788}
   opponentHandRoot: {fileID: 8267223621560810769}
   selfFieldLaneRoot:

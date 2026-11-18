@@ -437,6 +437,11 @@ public enum NetworkUseID {
     LaneCange,
     // 効果対象カード
     AbilityTargetCard,
+
+    // 対戦相手の名前
+    OpponentName,
+    // 対戦相手のKEYカードID
+    OpponentKeyCardID,
 }
 
 /// <summary>

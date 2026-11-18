@@ -62,6 +62,9 @@ public class PachisuroPhase : PhaseBase {
                 handCanvas.enabled = false;
             }
         }
+
+        // 手札を非表示に
+        CardObjectManager.instance.HandHidden();
     }
 
     public override UniTask SelfExecute() {
