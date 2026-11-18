@@ -46,6 +46,9 @@ public class UIManager : SystemObject {
     // マウスの左右クリック判定
     public bool mouseButton { get; private set; } = true;
 
+    // ウィンドウに触れているか判定
+    public bool touchWindow { get; private set; } = false;
+
     // ダメージUI
     [SerializeField] private GameObject damageUI = null;
 
@@ -89,14 +92,16 @@ public class UIManager : SystemObject {
             mouseButton = true;
             // カードオブジェクトレイヤー取得
             int cardLayer = LayerMask.GetMask("CardObject");
+            // ウィンドウレイヤー取得
+            int windowLayer = LayerMask.GetMask("Window");
             // レイキャストでカードを触れているか判定
             if (Physics.Raycast(
-                ray, out RaycastHit hit,
+                ray, out RaycastHit hitCard,
                 GameConst.RAY_RANGE_MAX, cardLayer)
                 ) {
-                if (!hit.collider) return;
+                if (!hitCard.collider) return;
                 // 触れているオブジェクトを保存
-                catchObject = hit.collider.gameObject;
+                catchObject = hitCard.collider.gameObject;
                 // オブジェクトのクラス取得
                 cardObject = catchObject.GetComponent<CardObject>();
                 // IDからステータスを取得
@@ -106,7 +111,15 @@ public class UIManager : SystemObject {
                     cardData = null;
                 }
             }
-            else {
+            // ウィンドウに触れていたらスルー
+            else if (Physics.Raycast(
+                ray, out RaycastHit hitUI,
+                GameConst.RAY_RANGE_MAX, windowLayer)
+                ) {
+                // ウィンドウに触れている状態
+                touchWindow = true;
+            } else {
+                touchWindow = false;
                 cardData = null;
             }
             // 右クリックだったら判定を右にする

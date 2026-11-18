@@ -13,6 +13,42 @@ MonoBehaviour:
   m_Name: CardAbilityDatabase
   m_EditorClassIdentifier: 
   cardAbilityDataList:
+  - cardID: 108
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
+  - cardID: 109
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 0
+      abilityTarget: 0
+      abilityProcess: 0
+      passiveAbility: -1
+      abilityValue: 1
+  - cardID: 122
+    abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 6
+      abilityProcess: 8
+      passiveAbility: -1
+      abilityValue: -1
+  - cardID: 209
+    abilityList:
+    - abilityID: 1
+      abilityType: 1
+      abilityTiming: -1
+      abilityTarget: -1
+      abilityProcess: -1
+      passiveAbility: 0
+      abilityValue: -1
   - cardID: 407
     abilityList:
     - abilityID: 1

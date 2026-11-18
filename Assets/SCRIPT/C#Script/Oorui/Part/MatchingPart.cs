@@ -194,6 +194,30 @@ public class MatchingPart : PartBase {
                     continue;
                 }
 
+                // 自分のプレイヤー情報をセーブデータから取得する
+                PlayerSaveData saveData = SaveManager.Instance.Load();
+
+                // 自分のプレイヤー名を取得する
+                string playerName = saveData.playerName;
+
+                // 自分の名前を対戦相手へ送信する
+                PlayerNameManager.SendPlayerName(playerName);
+
+                // 選択中のデッキからKEYカードIDを取得する
+                int keyCardID = SaveManager.Instance.GetDeckKeyCardID(selectedDeckID);
+
+                // 自分のKEYカードIDを対戦相手へ送信する
+                PlayerDeckInfoManager.SendOwnKeyCardID(keyCardID);
+
+                // 対戦相手の名前とKEYカードIDを受信するまで待機する
+                await UniTask.WaitUntil(() =>
+                    PlayerNameManager.isOpponentNameReceived &&
+                    PlayerDeckInfoManager.isOpponentKeyCardReceived
+                );
+
+                // 対戦相手確認メニューを開く
+                await MenuWindowManager.Instance.Open<OpponentConfirmMenu>();
+
                 // 選択されたデッキIDを渡して対戦画面へ遷移する
                 await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID, MainGamePartType.Matching);
 
