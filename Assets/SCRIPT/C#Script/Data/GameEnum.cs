@@ -245,7 +245,7 @@ public enum FadeType {
     Max,
 }
 
-public enum VFXType {
+public enum EffectType {
     Invalid = -1,
     ClickEffect,
 
