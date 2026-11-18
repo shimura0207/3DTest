@@ -149,18 +149,18 @@ MonoBehaviour:
       abilityValue: 3
   - cardID: 118
     abilityList:
-    - abilityID: 1
-      abilityType: 0
-      abilityTiming: 1
-      abilityTarget: 0
-      abilityProcess: 3
-      passiveAbility: -1
-      abilityValue: -1
     - abilityID: 2
       abilityType: 0
       abilityTiming: 1
       abilityTarget: 5
       abilityProcess: 7
+      passiveAbility: -1
+      abilityValue: -1
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 6
+      abilityProcess: 3
       passiveAbility: -1
       abilityValue: -1
   - cardID: 119
@@ -271,13 +271,6 @@ MonoBehaviour:
       abilityValue: 3
   - cardID: 213
     abilityList:
-    - abilityID: 1
-      abilityType: 0
-      abilityTiming: 1
-      abilityTarget: 0
-      abilityProcess: 3
-      passiveAbility: -1
-      abilityValue: -1
     - abilityID: 2
       abilityType: 0
       abilityTiming: 1
@@ -285,6 +278,13 @@ MonoBehaviour:
       abilityProcess: 0
       passiveAbility: -1
       abilityValue: 3
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 1
+      abilityTarget: 6
+      abilityProcess: 3
+      passiveAbility: -1
+      abilityValue: -1
   - cardID: 214
     abilityList:
     - abilityID: 1
