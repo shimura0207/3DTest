@@ -323,6 +323,7 @@ public class CardObject : MonoBehaviour {
     /// <param name="setStatus">セットするステータス</param>
     /// <param name="setValue">セットする値</param>
     public void SetStatus(MonsterStatus setStatus, int setValue) {
+        if (cardType != CardType.Monster) return;
         currentStatus[setStatus] = setValue;
 
         // HPが0になった場合は破壊
@@ -338,6 +339,7 @@ public class CardObject : MonoBehaviour {
     /// <param name="giveStatus">与えるステータス</param>
     /// <param name="giveValue">与える値</param>
     public void GiveStatus(MonsterStatus giveStatus, int giveValue) {
+        if (cardType != CardType.Monster) return;
         currentStatus[giveStatus] += giveValue;
         
         // ダメージをくらったら表示
