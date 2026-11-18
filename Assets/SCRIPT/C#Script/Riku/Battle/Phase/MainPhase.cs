@@ -23,6 +23,9 @@ public class MainPhase : PhaseBase {
     private Vector3 catchStartPos = Vector3.zero;
     // 座標の初期化フラグ
     private bool resetPos = false;
+
+    // 持ち上げ幅
+    private readonly float CATCHI_UP = 0.01f;
     
     /// <summary>
     /// 自身のターン処理
@@ -203,6 +206,12 @@ public class MainPhase : PhaseBase {
             }
             // 位置を保存
             catchStartPos = catchObject.transform.position;
+            // 少し手前側に出す
+            catchObject.transform.position = new Vector3(
+                catchStartPos.x,
+                catchStartPos.y,
+                catchStartPos.z - CATCHI_UP
+                );
         }
     }
 
@@ -215,6 +224,8 @@ public class MainPhase : PhaseBase {
         Plane plane = new Plane(
             Vector3.forward,
             catchObject.transform.position);
+        // レイを出す位置も少し手前に
+        ray.origin = new Vector3(ray.origin.x, ray.origin.y, ray.origin.z - CATCHI_UP);
         // 仮想板とレイの判定
         if (plane.Raycast(ray, out float distance)) {
             // 衝突した位置を取得

@@ -162,7 +162,7 @@ public class AbilityProcessData {
         // 自身プレイヤー
         handDestruction[AbilityTarget.SelfPlayer] = null;
         // 相手プレイヤー
-        handDestruction[AbilityTarget.SelfPlayer] = null;
+        handDestruction[AbilityTarget.OpponentPlayer] = null;
         // 自身のランダムなカード
         handDestruction[AbilityTarget.SelfRandom] = async (player) => {
             // ランダムな手札取得

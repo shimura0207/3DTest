@@ -1,6 +1,6 @@
 /*
- * @file    VFXManager
- * @author oorui
+ * @file    EffectManager
+ * @author  oorui
  */
 
 using Cysharp.Threading.Tasks;
@@ -10,18 +10,18 @@ using UnityEngine;
 using UnityEngine.VFX;
 using static CommonModule;
 
-public class VFXManager : SystemObject {
+public class EffectManager : SystemObject {
     /// <summary>
     /// 自身への参照
     /// </summary>
-    public static VFXManager Instance { get; private set; } = null;
+    public static EffectManager Instance { get; private set; } = null;
 
     // エフェクトオブジェクト
     [SerializeField]
-    private VFXObject vfxObject = null;
+    private EffectObject effectObject = null;
 
     // 使用中のエフェクトリスト
-    private List<List<GameObject>> useVFXList = null;
+    private List<List<GameObject>> useEffectList = null;
 
     // タスク中断用トークン
     private CancellationToken token;
@@ -33,11 +33,11 @@ public class VFXManager : SystemObject {
     public override async UniTask Initialize() {
         Instance = this;
         // エフェクトオブジェクトの初期化
-        vfxObject.Initialize();
+        effectObject.Initialize();
         // 使用エフェクトリストを適当数生成
-        useVFXList = new List<List<GameObject>>((int)VFXType.max);
-        for (int i = 0, max = (int)VFXType.max; i < max; i++) {
-            useVFXList.Add(new List<GameObject>(VFXObject.GENERATE_OBJECTS_MAX));
+        useEffectList = new List<List<GameObject>>((int)EffectType.max);
+        for (int i = 0, max = (int)EffectType.max; i < max; i++) {
+            useEffectList.Add(new List<GameObject>(EffectObject.GENERATE_OBJECTS_MAX));
         }
         // オブジェクト破棄時に処理されるタスク中断用トークンを取得
         token = this.GetCancellationTokenOnDestroy();
@@ -52,22 +52,22 @@ public class VFXManager : SystemObject {
     /// <param name="playPosition"></param>
     /// <param name="setParent"></param>
     /// <returns></returns>
-    public async UniTask PlayEffect(VFXType playEffect, Vector3 playPosition, Transform setParent = null) {
+    public async UniTask PlayEffect(EffectType playEffect, Vector3 playPosition, Transform setParent = null) {
         // エフェクト使用化
-        GameObject vfx = vfxObject.UseEffect(playEffect, playPosition, setParent);
+        GameObject effect = effectObject.UseEffect(playEffect, playPosition, setParent);
         // SetParent用一時的待ち
         await UniTask.Yield();
-        vfx.transform.position = playPosition;
+        effect.transform.position = playPosition;
         // リストに追加
-        useVFXList[(int)playEffect].Add(vfx);
+        useEffectList[(int)playEffect].Add(effect);
         // 終了待ち
-        while (vfx.GetComponent<ParticleSystem>().isPlaying) {
+        while (effect.GetComponent<ParticleSystem>().isPlaying) {
             await UniTask.DelayFrame(1, PlayerLoopTiming.Update, token);
         }
         // エフェクトの終了処理
-        vfx.transform.position = Vector3.zero;
+        effect.transform.position = Vector3.zero;
         // エフェクト非表示
-        useVFXList[(int)playEffect].RemoveAt(0);
-        vfxObject.UnuseEffect((int)playEffect, 0);
+        useEffectList[(int)playEffect].RemoveAt(0);
+        effectObject.UnuseEffect((int)playEffect, 0);
     }
 }

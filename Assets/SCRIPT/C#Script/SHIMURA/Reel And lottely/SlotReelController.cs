@@ -774,7 +774,7 @@ public partial class SlotReelController : MonoBehaviour {
         if (!Input.GetKeyDown(KeyCode.UpArrow)) {
             return;
         }
-
+        AudioManager.instance.PlaySE("rever");
         TryStartSpin();
     }
 
@@ -783,7 +783,7 @@ public partial class SlotReelController : MonoBehaviour {
             return;
         }
 
-
+        AudioManager.instance.PlaySE("rever");
         TryStartSpin();
     }
 
@@ -802,7 +802,7 @@ public partial class SlotReelController : MonoBehaviour {
             if (!Input.GetKeyDown(stopKeys[i])) {
                 continue;
             }
-
+            AudioManager.instance.PlaySE("teisi");
             TryReserveStop(i);
         }
     }
@@ -1216,6 +1216,7 @@ public partial class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashTopRow(Color.white, 5, 0.15f));
+                    AudioManager.instance.PlaySE("bell");
                 }
 
                 efectManager.STOP_S();
@@ -1276,11 +1277,16 @@ public partial class SlotReelController : MonoBehaviour {
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
                     glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
                     glassFlash.StartCoroutine(glassFlash.FlashSUIKA(Color.black, 5, 0.03f, 0.9f));
+                    AudioManager.instance.PlaySE("suika");
                 }
 
-            }
+                if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Replay) {
+                    AudioManager.instance.PlaySE("rep");
+                }
 
-            return;
+                }
+
+                return;
         }
 
         // まだ目標角度まで届かない場合は、回転方向にだけ進めます。

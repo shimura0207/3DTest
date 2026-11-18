@@ -12,16 +12,16 @@ using static CommonModule;
 /// <summary>
 /// エフェクト毎の処理
 /// </summary>
-public class VFXObject : MonoBehaviour {
+public class EffectObject : MonoBehaviour {
     // エフェクトのオリジナルリスト
     [SerializeField]
-    private List<GameObject> originVFXtList = null;
+    private List<GameObject> originEffectList = null;
 
     // 使用中のエフェクトのオブジェクトリスト
-    private List<List<GameObject>> useVFXObjectsList = null;
+    private List<List<GameObject>> useEffectObjectsList = null;
 
     // 未使用のエフェクトオブジェクトリスト
-    private List<List<GameObject>> unuseVFXObjectsList = null;
+    private List<List<GameObject>> unuseEffectObjectsList = null;
 
     // 使用オブジェクトの親オブジェクト
     [SerializeField]
@@ -38,16 +38,16 @@ public class VFXObject : MonoBehaviour {
     /// </summary>
     public void Initialize() {
         // 各エフェクトオブジェクトの準備
-        unuseVFXObjectsList = new List<List<GameObject>>((int)VFXType.max);
-        for (int i = 0, max = (int)VFXType.max; i < max; i++) {
-            unuseVFXObjectsList.Add(new List<GameObject>(GENERATE_OBJECTS_MAX));
+        unuseEffectObjectsList = new List<List<GameObject>>((int)EffectType.max);
+        for (int i = 0, max = (int)EffectType.max; i < max; i++) {
+            unuseEffectObjectsList.Add(new List<GameObject>(GENERATE_OBJECTS_MAX));
             for (int obectNum = 0; obectNum < GENERATE_OBJECTS_MAX; obectNum++) {
-                unuseVFXObjectsList[i].Add(Instantiate(originVFXtList[i], unuseObjectRoot));
+                unuseEffectObjectsList[i].Add(Instantiate(originEffectList[i], unuseObjectRoot));
             }
         }
-        useVFXObjectsList = new List<List<GameObject>>((int)VFXType.max);
-        for (int i = 0, max = (int)VFXType.max; i < max; i++) {
-            useVFXObjectsList.Add(new List<GameObject>(GENERATE_OBJECTS_MAX));
+        useEffectObjectsList = new List<List<GameObject>>((int)EffectType.max);
+        for (int i = 0, max = (int)EffectType.max; i < max; i++) {
+            useEffectObjectsList.Add(new List<GameObject>(GENERATE_OBJECTS_MAX));
         }
     }
 
@@ -57,12 +57,12 @@ public class VFXObject : MonoBehaviour {
     /// </summary>
     /// <param name="effect"></param>
     /// <returns></returns>
-    public GameObject UseEffect(VFXType effect, Vector3 setPosition, Transform setParent) {
+    public GameObject UseEffect(EffectType effect, Vector3 setPosition, Transform setParent) {
         // setParentがnullなら_useObjectRootに
         Transform effectParent = setParent ?? useObjectRoot;
         // 使用可能なエフェクトの取得
         GameObject useObject = GetUsableEffectObject(effect);
-        useVFXObjectsList[(int)effect].Add(useObject);
+        useEffectObjectsList[(int)effect].Add(useObject);
         useObject.transform.position = setPosition;
         useObject.transform.SetParent(effectParent);
         return useObject;
@@ -75,9 +75,9 @@ public class VFXObject : MonoBehaviour {
     /// <param name="effect"></param>
     /// <returns></returns>
     public void UnuseEffect(int effect, int number) {
-        GameObject result = useVFXObjectsList[effect][number];
-        unuseVFXObjectsList[effect].Add(result);
-        useVFXObjectsList[effect].RemoveAt(number);
+        GameObject result = useEffectObjectsList[effect][number];
+        unuseEffectObjectsList[effect].Add(result);
+        useEffectObjectsList[effect].RemoveAt(number);
         result.transform.SetParent(unuseObjectRoot);
 
     }
@@ -87,12 +87,12 @@ public class VFXObject : MonoBehaviour {
     /// </summary>
     /// <param name="effectType"></param>
     /// <returns></returns>
-    private GameObject GetUsableEffectObject(VFXType effectType) {
+    private GameObject GetUsableEffectObject(EffectType effectType) {
         int effect = (int)effectType;
-        if (IsEmpty(unuseVFXObjectsList[effect])) return Instantiate(originVFXtList[effect]);
+        if (IsEmpty(unuseEffectObjectsList[effect])) return Instantiate(originEffectList[effect]);
 
-        GameObject result = unuseVFXObjectsList[effect][0];
-        unuseVFXObjectsList[effect].RemoveAt(0);
+        GameObject result = unuseEffectObjectsList[effect][0];
+        unuseEffectObjectsList[effect].RemoveAt(0);
         return result;
     }
 

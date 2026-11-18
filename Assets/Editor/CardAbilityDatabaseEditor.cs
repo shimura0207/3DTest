@@ -60,6 +60,8 @@ public class CardAbilityDatabaseEditor : Editor {
                 // 常在効果の設定
                 inputPassiveAbility = (PassiveAbility)UseEnumPopup(
                     "PassiveAbility", inputPassiveAbility);
+                // 効果の値設定
+                inputAbilityValue = EditorGUILayout.IntField("Value", inputAbilityValue);
                 break;
         }
 
@@ -125,6 +127,7 @@ public class CardAbilityDatabaseEditor : Editor {
                         break;
                     case AbilityType.Passive:
                         EditorGUILayout.LabelField("PassiveAbility", ability.passiveAbility.ToString());
+                        EditorGUILayout.LabelField($"Value: {ability.abilityValue}");
                         break;
                 }
                 // 登録されているデータを削除するボタン
