@@ -4,6 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
+using Mirror.Examples.CCU;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,10 @@ public class AbilityProcessData {
 
     // 受け取ったカード
     public CardObject receiveCard = null;
+    // 受け取ったカードID
+    public int receiveCardID = -1;
+    // 受け取ったレーン
+    public FieldLane receiveLane = FieldLane.None;
 
     // リーチェLv.1の名前
     private const string REACHE_LV1_NAME = "RG:REACHE Lv.1";
@@ -859,10 +864,32 @@ public class AbilityProcessData {
             if ((CardType)data.CardType != CardType.Monster) continue;
             bardIDs.Add(data.cardID);
         }
-        // ランダムで1体を選ぶ
-        int rand = UnityEngine.Random.Range(0, bardIDs.Count);
-        // 出すレーンを選択
-        FieldLane lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
+
+        int rand = -1;
+        FieldLane lane = FieldLane.None;
+        switch (player) {
+            case PlayerType.Self:
+                // ランダムで1体を選ぶ
+                rand = UnityEngine.Random.Range(0, bardIDs.Count);
+                // 出すレーンを選択
+                lane = await MenuWindowManager.Instance.EmptyLaneMenuOpen(PlayerType.Self);
+                // 相手へ抽選結果を送信
+                var pack = NetworkValueConverter.Pack(NetworkUseID.OpponentNakamayobi, rand, lane);
+                CustomNetworkManager.instance.SendStringToOpponent(pack);
+                break;
+            case PlayerType.Opponent:
+                // 出すモンスターと出るレーンを受け取るまで待機
+                while (receiveCardID < 0 || receiveLane == FieldLane.None) {
+                    await UniTask.Yield();
+                }
+                // 受け取った
+                rand = receiveCardID;
+                lane = receiveLane;
+                receiveCardID = -1;
+                receiveLane = FieldLane.None;
+                break;
+        }
+        
         // 選ばれたモンスターのオブジェクト生成
         CardObject cardObject = CardObjectManager.instance.UseCardObject(bardIDs[rand], player);
         // サイズを0にして召喚
