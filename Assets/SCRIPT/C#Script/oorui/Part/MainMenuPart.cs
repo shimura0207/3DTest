@@ -4,9 +4,11 @@
  */
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
+using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// メインメニューパート
@@ -20,8 +22,6 @@ public class MainMenuPart : PartBase {
     [SerializeField] private Button matching;
     // 設定画面遷移ボタン
     [SerializeField] private Button option;
-    // ガチャ画面遷移ボタン
-    [SerializeField] private Button gacha;
     // カード関連画面遷移ボタン
     [SerializeField] private Button card;
     // チュートリアル遷移ボタン
@@ -35,13 +35,34 @@ public class MainMenuPart : PartBase {
     // 各ボタンの多角形判定
     [SerializeField] private PolygonButtonHitArea matchingHitArea;
     [SerializeField] private PolygonButtonHitArea optionHitArea;
-    [SerializeField] private PolygonButtonHitArea gachaHitArea;
     [SerializeField] private PolygonButtonHitArea cardHitArea;
     [SerializeField] private PolygonButtonHitArea tutorialArea;
     /// <summary>
     /// メニュー説明用テキスト
     /// </summary>
     [SerializeField] private TMP_Text menuDescriptionText;
+
+    // テーマ画像の表示設定
+    [SerializeField]
+    private List<ThemeObjectData> themeObjectList = new List<ThemeObjectData>();
+
+    // 汎用テーマのID
+    [SerializeField]
+    private int normalThemeID;
+
+    // テーマ画像の浮遊移動量
+    [SerializeField]
+    private float floatHeight = 15.0f;
+
+    // テーマ画像が上下する速さ
+    [SerializeField]
+    private float floatSpeed = 1.5f;
+
+    // テーマ画像の移動処理を管理する
+    private CancellationTokenSource floatTokenSource;
+
+    // テーマ画像の初期位置
+    private Vector2 themeInitialPosition;
 
 
     // 流すBGM
@@ -61,14 +82,22 @@ public class MainMenuPart : PartBase {
     /// <returns></returns>
     public override async UniTask Setup() {
         await base.Setup();
+
         // 保存済みのプレイヤー名を表示する
         LoadPlayerName();
+
+        // 選択中のデッキに対応するテーマ画像を表示する
+        RefreshThemeObject();
+
         // フェードから開ける
         await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
+
         // 選択状態を初期化する
         selectMenu = MainMenuSelect.None;
+
         // メニューイベントを登録
         RegisterMenuEvent();
+
         // BGM再生
         AudioManager.instance.PlayBGM(menuBGMName);
     }
@@ -91,7 +120,6 @@ public class MainMenuPart : PartBase {
         // クリックイベント
         matching.onClick.AddListener(OnMatchmakingSelected);
         option.onClick.AddListener(OnOptionSelected);
-        gacha.onClick.AddListener(OnGachaSelected);
         card.onClick.AddListener(OnCartListSelected);
         tutorial.onClick.AddListener(OnTutorialSelected);
 
@@ -102,10 +130,6 @@ public class MainMenuPart : PartBase {
 
         optionHitArea.OnHover += () => {
             menuDescriptionText.text = "ゲームの設定、名前を変更が可能です";
-        };
-
-        gachaHitArea.OnHover += () => {
-            menuDescriptionText.text = "ガチャを引き、カードを取得することが可能です";
         };
 
         cardHitArea.OnHover += () => {
@@ -152,14 +176,6 @@ public class MainMenuPart : PartBase {
 
                 break;
 
-            case MainMenuSelect.Gacha:
-                // 再生中のBGMを停止する
-                AudioManager.instance.FadeOutBGM();
-                // ガチャパートへ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.Gacha);
-
-                break;
-
             case MainMenuSelect.Tutorial:
                 // 再生中のBGMを停止する
                 AudioManager.instance.FadeOutBGM();
@@ -188,15 +204,6 @@ public class MainMenuPart : PartBase {
     }
 
     /// <summary>
-    /// ガチャメニューが選択された時の処理
-    /// </summary>
-    /// <param name="menu"></param>
-    private void OnGachaSelected() {
-        // 遷移先オプションに設定する
-        selectMenu = MainMenuSelect.Gacha;
-    }
-
-    /// <summary>
     /// カード関連メニューが選択された時の処理
     /// </summary>
     /// <param name="menu"></param>
@@ -211,11 +218,128 @@ public class MainMenuPart : PartBase {
     private void OnTutorialSelected() {
         selectMenu = MainMenuSelect.Tutorial;
     }
+
+    /// <summary>
+    /// デッキのKEYカードに対応するテーマ画像を表示する
+    /// </summary>
+    private void RefreshThemeObject() {
+
+        // 表示するテーマIDを汎用テーマに設定する
+        int targetThemeID = normalThemeID;
+
+        // 選択中のデッキIDを取得する
+        int deckID = DeckSelectionManager.SelectedDeckID;
+
+        // デッキが選択されている場合
+        if (deckID >= 0) {
+
+            // デッキ情報を取得する
+            DeckSaveData deckData = SaveManager.Instance.GetDeckData(deckID);
+
+            // デッキ情報が存在する場合
+            if (deckData != null) {
+
+                // KEYカードIDを取得する
+                int keyCardID = deckData.keyCardID;
+
+                // KEYカードのマスターデータを取得する
+                var cardData = CardDataMasterUtility.GetCardMaster(keyCardID);
+
+                // カード情報が存在する場合
+                if (cardData != null) {
+
+                    // KEYカードのテーマIDを取得する
+                    targetThemeID = (int)cardData.themeID;
+                }
+            }
+        }
+
+        // 登録されているテーマ画像をすべて非表示にする
+        foreach (ThemeObjectData themeData in themeObjectList) {
+
+            if (themeData.targetObject != null) {
+                themeData.targetObject.SetActive(false);
+            }
+        }
+
+        // 対応するテーマIDのオブジェクトを表示する
+        foreach (ThemeObjectData themeData in themeObjectList) {
+
+            // テーマIDが一致した場合
+            if (themeData.themeID == targetThemeID) {
+
+                // 対象のオブジェクトを表示する
+                if (themeData.targetObject != null) {
+
+                    themeData.targetObject.SetActive(true);
+
+                    // RectTransformを取得する
+                    RectTransform rect =
+                        themeData.targetObject.GetComponent<RectTransform>();
+
+                    // 浮遊処理を開始する
+                    if (rect != null) {
+
+                        // 前回の浮遊処理を停止する
+                        floatTokenSource?.Cancel();
+                        floatTokenSource?.Dispose();
+
+                        // 新しいキャンセルトークンを作成する
+                        floatTokenSource = new CancellationTokenSource();
+
+                        // 浮遊処理を開始する
+                        FloatThemeObject(
+                            rect,
+                            floatTokenSource.Token
+                        ).Forget();
+                    }
+                }
+
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// テーマ画像を上下に浮遊させる
+    /// </summary>
+    private async UniTask FloatThemeObject(
+        RectTransform target,
+        CancellationToken token) {
+
+        // 初期位置を取得する
+        Vector2 initialPosition = target.anchoredPosition;
+
+        // 経過時間
+        float time = 0.0f;
+
+        while (!token.IsCancellationRequested && target != null) {
+
+            // 経過時間を加算する
+            time += Time.deltaTime * floatSpeed;
+
+            // Sin波を使って上下に移動させる
+            float offsetY = Mathf.Sin(time) * floatHeight;
+
+            // 初期位置から上下に移動させる
+            target.anchoredPosition =
+                initialPosition + new Vector2(0.0f, offsetY);
+
+            // 次のフレームまで待機する
+            await UniTask.Yield(PlayerLoopTiming.Update, token);
+        }
+    }
+
     /// <summary>
     /// 片付け処理
     /// </summary>
     /// <returns></returns>
     public override async UniTask Teardown() {
+        // 浮遊処理を停止する
+        floatTokenSource?.Cancel();
+        floatTokenSource?.Dispose();
+        floatTokenSource = null;
+
         await base.Teardown();
         // 選択状態を初期化する
         selectMenu = MainMenuSelect.None;

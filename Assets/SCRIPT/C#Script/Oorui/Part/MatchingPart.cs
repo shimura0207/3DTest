@@ -36,9 +36,6 @@ public class MatchingPart : PartBase {
     // デッキのKEYカードを表示する
     [SerializeField] private Image deckImage;
 
-    // 選択されたデッキID
-    private static int selectedDeckID = -1;
-
     // デッキ選択ボタンが押されたか
     private bool isDeckSelect = false;
 
@@ -76,13 +73,17 @@ public class MatchingPart : PartBase {
         // 前回選択したデッキが存在するか確認する
         DeckSaveData deckData = null;
 
-        if (selectedDeckID >= 0) {
-            deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
+        if (DeckSelectionManager.SelectedDeckID >= 0) {
+            deckData = SaveManager.Instance.GetDeckData(
+                DeckSelectionManager.SelectedDeckID
+            );
         }
 
         // デッキが存在しない場合
         if (deckData == null) {
-            selectedDeckID = -1;
+
+            // デッキIDを未選択状態にする
+            DeckSelectionManager.SetSelectedDeckID(-1);
 
             // 未選択状態の表示
             if (selectedDeckText != null) {
@@ -135,18 +136,21 @@ public class MatchingPart : PartBase {
 
                 // デッキ選択フラグを初期化する
                 isDeckSelect = false;
-
                 // 現在のデッキIDを渡してデッキ選択メニューを開く
-                int? result = await MenuWindowManager.Instance.DeckSelectMenuOpen(selectedDeckID);
+                int? result = await MenuWindowManager.Instance.DeckSelectMenuOpen(
+                    DeckSelectionManager.SelectedDeckID
+                );
 
-                // キャンセルされた場合は現在の選択状態を維持する
+                // キャンセルされた場合
                 if (result == null) continue;
 
                 // 決定されたデッキIDを保持する
-                selectedDeckID = result.Value;
+                DeckSelectionManager.SetSelectedDeckID(result.Value);
 
                 // 選択されたデッキ情報を取得する
-                DeckSaveData deckData = SaveManager.Instance.GetDeckData(selectedDeckID);
+                DeckSaveData deckData = SaveManager.Instance.GetDeckData(
+                    DeckSelectionManager.SelectedDeckID
+                );
 
                 // 選択されたデッキ情報を表示する
                 if (deckData != null) {
@@ -171,14 +175,11 @@ public class MatchingPart : PartBase {
                         deckImage.preserveAspect = true;
                     }
                 }
-
-                // 選択されたデッキIDをログに表示する
-                Debug.Log($"使用デッキID：{selectedDeckID}");
             }
             // ランダムマッチが選択された場合
             if (isRandomMatch) {
                 // デッキが選択されていない場合
-                if (selectedDeckID < 0) {
+                if (DeckSelectionManager.SelectedDeckID < 0) {
                     // デッキを選択していないことを伝えるメニュー表示をする
 
                     // 選択状態を解除する
@@ -203,8 +204,10 @@ public class MatchingPart : PartBase {
                 // 自分の名前を対戦相手へ送信する
                 PlayerNameManager.SendPlayerName(playerName);
 
-                // 選択中のデッキからKEYカードIDを取得する
-                int keyCardID = SaveManager.Instance.GetDeckKeyCardID(selectedDeckID);
+                // 変更後
+                int keyCardID = SaveManager.Instance.GetDeckKeyCardID(
+                    DeckSelectionManager.SelectedDeckID
+                );
 
                 // 自分のKEYカードIDを対戦相手へ送信する
                 PlayerDeckInfoManager.SendOwnKeyCardID(keyCardID);
@@ -214,12 +217,12 @@ public class MatchingPart : PartBase {
                     PlayerNameManager.isOpponentNameReceived &&
                     PlayerDeckInfoManager.isOpponentKeyCardReceived
                 );
-
                 // 対戦相手確認メニューを開く
                 await MenuWindowManager.Instance.Open<OpponentConfirmMenu>();
-
+                // フェードを挟む
+                await FadeManager.Instance.FadeOut(FadeType.White, 0.5f);
                 // 選択されたデッキIDを渡して対戦画面へ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.MainGame, selectedDeckID, MainGamePartType.Matching);
+                await PartManager.Instance.TransitionPart(GamePart.MainGame, DeckSelectionManager.SelectedDeckID, MainGamePartType.Matching);
 
                 return;
             }

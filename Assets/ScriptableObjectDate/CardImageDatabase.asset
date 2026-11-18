@@ -26,7 +26,7 @@ MonoBehaviour:
   - cardID: 101
     cardImage: {fileID: 21300000, guid: 43e3fe045415dfb438d35d1f6b8bf484, type: 3}
   - cardID: 102
-    cardImage: {fileID: 21300000, guid: 058efc62058c6264c88ba01e1ef51ea9, type: 3}
+    cardImage: {fileID: 21300000, guid: a4770369b3039d64e8b52031b7ce96a4, type: 3}
   - cardID: 104
     cardImage: {fileID: 21300000, guid: 7d4b12f698ca22d49926d83e6f0d1856, type: 3}
   - cardID: 105

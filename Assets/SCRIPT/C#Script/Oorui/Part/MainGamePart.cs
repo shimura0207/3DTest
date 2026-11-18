@@ -88,7 +88,8 @@ public class MainGamePart : PartBase {
     public override async UniTask Execute() {
         // オブジェクトを表示する
         pachisuroInstance.SetActive(true);
-
+        // フェードを挟む
+        await FadeManager.Instance.FadeIn(FadeType.White, 1f);
         // ゲームの種類によって処理を分岐
         switch (type) {
 

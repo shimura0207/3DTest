@@ -399,10 +399,10 @@ MonoBehaviour:
     - abilityID: 1
       abilityType: 0
       abilityTiming: 1
-      abilityTarget: -1
+      abilityTarget: 0
       abilityProcess: 16
       passiveAbility: -1
-      abilityValue: -1
+      abilityValue: 1
   - cardID: 307
     abilityList:
     - abilityID: 1
