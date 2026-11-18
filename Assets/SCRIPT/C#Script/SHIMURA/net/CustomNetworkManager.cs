@@ -973,7 +973,6 @@ public class CustomNetworkManager : NetworkManager {
             case NetworkUseID.FirstPlayer:
                 FirstPlayerManager.ReceiveFirstPlayer(values);
                 break;
-
             case NetworkUseID.PachisuroGoButton:
                 BattleSystemManager.instance.PachisuroGo();
                 break;
@@ -1011,6 +1010,9 @@ public class CustomNetworkManager : NetworkManager {
             case NetworkUseID.OpponentKeyCardID:
                 // KEYカードIDを共有
                 PlayerDeckInfoManager.ReceiveOpponentKeyCardID(values);
+                break;
+            case NetworkUseID.OpponentNakamayobi:
+                AbilityManager.instance.ReceiveOpponentNakamayobi(values);
                 break;
         }
     }

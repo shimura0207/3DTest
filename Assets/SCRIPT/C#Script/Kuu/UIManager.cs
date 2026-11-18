@@ -9,13 +9,28 @@ using System.ComponentModel;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.UI;
 using static CommonModule;
 
 /// <summary>
 /// UI管理クラス
 /// </summary>
 public class UIManager : SystemObject {
+    // ダメージUI
+    [SerializeField] private GameObject damageUI = null;
+
+    // ターン開始バナー
+    [SerializeField] private Image banner = null;
+
+    // バナーの親Canvas
+    [SerializeField] private Canvas bannerParent = null;
+
+    // 自分のターンバナー画像
+    [SerializeField] private Sprite selfBanner = null;
+
+    // 相手のターンバナー画像
+    [SerializeField] private Sprite opponentBanner = null;
+
     // 自身への参照
     public static UIManager instance { get; private set; }
 
@@ -48,9 +63,6 @@ public class UIManager : SystemObject {
 
     // ウィンドウに触れているか判定
     public bool touchWindow { get; private set; } = false;
-
-    // ダメージUI
-    [SerializeField] private GameObject damageUI = null;
 
     // 自分のHPTextの位置
     private Vector3 SELFHP_POSITION = new Vector3(-0.263f, 1.123f, -0.41f);
@@ -190,6 +202,23 @@ public class UIManager : SystemObject {
         damageValue = damage;
         // 生成する
         Instantiate(damageUI, position, Quaternion.identity);
+    }
+
+    /// <summary>
+    /// ターン開始時バナーを生成する
+    /// </summary>
+    /// <param name="player"></param>
+    public async UniTask GenerateTurnBanner(PlayerType player) {
+        // ターンプレイヤーに合わせてバナーの画像を変える
+        if (player == PlayerType.Self) {
+            banner.sprite = selfBanner;
+        }
+        else if (player == PlayerType.Opponent) {
+            banner.sprite = opponentBanner;
+        }
+
+        // 生成する
+        var turnPlayerBanner = Object.Instantiate(banner, bannerParent.transform, false);
     }
 }
 

@@ -540,6 +540,22 @@ public class BattleSystemManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// パチスロGoボタンの有効化無効化
+    /// </summary>
+    /// <param name="isActive"></param>
+    public void SetPachisuroGoActive(bool isActive) {
+        pachisuroGoActive = isActive;
+    }
+
+    /// <summary>
+    /// ターンエンドボタンの有効化無効化
+    /// </summary>
+    /// <param name="isActive"></param>
+    public void SetTurnEndActive(bool isActive) {
+        turnEndActive = isActive;
+    }
+
+    /// <summary>
     /// チュートリアルの矢印をレーンの位置に出す
     /// </summary>
     /// <param name="lane">出すレーン</param>

@@ -442,6 +442,8 @@ public enum NetworkUseID {
     OpponentName,
     // 対戦相手のKEYカードID
     OpponentKeyCardID,
+    // 相手のなかまよびの情報
+    OpponentNakamayobi,
 }
 
 /// <summary>

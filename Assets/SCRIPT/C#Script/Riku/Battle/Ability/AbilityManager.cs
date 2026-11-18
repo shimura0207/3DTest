@@ -39,6 +39,9 @@ public class AbilityManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public async UniTask AbilityExecute() {
+        // ボタンの無効化
+        BattleSystemManager.instance.SetPachisuroGoActive(false);
+        BattleSystemManager.instance.SetTurnEndActive(false);
         // 積まれた効果をひとつずつ発動
         while (true) {
             if (abilityQueue.Count <= 0) break;
@@ -51,6 +54,9 @@ public class AbilityManager : MonoBehaviour {
             // 次のフレームまで待機
             await UniTask.Yield();
         }
+        // ボタンの有効化
+        BattleSystemManager.instance.SetPachisuroGoActive(true);
+        BattleSystemManager.instance.SetTurnEndActive(true);
     }
 
     /// <summary>
@@ -149,5 +155,16 @@ public class AbilityManager : MonoBehaviour {
         NetworkValueConverter.TryGetInt(abilityTargetCard[1], out objectID);
         // オブジェクトIDからオブジェクト取得
         abilityProcessData.receiveCard = CardObjectManager.instance.GetUseCardObject(objectID);
+    }
+
+    /// <summary>
+    /// 相手の発動したなかまよびの情報を受け取り
+    /// </summary>
+    /// <param name="nakamayobi"></param>
+    public void ReceiveOpponentNakamayobi(string[] nakamayobi) {
+        // 2つ目の情報がカードIDなのでint変換
+        NetworkValueConverter.TryGetInt(nakamayobi[1], out abilityProcessData.receiveCardID);
+        // 3つ目の情報がレーンなのでenum変換
+        NetworkValueConverter.TryGetEnum(nakamayobi[2], out abilityProcessData.receiveLane);
     }
 }
