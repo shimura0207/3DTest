@@ -156,9 +156,16 @@ public class MainPhase : PhaseBase {
                             lane = FieldLane.None;
                         }
                     }
-                    // モンスター召喚
-                    await BattleSystemManager.instance.SummonMonster(PlayerType.Self, card, lane);
-                    Debug.Log("モンスター召喚！！");
+                    // レーンの選択ができていれば
+                    if (lane != FieldLane.None) {
+                        // モンスター召喚
+                        await BattleSystemManager.instance.SummonMonster(PlayerType.Self, card, lane);
+                        Debug.Log("モンスター召喚！！");
+                    }
+                    else {
+                        resetPos = false;
+                        Debug.Log("レーンの選択ができませんでした");
+                    }
                 }
                 else {
                     resetPos = true;
