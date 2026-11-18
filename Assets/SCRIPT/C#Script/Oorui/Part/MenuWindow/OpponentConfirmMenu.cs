@@ -10,21 +10,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// テーマIDと表示するオブジェクトを紐づけるクラス
+[Serializable]
+public class ThemeObjectData {
+
+    // テーマID
+    public int themeID;
+
+    // 表示するオブジェクト
+    public GameObject targetObject;
+}
 /// <summary>
 /// 対戦相手を確認するメニュー
 /// </summary>
 public class OpponentConfirmMenu : MenuWindowBase {
 
-    // テーマIDと表示するオブジェクトを紐づけるクラス
-    [Serializable]
-    private class ThemeObjectData {
-
-        // テーマID
-        public int themeID;
-
-        // 表示するオブジェクト
-        public GameObject targetObject;
-    }
 
     // 自分のテーマ表示リスト
     [SerializeField]
@@ -66,7 +66,6 @@ public class OpponentConfirmMenu : MenuWindowBase {
     /// </summary>
     public override async UniTask Open() {
         await base.Open();
-
         // 自分の名前を表示する
         ownNameText.text = PlayerNameManager.ownName;
 
