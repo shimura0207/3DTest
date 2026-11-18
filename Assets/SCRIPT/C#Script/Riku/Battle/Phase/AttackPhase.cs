@@ -171,10 +171,12 @@ public class AttackPhase : PhaseBase {
             }
             // 積まれた効果があれば発動
             task = AbilityManager.instance.AbilityExecute();
+            AudioManager.instance.PlaySE("kougeki");
             // モンスターにダメージを与える
             frontMonster.GiveStatus(MonsterStatus.HP, -damage);
         }
         else {
+            AudioManager.instance.PlaySE("kougeki");
             // プレイヤーにダメージを与える
             BattleSystemManager.instance.PlayerGiveHP(player, -damage);
         }

@@ -16,6 +16,25 @@ using UnityEngine.Analytics;
 /// カードオブジェクトクラス
 /// </summary>
 public class CardObject : MonoBehaviour {
+    // 未使用エフェクトの親オブジェクト
+    [SerializeField]
+    private Transform unuseEffectRoot = null;
+    // 使用エフェクトの親オブジェクト
+    [SerializeField]
+    private Transform useEffectRoot = null;
+    // 疲労しないエフェクト
+    [SerializeField]
+    private Transform noFatigueEffect = null;
+    // ダメージ軽減エフェクト
+    [SerializeField]
+    private Transform attackReductionEffeect = null;
+    // 疲労エフェクト
+    [SerializeField]
+    private Transform fatigueEffect = null;
+    // プレイ可能エフェクト
+    [SerializeField]
+    private Transform canPlayEffect = null;
+
     // オブジェクトを判別する個別ID
     public int objectID { get; private set; } = -1;
     // カードの種類を判別するID
