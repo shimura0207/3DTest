@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
 
@@ -34,6 +35,12 @@ public class CardObject : MonoBehaviour {
     // プレイ可能エフェクト
     [SerializeField]
     private Transform canPlayEffect = null;
+    // 役昇格エフェクト
+    [SerializeField]
+    private Transform upperEffect = null;
+    // G数上昇エフェクト
+    [SerializeField]
+    private Transform gOverEffect = null;
 
     // オブジェクトを判別する個別ID
     public int objectID { get; private set; } = -1;
@@ -129,6 +136,12 @@ public class CardObject : MonoBehaviour {
         abilityList = new List<CardAbilityDatabase.AbilityData>();
         isFatigue = false;
         spriteRenderer.sprite = null;
+        noFatigueEffect.SetParent(unuseEffectRoot);
+        attackReductionEffeect.SetParent(unuseEffectRoot);
+        fatigueEffect.SetParent(unuseEffectRoot);
+        canPlayEffect.SetParent(unuseEffectRoot);
+        upperEffect.SetParent(unuseEffectRoot);
+        gOverEffect.SetParent(unuseEffectRoot);
     }
 
     /// <summary>
@@ -183,6 +196,41 @@ public class CardObject : MonoBehaviour {
     /// <param name="setID">セットするID</param>
     public void SetHandID(int setID) {
         handID = setID;
+
+        
+        if (playerType != PlayerType.Self) return;
+        // 手札のカードではなくなったのならエフェクトは消す
+        if (handID < 0) {
+            canPlayEffect.SetParent(unuseEffectRoot);
+            return;
+        }
+        // プレイ可能なカードはエフェクトを出す
+        switch (cardType) {
+            case CardType.Monster:
+                // フィールドに空きがあるか
+                bool fieldBlank = false;
+                foreach (var card in CardObjectManager.instance.fieldObjectList[PlayerType.Self]) {
+                    if (card.Value != null) continue;
+                    fieldBlank = true;
+                    break;
+                }
+                // サイズが超過しないか
+                bool sizeBlank = false;
+                if (currentStatus[MonsterStatus.SIZE] <= BattleSystemManager.instance.GetRemainingSize(PlayerType.Self)) {
+                    sizeBlank = true;
+                }
+                // フィールドに空きがあり、サイズが超過しないならプレイ可能
+                if (fieldBlank && sizeBlank) {
+                    canPlayEffect.SetParent(useEffectRoot);
+                }
+                break;
+            case CardType.Spell:
+                // スペル使用回数が3回以下ならプレイ可能
+                if (BattleSystemManager.instance.spellCastCount < GameConst.SPELL_CAST_MAX) {
+                    canPlayEffect.SetParent(useEffectRoot);
+                }
+                break;
+        }
     }
 
     /// <summary>
@@ -191,6 +239,33 @@ public class CardObject : MonoBehaviour {
     /// <param name="setID">セットするID</param>
     public void SetLaneID(int setID) {
         laneID = setID;
+
+        // フィールドのカードではなくなったのならエフェクトは消す
+        if (laneID < 0) {
+            noFatigueEffect.SetParent(unuseEffectRoot);
+            attackReductionEffeect.SetParent(unuseEffectRoot);
+            upperEffect.SetParent(unuseEffectRoot);
+            gOverEffect.SetParent(unuseEffectRoot);
+            return;
+        }
+        // 常在効果を持っている場合はエフェクトを出す
+        foreach (var ability in abilityList) {
+            if (ability.abilityType != AbilityType.Passive) return;
+            switch (ability.passiveAbility) {
+                case PassiveAbility.NoFatigue:
+                    noFatigueEffect.SetParent(useEffectRoot);
+                    break;
+                case PassiveAbility.AttackReduction:
+                    attackReductionEffeect.SetParent(useEffectRoot);
+                    break;
+                case PassiveAbility.Upper:
+                    upperEffect.SetParent(useEffectRoot);
+                    break;
+                case PassiveAbility.GOver:
+                    gOverEffect.SetParent(useEffectRoot);
+                    break;
+            }
+        }
     }
 
     /// <summary>
@@ -293,6 +368,15 @@ public class CardObject : MonoBehaviour {
         foreach (var ability in abilityList) {
             if (ability.passiveAbility == PassiveAbility.NoFatigue) return;
         }
+        // 疲労
         isFatigue = setFatigue;
+        // 疲労エフェクトの表示
+        if (isFatigue) {
+            fatigueEffect.SetParent(useEffectRoot);
+        }
+        // 非表示
+        else {
+            fatigueEffect.SetParent(unuseEffectRoot);
+        }
     }
 }
