@@ -15,6 +15,14 @@ MonoBehaviour:
   cardImageDataList:
   - cardID: 0
     cardImage: {fileID: 21300000, guid: aaa41a55e66e1b14db608e9ed1bb44fa, type: 3}
+  - cardID: 1
+    cardImage: {fileID: 21300000, guid: 0d3468ae18861e74c9be98c9c91d9933, type: 3}
+  - cardID: 2
+    cardImage: {fileID: 21300000, guid: d93f1aa32fc11e645ab9439f9a5832c7, type: 3}
+  - cardID: 3
+    cardImage: {fileID: 21300000, guid: ee82fea89e3c5fc47b3c0bf7ef0d5389, type: 3}
+  - cardID: 4
+    cardImage: {fileID: 21300000, guid: a8c69b154ccc4ab4cb06051bd55f36d3, type: 3}
   - cardID: 101
     cardImage: {fileID: 21300000, guid: 43e3fe045415dfb438d35d1f6b8bf484, type: 3}
   - cardID: 102
