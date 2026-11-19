@@ -772,7 +772,7 @@ MonoBehaviour:
       ATK: 5
       HP: 10
       CardType: 0
-      ability: "\u30FB\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u53EC\u559A\u3057\u305F\u6642\u3001\u30B2\u30FC\u30E0\u5916\u304B\u3089\u30E9\u30F3\u30C0\u30E0\u306A\u30DE\u30A4\u30AB\u30EB\u30D0\u30FC\u30C9\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u3092\u30B5\u30A4\u30BA0\u3067\u53EC\u559A\u3059\u308B\u3002"
+      ability: "\u30FB\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u53EC\u559A\u3057\u305F\u6642\u3001\u30B2\u30FC\u30E0\u5916\u304B\u3089\u30E9\u30F3\u30C0\u30E0\u306A\u30DE\u30B8\u30AB\u30EB\u30D0\u30FC\u30C9\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u3092\u30B5\u30A4\u30BA0\u3067\u53EC\u559A\u3059\u308B\u3002"
       PlayID: 0
     - cardID: 307
       name: "\u5927\u9577\u8001\u3000\u30CE\u30A6\u30EC\u30C3\u30B8"
@@ -972,7 +972,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 401
       name: "\u30D6\u30E9\u30F3\u30AF\u964D\u81E8"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
@@ -986,7 +986,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 402
       name: "\u30EA\u30D7\u30EC\u30A4\u964D\u81E8"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
@@ -1000,7 +1000,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 403
       name: "\u30D9\u30EB\u964D\u81E8"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
@@ -1014,7 +1014,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 404
       name: "\u30B9\u30A4\u30AB\u964D\u81E8"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
@@ -1028,7 +1028,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 405
       name: "\u30C1\u30A7\u30EA\u30FC\u964D\u81E8"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
@@ -1042,7 +1042,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 406
       name: "\u3046\u304A\u304A\u304A\u304A"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
@@ -1056,7 +1056,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 407
       name: "\u30AA\u30FC\u30F4\u30A1"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 2
       FirstRaceID: -1
@@ -1070,7 +1070,7 @@ MonoBehaviour:
       PlayID: 0
     - cardID: 408
       name: "\u30ED\u30FC\u30EB\u30FB\u30A2\u30C3\u30D1\u30FC"
-      rarityID: -1
+      rarityID: 5
       themeID: 4
       suportRoleID: 0
       FirstRaceID: -1
