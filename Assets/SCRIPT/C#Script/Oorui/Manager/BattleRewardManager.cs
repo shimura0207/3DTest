@@ -44,16 +44,13 @@ public static class BattleRewardManager {
                 CardDataMasterUtility.GetCardMaster(cardID);
 
             // マスターが存在しないカードは除外する
-            if (cardData == null) {
-                Debug.LogWarning($"カードマスターが存在しません。ID:{cardID}");
-                continue;
-            }
+            if (cardData == null) continue;
 
             // PlayIDが1のカードは抽選対象から除外する
-            if (cardData.PlayID == 1) {
-                Debug.LogWarning($"使用不可カードを抽選対象から除外しました。ID:{cardID}");
-                continue;
-            }
+            if (cardData.PlayID == 1) continue;
+
+            // ゲーム外カードは抽選対象から除外する
+            if ((CardRearity)cardData.rarityID == CardRearity.None) continue;
 
             // 使用可能なカードだけを追加する
             validCardIDs.Add(cardID);
@@ -63,10 +60,7 @@ public static class BattleRewardManager {
         allCardIDs = validCardIDs;
 
         // 抽選対象が存在しなければ終了する
-        if (allCardIDs.Count == 0) {
-            Debug.LogWarning("報酬対象の使用可能なカードが存在しません");
-            return new Dictionary<int, int>();
-        }
+        if (allCardIDs.Count == 0) return new Dictionary<int, int>();
 
         // 所持カードの枚数をカードIDごとに集計する
         Dictionary<int, int> ownedCounts = new Dictionary<int, int>();
@@ -128,7 +122,6 @@ public static class BattleRewardManager {
                 break;
 
             default:
-                Debug.LogWarning("対戦結果が正しくありません");
                 return new Dictionary<int, int>();
         }
 
@@ -160,9 +153,6 @@ public static class BattleRewardManager {
             acquiredCards
         );
 
-        // 獲得したカードをまとめてログに表示する
-        ShowRewardLog(result, acquiredCards);
-
         // 獲得カード情報を呼び出し元に返す
         return acquiredCards;
     }
@@ -188,9 +178,7 @@ public static class BattleRewardManager {
         int remainingCount = drawCount - drawnCount;
 
         // 不足分がなければ終了する
-        if (remainingCount <= 0) {
-            return;
-        }
+        if (remainingCount <= 0) return;
 
         // 補填候補が存在する場合はそこから抽選する
         if (fallbackCandidates != null) {
@@ -223,9 +211,7 @@ public static class BattleRewardManager {
         Dictionary<int, int> acquiredCards) {
 
         // 候補が存在しない場合は終了する
-        if (candidates == null || candidates.Count == 0) {
-            return 0;
-        }
+        if (candidates == null || candidates.Count == 0) return 0;
 
         // 実際に抽選した枚数
         int drawnCount = 0;
@@ -234,9 +220,7 @@ public static class BattleRewardManager {
         for (int i = 0; i < drawCount; i++) {
 
             // 候補がなくなった場合は終了する
-            if (candidates.Count == 0) {
-                break;
-            }
+            if (candidates.Count == 0) break;
 
             // ランダムに抽選する
             int index = Random.Range(0, candidates.Count);
@@ -269,9 +253,7 @@ public static class BattleRewardManager {
         Dictionary<int, int> acquiredCards) {
 
         // カードが存在しない場合は終了する
-        if (allCardIDs == null || allCardIDs.Count == 0) {
-            return;
-        }
+        if (allCardIDs == null || allCardIDs.Count == 0) return;
 
         // 指定枚数だけ抽選する
         for (int i = 0; i < drawCount; i++) {
@@ -305,53 +287,5 @@ public static class BattleRewardManager {
             // 初めて獲得したカードなら新しく登録する
             acquiredCards.Add(cardID, 1);
         }
-    }
-
-    /// <summary>
-    /// 獲得したカードをまとめてログに表示する
-    /// </summary>
-    private static void ShowRewardLog(
-        BattleState result,
-        Dictionary<int, int> acquiredCards) {
-
-        // ログを作成する
-        StringBuilder log = new StringBuilder();
-
-        // 対戦結果を表示する
-        log.AppendLine("========== 対戦報酬 ==========");
-        log.AppendLine($"対戦結果: {result}");
-        log.AppendLine($"獲得カード合計: {GetTotalCount(acquiredCards)}枚");
-        log.AppendLine("------------------------------");
-
-        // カードIDごとに獲得枚数を表示する
-        foreach (var card in acquiredCards) {
-            log.AppendLine(
-                $"カードID: {card.Key} / 獲得枚数: {card.Value}枚"
-            );
-        }
-
-        // ログを終了する
-        log.Append("==============================");
-
-        // まとめて1回だけログを出力する
-        Debug.Log(log.ToString());
-    }
-
-    /// <summary>
-    /// 獲得カードの合計枚数を取得する
-    /// </summary>
-    private static int GetTotalCount(
-        Dictionary<int, int> acquiredCards) {
-
-        // 合計枚数
-        int totalCount = 0;
-
-        // 全カードの獲得枚数を加算する
-        foreach (var card in acquiredCards) {
-            totalCount += card.Value;
-        }
-
-        // 合計枚数を返す
-        return totalCount;
     }
 }
