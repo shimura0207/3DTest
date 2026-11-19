@@ -5,10 +5,9 @@
 
 using Cysharp.Threading.Tasks;
 using System.Threading;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+
 /// <summary>
 /// タイトルパート
 /// </summary>
@@ -43,16 +42,26 @@ public class TitlePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Setup() {
-        // 基底側の処理を呼ぶ
+        // 基底クラスの処理
         await base.Setup();
+
+        // ボタンイベントの重複登録を防ぐ
+        start.onClick.RemoveListener(OnTitleSelected);
         start.onClick.AddListener(OnTitleSelected);
+
         // BGM再生
         AudioManager.instance.PlayBGM(TITLE_BGMNAME);
+
+        // フェードイン
         await FadeManager.Instance.FadeIn(FadeType.Black);
-        // タイトルロゴの点滅処理を開始する
+
+        // 点滅処理用のキャンセルトークンを作成
+        flashTokenSource?.Cancel();
+        flashTokenSource?.Dispose();
         flashTokenSource = new CancellationTokenSource();
+
+        // タイトルロゴの点滅を開始
         FlashingImage(flashTokenSource.Token).Forget();
-        await UniTask.CompletedTask;
     }
 
 
@@ -69,22 +78,60 @@ public class TitlePart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        // BGMを再生
-
         // 選択状態を初期化
         selectMenu = MainMenuSelect.None;
 
-        // メニューが選択されるまで待機する
-        while (selectMenu == MainMenuSelect.None) {
-            // 次のフレームまで待機する
-            await UniTask.DelayFrame(1);
+        // 入力待ちを繰り返す
+        while (true) {
+
+            // Escapeキーの入力状態
+            bool isEscapePressed = false;
+
+            // スタートボタンが押されるか、Escapeキーが押されるまで待機
+            await UniTask.WaitUntil(() => {
+
+                // Escapeキーの入力を確認
+                isEscapePressed = Input.GetKeyDown(KeyCode.Escape);
+
+                return selectMenu != MainMenuSelect.None || isEscapePressed;
+            });
+
+            // Escapeキーが押された場合
+            if (isEscapePressed) {
+
+                // ゲームを終了するか確認する
+                bool isGameEnd = await MenuWindowManager.Instance.Confirm("ゲームを終了しますか？");
+
+                // 「いいえ」が選択された場合
+                if (!isGameEnd) continue;
+                // 再生中のBGMを停止する
+                AudioManager.instance.FadeOutBGM(0.2f);
+
+                // 点滅処理を停止する
+                flashTokenSource?.Cancel();
+
+                // ゲームを終了する
+                QuitGame();
+
+                return;
+            }
+
+            // スタートボタンが押された場合
+
+            // 再生中のBGMを停止する
+            AudioManager.instance.FadeOutBGM(0.2f);
+
+            // ロゴの点滅処理を停止する
+            flashTokenSource?.Cancel();
+
+            // 画面遷移前にフェードアウトする
+            await FadeManager.Instance.FadeOut(FadeType.Black, 0.5f);
+
+            // メインメニュー画面へ遷移する
+            await PartManager.Instance.TransitionPart(GamePart.MainMenu);
+
+            return;
         }
-        // 再生中のBGMを停止する
-        AudioManager.instance.FadeOutBGM(0.2f);
-        // メニューが消える前にフェードアウトする
-        await FadeManager.Instance.FadeOut(FadeType.Black, 0.5f);
-        // メインメニュー画面に遷移
-        await PartManager.Instance.TransitionPart(GamePart.MainMenu);
     }
 
     /// <summary>
@@ -145,20 +192,37 @@ public class TitlePart : PartBase {
     }
 
     /// <summary>
+    /// ゲームを終了する
+    /// </summary>
+    private void QuitGame() {
+
+        // ゲームを終了する
+        Application.Quit();
+
+#if UNITY_EDITOR
+        // Unityエディター上の場合は再生モードを終了する
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    /// <summary>
     /// 片付け処理
     /// </summary>
     public override async UniTask Teardown() {
 
-        // 点滅処理を停止する
+        // ロゴの点滅処理を停止する
         if (flashTokenSource != null) {
 
-            // 非同期処理にキャンセルを通知する
+            // 非同期処理をキャンセルする
             flashTokenSource.Cancel();
 
             // トークンソースを破棄する
             flashTokenSource.Dispose();
             flashTokenSource = null;
         }
+
+        // ボタンイベントを解除する
+        start.onClick.RemoveListener(OnTitleSelected);
 
         // 基底クラスの片付け処理
         await base.Teardown();
