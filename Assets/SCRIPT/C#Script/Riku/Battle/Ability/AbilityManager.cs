@@ -56,8 +56,11 @@ public class AbilityManager : MonoBehaviour {
             await UniTask.Yield();
         }
         // ボタンの有効化
-        BattleSystemManager.instance.SetPachisuroGoActive(true);
-        BattleSystemManager.instance.SetTurnEndActive(true);
+        if (BattleSystemManager.instance.turnPlayer == PlayerType.Self ||
+            BattleSystemManager.instance.currentPhase == BattlePhase.MainPhase) {
+            BattleSystemManager.instance.SetTurnEndActive(true);
+            BattleSystemManager.instance.SetPachisuroGoActive(true);
+        }
     }
 
     /// <summary>

@@ -296,6 +296,53 @@ public class CardObjectManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// 手札の使用可能エフェクトのチェック
+    /// </summary>
+    public void HandCanPlayEffectCheck() {
+        int handCount = AreaCardManager.instance.outDeckCards[PlayerType.Self].handCards.Count;
+        // 手札が0枚以下なら必要なし
+        if (handCount <= 0) return;
+        // 手札のカードを取得
+        List<CardObject> handList = GetHandCardList(PlayerType.Self);
+
+        // 使用可能なものはエフェクトを出し、不可なら消す
+        foreach (var hand in handList) {
+            switch (hand.cardType) {
+                case CardType.Monster:
+                    // フィールドに空きがあるか
+                    bool fieldBlank = false;
+                    foreach (var field in fieldObjectList[PlayerType.Self]) {
+                        if (field.Value != null) continue;
+                        fieldBlank = true;
+                        break;
+                    }
+                    // サイズが超過しないか
+                    bool sizeBlank = false;
+                    if (hand.currentStatus[MonsterStatus.SIZE] <= BattleSystemManager.instance.GetRemainingSize(PlayerType.Self)) {
+                        sizeBlank = true;
+                    }
+                    // フィールドに空きがあり、サイズが超過しないならプレイ可能
+                    if (fieldBlank && sizeBlank) {
+                        hand.SetCanPlayEffectActive(true);
+                    }
+                    else {
+                        hand.SetCanPlayEffectActive(false);
+                    }
+                    break;
+                case CardType.Spell:
+                    // スペル使用回数が3回以下ならプレイ可能
+                    if (BattleSystemManager.instance.spellCastCount < GameConst.SPELL_CAST_MAX) {
+                        hand.SetCanPlayEffectActive(true);
+                    }
+                    else {
+                        hand.SetCanPlayEffectActive(false);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
     /// 手札の拡大
     /// </summary>
     public void ScaleUpHand() {
