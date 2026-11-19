@@ -203,7 +203,7 @@ public class MainMenuPart : PartBase {
                     return;
 
                 case MainMenuSelect.Tutorial:
-                    //AudioManager.instance.FadeOutBGM();
+                    AudioManager.instance.FadeOutBGM();
                     await PartManager.Instance.TransitionPart(
                         GamePart.MainGame, 1, MainGamePartType.Tutotrial
                     );
