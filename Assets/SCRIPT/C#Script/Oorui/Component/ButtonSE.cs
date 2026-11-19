@@ -19,6 +19,6 @@ public class ButtonSE : MonoBehaviour, IPointerDownHandler {
     public void OnPointerDown(PointerEventData eventData) {
 
         // ボタン押下時のSEを再生する
-        AudioManager.instance.PlaySE("ButtonClick");
+        AudioManager.instance.PlaySE("Button");
     }
 }

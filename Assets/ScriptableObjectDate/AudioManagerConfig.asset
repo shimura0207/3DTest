@@ -59,7 +59,7 @@ MonoBehaviour:
   - soundName: kougeki
     clip: {fileID: 8300000, guid: 28feddeee1b1a8446846f46a5af57cf5, type: 3}
     volume: 1
-  - soundName: ButtonClick
+  - soundName: Button
     clip: {fileID: 8300000, guid: dd6b89a8a27c9674e85cd40b6e521cfe, type: 3}
     volume: 1
   - soundName: DRAW
