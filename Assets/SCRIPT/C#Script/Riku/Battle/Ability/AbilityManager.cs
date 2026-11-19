@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
 /// <summary>
@@ -155,6 +156,7 @@ public class AbilityManager : MonoBehaviour {
         NetworkValueConverter.TryGetInt(abilityTargetCard[1], out objectID);
         // オブジェクトIDからオブジェクト取得
         abilityProcessData.receiveCard = CardObjectManager.instance.GetUseCardObject(objectID);
+        abilityProcessData.isReceiveCard = true;
     }
 
     /// <summary>
@@ -164,7 +166,9 @@ public class AbilityManager : MonoBehaviour {
     public void ReceiveOpponentNakamayobi(string[] nakamayobi) {
         // 2つ目の情報がカードIDなのでint変換
         NetworkValueConverter.TryGetInt(nakamayobi[1], out abilityProcessData.receiveCardID);
+        abilityProcessData.isReceiveCardID = true;
         // 3つ目の情報がレーンなのでenum変換
         NetworkValueConverter.TryGetEnum(nakamayobi[2], out abilityProcessData.receiveLane);
+        abilityProcessData.isReceiveLane = true;
     }
 }

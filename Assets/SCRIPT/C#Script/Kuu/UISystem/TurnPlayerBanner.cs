@@ -31,15 +31,15 @@ public class TurnPlayerBanner : MonoBehaviour
         if (player == PlayerType.Self) {
             banner.sprite = selfBanner;
         }
-        else if (player == PlayerType.Opponent) {
+        if (player == PlayerType.Opponent) {
             banner.sprite = opponentBanner;
         }
 
         // バナーを表示する
-        banner.enabled = true;
+        banner.gameObject.SetActive(true);
 
         // 1秒待って非表示にする
         await UniTask.Delay(DISPLAY_TIME);
-        banner.enabled = false;
+        banner.gameObject.SetActive(false);
     }
 }

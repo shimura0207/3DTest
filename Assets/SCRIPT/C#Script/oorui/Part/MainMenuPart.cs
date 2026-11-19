@@ -67,6 +67,8 @@ public class MainMenuPart : PartBase {
 
     // 流すBGM
     private const string menuBGMName = "MainMenuBGM";
+    // SEの名前
+    private const string buttonSEName = "ButtonClick";
 
     /// <summary>
     /// 初期化処理
@@ -187,17 +189,16 @@ public class MainMenuPart : PartBase {
             switch (selectMenu) {
 
                 case MainMenuSelect.Matchmaking:
-                    AudioManager.instance.FadeOutBGM();
+                    //AudioManager.instance.FadeOutBGM();
                     await PartManager.Instance.TransitionPart(GamePart.Matchmaking);
                     return;
 
                 case MainMenuSelect.Option:
-                    AudioManager.instance.FadeOutBGM();
                     await PartManager.Instance.TransitionPart(GamePart.Option);
                     return;
 
                 case MainMenuSelect.CardRelation:
-                    AudioManager.instance.FadeOutBGM();
+                    //AudioManager.instance.FadeOutBGM();
                     await PartManager.Instance.TransitionPart(GamePart.CardRelation);
                     return;
 
@@ -215,7 +216,6 @@ public class MainMenuPart : PartBase {
     /// マッチングメニューが選択された時の処理
     /// </summary>
     private void OnMatchmakingSelected() {
-
         // 遷移先をマッチングに設定する
         selectMenu = MainMenuSelect.Matchmaking;
     }
@@ -224,7 +224,6 @@ public class MainMenuPart : PartBase {
     /// オプションメニューが選択された時の処理
     /// </summary>
     private void OnOptionSelected() {
-
         // 遷移先をオプションに設定する
         selectMenu = MainMenuSelect.Option;
     }

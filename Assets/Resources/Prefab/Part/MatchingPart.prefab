@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 396581269806397460}
   - component: {fileID: 9157096195698888420}
   - component: {fileID: 4337245523347820760}
+  - component: {fileID: 6651125257424803107}
   m_Layer: 5
   m_Name: Random
   m_TagString: Untagged
@@ -120,6 +121,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6651125257424803107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355607202031915204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &576485320499167648
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,6 +512,7 @@ GameObject:
   - component: {fileID: 855141598362340749}
   - component: {fileID: 5139488348207900264}
   - component: {fileID: 5837714038057907764}
+  - component: {fileID: 1628674873328950980}
   m_Layer: 5
   m_Name: Return
   m_TagString: Untagged
@@ -608,6 +622,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1628674873328950980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3305294219991549090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3405771767982167448
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,6 +856,7 @@ GameObject:
   - component: {fileID: 4282862931984365078}
   - component: {fileID: 8048926090676171232}
   - component: {fileID: 918004065718595436}
+  - component: {fileID: 3120539707953141830}
   m_Layer: 5
   m_Name: DecklSelectButton
   m_TagString: Untagged
@@ -956,6 +983,18 @@ MonoBehaviour:
   - {x: -256.0871, y: 313.97076}
   - {x: 258.3825, y: 318.56158}
   - {x: 258.38257, y: -304.78928}
+--- !u!114 &3120539707953141830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5468572022250285547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6176600555853339896
 GameObject:
   m_ObjectHideFlags: 0

@@ -56,7 +56,7 @@ public class StartPhase : PhaseBase {
         // SE再生
         AudioManager.instance.PlaySE("E_TURN");
         // バナー表示
-        await UIManager.instance.DisplayTurnBanner(PlayerType.Self);
+        await UIManager.instance.DisplayTurnBanner(PlayerType.Opponent);
 
         foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Opponent]) {
             if (!monster.Value) continue;

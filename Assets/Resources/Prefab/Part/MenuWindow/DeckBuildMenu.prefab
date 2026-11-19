@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 2335216671477793056}
   - component: {fileID: 8292213995544355966}
   - component: {fileID: 514204390648957934}
+  - component: {fileID: 6411963189653487022}
   m_Layer: 0
   m_Name: DeckSaveButton
   m_TagString: Untagged
@@ -162,6 +163,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6411963189653487022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982363465510125243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1101866335240731953
 GameObject:
   m_ObjectHideFlags: 0
@@ -1122,6 +1135,7 @@ GameObject:
   - component: {fileID: 6526293426967104325}
   - component: {fileID: 8236011247891220396}
   - component: {fileID: 3899894245203267010}
+  - component: {fileID: 2194155137975884502}
   m_Layer: 0
   m_Name: AddCardButton
   m_TagString: Untagged
@@ -1231,6 +1245,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2194155137975884502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2914220244429685848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3096206235893176199
 GameObject:
   m_ObjectHideFlags: 0
@@ -2231,6 +2257,7 @@ GameObject:
   - component: {fileID: 3788394067462280997}
   - component: {fileID: 3861965219953507312}
   - component: {fileID: 4800955804746181840}
+  - component: {fileID: 3800202466979447964}
   m_Layer: 0
   m_Name: RemoveCardButton
   m_TagString: Untagged
@@ -2340,6 +2367,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3800202466979447964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928943870794655597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5938615029335992681
 GameObject:
   m_ObjectHideFlags: 0
@@ -3456,6 +3495,7 @@ GameObject:
   - component: {fileID: 2372629650658524745}
   - component: {fileID: 6022908346424540501}
   - component: {fileID: 4416333729987310838}
+  - component: {fileID: 8009245572981543353}
   m_Layer: 0
   m_Name: ReturnMainMenuButton
   m_TagString: Untagged
@@ -3565,6 +3605,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8009245572981543353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8068612702261047701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8294876705366897107
 GameObject:
   m_ObjectHideFlags: 0

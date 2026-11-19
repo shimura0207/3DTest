@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,6 +49,7 @@ public class CardDetailMenu : MenuWindowBase {
     [SerializeField] private TMP_Text havePointText;    // 現在の所持ポイント
     [SerializeField] private TMP_Text haveCardNumText;  // 現在のカードの所持数
 
+    private Entity_CardData.Param cardData; // カードのデータ
 
     // ボタンが選択されるまで待機するための完了通知
     private UniTaskCompletionSource<bool> completionSource;
@@ -78,7 +80,7 @@ public class CardDetailMenu : MenuWindowBase {
         AllTextSetup();
 
         // マスターデータからカード情報を取得する
-        var cardData = CardDataMasterUtility.GetCardMaster(id);
+        cardData = CardDataMasterUtility.GetCardMaster(id);
 
         // カード情報を画面に反映する
         AllTextUpdate(cardData);
@@ -100,8 +102,16 @@ public class CardDetailMenu : MenuWindowBase {
             // 所持状態に応じて画像の色を変更する
             cardImage.color = ownedCount > 0 ? Color.white : Color.gray;
 
-            // 3枚以上所持している場合は生成ボタンを無効化する
-            createButton.interactable = ownedCount < 3;
+            // カードの必要生成ポイントを取得
+            int createCardPoint = CardCreatePoint(cardData);
+            // 生成可能条件を確認する
+            bool canCreate = ownedCount < 3 && CreatePointManager.Instance.CanSpendPoint(createCardPoint);
+
+            // 生成ボタンの有効・無効を更新する
+            createButton.interactable = canCreate;
+
+            // 生成ボタンの見た目を更新する
+            CreateButtonColorUpdate();
         }
 
         // メニューを表示する
@@ -144,7 +154,7 @@ public class CardDetailMenu : MenuWindowBase {
         cardAbilittyText.text = cardData.ability;
 
         // テキストの更新
-        pullPointText.text = CardCreatePoint(cardData);
+        pullPointText.text = CardCreatePoint(cardData).ToString();
         havePointText.text = HavePoint();
         haveCardNumText.text = HaveCardNum(cardData.cardID);
     }
@@ -223,11 +233,29 @@ public class CardDetailMenu : MenuWindowBase {
     /// カード生成ボタンが押された時の処理
     /// </summary>
     private void OnCreateButton() {
-        // カード生成を行う
-        SaveManager.Instance.AcquireCard(cardID);
+        // 現在の所持枚数を取得する
+        int ownedCount = GetOwnedCardCount(cardID);
 
-        // UIを更新する
-        CreateUIUpdate();
+        // 必要生成ポイントを取得する
+        int createPoint = CardCreatePoint(cardData);
+
+        // 現在の所持ポイントを更新
+        havePointText.text = HavePoint();
+
+        // 現在のカード所持枚数を更新
+        haveCardNumText.text = HaveCardNum(cardID);
+
+        // カードを所持済みの色に変更
+        cardImage.color = ownedCount > 0 ? Color.white : Color.gray;
+
+        // 生成可能条件を確認する
+        bool canCreate = ownedCount < 3 && CreatePointManager.Instance.CanSpendPoint(createPoint);
+
+        // 生成ボタンの有効・無効を更新する
+        createButton.interactable = canCreate;
+
+        // 生成ボタンの見た目を更新する
+        CreateButtonColorUpdate();
 
     }
 
@@ -314,7 +342,7 @@ public class CardDetailMenu : MenuWindowBase {
     /// カード生成のポイントを決定する
     /// </summary>
     /// <param name="cardData"></param>
-    private string CardCreatePoint(Entity_CardData.Param cardData) {
+    private int CardCreatePoint(Entity_CardData.Param cardData) {
 
         CardRearity realityID = (CardRearity)cardData.rarityID;
         switch (realityID) {
@@ -333,7 +361,7 @@ public class CardDetailMenu : MenuWindowBase {
         }
 
         // 値をstring型で返す
-        return cardPointNum.ToString();
+        return cardPointNum;
     }
 
     /// <summary>
@@ -422,5 +450,30 @@ public class CardDetailMenu : MenuWindowBase {
         await base.Close();
         // カードの初期化
         cardID = -1;
+    }
+
+    /// <summary>
+    /// カード生成ボタンの見た目を更新する
+    /// </summary>
+    private void CreateButtonColorUpdate() {
+
+        // ボタンの状態を取得する
+        bool canCreate = createButton.interactable;
+
+        // ボタンの色を取得する
+        ColorBlock colors = createButton.colors;
+
+        // 生成可能なら通常色、生成不可なら半透明にする
+        colors.normalColor = canCreate
+            ? Color.white
+            : new Color(1f, 1f, 1f, 0.4f);
+
+        // 押下時の色も設定する
+        colors.highlightedColor = canCreate
+            ? Color.white
+            : new Color(1f, 1f, 1f, 0.4f);
+
+        // Buttonに色設定を反映する
+        createButton.colors = colors;
     }
 }

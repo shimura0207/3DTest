@@ -224,6 +224,7 @@ public class MatchingPart : PartBase {
                 await MenuWindowManager.Instance.Open<OpponentConfirmMenu>();
                 // フェードを挟む
                 await FadeManager.Instance.FadeOut(FadeType.White, 0.5f);
+                AudioManager.instance.FadeOutBGM();
                 // 選択されたデッキIDを渡して対戦画面へ遷移する
                 await PartManager.Instance.TransitionPart(GamePart.MainGame, DeckSelectionManager.SelectedDeckID, MainGamePartType.Matching);
 
