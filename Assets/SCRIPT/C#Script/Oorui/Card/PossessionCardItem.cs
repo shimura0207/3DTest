@@ -29,6 +29,8 @@ public class PossessionCardItem : MonoBehaviour {
 
     // 詳細メニューを閉じた後に実行する処理
     private Action onDetailClosed = null;
+    // 左クリック時に実行する処理
+    private Action onLeftClick = null;
 
     /// <summary>
     /// 詳細メニュー終了後の処理を設定する
@@ -37,6 +39,24 @@ public class PossessionCardItem : MonoBehaviour {
 
         // 呼び出し元から渡された処理を登録する
         onDetailClosed = callback;
+    }
+
+    /// <summary>
+    /// 左クリック時の処理を設定する
+    /// </summary>
+    public void SetLeftClickCallback(Action callback) {
+
+        // 呼び出し元から渡された処理を登録する
+        onLeftClick = callback;
+    }
+
+    /// <summary>
+    /// 左クリックされたときの処理
+    /// </summary>
+    public void OnLeftClick() {
+
+        // 登録されている左クリック処理を実行する
+        onLeftClick?.Invoke();
     }
 
     /// <summary>

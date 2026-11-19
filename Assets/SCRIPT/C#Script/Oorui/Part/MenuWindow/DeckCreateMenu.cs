@@ -45,6 +45,9 @@ public class DeckCreateMenu : MenuWindowBase {
     // 編集ボタンが押されたかどうか
     public bool IsEditRequested { get; private set; }
 
+    // 現在設定されているKEYカードID
+    private int keyCardID = -1;
+
     /// <summary>
     /// 表示するデッキ情報を設定する
     /// </summary>
@@ -78,10 +81,13 @@ public class DeckCreateMenu : MenuWindowBase {
         // デッキのカード一覧を更新する
         RefreshDeckCards();
 
-        // キーカードIDを取得
-        int keyCardID = deckData.keyCardID;
-        // キーカードを更新
+        // 保存されているKEYカードIDを取得
+        keyCardID = deckData.keyCardID;
+
+        // KEYカードの表示を更新
         possessionCardListView.RefreshKeyCardLabel(keyCardID);
+
+
 
         // 戻るボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu == DeckBuildMenuSelect.DeckBuild);
@@ -138,6 +144,9 @@ public class DeckCreateMenu : MenuWindowBase {
 
             // カードID・画像・枚数1枚を設定する
             cardItem.SetCard(cardID, cardSprite, 1, false);
+
+            // 左クリック時にKEYカードを変更する処理を登録する
+            cardItem.SetLeftClickCallback(() => OnCardClick(cardID));
 
             // 生成したオブジェクトをリストに登録する
             cardItems.Add(cardItem);
@@ -249,5 +258,35 @@ public class DeckCreateMenu : MenuWindowBase {
 
         // メニューを閉じる操作に設定する
         selectMenu = DeckBuildMenuSelect.DeckBuild;
+    }
+
+    /// <summary>
+    /// カードが左クリックされたときの処理
+    /// </summary>
+    /// <param name="cardID">クリックされたカードID</param>
+    private void OnCardClick(int cardID) {
+
+        // デッキ情報が存在しなければ終了する
+        if (deckData == null) return;
+
+        // SaveManagerが存在しなければ終了する
+        if (SaveManager.Instance == null) return;
+
+        // KEYカードIDを更新する
+        keyCardID = cardID;
+
+        // デッキ情報のKEYカードIDを更新する
+        deckData.keyCardID = cardID;
+
+        // 現在のデッキ情報をセーブデータに保存する
+        bool isSaved = SaveManager.Instance.UpdateDeck(
+            deckData.deckID,
+            deckData.deckName,
+            deckData.cardIDs,
+            keyCardID
+        );
+
+        // KEYカードの表示を更新する
+        possessionCardListView.RefreshKeyCardLabel(keyCardID);
     }
 }
