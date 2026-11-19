@@ -46,6 +46,8 @@ public class CardRelationPart : PartBase {
         selectMenu = CardRelationMenuSelect.None;
         // イベント登録
         RegisterMenuEvent();
+        // フェードから開ける
+        await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
     }
 
     /// <summary>

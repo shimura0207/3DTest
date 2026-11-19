@@ -68,6 +68,8 @@ public class DeckBuildingPart : PartBase {
 
         // 保存済みデッキを表示する
         RefreshDeckButtons();
+        // フェードから開ける
+        await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
     }
 
 

@@ -27,15 +27,6 @@ public class OptionPart : PartBase {
     // メインメニュー復帰ボタン
     [SerializeField] private Button returnMenu;
 
-    // 矢印Prefab
-    [SerializeField] private GameObject arrowPrefab;
-
-    // 矢印の生成先
-    [SerializeField] private Transform arrowParent;
-
-    // 矢印生成クラス
-    private ArrowCreate arrowCreate;
-
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -48,15 +39,15 @@ public class OptionPart : PartBase {
     public override async UniTask Setup() {
         await base.Setup();
         Debug.Log("設定画面表示中");
-
+        // 設定メニューを開く
+        await MenuWindowManager.Instance.Open<OptionMenu>();
         // 選択状態を初期化する
         selectMenu = OptionMenuSelect.None;
         // イベント登録
         gameEnd.onClick.AddListener(OnGameEndSelected);
         returnMenu.onClick.AddListener(OnReturnMenuSelected);
-
-        // 矢印生成クラスを生成
-        arrowCreate = new ArrowCreate(arrowPrefab, arrowParent);
+        // フェードから開ける
+        await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
     }
 
     /// <summary>
@@ -83,9 +74,7 @@ public class OptionPart : PartBase {
     public override async UniTask Execute() {
         // ボタンが選択されるまで繰り返し待機
         while (true) {
-            // 設定メニューを開く
-            await MenuWindowManager.Instance.Open<OptionMenu>();
-            arrowCreate.CreateHorizontalArrow(new Vector2(500,500),90f);
+
             // いずれかのボタンが押されるまで待機
             await UniTask.WaitUntil(() => selectMenu != OptionMenuSelect.None);
 

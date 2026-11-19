@@ -229,6 +229,9 @@ public class CardObject : MonoBehaviour {
                 if (BattleSystemManager.instance.spellCastCount < GameConst.SPELL_CAST_MAX) {
                     canPlayEffect.SetParent(useEffectRoot);
                 }
+                else {
+                    canPlayEffect.SetParent(unuseEffectRoot);
+                }
                 break;
         }
     }
