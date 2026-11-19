@@ -325,6 +325,7 @@ GameObject:
   - component: {fileID: 7276847354232744034}
   - component: {fileID: 1198461132000678294}
   - component: {fileID: 4796232094919460902}
+  - component: {fileID: 3789960310341052003}
   m_Layer: 5
   m_Name: GameEnd
   m_TagString: Untagged
@@ -434,6 +435,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3789960310341052003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4640134047745176395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6095836996860434792
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,8 +494,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameEnd: {fileID: 4796232094919460902}
   returnMenu: {fileID: 4520825746799288630}
-  arrowPrefab: {fileID: 76552769266445703, guid: 3db4ed6698c56924eaf6b7673b565247, type: 3}
-  arrowParent: {fileID: 7121317323751926343}
 --- !u!1 &6408564270521957930
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,6 +640,7 @@ GameObject:
   - component: {fileID: 5591239071992540839}
   - component: {fileID: 7603443536984950082}
   - component: {fileID: 4520825746799288630}
+  - component: {fileID: 5463053014583349799}
   m_Layer: 5
   m_Name: ReturnMenu
   m_TagString: Untagged
@@ -738,3 +750,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5463053014583349799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8643732363342277369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
