@@ -258,9 +258,9 @@ public class MainPhase : PhaseBase {
             // レーン番号の取得
             FieldLane lane = CardObjectManager.instance.GetObjectLane(hit.transform);
             // レーンの指定がある場合はそのレーン以外なら交換しない
+            if (selectLane != FieldLane.None && selectLane != lane) return false;
             // 移動先が同じレーンなら交換しない
-            if (selectLane != FieldLane.None && selectLane != lane ||
-                (FieldLane)cardObject.laneID == lane) return false;
+            if ((FieldLane)cardObject.laneID == lane) return false;
             // レーンの位置変更
             BattleSystemManager.instance.LaneChange(PlayerType.Self, (FieldLane)cardObject.laneID, lane);
             return true;
