@@ -334,9 +334,9 @@ MonoBehaviour:
       FirstRaceID: 1
       SecondRaceID: 2
       ThildRaceID: -1
-      SIZE: 4
+      SIZE: 2
       ATK: 4
-      HP: 15
+      HP: 11
       CardType: 0
       ability: ' '
       PlayID: 0
@@ -1076,9 +1076,9 @@ MonoBehaviour:
       FirstRaceID: -1
       SecondRaceID: -1
       ThildRaceID: -1
-      SIZE: 6
+      SIZE: 2
       ATK: 0
-      HP: 11
+      HP: 6
       CardType: 0
-      ability: "\u30FB\u5F31\u30C1\u30A7\u30EA\u30FC\u3092\u5F15\u3044\u305F\u3068\u304D\u3001\u305D\u308C\u306F\u5F37\u30C1\u30A7\u30EA\u30FC\u306B\u306A\u308B\u3002"
+      ability: "\u30FB\u5F31\u30C1\u30A7\u30EA\u30FC\u3092\u5F15\u3044\u305F\u3068\u304D\u3001\u305D\u308C\u306F\u5F37\u30C1\u30A7\u30EA\u30FC\u306B\u306A\u308B\u3002\n\u30FB\u30B9\u30A4\u30AB\u3092\u5F15\u3044\u305F\u3068\u304D\u3001\u305D\u308C\u306FRG\u63C3\u3044\u306B\u306A\u308B\u3002"
       PlayID: 0
