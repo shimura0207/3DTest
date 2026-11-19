@@ -32,11 +32,11 @@ public class MainPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
-        // 手札のエフェクトチェック
-        CardObjectManager.instance.HandCanPlayEffectCheck();
-
         // カード操作
         await CardControl();
+
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
 
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();

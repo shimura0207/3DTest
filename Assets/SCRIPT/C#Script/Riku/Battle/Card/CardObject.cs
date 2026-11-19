@@ -216,44 +216,6 @@ public class CardObject : MonoBehaviour {
     /// <param name="setID">セットするID</param>
     public void SetHandID(int setID) {
         handID = setID;
-
-        
-        if (playerType != PlayerType.Self) return;
-        // 手札のカードではなくなったのならエフェクトは消す
-        if (handID < 0) {
-            canPlayEffect.SetParent(unuseEffectRoot);
-            return;
-        }
-        // プレイ可能なカードはエフェクトを出す
-        switch (cardType) {
-            case CardType.Monster:
-                // フィールドに空きがあるか
-                bool fieldBlank = false;
-                foreach (var card in CardObjectManager.instance.fieldObjectList[PlayerType.Self]) {
-                    if (card.Value != null) continue;
-                    fieldBlank = true;
-                    break;
-                }
-                // サイズが超過しないか
-                bool sizeBlank = false;
-                if (currentStatus[MonsterStatus.SIZE] <= BattleSystemManager.instance.GetRemainingSize(PlayerType.Self)) {
-                    sizeBlank = true;
-                }
-                // フィールドに空きがあり、サイズが超過しないならプレイ可能
-                if (fieldBlank && sizeBlank) {
-                    canPlayEffect.SetParent(useEffectRoot);
-                }
-                break;
-            case CardType.Spell:
-                // スペル使用回数が3回以下ならプレイ可能
-                if (BattleSystemManager.instance.spellCastCount < GameConst.SPELL_CAST_MAX) {
-                    canPlayEffect.SetParent(useEffectRoot);
-                }
-                else {
-                    canPlayEffect.SetParent(unuseEffectRoot);
-                }
-                break;
-        }
     }
 
     /// <summary>

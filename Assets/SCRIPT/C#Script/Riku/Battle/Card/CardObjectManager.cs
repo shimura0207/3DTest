@@ -325,6 +325,9 @@ public class CardObjectManager : MonoBehaviour {
                     if (fieldBlank && sizeBlank) {
                         hand.SetCanPlayEffectActive(true);
                     }
+                    else {
+                        hand.SetCanPlayEffectActive(false);
+                    }
                     break;
                 case CardType.Spell:
                     // スペル使用回数が3回以下ならプレイ可能
