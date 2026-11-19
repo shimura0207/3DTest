@@ -32,8 +32,8 @@ public class DamageUI : MonoBehaviour
         // 徐々に上げる
         damageText.transform.position += new Vector3(0.0f, YPOS_UPPER, 0.0f);
         // アルファ値が0以下なら削除
-        if (damageText.alpha < 0.0f) {
-            Destroy(this);
+        if (damageText.alpha <= 0.0f) {
+            Destroy(gameObject);
         }
     }
 }
