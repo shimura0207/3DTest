@@ -4983,6 +4983,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11defae2783a6964e8f411d75f7deb52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endButton: {fileID: 5365911776826332307}
+  pachisuroGoButton: {fileID: 3173019148773327881}
+  turnEnd: {fileID: 21300000, guid: 0427fbf1ad9d34642a680d4686d9a370, type: 3}
+  enemyTurn: {fileID: 21300000, guid: ea2714eb255bc0a478836461aaad388d, type: 3}
+  pachisurogo: {fileID: 21300000, guid: 7067d7fad262de74fbfca420bd63af13, type: 3}
+  pachisurogoMono: {fileID: 21300000, guid: 8d281b9c1abb2ef4c942b0ba45d06992, type: 3}
 --- !u!1 &1111649192364706852
 GameObject:
   m_ObjectHideFlags: 0
@@ -28663,14 +28669,14 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 7
   m_TargetDisplay: 0
 --- !u!114 &8655195899533600742
 MonoBehaviour:
@@ -35736,7 +35742,7 @@ GameObject:
   - component: {fileID: 4869105072247175557}
   - component: {fileID: 3321816019037219819}
   - component: {fileID: 1793905740219415820}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Banner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
