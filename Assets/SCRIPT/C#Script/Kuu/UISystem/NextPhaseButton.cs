@@ -21,6 +21,7 @@ public class NextPhaseButton : MonoBehaviour
     public void OnClickPachisuroGo() {
         if (BattleSystemManager.instance.pachisuroGoActive) {
             UniTask task = PachisuroGo();
+            AudioManager.instance.PlaySE("Button");
         }
     }
 
@@ -30,6 +31,7 @@ public class NextPhaseButton : MonoBehaviour
     public void OnClickTurnEnd() {
         if (BattleSystemManager.instance.turnEndActive) {
             UniTask task = TurnEnd();
+            AudioManager.instance.PlaySE("Button");
         }
     }
 
