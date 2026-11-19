@@ -17,6 +17,7 @@ public class StartPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
+        AudioManager.instance.PlaySE("P_TURN");
         foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Self]) {
             if (!monster.Value) continue;
             // 疲労回復
@@ -48,6 +49,7 @@ public class StartPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask OpponentExecute() {
+        AudioManager.instance.PlaySE("E_TURN");
         foreach (var monster in CardObjectManager.instance.fieldObjectList[PlayerType.Opponent]) {
             if (!monster.Value) continue;
             // 疲労回復

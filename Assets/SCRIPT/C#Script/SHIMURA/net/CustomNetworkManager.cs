@@ -458,6 +458,7 @@ public class CustomNetworkManager : NetworkManager {
 
             // ホスト自身を含む両クライアントへ通知
             SendRoomState(true, "対戦開始");
+            
         }
         else if (!matchStarted) {
             SendRoomState(
