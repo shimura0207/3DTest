@@ -191,5 +191,19 @@ public class UIManager : SystemObject {
         // 生成する
         Instantiate(damageUI, position, Quaternion.identity);
     }
+
+    /// <summary>
+    /// ターン開始時バナーを表示する
+    /// </summary>
+    /// <param name="player"></param>
+    public async UniTask DisplayTurnBanner(PlayerType player) {
+        //呼ぶスクリプト
+        TurnPlayerBanner displayBanner;
+        GameObject banner = GameObject.Find("TurnPlayerBanner");
+        //付いているスクリプトを取得
+        displayBanner = banner.GetComponent<TurnPlayerBanner>();
+        // バナーを表示する
+        await displayBanner.DisplayBanner(player);
+    }
 }
 
