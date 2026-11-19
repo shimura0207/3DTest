@@ -295,13 +295,22 @@ public class BattleSystemManager : MonoBehaviour {
         if (playerHP[player] > 0) return;
 
         playerHP[player] = 0;
+        // プレイヤーの敗北
+        PlayerLose(player);
+    }
+
+    /// <summary>
+    /// プレイヤーの敗北
+    /// </summary>
+    /// <param name="player"></param>
+    public void PlayerLose(PlayerType player) {
         switch (player) {
             case PlayerType.Self:
-                // 自身のHPが0なら敗北
+                // 自身の敗北なら敗北
                 battleState = BattleState.Lose;
                 break;
             case PlayerType.Opponent:
-                // 相手のHPが0なら勝利
+                // 相手の敗北なら勝利
                 battleState = BattleState.Win;
                 break;
         }

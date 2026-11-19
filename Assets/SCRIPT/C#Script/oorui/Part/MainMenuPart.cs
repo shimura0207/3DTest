@@ -146,42 +146,68 @@ public class MainMenuPart : PartBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Execute() {
-        // ボタンが選択されるまで待機する
-        await UniTask.WaitUntil(() => selectMenu != MainMenuSelect.None);
 
-        // 選択されたメニューによって遷移先を変更する
-        switch (selectMenu) {
+        // メニューが選択されるまで繰り返し待機する
+        while (true) {
 
-            case MainMenuSelect.Matchmaking:
+            // Escapeキーが押されたか確認する
+            bool isEscapePressed = false;
+
+            // ボタンが選択されるか、Escapeキーが押されるまで待機する
+            await UniTask.WaitUntil(() => {
+
+                // Escapeキーの入力状態を取得する
+                isEscapePressed = Input.GetKeyDown(KeyCode.Escape);
+
+                return selectMenu != MainMenuSelect.None || isEscapePressed;
+            });
+
+            // Escapeキーが押された場合
+            if (isEscapePressed) {
+
+                // タイトルに戻るか確認する
+                bool isGameEnd = await MenuWindowManager.Instance.Confirm("タイトルに戻りますか？");
+
+                // 「いいえ」が選択された場合
+                if (!isGameEnd) {
+                    // 入力待ちに戻る
+                    continue;
+                }
+
                 // 再生中のBGMを停止する
                 AudioManager.instance.FadeOutBGM();
-                // マッチングパートへ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.Matchmaking);
 
-                break;
+                // タイトル画面へ遷移する
+                await PartManager.Instance.TransitionPart(GamePart.Title);
 
-            case MainMenuSelect.Option:
-                // 再生中のBGMを停止する
-                AudioManager.instance.FadeOutBGM();
-                // オプションパートへ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.Option);
+                return;
+            }
 
-                break;
+            // 選択されたメニューによって遷移先を変更する
+            switch (selectMenu) {
 
-            case MainMenuSelect.CardRelation:
-                // 再生中のBGMを停止する
-                AudioManager.instance.FadeOutBGM();
-                // カード一覧パートへ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.CardRelation);
+                case MainMenuSelect.Matchmaking:
+                    AudioManager.instance.FadeOutBGM();
+                    await PartManager.Instance.TransitionPart(GamePart.Matchmaking);
+                    return;
 
-                break;
+                case MainMenuSelect.Option:
+                    AudioManager.instance.FadeOutBGM();
+                    await PartManager.Instance.TransitionPart(GamePart.Option);
+                    return;
 
-            case MainMenuSelect.Tutorial:
-                // 再生中のBGMを停止する
-                AudioManager.instance.FadeOutBGM();
-                // チュートリアルパートへ遷移する
-                await PartManager.Instance.TransitionPart(GamePart.MainGame,1, MainGamePartType.Tutotrial);
-                break;
+                case MainMenuSelect.CardRelation:
+                    AudioManager.instance.FadeOutBGM();
+                    await PartManager.Instance.TransitionPart(GamePart.CardRelation);
+                    return;
+
+                case MainMenuSelect.Tutorial:
+                    AudioManager.instance.FadeOutBGM();
+                    await PartManager.Instance.TransitionPart(
+                        GamePart.MainGame, 1, MainGamePartType.Tutotrial
+                    );
+                    return;
+            }
         }
     }
 

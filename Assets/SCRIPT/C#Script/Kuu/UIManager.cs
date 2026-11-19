@@ -19,18 +19,6 @@ public class UIManager : SystemObject {
     // ダメージUI
     [SerializeField] private GameObject damageUI = null;
 
-    // ターン開始バナー
-    [SerializeField] private Image banner = null;
-
-    // バナーの親Canvas
-    [SerializeField] private Canvas bannerParent = null;
-
-    // 自分のターンバナー画像
-    [SerializeField] private Sprite selfBanner = null;
-
-    // 相手のターンバナー画像
-    [SerializeField] private Sprite opponentBanner = null;
-
     // 自身への参照
     public static UIManager instance { get; private set; }
 
@@ -205,20 +193,17 @@ public class UIManager : SystemObject {
     }
 
     /// <summary>
-    /// ターン開始時バナーを生成する
+    /// ターン開始時バナーを表示する
     /// </summary>
     /// <param name="player"></param>
-    public async UniTask GenerateTurnBanner(PlayerType player) {
-        // ターンプレイヤーに合わせてバナーの画像を変える
-        if (player == PlayerType.Self) {
-            banner.sprite = selfBanner;
-        }
-        else if (player == PlayerType.Opponent) {
-            banner.sprite = opponentBanner;
-        }
-
-        // 生成する
-        var turnPlayerBanner = Object.Instantiate(banner, bannerParent.transform, false);
+    public async UniTask DisplayTurnBanner(PlayerType player) {
+        //呼ぶスクリプト
+        TurnPlayerBanner displayBanner;
+        GameObject banner = GameObject.Find("TurnPlayerBanner");
+        //付いているスクリプトを取得
+        displayBanner = banner.GetComponent<TurnPlayerBanner>();
+        // バナーを表示する
+        await displayBanner.DisplayBanner(player);
     }
 }
 

@@ -115,7 +115,7 @@ public class StandbyPart : PartBase {
                 }
 
                 // 初期デッキ名を設定する
-                string deckName = $"レンタルデッキ{masterDeckID}";
+                string deckName = $"デフォルトデッキ{masterDeckID}";
 
                 // デッキをセーブデータに登録する
                 int savedDeckID = SaveManager.Instance.SaveDeck(

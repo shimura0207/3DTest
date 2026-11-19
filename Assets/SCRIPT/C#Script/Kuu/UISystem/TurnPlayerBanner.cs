@@ -2,6 +2,7 @@
  * @file    TurnPlayerBanner.cs
  * @author  kuu
  */
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,23 +19,27 @@ public class TurnPlayerBanner : MonoBehaviour
     // 相手のターンバナー画像
     [SerializeField] Sprite opponentBanner = null;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    // 表示する秒数
+    private const int DISPLAY_TIME = 1000;
 
-    // Update is called once per frame
-    void Update()
-    {
+    /// <summary>
+    /// 適切なバナーを表示
+    /// </summary>
+    /// <returns></returns>
+    public async UniTask DisplayBanner(PlayerType player) {
         // ターンプレイヤーに合わせてバナーの画像を変える
-        if (BattleSystemManager.instance.turnPlayer == PlayerType.Self) {
+        if (player == PlayerType.Self) {
             banner.sprite = selfBanner;
         }
-        else if (BattleSystemManager.instance.turnPlayer == PlayerType.Opponent) {
+        else if (player == PlayerType.Opponent) {
             banner.sprite = opponentBanner;
         }
+
+        // バナーを表示する
+        banner.enabled = true;
+
+        // 1秒待って非表示にする
+        await UniTask.Delay(DISPLAY_TIME);
+        banner.enabled = false;
     }
-
-
 }

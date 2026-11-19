@@ -101,6 +101,11 @@ public class AreaCardManager : MonoBehaviour {
         // 山札の一番上のカードを削除
         deckCards[player].RemoveAt(0);
 
+        // 山札がなくなったらそのプレイヤーの敗北
+        if (IsEmpty(deckCards[player])) {
+            BattleSystemManager.instance.PlayerLose(player);
+        }
+
         return card;
     }
 
@@ -117,6 +122,11 @@ public class AreaCardManager : MonoBehaviour {
         outDeckCards[player].graveCards.Add(card);
         // 山札の一番上のカードを削除
         deckCards[player].RemoveAt(0);
+
+        // 山札がなくなったらそのプレイヤーの敗北
+        if (IsEmpty(deckCards[player])) {
+            BattleSystemManager.instance.PlayerLose(player);
+        }
 
         return card;
     }

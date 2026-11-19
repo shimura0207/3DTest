@@ -57,10 +57,10 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 362.72, y: 231.1}
-  m_Spacing: {x: 10, y: 0}
+  m_CellSize: {x: 467.65, y: 252.8}
+  m_Spacing: {x: 23.3, y: 10.58}
   m_Constraint: 1
-  m_ConstraintCount: 4
+  m_ConstraintCount: 3
 --- !u!114 &3700173419752606076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1623,7 +1623,7 @@ RectTransform:
   m_GameObject: {fileID: 8667422709296149667}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.93749, y: 0.93749, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3476216464481395586}
@@ -1632,7 +1632,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -179.45105, y: -65.04846}
+  m_AnchoredPosition: {x: -183, y: -65.04846}
   m_SizeDelta: {x: 1461.0991, y: 853.9031}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3722818560066012219
@@ -1686,7 +1686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 3005262199424236193}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
