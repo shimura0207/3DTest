@@ -179,11 +179,12 @@ public enum ConnectionState {
 /// カードのレアリティ
 /// </summary>
 public enum CardRearity {
-    None = -1,
+    None = -1,      // ゲーム外
     N = 1,
     R = 2,
     SR = 3,
-    LR = 4
+    LR = 4,
+    Neutral = 5     // 汎用
 }
 
 /// <summary>

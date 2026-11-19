@@ -56,6 +56,7 @@ public class MatchingPart : PartBase {
         // 接続状況の初期化
         //conection = ConnectionState.None;
 
+
         // 選択状態を初期化する
         isRandomMatch = false;
         isPrivateMatch = false;
@@ -120,6 +121,8 @@ public class MatchingPart : PartBase {
 
         deckSelectButton.onClick.RemoveListener(OnClickDeckSelectButton);
         deckSelectButton.onClick.AddListener(OnClickDeckSelectButton);
+        // フェードから開ける
+        await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
     }
 
     /// <summary>

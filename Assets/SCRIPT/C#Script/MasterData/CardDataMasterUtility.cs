@@ -24,6 +24,7 @@ public class CardDataMasterUtility {
         for (int i = 0, max = cardMasterList.Count; i < max; i++) {
             // 使用しないカードは無視する
             if (cardMasterList[i].PlayID == 1) continue;
+            if ((CardRearity)cardMasterList[i].rarityID == CardRearity.None) continue;
             if (cardMasterList[i].cardID != masterID) continue;
             return cardMasterList[i];
         }
@@ -53,7 +54,7 @@ public class CardDataMasterUtility {
 
             // 使用しないカードは除外
             if (cardMasterList[i].PlayID == 1) continue;
-
+            if ((CardRearity)cardMasterList[i].rarityID == CardRearity.None) continue;
             // 不正なカードIDは除外
             if (cardMasterList[i].cardID <= 0) continue;
 
@@ -91,6 +92,7 @@ public class CardDataMasterUtility {
         for (int i = 0, max = cardMasterList.Count; i < max; i++) {
             // 使用しないカードは無視する
             if (cardMasterList[i].PlayID == 1) continue;
+            if ((CardRearity)cardMasterList[i].rarityID == CardRearity.None) continue;
             // テーマIDが一致しなければスキップ
             if (cardMasterList[i].themeID != (int)id) continue;
 

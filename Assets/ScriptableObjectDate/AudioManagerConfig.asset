@@ -41,9 +41,6 @@ MonoBehaviour:
   - soundName: bell
     clip: {fileID: 8300000, guid: 5cb64128a9bf77a43a543ad69c85d019, type: 3}
     volume: 1
-  - soundName: suika
-    clip: {fileID: 8300000, guid: b05da17d8ce019f4a969ce722b5b3b93, type: 3}
-    volume: 1
   - soundName: M_START
     clip: {fileID: 8300000, guid: 7b2bcc6a1572220478aba8f5c73030c5, type: 3}
     volume: 1
@@ -57,5 +54,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 84bba2e3b8f8dc6459d241bb71d3bf66, type: 3}
     volume: 1
   - soundName: P_TURN
-    clip: {fileID: 8300000, guid: 84bba2e3b8f8dc6459d241bb71d3bf66, type: 3}
+    clip: {fileID: 8300000, guid: fd544c6b0dc20f648870fc5e3c118510, type: 3}
+    volume: 1
+  - soundName: kougeki
+    clip: {fileID: 8300000, guid: 28feddeee1b1a8446846f46a5af57cf5, type: 3}
     volume: 1
