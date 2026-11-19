@@ -32,8 +32,17 @@ public class PossessionCardListView : MonoBehaviour {
     /// 所持カード一覧を更新する
     /// </summary>
     public void RefreshCards() {
+
         // 必要なオブジェクトが設定されているか確認
         if (!CheckInstance()) return;
+
+        // ScrollRectを取得
+        ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>();
+
+        // 現在のスクロール位置を保存
+        float currentScrollPosition = scrollRect != null
+            ? scrollRect.verticalNormalizedPosition
+            : 1f;
 
         // 所持カードをセーブデータから取得
         PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
@@ -79,22 +88,30 @@ public class PossessionCardListView : MonoBehaviour {
             // 所持状況に応じて画像の色を変更
             cardItem.SetOwnedState(ownedCount > 0);
 
-            // 詳細メニュー終了後に一覧を更新する処理を登録
-            cardItem.SetDetailClosedCallback(RefreshCards);
+            // 詳細メニュー終了後に既存カードの表示を更新する
+            cardItem.SetDetailClosedCallback(UpdateCardDisplay);
 
             // 生成したカードを管理リストに登録
             cardItems.Add(cardItem);
         }
 
-        // Contentのレイアウトを即時更新
+        // Canvasの更新
         Canvas.ForceUpdateCanvases();
+
+        // Contentのレイアウトを再構築
         LayoutRebuilder.ForceRebuildLayoutImmediate(content);
 
-        // スクロール位置を先頭に戻す
-        ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>();
-
+        // ScrollRectのレイアウトを更新
         if (scrollRect != null) {
-            scrollRect.verticalNormalizedPosition = 1f;
+
+            // スクロール位置を復元
+            scrollRect.verticalNormalizedPosition = currentScrollPosition;
+
+            // スクロール位置の変更を即時反映
+            scrollRect.velocity = Vector2.zero;
+
+            // ScrollRectの表示を更新
+            scrollRect.StopMovement();
         }
     }
 
@@ -291,6 +308,55 @@ public class PossessionCardListView : MonoBehaviour {
 
             // カードのクリック操作を妨げないようにする
             label.raycastTarget = false;
+        }
+    }
+
+    /// <summary>
+    /// スクロール位置を一番上に戻す
+    /// </summary>
+    public void ResetScrollPosition() {
+
+        // ScrollRectを取得
+        ScrollRect scrollRect = content.GetComponentInParent<ScrollRect>();
+
+        // スクロール位置を一番上に戻す
+        if (scrollRect != null) {
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
+    }
+
+    /// <summary>
+    /// 既存カードの所持状況を更新する
+    /// </summary>
+    public void UpdateCardDisplay() {
+
+        // 必要なオブジェクトが設定されているか確認
+        if (!CheckInstance()) return;
+
+        // 所持カードをセーブデータから取得
+        PossessionCardSaveData saveData = SaveManager.Instance.LoadCards();
+
+        // 所持カードIDを取得
+        List<int> ownedCardIDs = saveData != null && saveData.cardID != null
+            ? saveData.cardID
+            : new List<int>();
+
+        // カードIDごとの所持枚数を集計
+        Dictionary<int, int> cardCounts =
+            OwnedCardUtility.GetCardCounts(ownedCardIDs);
+
+        // 既存のカード表示を確認
+        foreach (PossessionCardItem cardItem in cardItems) {
+
+            // カードが削除されていないか確認
+            if (cardItem == null) continue;
+
+            // 所持枚数を取得
+            int ownedCount = 0;
+            cardCounts.TryGetValue(cardItem.CardID, out ownedCount);
+
+            // 所持枚数と画像の色を更新
+            cardItem.UpdateOwnedCount(ownedCount);
         }
     }
 }

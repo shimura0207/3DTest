@@ -47,18 +47,21 @@ public class CardListPart : PartBase {
     public override async UniTask Setup() {
         // 基底クラスの準備処理
         await base.Setup();
+
         // 遷移先を初期化
         selectMenu = CardRelationMenuSelect.None;
-        // 追加と初期化をまとめて行う
+
+        // イベント登録
         ListenerALL();
 
-        // 表示クラスが設定されているか確認する
+        // 表示クラスが設定されているか確認
         if (possessionCardListView == null) return;
 
-        // 所持カード一覧を生成して表示する
+        // 所持カード一覧を生成
         possessionCardListView.RefreshCards();
 
-        Debug.Log("カード一覧画面表示中");
+        // スクロール位置を一番上に戻す
+        possessionCardListView.ResetScrollPosition();
     }
 
     /// <summary>
