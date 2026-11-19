@@ -62,6 +62,9 @@ public class CardListPart : PartBase {
 
         // スクロール位置を一番上に戻す
         possessionCardListView.ResetScrollPosition();
+
+        // フェードから開ける
+        await FadeManager.Instance.FadeIn(FadeType.Black, 0.5f);
     }
 
     /// <summary>
