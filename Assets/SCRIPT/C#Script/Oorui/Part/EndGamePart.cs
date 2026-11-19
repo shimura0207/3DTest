@@ -180,6 +180,8 @@ public class EndGamePart : PartBase {
         switch (selectMenu) {
 
             case ResultSelectMenu.MainMenu:
+                // マッチング中であれば終了処理
+                CancelMatching();
                 // メインメニューに遷移
                 await PartManager.Instance.TransitionPart(GamePart.MainMenu);
                 break;
@@ -192,6 +194,8 @@ public class EndGamePart : PartBase {
                 break;
 
             case ResultSelectMenu.DeckBuilding:
+                // マッチング中であれば終了処理
+                CancelMatching();
                 // デッキ編成画面に遷移
                 await PartManager.Instance.TransitionPart(GamePart.DeckBuild);
                 break;
