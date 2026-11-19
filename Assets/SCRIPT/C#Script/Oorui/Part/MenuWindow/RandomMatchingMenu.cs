@@ -76,7 +76,7 @@ public class RandomMatchingMenu : MenuWindowBase {
 
         // ランダムマッチを開始する
         MatchingNetMatch.instance.OnRandomMatchButton();
-
+        AudioManager.instance.PlaySE("M_START");
         // マッチングの終了条件を満たすまで待機する
         await WaitForMatchingEnd(sessionId);
 
@@ -100,6 +100,7 @@ public class RandomMatchingMenu : MenuWindowBase {
 
         // 対戦相手が見つかったことを表示する
         ShowMessage("対戦相手が見つかりました");
+        AudioManager.instance.PlaySE("M_SUCSESS");
         // 自分のプレイヤー名を取得する
 
         // セーブデータを取得

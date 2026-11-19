@@ -44,6 +44,18 @@ MonoBehaviour:
   - soundName: suika
     clip: {fileID: 8300000, guid: b05da17d8ce019f4a969ce722b5b3b93, type: 3}
     volume: 1
-  - soundName: suika
-    clip: {fileID: 8300000, guid: b05da17d8ce019f4a969ce722b5b3b93, type: 3}
+  - soundName: M_START
+    clip: {fileID: 8300000, guid: 7b2bcc6a1572220478aba8f5c73030c5, type: 3}
+    volume: 1
+  - soundName: M_SUCSESS
+    clip: {fileID: 8300000, guid: 3e95b7861ab33e345af0c6a6c4a50f7c, type: 3}
+    volume: 1
+  - soundName: SUPERU
+    clip: {fileID: 8300000, guid: c1033d2c461f35f4eb5dda6db31fdc6c, type: 3}
+    volume: 1
+  - soundName: E_TURN
+    clip: {fileID: 8300000, guid: 84bba2e3b8f8dc6459d241bb71d3bf66, type: 3}
+    volume: 1
+  - soundName: P_TURN
+    clip: {fileID: 8300000, guid: 84bba2e3b8f8dc6459d241bb71d3bf66, type: 3}
     volume: 1

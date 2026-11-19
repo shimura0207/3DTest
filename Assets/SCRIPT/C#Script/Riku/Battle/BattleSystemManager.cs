@@ -372,6 +372,7 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="card">唱えるカードのオブジェクト</param>
     public void CastSpell(PlayerType player, CardObject card) {
         int objectID = card.objectID;
+        AudioManager.instance.PlaySE("SUPERU");
         // スペルの効果発動確認
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Play) continue;
