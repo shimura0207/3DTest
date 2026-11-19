@@ -4,6 +4,7 @@
  */
 
 using Cysharp.Threading.Tasks;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,7 +27,8 @@ public class TitlePart : PartBase {
 
     // 点滅速度
     private const float FLASH_DURATION = 0.85f;
-
+    // タイトルロゴの点滅処理を管理するキャンセルトークン
+    private CancellationTokenSource flashTokenSource;
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -46,8 +48,10 @@ public class TitlePart : PartBase {
         start.onClick.AddListener(OnTitleSelected);
         // BGM再生
         AudioManager.instance.PlayBGM(TITLE_BGMNAME);
-        // タイトルロゴの点滅を開始
-        FlashingImage().Forget();
+        await FadeManager.Instance.FadeIn(FadeType.Black);
+        // タイトルロゴの点滅処理を開始する
+        flashTokenSource = new CancellationTokenSource();
+        FlashingImage(flashTokenSource.Token).Forget();
         await UniTask.CompletedTask;
     }
 
@@ -84,9 +88,10 @@ public class TitlePart : PartBase {
     }
 
     /// <summary>
-    /// 仮：画像を点滅させる
+    /// 画像を点滅させる
     /// </summary>
-    private async UniTask FlashingImage() {
+    /// <param name="token">キャンセルトークン</param>
+    private async UniTask FlashingImage(CancellationToken token) {
 
         // 画像の透明度を管理する変数
         float alpha = 1.0f;
@@ -94,8 +99,9 @@ public class TitlePart : PartBase {
         // 透明度を減少・増加させる方向
         bool isFadeOut = true;
 
-        // パートが破棄されるまで点滅を繰り返す
-        while (true) {
+        // キャンセルされるまで点滅を繰り返す
+        while (!token.IsCancellationRequested && titleLogo != null) {
+
             // 経過時間を管理する
             float elapsedTime = 0.0f;
 
@@ -106,7 +112,10 @@ public class TitlePart : PartBase {
             float targetAlpha = isFadeOut ? 0.3f : 1.0f;
 
             // 指定時間をかけて透明度を変化させる
-            while (elapsedTime < FLASH_DURATION) {
+            while (elapsedTime < FLASH_DURATION &&
+                   !token.IsCancellationRequested &&
+                   titleLogo != null) {
+
                 elapsedTime += Time.deltaTime;
 
                 // 0～1の割合で透明度を補間する
@@ -121,13 +130,38 @@ public class TitlePart : PartBase {
                 titleLogo.color = color;
 
                 // 次のフレームまで待機する
-                await UniTask.Yield();
+                await UniTask.Yield(PlayerLoopTiming.Update);
+            }
+
+            // キャンセルまたは画像が破棄された場合は終了する
+            if (token.IsCancellationRequested || titleLogo == null) {
+                break;
             }
 
             // 透明・不透明の切り替え
             alpha = targetAlpha;
             isFadeOut = !isFadeOut;
         }
+    }
+
+    /// <summary>
+    /// 片付け処理
+    /// </summary>
+    public override async UniTask Teardown() {
+
+        // 点滅処理を停止する
+        if (flashTokenSource != null) {
+
+            // 非同期処理にキャンセルを通知する
+            flashTokenSource.Cancel();
+
+            // トークンソースを破棄する
+            flashTokenSource.Dispose();
+            flashTokenSource = null;
+        }
+
+        // 基底クラスの片付け処理
+        await base.Teardown();
     }
 
 }
