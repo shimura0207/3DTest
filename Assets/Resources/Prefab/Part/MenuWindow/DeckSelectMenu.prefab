@@ -558,6 +558,7 @@ GameObject:
   - component: {fileID: 4044134748297117204}
   - component: {fileID: 1436794012409750473}
   - component: {fileID: 8103370924154000488}
+  - component: {fileID: 4771090204991104647}
   m_Layer: 0
   m_Name: Kettei
   m_TagString: Untagged
@@ -667,6 +668,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4771090204991104647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3460090494363955574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3610992214050148146
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,6 +806,7 @@ GameObject:
   - component: {fileID: 2047095526925618209}
   - component: {fileID: 5165989519099444287}
   - component: {fileID: 1014801586811623693}
+  - component: {fileID: 7847840830270796787}
   m_Layer: 0
   m_Name: ReturnButton
   m_TagString: Untagged
@@ -902,6 +916,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7847840830270796787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5645185632142603174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc267b331b2afba44ae68c895b4ad56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7055488909565301217
 GameObject:
   m_ObjectHideFlags: 0
