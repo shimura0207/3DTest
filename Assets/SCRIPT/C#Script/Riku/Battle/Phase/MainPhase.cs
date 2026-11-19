@@ -68,7 +68,7 @@ public class MainPhase : PhaseBase {
             // 掴む
             CardCatch(ray);
             // 指定カードがあり、そのカードでないなら掴まない
-            if (selectCard && selectCard != cardObject) {
+            if (catchObject && selectCard && selectCard != cardObject) {
                 catchObject.transform.position = catchStartPos;
                 catchObject = null;
                 cardObject = null;
