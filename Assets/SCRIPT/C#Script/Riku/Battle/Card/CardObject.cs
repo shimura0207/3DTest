@@ -118,6 +118,26 @@ public class CardObject : MonoBehaviour {
         abilityList = ScriptableObjectManager.instance.GetCardAbility(cardID);
         // nullだったら空を入れとく
         if (abilityList == null) abilityList = new List<CardAbilityDatabase.AbilityData>();
+
+        // フィールドのカードの場合はエフェクトをつける
+        if (laneID < 0) return;
+        foreach (var ability in abilityList) {
+            if (ability.abilityType != AbilityType.Passive) continue;
+            switch (ability.passiveAbility) {
+                case PassiveAbility.NoFatigue:
+                    noFatigueEffect.SetParent(useEffectRoot);
+                    break;
+                case PassiveAbility.AttackReduction:
+                    attackReductionEffeect.SetParent(useEffectRoot);
+                    break;
+                case PassiveAbility.Upper:
+                    upperEffect.SetParent(useEffectRoot);
+                    break;
+                case PassiveAbility.GOver:
+                    gOverEffect.SetParent(useEffectRoot);
+                    break;
+            }
+        }
     }
 
     /// <summary>
@@ -237,6 +257,19 @@ public class CardObject : MonoBehaviour {
     }
 
     /// <summary>
+    /// 手札のプレイ可能エフェクトの表示非表示
+    /// </summary>
+    /// <param name="isActive"></param>
+    public void SetCanPlayEffectActive(bool isActive) {
+        if (isActive) {
+            canPlayEffect.SetParent(useEffectRoot);
+        }
+        else {
+            canPlayEffect.SetParent(unuseEffectRoot);
+        }
+    }
+
+    /// <summary>
     /// レーンIDのセット
     /// </summary>
     /// <param name="setID">セットするID</param>
@@ -253,7 +286,7 @@ public class CardObject : MonoBehaviour {
         }
         // 常在効果を持っている場合はエフェクトを出す
         foreach (var ability in abilityList) {
-            if (ability.abilityType != AbilityType.Passive) return;
+            if (ability.abilityType != AbilityType.Passive) continue;
             switch (ability.passiveAbility) {
                 case PassiveAbility.NoFatigue:
                     noFatigueEffect.SetParent(useEffectRoot);

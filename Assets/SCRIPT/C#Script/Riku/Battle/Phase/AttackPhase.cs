@@ -130,6 +130,15 @@ public class AttackPhase : PhaseBase {
             foreach (var role in suportRole) {
                 if (koyaku == role) {
                     damage = card.currentStatus[MonsterStatus.ATK];
+                    break;
+                }
+                // チャンス目
+                else if (koyaku == PachisuroSymbolKoyakuEnum.Chance) {
+                    if (role == PachisuroSymbolKoyakuEnum.Suika ||
+                        role == PachisuroSymbolKoyakuEnum.WeakCherry) {
+                        damage = card.currentStatus[MonsterStatus.ATK];
+                        break;
+                    } 
                 }
             }
         }
