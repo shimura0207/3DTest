@@ -148,6 +148,10 @@ public class BattleSystemManager : MonoBehaviour {
                 pachisuroGoActive = true;
                 turnEndActive = true;
             }
+            else {
+                pachisuroGoActive = false;
+                turnEndActive = false;
+            }
 
             switch (currentPhase) {
                 case BattlePhase.StartPhase:
@@ -359,14 +363,14 @@ public class BattleSystemManager : MonoBehaviour {
             AbilityManager.instance.SetAblityQueue(card, ability);
         }
 
+        // 効果発動中ならここで終了
+        if (isAbility) return;
+
         // 自分の処理なら相手に送る
         if (player == PlayerType.Self) {
             var pack = NetworkValueConverter.Pack(NetworkUseID.PlayCard, objectID, lane);
             CustomNetworkManager.instance.SendStringToOpponent(pack);
         }
-
-        // 効果発動中ならここで終了
-        if (isAbility) await UniTask.CompletedTask;
 
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
