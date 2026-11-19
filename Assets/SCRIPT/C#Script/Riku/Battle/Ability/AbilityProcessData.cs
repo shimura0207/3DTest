@@ -4,7 +4,6 @@
  */
 
 using Cysharp.Threading.Tasks;
-using Mirror.Examples.CCU;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +29,12 @@ public class AbilityProcessData {
     public int receiveCardID = -1;
     // 受け取ったレーン
     public FieldLane receiveLane = FieldLane.None;
+    // カードを受け取ったか
+    public bool isReceiveCard = false;
+    // カードIDを受け取ったか
+    public bool isReceiveCardID = false;
+    // レーンを受け取ったか
+    public bool isReceiveLane = false;
 
     // リーチェLv.1の名前
     private const string REACHE_LV1_NAME = "RG:REACHE Lv.1";
@@ -83,6 +88,7 @@ public class AbilityProcessData {
         giveStatus[AbilityTarget.SelfRandom] = async (status, card, player, value) => {
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(player);
+            if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
         };
@@ -92,6 +98,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
         };
@@ -99,6 +106,7 @@ public class AbilityProcessData {
         giveStatus[AbilityTarget.SelfSelect] = async (status, card, player, value) => {
             // 選択モンスターの取得
             CardObject monster = await GetSelectMonster(player);
+            if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
         };
@@ -108,6 +116,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // 選択モンスター取得
             CardObject monster = await GetSelectMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
         };
@@ -172,6 +181,7 @@ public class AbilityProcessData {
         handDestruction[AbilityTarget.SelfRandom] = async (player) => {
             // ランダムな手札取得
             CardObject hand = await GetRandomHand(player);
+            if (!hand) return;
             // ランダムに選ばれたカードを捨てる
             BattleSystemManager.instance.HandDestruction(player, hand);
         };
@@ -181,6 +191,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // ランダムな手札取得
             CardObject hand = await GetRandomHand(revPla);
+            if (!hand) return;
             // ランダムに選ばれたカードを捨てる
             BattleSystemManager.instance.HandDestruction(revPla, hand);
         };
@@ -188,6 +199,7 @@ public class AbilityProcessData {
         handDestruction[AbilityTarget.SelfSelect] = async (player) => {
             // 手札のカードを選択
             CardObject selectCard = await SelectHandCard(player);
+            if (!selectCard) return;
             // 選択したカードを捨てる
             BattleSystemManager.instance.HandDestruction(player, selectCard);
         };
@@ -236,6 +248,7 @@ public class AbilityProcessData {
         deleteMonster[AbilityTarget.SelfRandom] = async (card, player) => {
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(player);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
         };
@@ -245,6 +258,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
         };
@@ -252,6 +266,7 @@ public class AbilityProcessData {
         deleteMonster[AbilityTarget.SelfSelect] = async (card, player) => {
             // 選択モンスター取得
             CardObject monster = await GetSelectMonster(player);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
         };
@@ -261,6 +276,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // 選択モンスター取得
             CardObject monster = await GetSelectMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
         };
@@ -325,6 +341,7 @@ public class AbilityProcessData {
         returnMonster[AbilityTarget.SelfRandom] = async (card, player) => {
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(player);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.ReturnMonster(true);
         };
@@ -334,6 +351,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.ReturnMonster(true);
         };
@@ -341,6 +359,7 @@ public class AbilityProcessData {
         returnMonster[AbilityTarget.SelfSelect] = async (card, player) => {
             // 選択したレーンのモンスター取得
             CardObject monster = await GetSelectMonster(player);
+            if (!monster) return;
             // 取得したモンスターを破壊
             monster.ReturnMonster(true);
         };
@@ -350,6 +369,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // 選択したレーンのモンスター取得
             CardObject monster = await GetSelectMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターを手札に戻す
             monster.ReturnMonster(true);
         };
@@ -413,6 +433,7 @@ public class AbilityProcessData {
         fatigueMonster[AbilityTarget.SelfRandom] = async (fatigue, card, player) => {
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(player);
+            if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
         };
@@ -422,6 +443,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
             CardObject monster = await GetRandomMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
         };
@@ -429,6 +451,7 @@ public class AbilityProcessData {
         fatigueMonster[AbilityTarget.SelfSelect] = async (fatigue, card, player) => {
             // 選択モンスター取得
             CardObject monster = await GetSelectMonster(player);
+            if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
         };
@@ -438,6 +461,7 @@ public class AbilityProcessData {
             PlayerType revPla = GetReversePlayer(player);
             // 選択モンスター取得
             CardObject monster = await GetSelectMonster(revPla);
+            if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
         };
@@ -529,7 +553,7 @@ public class AbilityProcessData {
                 break;
             case PlayerType.Opponent:
                 // カードを受け取るまで待機
-                while (!receiveCard) {
+                while (!isReceiveCard) {
                     await UniTask.Yield();
                 }
                 // 受け取った
@@ -559,7 +583,7 @@ public class AbilityProcessData {
                 break;
             case PlayerType.Opponent:
                 // カードを受け取るまで待機
-                while (!receiveCard) {
+                while (!isReceiveCard) {
                     await UniTask.Yield();
                 }
                 // 受け取った
@@ -589,7 +613,7 @@ public class AbilityProcessData {
                 break;
             case PlayerType.Opponent:
                 // カードを受け取るまで待機
-                while (!receiveCard) {
+                while (!isReceiveCard) {
                     await UniTask.Yield();
                 }
                 // 受け取った
@@ -642,7 +666,7 @@ public class AbilityProcessData {
                 break;
             case PlayerType.Opponent:
                 // カードを受け取るまで待機
-                while (!receiveCard) {
+                while (!isReceiveCard) {
                     await UniTask.Yield();
                 }
                 // 受け取った
@@ -879,7 +903,7 @@ public class AbilityProcessData {
                 break;
             case PlayerType.Opponent:
                 // 出すモンスターと出るレーンを受け取るまで待機
-                while (receiveCardID < 0 || receiveLane == FieldLane.None) {
+                while (!isReceiveCardID || !isReceiveLane) {
                     await UniTask.Yield();
                 }
                 // 受け取った
@@ -889,7 +913,8 @@ public class AbilityProcessData {
                 receiveLane = FieldLane.None;
                 break;
         }
-        
+
+        if (rand < 0 || lane == FieldLane.None) return;
         // 選ばれたモンスターのオブジェクト生成
         CardObject cardObject = CardObjectManager.instance.UseCardObject(bardIDs[rand], player);
         // サイズを0にして召喚
@@ -915,7 +940,7 @@ public class AbilityProcessData {
             // カードのID変更
             AreaCardManager.instance.OutGameToField(card.playerType, reacheLv1ID, card.laneID);
             // カードの情報更新
-            card.Setup(card.objectID, reacheLv1ID, card.playerType);
+            card.Setup(card.objectID, reacheLv2ID, card.playerType);
             // イラスト設定
             card.ChangeCardImage(card.cardID);
         }
@@ -924,7 +949,7 @@ public class AbilityProcessData {
             // カードのID変更
             AreaCardManager.instance.OutGameToField(card.playerType, reacheLv2ID, card.laneID);
             // カードの情報更新
-            card.Setup(card.objectID, reacheLv2ID, card.playerType);
+            card.Setup(card.objectID, reacheLv3ID, card.playerType);
             // イラスト設定
             card.ChangeCardImage(card.cardID);
         }
@@ -933,7 +958,7 @@ public class AbilityProcessData {
             // カードのID変更
             AreaCardManager.instance.OutGameToField(card.playerType, isukaLv1ID, card.laneID);
             // カードの情報更新
-            card.Setup(card.objectID, isukaLv1ID, card.playerType);
+            card.Setup(card.objectID, isukaLv2ID, card.playerType);
             // イラスト設定
             card.ChangeCardImage(card.cardID);
         }
