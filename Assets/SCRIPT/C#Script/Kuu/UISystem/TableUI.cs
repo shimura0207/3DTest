@@ -1,49 +1,67 @@
-/*
- * @file    TableUI.cs
- * @autor   Kuu
- */
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
+using Mirror;
 using TMPro;
 using UnityEngine;
 
-public class TableUI : MonoBehaviour
-{
-    // 自分のテーブル数
-    [SerializeField] private TMP_Text selfTable = null;
+/// <summary>
+/// 自分・相手のテーブルを別々の TMP_Text に表示する。
+/// 自分 = SlotReelController.Instance.currentTable
+/// 相手 = 相手の Mirror Player に付いた TableNetworkSync.SyncedTable
+/// 【アタッチ先】Canvas 内の UI 管理用 GameObject
+/// </summary>
+public class TableUI : MonoBehaviour {
+    [Header("表示する TextMeshPro オブジェクト")]
+    [SerializeField] private TMP_Text selfTable;
+    [SerializeField] private TMP_Text opponentTable;
 
-    // 相手のテーブル数
-    [SerializeField] private TMP_Text opponentTable = null;
+    [Header("表示設定")]
+    [Min(1)]
+    [SerializeField] private int maxTable = 15;
 
-    // 現在の相手のテーブル数
-    private int currentOpTable = -1;
+    [SerializeField] private string waitingValue = "--";
 
-    // テーブル最大数
-    private const int MAX_TABLE = 15;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    private void Start() {
+        UpdateText(selfTable, FormatTable(-1));
+        UpdateText(opponentTable, FormatTable(-1));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        var slotReelController = SlotReelController.Instance;
-        if (slotReelController == null) {
-            return;
+    private void Update() {
+        // 自分の値はゲーム内の管理元から直接読む。
+        SlotReelController slot = SlotReelController.Instance;
+        int myTable = slot != null ? slot.currentTable : -1;
+        UpdateText(selfTable, FormatTable(myTable));
+
+        // 相手の値はネットワークで同期された相手 Player から読む。
+        int remoteTable = FindOpponentTable();
+        UpdateText(opponentTable, FormatTable(remoteTable));
+    }
+
+    private int FindOpponentTable() {
+        // 未接続・切断時は古い値を保持せず未受信表示に戻す。
+        if (!NetworkClient.isConnected)
+            return -1;
+
+        foreach (NetworkIdentity identity in NetworkClient.spawned.Values) {
+            if (identity == null || identity.isLocalPlayer)
+                continue;
+
+            // Player Prefab にのみ TableNetworkSync を付けること。
+            if (!identity.TryGetComponent(out TableNetworkSync tableSync))
+                continue;
+
+            if (tableSync.HasSyncedTable)
+                return tableSync.SyncedTable;
         }
 
-        // 自分のテーブル数を表示
-        selfTable.text = "Table:" + slotReelController.currentTable + "/" + MAX_TABLE;
+        return -1;
+    }
 
-        // 相手のテーブル数を表示
-        if (slotReelController.OpponentTable.HasValue) {
-            currentOpTable = slotReelController.OpponentTable.Value;
+    private string FormatTable(int value) {
+        string valueText = value >= 0 ? value.ToString() : waitingValue;
+        return $"Table:{valueText}/{maxTable}";
+    }
 
-        }
-        opponentTable.text = "Table:" + currentOpTable + "/" + MAX_TABLE;
+    private static void UpdateText(TMP_Text target, string text) {
+        if (target != null && target.text != text)
+            target.text = text;
     }
 }
