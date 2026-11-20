@@ -184,7 +184,7 @@ public class MainPhase : PhaseBase {
                 }
                 else {
                     resetPos = true;
-                    Debug.Log("サイズが超過しています");
+                    Debug.Log("スペルの詠唱上限です");
                 }
                 break;
         }
