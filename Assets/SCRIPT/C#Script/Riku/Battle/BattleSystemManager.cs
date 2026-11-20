@@ -199,6 +199,8 @@ public class BattleSystemManager : MonoBehaviour {
         battleState = BattleState.InProgress;
         // 現在のターンを1に
         currentTurn = 1;
+        // スペル回数を0に
+        spellCastCount = 0;
 
         // 相手のデッキを受け取るまで待つ
         while (!AreaCardManager.instance.catchOpponentDeck) {
@@ -349,6 +351,8 @@ public class BattleSystemManager : MonoBehaviour {
     /// <param name="lane">召喚するカードのレーン</param>
     /// <param name="isAbility">効果発動中かどうか</param>
     public async UniTask SummonMonster(PlayerType player, CardObject card, FieldLane lane, bool isAbility = false) {
+        // 手札エフェクト消す
+        card.SetCanPlayEffectActive(false);
         int objectID = card.objectID;
         if (card.handID >= 0) {
             // 手札から指定されたレーンにカードを移動

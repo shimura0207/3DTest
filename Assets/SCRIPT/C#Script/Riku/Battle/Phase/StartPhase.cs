@@ -17,6 +17,10 @@ public class StartPhase : PhaseBase {
     /// </summary>
     /// <returns></returns>
     public override async UniTask SelfExecute() {
+        // 自分のターン開始時にテーブルを1上昇させる。
+        // バナー表示・ターン開始時効果より前に更新する。
+        SlotReelController.Instance.currentTable++;
+
         // SE再生
         AudioManager.instance.PlaySE("P_TURN");
         // バナー表示
