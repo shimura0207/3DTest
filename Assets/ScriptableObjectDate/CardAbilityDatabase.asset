@@ -59,7 +59,7 @@ MonoBehaviour:
     - abilityID: 1
       abilityType: 0
       abilityTiming: 5
-      abilityTarget: 9
+      abilityTarget: 3
       abilityProcess: 1
       passiveAbility: -1
       abilityValue: 3
@@ -433,7 +433,7 @@ MonoBehaviour:
     - abilityID: 1
       abilityType: 0
       abilityTiming: 1
-      abilityTarget: 4
+      abilityTarget: 5
       abilityProcess: 7
       passiveAbility: -1
       abilityValue: -1
