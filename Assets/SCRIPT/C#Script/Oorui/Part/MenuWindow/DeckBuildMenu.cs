@@ -249,10 +249,13 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキテーマに合わないカードは追加しない
         if (!deckBuildView.CanAddCard(selectedCardID)) return;
 
+        // カードのデータを取得
+        var cardData = CardDataMasterUtility.GetCardMaster(selectedCardID);
+
         // デッキにカードを追加する
         deckBuildView.AddCard(selectedCardID);
         // KEYカードが未設定なら、最初に追加したカードをKEYにする
-        if (keyCardID < 0) {
+        if (keyCardID < 0 && (CardTheme)cardData.themeID != CardTheme.Neutral) {
             keyCardID = selectedCardID;
         }
 
