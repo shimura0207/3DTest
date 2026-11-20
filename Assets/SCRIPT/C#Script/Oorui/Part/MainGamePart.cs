@@ -43,6 +43,12 @@ public class MainGamePart : PartBase {
     // 生成したカード効果管理のインスタンス
     private AbilityManager abilityManager = null;
 
+    // カード演出管理のPrefab
+    [SerializeField]
+    private GameObject cardEffectAnimationManagerPrefab = null;
+    // 生成したバトルシステム管理のインスタンス
+    private CardEffectAnimationManager cardEffectAnimationManager = null;
+
     [SerializeField]
     private GameObject patisuro = null;
     // 生成したPrefabを保持する
@@ -206,6 +212,17 @@ public class MainGamePart : PartBase {
             if (abilityManager == null) return;
             // カード効果管理を初期化
             abilityManager.Initialize();
+        }
+        // カード演出管理のPrefabを作成
+        if (cardEffectAnimationManagerPrefab != null) {
+            // 自身の傘下に生成
+            GameObject cardEffectAnimationObject = Instantiate(cardEffectAnimationManagerPrefab, transform);
+            // 生成したオブジェクトから管理コンポーネントを取得
+            cardEffectAnimationManager = cardEffectAnimationObject.GetComponent<CardEffectAnimationManager>();
+            // 管理コンポーネントが取得できたか確認
+            if (cardEffectAnimationManager == null) return;
+            // カード演出管理を初期化
+            cardEffectAnimationManager.Initialize();
         }
     }
 
