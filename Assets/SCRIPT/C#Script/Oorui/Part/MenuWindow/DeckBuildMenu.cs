@@ -155,7 +155,7 @@ public class DeckBuildMenu : MenuWindowBase {
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
 
         // デッキ登録情報とテーマを一覧側に反映する
-        RefreshDeckBuildCardList();
+        RefreshDeckBuildCardList(true);
 
         // 保存ボタンが押されるまで待機する
         await UniTask.WaitUntil(() => selectMenu != DeckBuildMenuSelect.None);
@@ -290,7 +290,8 @@ public class DeckBuildMenu : MenuWindowBase {
 
             // 現在のデッキ登録カードIDを取得する
             var cardIDs = deckBuildView.GetCardIDs();
-
+            // デッキ登録情報とテーマを一覧側に反映する
+            RefreshDeckBuildCardList(true);
             // 残っているカードの先頭を新しいKEYカードにする
             keyCardID = cardIDs.Count > 0 ? cardIDs[0] : -1;
         }
@@ -462,8 +463,8 @@ public class DeckBuildMenu : MenuWindowBase {
     /// <summary>
     /// デッキの登録情報とテーマを一覧側に反映する
     /// </summary>
-    private void RefreshDeckBuildCardList() {
-
+    /// <param name="resetScroll">スクロール位置を先頭に戻すか</param>
+    private void RefreshDeckBuildCardList(bool resetScroll = false) {
 
         // 現在のデッキ登録カードIDを取得する
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
@@ -474,7 +475,7 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキテーマを一覧側に反映する
         deckBuildCardListView.SetDeckTheme(deckBuildView.GetDeckTheme());
 
-        // 一覧を再生成せず、登録枚数だけ更新する
-        deckBuildCardListView.RefreshCards(resetScroll: false);
+        // 指定されたスクロール設定で一覧を更新する
+        deckBuildCardListView.RefreshCards(resetScroll: resetScroll);
     }
 }
