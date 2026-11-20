@@ -15,6 +15,9 @@ public class SpellLimitUI : MonoBehaviour
     // スペルを唱えられる最大数
     private const int SPELL_MAX = 3;
 
+    // 省略
+    private BattleSystemManager battleSystemManager = BattleSystemManager.instance;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,10 +25,17 @@ public class SpellLimitUI : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        var spellLimit = BattleSystemManager.instance.spellCastCount + 1;
+    void Update() {
+        var spellLimit = 0;
+
+        // カウントするのは自分のターンのみ
+        if (battleSystemManager.turnPlayer == PlayerType.Self) {
+            spellLimit = battleSystemManager.spellCastCount;
+        }
+        else {
+            spellLimit = 0;
+        }
         // スペルの回数をテキストとして表示する
-        spellCount.text = "Spell:" + spellLimit + "/" + SPELL_MAX;
+        spellCount.text = spellLimit + "/" + SPELL_MAX;
     }
 }

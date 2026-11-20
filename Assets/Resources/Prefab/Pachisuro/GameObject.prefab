@@ -2595,7 +2595,7 @@ GameObject:
   - component: {fileID: 4220981809649417819}
   - component: {fileID: 1023055459739652588}
   m_Layer: 5
-  m_Name: SelfSpellCount
+  m_Name: SelfTableText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3512,12 +3512,12 @@ GameObject:
   - component: {fileID: 9214284499550428778}
   - component: {fileID: 5055667943690442520}
   m_Layer: 5
-  m_Name: OpponentSpellCount
+  m_Name: OpponentTableText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5227329521502899533
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28731,8 +28731,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   banner: {fileID: 1793905740219415820}
-  selfBanner: {fileID: 21300000, guid: 19af07f7c5150b741892b29422f961bc, type: 3}
-  opponentBanner: {fileID: 21300000, guid: 82fa2c706a45a234b85b2cbd8937e814, type: 3}
+  selfBanner: {fileID: 21300000, guid: 560b91e51142aab45acdb292780d9f0b, type: 3}
+  opponentBanner: {fileID: 21300000, guid: d39f0bc7bc282944d8dce0bb14385f26, type: 3}
 --- !u!1 &6000675975532807895
 GameObject:
   m_ObjectHideFlags: 0
@@ -33269,9 +33269,8 @@ GameObject:
   - component: {fileID: 8257063829405697748}
   - component: {fileID: 3414305458078988290}
   - component: {fileID: 3095229308323596164}
-  - component: {fileID: 6008143010288095268}
   m_Layer: 5
-  m_Name: SpellCanvas
+  m_Name: TableCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33336,19 +33335,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6008143010288095268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6943159353164563133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dade84fe31d2add4b971d60811afa585, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spellCount: {fileID: 1023055459739652588}
 --- !u!1 &6950883020776685382
 GameObject:
   m_ObjectHideFlags: 0
@@ -35772,7 +35758,7 @@ RectTransform:
   m_GameObject: {fileID: 7550120664544547379}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 16, y: 9, z: 1}
+  m_LocalScale: {x: 15.954, y: 9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4343402975650621493}
@@ -35810,7 +35796,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 82fa2c706a45a234b85b2cbd8937e814, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 560b91e51142aab45acdb292780d9f0b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
