@@ -356,6 +356,8 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 指定されたレーンにカードを設置
         CardObjectManager.instance.MoveToField(player, objectID, lane);
+        //SE再生
+        AudioManager.instance.PlaySE("SAMON");
         // 召喚時効果発動確認
         foreach (var ability in card.abilityList) {
             if (ability.abilityTiming != AbilityTiming.Play) continue;
