@@ -39,11 +39,211 @@ public partial class SlotReelController : MonoBehaviour {
     /// </summary>
     public int? OpponentTable { get; private set; }
 
+
+    [Header("レア役成立時のコントローラー振動")]
+    [SerializeField] private bool rareRoleRumbleEnabled = true;
+    [SerializeField, Range(0f, 1f)] private float rareRoleRumbleChance = 0.30f;
+    [SerializeField, Range(0f, 1f)] private float rareRoleLowMotor = 1f;
+    [SerializeField, Range(0f, 1f)] private float rareRoleHighMotor = 1f;
+    [SerializeField, Min(0.01f)] private float matchingRareRoleRumbleSeconds = 1f;
+    [Tooltip("ONなら相手のスロット再生時にも、このPCのコントローラーを振動させます。")]
+    [SerializeField] private bool rumbleDuringOpponentPlayback = false;
+
+    // 役抽選用のUnityEngine.Randomを消費せず、振動だけ独立して抽選する。
+    private readonly System.Random rareRoleRumbleRandom = new System.Random();
+    private Coroutine rareRoleRumbleCoroutine;
+    private bool rumbleBackendWarningShown;
+#if ENABLE_INPUT_SYSTEM
+    // 実際に振動させた機器だけを保持し、終了時に同じ機器を停止する。
+    private readonly List<UnityEngine.InputSystem.Gamepad> rumblingGamepads =
+        new List<UnityEngine.InputSystem.Gamepad>();
+#endif
+
+    /// <summary>
+    /// 回転開始成功後に1回だけ呼ぶ。昇格など適用後の最終成立役で判定する。
+    /// 対象は弱チェリー・スイカ・強チェリー・チャンス目。Sevenは対象外。
+    /// </summary>
+    private void TryPlayRareRoleRumble(PachisuroSymbolKoyakuEnum role) {
+        if (!rareRoleRumbleEnabled || !isActiveAndEnabled || !Application.isFocused)
+            return;
+        if (networkRemoteControl && !rumbleDuringOpponentPlayback) return;
+        if (!HasMatchingAttackMonster(role)) return;
+        if (role != PachisuroSymbolKoyakuEnum.WeakCherry &&
+            role != PachisuroSymbolKoyakuEnum.Suika &&
+            role != PachisuroSymbolKoyakuEnum.StrongCherry &&
+            role != PachisuroSymbolKoyakuEnum.Chance) return;
+
+#if ENABLE_INPUT_SYSTEM
+        // 未接続なら何もしない。毎回列挙するので途中接続にも対応する。
+        if (UnityEngine.InputSystem.Gamepad.all.Count == 0) return;
+        if (rareRoleRumbleRandom.NextDouble() >= Mathf.Clamp01(rareRoleRumbleChance))
+            return;
+        StopRareRoleRumble();
+        rareRoleRumbleCoroutine = StartCoroutine(PlayRareRoleRumble(matchingRareRoleRumbleSeconds));
+#else
+        // Input System未導入でも既存のスロットは動かせるよう、依存部分を除外する。
+        if (!rumbleBackendWarningShown) {
+            rumbleBackendWarningShown = true;
+            Debug.LogWarning("振動にはInput Systemが必要です。導入後、Active Input HandlingをBothにしてください。", this);
+        }
+#endif
+    }
+
+#if ENABLE_INPUT_SYSTEM
+    private IEnumerator PlayRareRoleRumble(float seconds) {
+        // このPCでGamepadとして認識されている、接続済みの機器を振動させる。
+        foreach (var pad in UnityEngine.InputSystem.Gamepad.all) {
+            if (!pad.added || !pad.enabled) continue;
+            rumblingGamepads.Add(pad);
+            try {
+                pad.SetMotorSpeeds(Mathf.Clamp01(rareRoleLowMotor), Mathf.Clamp01(rareRoleHighMotor));
+            }
+            catch (System.Exception exception) {
+                // 機器やドライバーの問題でゲーム進行を止めない。
+                Debug.LogWarning("コントローラー振動を開始できませんでした：" + exception.Message, this);
+            }
+        }
+
+        // Time.timeScaleに関係なく、指定秒数で停止する。
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.01f, seconds));
+        StopRareRoleRumbleMotors();
+        rareRoleRumbleCoroutine = null;
+    }
+#endif
+
+    /// <summary>フェイズ終了・無効化・フォーカス喪失時にもモーターを停止する。</summary>
+    private void StopRareRoleRumble() {
+        if (rareRoleRumbleCoroutine != null) {
+            StopCoroutine(rareRoleRumbleCoroutine);
+            rareRoleRumbleCoroutine = null;
+        }
+        StopRareRoleRumbleMotors();
+    }
+
+    private void StopRareRoleRumbleMotors() {
+#if ENABLE_INPUT_SYSTEM
+        foreach (var pad in rumblingGamepads) {
+            try {
+                // ResetHapticsで、切断済み機器も含めて振動指示をリセットする。
+                pad.ResetHaptics();
+            }
+            catch (System.Exception exception) {
+                Debug.LogWarning("コントローラー振動の停止通知に失敗しました：" + exception.Message, this);
+            }
+        }
+        rumblingGamepads.Clear();
+#endif
+    }
+
+    private void OnApplicationFocus(bool hasFocus) {
+        if (!hasFocus) StopRareRoleRumble();
+    }
+
+    private void OnApplicationPause(bool paused) {
+        if (paused) StopRareRoleRumble();
+    }
+
+    private void OnApplicationQuit() {
+        StopRareRoleRumble();
+    }
+
+
+    [Header("Sevenの始動遅延")]
+    [SerializeField] private bool sevenStartDelayEnabled = true;
+    [SerializeField, Range(0f, 1f)] private float sevenStartDelayChance = 0.5f;
+    [SerializeField, Min(0.01f)] private float sevenStartDelaySeconds = 2f;
+    private bool sevenStartDelayRunning;
+    private Coroutine sevenStartDelayCoroutine;
+    private System.Action sendSevenStartAfterDelay;
+
+    /// <summary>
+    /// AttackPhaseと同じ対応役判定。場に攻撃可能なモンスターが1体でもいればtrue。
+    /// 複数体いても振動抽選は1Gにつき1回。攻撃やカード効果自体は実行しない。
+    /// </summary>
+    private bool HasMatchingAttackMonster(PachisuroSymbolKoyakuEnum role) {
+        var manager = CardObjectManager.instance;
+        PlayerType owner = networkRemoteControl ? PlayerType.Opponent : PlayerType.Self;
+        if (manager == null || manager.fieldObjectList == null ||
+            !manager.fieldObjectList.TryGetValue(owner, out var field) || field == null)
+            return false;
+        foreach (var entry in field) {
+            var card = entry.Value;
+            if (card == null || card.cardType != CardType.Monster ||
+                card.playerType != owner || card.isFatigue) continue;
+            if (card.currentStatus == null ||
+                !card.currentStatus.TryGetValue(MonsterStatus.ATK, out int attack) || attack <= 0)
+                continue;
+            var supported = card.SuportRoleToKoyaku();
+            if (supported == null) continue;
+            if (card.suportRole == CardSuportRole.ALL) return true;
+            foreach (var supportedRole in supported) {
+                if (role == supportedRole) return true;
+                if (role == PachisuroSymbolKoyakuEnum.Chance &&
+                    (supportedRole == PachisuroSymbolKoyakuEnum.Suika ||
+                     supportedRole == PachisuroSymbolKoyakuEnum.WeakCherry)) return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 役確定後に抽選。Sevenは対応モンスターの有無と無関係に50%で遅延する。
+    /// 受信側では再抽選せず、送信側から実際の始動時に届く開始通知を再生する。
+    /// </summary>
+    private void PrepareSevenStartDelay() {
+        if (!networkLocalControl || networkRemoteControl || !sevenStartDelayEnabled ||
+            currentSlotSymbolRole != PachisuroSymbolKoyakuEnum.Seven) return;
+        if (rareRoleRumbleRandom.NextDouble() >= Mathf.Clamp01(sevenStartDelayChance)) return;
+        sevenStartDelayRunning = true;
+        // 既存のフェイズ終了判定・停止入力・連打防止にも待機中であることを伝える。
+        NetworkReelLockRunning = true;
+    }
+
+    private IEnumerator WaitSevenStartDelay() {
+        StopRareRoleRumble();
+#if ENABLE_INPUT_SYSTEM
+        if (Application.isFocused) {
+            // 終了時刻はこの待機処理が管理する。始動直前に明示的に停止する。
+            rareRoleRumbleCoroutine = StartCoroutine(PlayRareRoleRumble(float.MaxValue));
+        }
+#endif
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.01f, sevenStartDelaySeconds));
+        StopRareRoleRumble();
+        sevenStartDelayRunning = false;
+        NetworkReelLockRunning = false;
+        sevenStartDelayCoroutine = null;
+        // 回転解禁と同時にSevenカットインを出す。待機中に当選を先に見せない。
+        ShowSevenStartCue();
+        var send = sendSevenStartAfterDelay;
+        sendSevenStartAfterDelay = null;
+        send?.Invoke();
+    }
+
+    private void ShowSevenStartCue() {
+        efectManager.ShowCutinStart();
+        glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
+        glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterTop, Color.black, 0.9f);
+        glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
+        glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
+        glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
+        glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
+    }
+
+    private void CancelSevenStartDelay() {
+        if (sevenStartDelayCoroutine != null) StopCoroutine(sevenStartDelayCoroutine);
+        sevenStartDelayCoroutine = null;
+        sendSevenStartAfterDelay = null;
+        if (sevenStartDelayRunning) NetworkReelLockRunning = false;
+        sevenStartDelayRunning = false;
+    }
+
     private void Awake() {
         Instance = this;
     }
 
     private void OnDestroy() {
+        CancelSevenStartDelay();
+        StopRareRoleRumble();
         if (Instance == this) {
             Instance = null;
         }
@@ -189,6 +389,8 @@ public partial class SlotReelController : MonoBehaviour {
     /// 相手を再生していた場合は、自分の状態へ戻します。
     /// </summary>
     public void EndNetworkPlayback() {
+        CancelSevenStartDelay();
+        StopRareRoleRumble();
         if (networkLocalControl) ClearSlotCardEffects();
         HideRushLogo();
         ResetRoleStocks();
@@ -758,13 +960,19 @@ public partial class SlotReelController : MonoBehaviour {
 
         // チュートリアルでは送信しない。
         if (!IsTutorialMode) {
-            sync.SendStart(
-                slotIndex,
-                currentSlotSymbolRole,
-                rush,
-                nrush,
-                currentTable
-            );
+            // 待機中はまだ相手へ回転開始を送らない。
+            // 役・G数・テーブルを固定して、実際の始動時に1回だけ送信する。
+            int sentSpin = slotIndex;
+            var sentRole = currentSlotSymbolRole;
+            bool sentRush = rush;
+            bool sentNextRush = nrush;
+            int sentTable = currentTable;
+            System.Action sendStart = () => {
+                if (sync != null && sync.Connected && !sync.HasError)
+                    sync.SendStart(sentSpin, sentRole, sentRush, sentNextRush, sentTable);
+            };
+            if (sevenStartDelayRunning) sendSevenStartAfterDelay = sendStart;
+            else sendStart();
         }
 
         return true;
@@ -906,18 +1114,12 @@ public partial class SlotReelController : MonoBehaviour {
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.RUSHDrawRole(currentTable);
             currentSlotSymbolRole = ApplySlotCardEffects(currentSlotSymbolRole);
+            PrepareSevenStartDelay();
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
 
-            if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
-                efectManager.ShowCutinStart();
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterTop, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
-            }
+            if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven && !sevenStartDelayRunning)
+                ShowSevenStartCue();
             for (int i = 0; i < reels.Length; i++) {
                 if (reels[i] == null) {
                     continue;
@@ -953,6 +1155,7 @@ public partial class SlotReelController : MonoBehaviour {
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.DrawRole(currentTable);
             currentSlotSymbolRole = ApplySlotCardEffects(currentSlotSymbolRole);
+            PrepareSevenStartDelay();
             par = Random.Range(0, 1);
             switch (currentSlotSymbolRole) {
                 case PachisuroSymbolKoyakuEnum.Miss:
@@ -993,15 +1196,8 @@ public partial class SlotReelController : MonoBehaviour {
 
             }
 
-            if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven) {
-                efectManager.ShowCutinStart();
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightTop, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterTop, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftTop, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.RightBottom, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.CenterBottom, Color.black, 0.9f);
-                glassFlash.SetGlassColor(grassFlash.GlassPosition.LeftBottom, Color.black, 0.9f);
-            }
+            if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Seven && !sevenStartDelayRunning)
+                ShowSevenStartCue();
 
             if (currentSlotSymbolRole == PachisuroSymbolKoyakuEnum.Bell) {
                 efectManager.ShowTrumps();
@@ -1026,6 +1222,10 @@ public partial class SlotReelController : MonoBehaviour {
         // 回転開始が成功したときだけ前ゲームの予約を消費する。
         // 今回のSeven予約は、その表示処理の後で設定する。
         HandleRushLogoOnSuccessfulLever();
+        // 通常・RUSH共通。成功したレバーオンにつき1回のみ振動抽選。
+        TryPlayRareRoleRumble(currentSlotSymbolRole);
+        if (sevenStartDelayRunning)
+            sevenStartDelayCoroutine = StartCoroutine(WaitSevenStartDelay());
 
         // 両分岐でslotIndex++された後なので、「残りG数」を正しく表示。
         // 通常/RUSH/チュートリアル/相手の受信再生すべてこの経路を通る。
@@ -1114,6 +1314,8 @@ public partial class SlotReelController : MonoBehaviour {
     /// 停止予約中でなければ通常回転します。
     /// </summary>
     private void UpdateReelRotation() {
+        // 回転予約は保持するが、Seven待機中は角度を一切進めない。
+        if (sevenStartDelayRunning) return;
         for (int i = 0; i < reels.Length; i++) {
             if (reels[i] == null) {
                 continue;
@@ -1507,6 +1709,8 @@ public partial class SlotReelController : MonoBehaviour {
 
     // フェイズ終了時にオブジェクト自体を非表示にする経路も保護。
     private void OnDisable() {
+        CancelSevenStartDelay();
+        StopRareRoleRumble();
         ClearSlotCardEffects();
         HideRushLogo();
         ResetRoleStocks();
@@ -1764,7 +1968,7 @@ public partial class SlotReelController : MonoBehaviour {
             Debug.Log("★★★ RUSH = false にしました");
         }
 
-        currentTable++;
+        //currentTable++;
         slotIndex = 0;
 
 
