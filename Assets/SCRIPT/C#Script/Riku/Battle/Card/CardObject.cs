@@ -198,6 +198,10 @@ public class CardObject : MonoBehaviour {
         CardObjectManager.instance.LeaveFieldSetup(playerType, (FieldLane)laneID);
         // オブジェクトを手札へ移動
         CardObjectManager.instance.MoveToHand(playerType, objectID);
+        // 相手のカードの場合は裏面画像に設定
+        if (playerType == PlayerType.Opponent) {
+            spriteRenderer.sprite = ScriptableObjectManager.instance.GetCardImage(GameConst.BACK_IMAGE_ID);
+        }
         // 離れた時効果発動確認
         foreach (var ability in abilityList) {
             if (ability.abilityTiming != AbilityTiming.Leave) continue;
