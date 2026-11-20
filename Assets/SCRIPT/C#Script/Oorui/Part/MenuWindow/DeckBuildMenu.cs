@@ -464,6 +464,7 @@ public class DeckBuildMenu : MenuWindowBase {
     /// </summary>
     private void RefreshDeckBuildCardList() {
 
+
         // 現在のデッキ登録カードIDを取得する
         var currentDeckCardIDs = deckBuildView.GetCardIDs();
 
@@ -473,7 +474,7 @@ public class DeckBuildMenu : MenuWindowBase {
         // デッキテーマを一覧側に反映する
         deckBuildCardListView.SetDeckTheme(deckBuildView.GetDeckTheme());
 
-        // 所持カード一覧を更新する
-        deckBuildCardListView.RefreshCards();
+        // 一覧を再生成せず、登録枚数だけ更新する
+        deckBuildCardListView.RefreshCards(resetScroll: false);
     }
 }
