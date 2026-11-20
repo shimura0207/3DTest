@@ -40,7 +40,7 @@ public class DeckBuildCardListView : MonoBehaviour {
         // クリック時の処理を登録する
         onCardClicked = action;
     }
-
+    
     /// <summary>
     /// デッキ編成用の所持カード一覧を更新する
     /// </summary>
@@ -51,6 +51,8 @@ public class DeckBuildCardListView : MonoBehaviour {
             currentDeckCardIDs = new List<int>(deckCardIDs);
         }
 
+        // 現在のデッキ登録カードからテーマを判定する
+        UpdateDeckThemeFromCurrentCards();
         // 必要なオブジェクトが設定されているか確認する
         if (!CheckInstance()) return;
 
@@ -161,7 +163,7 @@ public class DeckBuildCardListView : MonoBehaviour {
 
             // マスターデータを取得する
             var masterA = CardDataMasterUtility.GetCardMaster(a.CardID);
-
+            // マスターデータを取得する
             var masterB = CardDataMasterUtility.GetCardMaster(b.CardID);
 
             // マスターデータがないカードは最後に配置する
@@ -258,6 +260,40 @@ public class DeckBuildCardListView : MonoBehaviour {
         currentDeckCardIDs = deckCardIDs != null
             ? new List<int>(deckCardIDs)
             : new List<int>();
+
+        // 現在のデッキ内容からテーマを判定する
+        UpdateDeckThemeFromCurrentCards();
+    }
+
+    /// <summary>
+    /// 現在のデッキ内容からテーマを判定する
+    /// </summary>
+    private void UpdateDeckThemeFromCurrentCards() {
+
+        // すでにテーマが決定している場合は変更しない
+        if (currentDeckTheme != CardTheme.None) return;
+
+        // 登録カードを順番に確認する
+        foreach (int cardID in currentDeckCardIDs) {
+
+            // カードのマスターデータを取得する
+            var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+
+            // マスターデータがない場合はスキップする
+            if (cardData == null) continue;
+
+            // カードのテーマを取得する
+            CardTheme cardTheme = (CardTheme)cardData.themeID;
+
+            // 汎用カードはテーマ決定の対象にしない
+            if (cardTheme == CardTheme.Neutral) continue;
+
+            // 最初に見つかった汎用以外のテーマを採用する
+            currentDeckTheme = cardTheme;
+
+            // テーマが決定したので終了する
+            return;
+        }
     }
 
     /// <summary>

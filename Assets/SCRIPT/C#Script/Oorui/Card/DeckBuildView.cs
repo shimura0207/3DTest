@@ -61,7 +61,6 @@ public class DeckBuildView : MonoBehaviour {
 
         // SaveManagerが存在しなければ終了する
         if (SaveManager.Instance == null) {
-            Debug.LogError("SaveManagerが存在しません");
             isOwnedCardCountsLoaded = false;
             return;
         }
@@ -94,13 +93,6 @@ public class DeckBuildView : MonoBehaviour {
         // テーマが合わないカードは追加しない
         if (!CanAddCard(cardID)) return;
 
-        // マスターデータからカード情報を取得する
-        var cardData = CardDataMasterUtility.GetCardMaster(cardID);
-
-        // 最初のカードならデッキテーマを設定する
-        if (deckTheme == CardTheme.None) {
-            deckTheme = (CardTheme)cardData.themeID;
-        }
         // 必要な参照が設定されているか確認する
         if (content == null || cardPrefab == null) return;
 
@@ -122,13 +114,12 @@ public class DeckBuildView : MonoBehaviour {
         int maxCount = Mathf.Min(MAX_CARD_COUNT, ownedCount);
 
         // 上限枚数に達している場合は追加しない
-        if (currentCount >= maxCount) {
-            Debug.Log($"カードID:{cardID} は追加上限の {maxCount} 枚に達しています");
-            return;
-        }
-        // カード画像を取得する
+        if (currentCount >= maxCount) return;
+
+        // マスターデータ管理クラスの存在を確認する
         if (ScriptableObjectManager.instance == null) return;
 
+        // カード画像を取得する
         Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(cardID);
 
         // 画像が取得できなければ追加しない
@@ -146,7 +137,6 @@ public class DeckBuildView : MonoBehaviour {
                 cardSprite,
                 cardCounts[cardID]
             );
-
         }
         else {
 
@@ -157,7 +147,8 @@ public class DeckBuildView : MonoBehaviour {
             cardItem.SetCard(cardID, cardSprite, 1);
 
             // クリック処理クラスを取得する
-            PossessionCardClick cardClick = cardItem.GetComponent<PossessionCardClick>();
+            PossessionCardClick cardClick =
+                cardItem.GetComponent<PossessionCardClick>();
 
             // クリック時の処理を登録する
             if (cardClick != null) {
@@ -174,8 +165,42 @@ public class DeckBuildView : MonoBehaviour {
         // カードIDをデッキに追加する
         deckCardIDs.Add(cardID);
 
+        // 登録カードからデッキテーマを再判定する
+        UpdateDeckTheme();
+
         // レイアウトを更新する
         UpdateLayout();
+    }
+
+    /// <summary>
+    /// デッキに登録されているカードからテーマを再判定する
+    /// </summary>
+    private void UpdateDeckTheme() {
+
+        // 一度テーマを未決定に戻す
+        deckTheme = CardTheme.None;
+
+        // 登録されているカードを順番に確認する
+        foreach (int cardID in deckCardIDs) {
+
+            // マスターデータを取得する
+            var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+
+            // マスターデータが存在しなければスキップする
+            if (cardData == null) continue;
+
+            // カードのテーマを取得する
+            CardTheme cardTheme = (CardTheme)cardData.themeID;
+
+            // 汎用カードはテーマ決定の対象外
+            if (cardTheme == CardTheme.Neutral) continue;
+
+            // 最初に見つかった汎用以外のテーマを採用する
+            deckTheme = cardTheme;
+
+            // テーマが決定したので終了する
+            return;
+        }
     }
 
     /// <summary>
@@ -215,12 +240,8 @@ public class DeckBuildView : MonoBehaviour {
                 cardCounts[cardID]
             );
         }
-        // デッキにカードが残っていない場合
-        if (deckCardIDs.Count == 0) {
-
-            // デッキテーマを初期化する
-            deckTheme = CardTheme.None;
-        }
+        // 登録カードからデッキテーマを再判定する
+        UpdateDeckTheme();
         // レイアウトを更新する
         UpdateLayout();
     }
@@ -398,7 +419,6 @@ public class DeckBuildView : MonoBehaviour {
     /// 指定されたカードがデッキに追加可能か判定する
     /// </summary>
     public bool CanAddCard(int cardID) {
-
         // マスターデータからカード情報を取得する
         var cardData = CardDataMasterUtility.GetCardMaster(cardID);
 
@@ -408,11 +428,8 @@ public class DeckBuildView : MonoBehaviour {
         // カードのテーマを取得する
         CardTheme cardTheme = (CardTheme)cardData.themeID;
 
-        // まだデッキテーマが決まっていなければ追加可能
+        // デッキテーマが未決定なら追加可能
         if (deckTheme == CardTheme.None) return true;
-
-        // デッキテーマが汎用なら、すべてのテーマを追加可能
-        if (deckTheme == CardTheme.Neutral) return true;
 
         // デッキテーマと同じテーマ、または汎用なら追加可能
         return cardTheme == deckTheme || cardTheme == CardTheme.Neutral;
