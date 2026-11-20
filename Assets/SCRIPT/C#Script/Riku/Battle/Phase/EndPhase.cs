@@ -30,6 +30,12 @@ public class EndPhase : PhaseBase {
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
 
+        // 手札のエフェクトを消す
+        var handCards = CardObjectManager.instance.GetHandCardList(PlayerType.Self);
+        foreach (var card in handCards) {
+            card.SetCanPlayEffectActive(false);
+        }
+
         // 次のフェイズへ
         nextPhase = true;
 

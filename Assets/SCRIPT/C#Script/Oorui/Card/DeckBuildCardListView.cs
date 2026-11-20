@@ -45,11 +45,16 @@ public class DeckBuildCardListView : MonoBehaviour {
     /// デッキ編成用の所持カード一覧を更新する
     /// </summary>
     /// <param name="deckCardIDs">現在デッキに登録されているカードID</param>
-    public void RefreshCards(List<int> deckCardIDs = null) {
+    /// <param name="resetScroll">スクロール位置をリセットするか</param>
+    public void RefreshCards(List<int> deckCardIDs = null, bool resetScroll = true) {
+
         // 新しいデッキ登録カードIDが渡された場合のみ更新する
         if (deckCardIDs != null) {
             currentDeckCardIDs = new List<int>(deckCardIDs);
         }
+
+        // 現在のデッキ登録カードからテーマを判定する
+        UpdateDeckThemeFromCurrentCards();
 
         // 必要なオブジェクトが設定されているか確認する
         if (!CheckInstance()) return;
@@ -64,17 +69,22 @@ public class DeckBuildCardListView : MonoBehaviour {
         if (saveData == null || saveData.cardID == null) return;
 
         // 所持カードIDごとの枚数を集計する
-        Dictionary<int, int> cardCounts = OwnedCardUtility.GetCardCounts(saveData.cardID);
+        Dictionary<int, int> cardCounts =
+            OwnedCardUtility.GetCardCounts(saveData.cardID);
 
-        // 保持している最新のデッキ登録カードIDから枚数を集計する
-        Dictionary<int, int> deckCounts = OwnedCardUtility.GetCardCounts(currentDeckCardIDs);
+        // デッキ登録カードIDから枚数を集計する
+        Dictionary<int, int> deckCounts =
+            OwnedCardUtility.GetCardCounts(currentDeckCardIDs);
 
         // カードIDごとに表示を生成する
         foreach (KeyValuePair<int, int> entry in cardCounts) {
+
             // デッキテーマに合わないカードは表示しない
             if (!CanDisplayCard(entry.Key)) continue;
+
             // カード画像を取得する
-            Sprite cardSprite = ScriptableObjectManager.instance.GetCardImage(entry.Key);
+            Sprite cardSprite =
+                ScriptableObjectManager.instance.GetCardImage(entry.Key);
 
             // 画像が取得できなければスキップする
             if (cardSprite == null) continue;
@@ -87,35 +97,38 @@ public class DeckBuildCardListView : MonoBehaviour {
             // 残り編成可能枚数を計算する
             int remainingCount = Mathf.Max(0, entry.Value - registeredCount);
 
-            // カード表示Prefabを生成
+            // カード表示Prefabを生成する
             PossessionCardItem cardItem = Instantiate(cardPrefab, content);
 
-            // 残り枚数を設定
+            // カード情報を設定する
             cardItem.SetCard(entry.Key, cardSprite, remainingCount);
 
-            // 詳細メニュー終了後に一覧を更新する処理を登録
+            // 詳細メニュー終了後に一覧を更新する
             cardItem.SetDetailClosedCallback(() => {
-                // 最新のデッキ登録情報を使って一覧を再構築する
-                RefreshCards();
+
+                // 最新のデッキ情報で一覧を更新する
+                RefreshCards(resetScroll: false);
             });
 
-            // クリック処理クラスを取得
-            PossessionCardClick cardClick = cardItem.GetComponent<PossessionCardClick>();
+            // クリック処理を登録する
+            PossessionCardClick cardClick =
+                cardItem.GetComponent<PossessionCardClick>();
 
-            // クリック時の処理を登録
             if (cardClick != null) {
                 cardClick.SetClickAction(onCardClicked);
             }
 
-            // 管理リストに登録
+            // 管理リストに登録する
             cardItems.Add(cardItem);
         }
 
         // レイアウトを更新する
         UpdateLayout();
 
-        // スクロール位置を先頭に戻す
-        ResetScrollPosition();
+        // 必要な場合のみスクロール位置を先頭に戻す
+        if (resetScroll) {
+            ResetScrollPosition();
+        }
     }
 
     /// <summary>
@@ -161,7 +174,7 @@ public class DeckBuildCardListView : MonoBehaviour {
 
             // マスターデータを取得する
             var masterA = CardDataMasterUtility.GetCardMaster(a.CardID);
-
+            // マスターデータを取得する
             var masterB = CardDataMasterUtility.GetCardMaster(b.CardID);
 
             // マスターデータがないカードは最後に配置する
@@ -258,6 +271,40 @@ public class DeckBuildCardListView : MonoBehaviour {
         currentDeckCardIDs = deckCardIDs != null
             ? new List<int>(deckCardIDs)
             : new List<int>();
+
+        // 現在のデッキ内容からテーマを判定する
+        UpdateDeckThemeFromCurrentCards();
+    }
+
+    /// <summary>
+    /// 現在のデッキ内容からテーマを判定する
+    /// </summary>
+    private void UpdateDeckThemeFromCurrentCards() {
+
+        // すでにテーマが決定している場合は変更しない
+        if (currentDeckTheme != CardTheme.None) return;
+
+        // 登録カードを順番に確認する
+        foreach (int cardID in currentDeckCardIDs) {
+
+            // カードのマスターデータを取得する
+            var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+
+            // マスターデータがない場合はスキップする
+            if (cardData == null) continue;
+
+            // カードのテーマを取得する
+            CardTheme cardTheme = (CardTheme)cardData.themeID;
+
+            // 汎用カードはテーマ決定の対象にしない
+            if (cardTheme == CardTheme.Neutral) continue;
+
+            // 最初に見つかった汎用以外のテーマを採用する
+            currentDeckTheme = cardTheme;
+
+            // テーマが決定したので終了する
+            return;
+        }
     }
 
     /// <summary>

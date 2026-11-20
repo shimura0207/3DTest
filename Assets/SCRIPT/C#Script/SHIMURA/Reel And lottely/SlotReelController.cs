@@ -32,6 +32,13 @@ using static grassFlash;
 public partial class SlotReelController : MonoBehaviour {
     public static SlotReelController Instance { get; private set; }
 
+    /// <summary>
+    /// 相手の回転開始データから最後に取得したテーブル番号。
+    /// 未取得ならnull。再生終了後も保持し、次の受信で更新する。
+    /// チュートリアルではStartRemoteSpinに指定された番号が入る。
+    /// </summary>
+    public int? OpponentTable { get; private set; }
+
     private void Awake() {
         Instance = this;
     }
@@ -230,6 +237,9 @@ public partial class SlotReelController : MonoBehaviour {
         rush = remoteRush;
         nrush = remoteNextRush;
         currentTable = remoteTable;
+
+        // 自分のcurrentTableへ復元されても相手の最終取得値を保持する。
+        OpponentTable = remoteTable;
 
         // StartSpinCore内でslotIndex++するため、その直前の値にする。
         slotIndex = spin - 1;
@@ -700,6 +710,7 @@ public partial class SlotReelController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.RightControl) && !state.IsAnyReelRotating()) {
             //Debug.Log(PachisuroPhase.Instance.nrush);
             Debug.Log(rush);
+            AudioManager.instance.PlaySE("BETMAX");
             maxBet = true;
         }
     }
@@ -1284,9 +1295,9 @@ public partial class SlotReelController : MonoBehaviour {
                     AudioManager.instance.PlaySE("rep");
                 }
 
-                }
+            }
 
-                return;
+            return;
         }
 
         // まだ目標角度まで届かない場合は、回転方向にだけ進めます。

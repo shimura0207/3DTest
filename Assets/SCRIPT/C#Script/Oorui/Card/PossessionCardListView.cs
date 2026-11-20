@@ -68,7 +68,9 @@ public class PossessionCardListView : MonoBehaviour {
             // 所持枚数を取得
             int ownedCount = 0;
             cardCounts.TryGetValue(cardID, out ownedCount);
-
+            // カードデータ取得
+            var card = CardDataMasterUtility.GetCardMaster(cardID);
+            if ((CardRearity)card.rarityID == CardRearity.None) continue;
             // 所持カードのみ表示する場合、未所持カードを除外
             if (!isShowAllCards && ownedCount <= 0) continue;
 

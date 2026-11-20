@@ -35,6 +35,9 @@ public class MainPhase : PhaseBase {
         // カード操作
         await CardControl();
 
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
+
         // 積まれた効果があれば発動
         await AbilityManager.instance.AbilityExecute();
 
