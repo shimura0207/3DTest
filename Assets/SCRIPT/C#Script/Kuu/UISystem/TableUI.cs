@@ -42,6 +42,7 @@ public class TableUI : MonoBehaviour
         // 相手のテーブル数を表示
         if (slotReelController.OpponentTable.HasValue) {
             currentOpTable = slotReelController.OpponentTable.Value;
+
         }
         opponentTable.text = "Table:" + currentOpTable + "/" + MAX_TABLE;
     }
