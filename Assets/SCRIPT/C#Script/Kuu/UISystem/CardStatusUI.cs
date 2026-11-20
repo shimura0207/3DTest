@@ -16,6 +16,9 @@ public class CardStatusUI : MonoBehaviour
     // ステータスCanvas
     [SerializeField] private Canvas statusCanvas = null;
 
+    // スペル回数Canvas
+    [SerializeField] private Canvas spellCountCanvas = null;
+
     // サイズテキスト
     [SerializeField] private TMP_Text sizeText = null;
 
@@ -46,16 +49,25 @@ public class CardStatusUI : MonoBehaviour
         // データがなければ非表示
         if (cardObject == null) {
             statusCanvas.enabled = false;
+            spellCountCanvas.enabled = false;
             return;
         }
 
-        // スペルか裏向きカードなら非表示
-        if (cardObject.cardType != CardType.Monster || 
-            cardObject.SpriteRenderer.sprite == ScriptableObjectManager.instance.GetCardImage(0)) {
+        // 裏向きカードなら非表示
+        if (cardObject.SpriteRenderer.sprite == ScriptableObjectManager.instance.GetCardImage(0)) {
             statusCanvas.enabled = false;
+            spellCountCanvas.enabled = false;
             return;
-        } else {
+        }
+        // モンスターならステータスCanvasを表示
+        else if (cardObject.cardType == CardType.Monster) {
             statusCanvas.enabled = true;
+            spellCountCanvas.enabled = false;
+        }
+        // スペルならスペル回数Canvasを表示
+        else if (cardObject.cardType == CardType.Spell) {
+            statusCanvas.enabled = false;
+            spellCountCanvas.enabled = true;
         }
 
         // それぞれのステータスをテキストで表示する
