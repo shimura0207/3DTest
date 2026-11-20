@@ -700,6 +700,7 @@ public partial class SlotReelController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.RightControl) && !state.IsAnyReelRotating()) {
             //Debug.Log(PachisuroPhase.Instance.nrush);
             Debug.Log(rush);
+            AudioManager.instance.PlaySE("BETMAX");
             maxBet = true;
         }
     }
