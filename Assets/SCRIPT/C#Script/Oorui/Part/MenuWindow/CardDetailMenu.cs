@@ -233,30 +233,50 @@ public class CardDetailMenu : MenuWindowBase {
     /// カード生成ボタンが押された時の処理
     /// </summary>
     private void OnCreateButton() {
+
         // 現在の所持枚数を取得する
         int ownedCount = GetOwnedCardCount(cardID);
 
-        // 必要生成ポイントを取得する
+        // 必要な生成ポイントを取得する
         int createPoint = CardCreatePoint(cardData);
 
-        // 現在の所持ポイントを更新
-        havePointText.text = HavePoint();
+        // すでに3枚所持している場合は生成しない
+        if (ownedCount >= 3) {
+            CreateUIUpdate();
+            createButton.interactable = false;
+            CreateButtonColorUpdate();
+            return;
+        }
 
-        // 現在のカード所持枚数を更新
-        haveCardNumText.text = HaveCardNum(cardID);
+        // ポイントが不足している場合は生成しない
+        if (!CreatePointManager.Instance.CanSpendPoint(createPoint)) {
+            CreateUIUpdate();
+            createButton.interactable = false;
+            CreateButtonColorUpdate();
+            return;
+        }
 
-        // カードを所持済みの色に変更
-        cardImage.color = ownedCount > 0 ? Color.white : Color.gray;
+        // 生成に必要なポイントを消費する
+        CreatePointManager.Instance.SpendPoint(createPoint);
 
-        // 生成可能条件を確認する
-        bool canCreate = ownedCount < 3 && CreatePointManager.Instance.CanSpendPoint(createPoint);
+        // 所持カードデータにカードを追加して保存する
+        SaveManager.Instance.AcquireCard(cardID);
 
-        // 生成ボタンの有効・無効を更新する
+        // カード生成後のUIを更新する
+        CreateUIUpdate();
+
+        // 最新の所持枚数を取得する
+        ownedCount = GetOwnedCardCount(cardID);
+
+        // 生成可能条件を再確認する
+        bool canCreate = ownedCount < 3 &&
+            CreatePointManager.Instance.CanSpendPoint(createPoint);
+
+        // 生成ボタンの状態を更新する
         createButton.interactable = canCreate;
 
         // 生成ボタンの見た目を更新する
         CreateButtonColorUpdate();
-
     }
 
 
