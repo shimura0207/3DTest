@@ -90,6 +90,8 @@ public class CardObjectManager : MonoBehaviour {
         }
 
         isHandShrink = false;
+        selfHandRoot.localScale = Vector3.one;
+        selfHandRoot.localPosition = Vector3.zero;
     }
 
     /// <summary>

@@ -8,13 +8,12 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.VFX;
-using static CommonModule;
 
 public class EffectManager : SystemObject {
     /// <summary>
     /// 自身への参照
     /// </summary>
-    public static EffectManager Instance { get; private set; } = null;
+    public static EffectManager instance { get; private set; } = null;
 
     // エフェクトオブジェクト
     [SerializeField]
@@ -31,7 +30,7 @@ public class EffectManager : SystemObject {
     /// </summary>
     /// <returns></returns>
     public override async UniTask Initialize() {
-        Instance = this;
+        instance = this;
         // エフェクトオブジェクトの初期化
         effectObject.Initialize();
         // 使用エフェクトリストを適当数生成

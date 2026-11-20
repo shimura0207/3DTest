@@ -89,7 +89,7 @@ public class AbilityManager : MonoBehaviour {
         // ラムダ式で引数を固定して代入する
         switch (process) {
             case AbilityProcess.Draw:
-                func = () => abilityProcessData.DrawAbility(player, value);
+                func = () => abilityProcessData.DrawAbility(card, player, value);
                 break;
             case AbilityProcess.GiveDamage:
                 func = () => abilityProcessData.GiveDamageAbility(card, player, target, value);
@@ -98,7 +98,7 @@ public class AbilityManager : MonoBehaviour {
                 func = () => abilityProcessData.GiveHealthAbility(card, player, target, value);
                 break;
             case AbilityProcess.DiscardHand:
-                func = () => abilityProcessData.HandDestructionAbility(player, target);
+                func = () => abilityProcessData.HandDestructionAbility(card, player, target);
                 break;
             case AbilityProcess.UpATK:
                 func = () => abilityProcessData.GiveAttackAbility(card, player, target, value);
@@ -119,31 +119,31 @@ public class AbilityManager : MonoBehaviour {
                 func = () => abilityProcessData.GiveFatigueAbility(card, player, target);
                 break;
             case AbilityProcess.SetRoleBell:
-                func = () => abilityProcessData.SetRoleBellAbility();
+                func = () => abilityProcessData.SetRoleBellAbility(card);
                 break;
             case AbilityProcess.SetRoleSuika:
-                func = () => abilityProcessData.SetRoleSuikaAbility();
+                func = () => abilityProcessData.SetRoleSuikaAbility(card);
                 break;
             case AbilityProcess.SetRoleReplay:
-                func = () => abilityProcessData.SetRoleReplayAbility();
+                func = () => abilityProcessData.SetRoleReplayAbility(card);
                 break;
             case AbilityProcess.SetRoleBlank:
-                func = () => abilityProcessData.SetRoleBlankAbility();
+                func = () => abilityProcessData.SetRoleBlankAbility(card);
                 break;
             case AbilityProcess.SetRoleCherry:
-                func = () => abilityProcessData.SetRoleCherryAbility();
+                func = () => abilityProcessData.SetRoleCherryAbility(card);
                 break;
             case AbilityProcess.Uoooo:
-                func = () => abilityProcessData.UooooAbility();
+                func = () => abilityProcessData.UooooAbility(card);
                 break;
             case AbilityProcess.Nakamayobi:
-                func = () => abilityProcessData.NakamayobiAbility(player);
+                func = () => abilityProcessData.NakamayobiAbility(card, player);
                 break;
             case AbilityProcess.LevelUP:
                 func = () => abilityProcessData.LevelUPAbility(card);
                 break;
             case AbilityProcess.Soukougeki:
-                func = () => abilityProcessData.SoukougekiAbility(player);
+                func = () => abilityProcessData.SoukougekiAbility(card, player);
                 break;
         }
         return func;
