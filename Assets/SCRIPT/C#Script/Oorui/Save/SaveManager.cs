@@ -430,7 +430,7 @@ public class SaveManager : MonoBehaviour {
         }
         catch (Exception e) {
             // 保存に失敗した原因を表示する
-            Debug.LogError($"所持カードの保存に失敗しました: {e}");
+            Debug.LogError($"{e}");
         }
     }
 
