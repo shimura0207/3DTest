@@ -56,6 +56,13 @@ MonoBehaviour:
       abilityValue: -1
   - cardID: 105
     abilityList:
+    - abilityID: 1
+      abilityType: 0
+      abilityTiming: 5
+      abilityTarget: 3
+      abilityProcess: 1
+      passiveAbility: -1
+      abilityValue: 3
     - abilityID: 2
       abilityType: 1
       abilityTiming: -1
@@ -70,13 +77,6 @@ MonoBehaviour:
       abilityProcess: 17
       passiveAbility: -1
       abilityValue: -1
-    - abilityID: 1
-      abilityType: 0
-      abilityTiming: 5
-      abilityTarget: 3
-      abilityProcess: 1
-      passiveAbility: -1
-      abilityValue: 3
   - cardID: 106
     abilityList:
     - abilityID: 1
