@@ -64,10 +64,12 @@ public partial class SlotReelController : MonoBehaviour {
     /// 対象は弱チェリー・スイカ・強チェリー・チャンス目。Sevenは対象外。
     /// </summary>
     private void TryPlayRareRoleRumble(PachisuroSymbolKoyakuEnum role) {
-        if (!rareRoleRumbleEnabled || !isActiveAndEnabled || !Application.isFocused)
+        bool forced = !networkRemoteControl && forcedRumbleRole.HasValue &&
+            forcedRumbleRole.Value == role;
+        if ((!rareRoleRumbleEnabled && !forced) || !isActiveAndEnabled || !Application.isFocused)
             return;
         if (networkRemoteControl && !rumbleDuringOpponentPlayback) return;
-        if (!HasMatchingAttackMonster(role)) return;
+        if (!forced && !HasMatchingAttackMonster(role)) return;
         if (role != PachisuroSymbolKoyakuEnum.WeakCherry &&
             role != PachisuroSymbolKoyakuEnum.Suika &&
             role != PachisuroSymbolKoyakuEnum.StrongCherry &&
@@ -76,10 +78,10 @@ public partial class SlotReelController : MonoBehaviour {
 #if ENABLE_INPUT_SYSTEM
         // 未接続なら何もしない。毎回列挙するので途中接続にも対応する。
         if (UnityEngine.InputSystem.Gamepad.all.Count == 0) return;
-        if (rareRoleRumbleRandom.NextDouble() >= Mathf.Clamp01(rareRoleRumbleChance))
+        if (!forced && rareRoleRumbleRandom.NextDouble() >= Mathf.Clamp01(rareRoleRumbleChance))
             return;
         StopRareRoleRumble();
-        rareRoleRumbleCoroutine = StartCoroutine(PlayRareRoleRumble(matchingRareRoleRumbleSeconds));
+        rareRoleRumbleCoroutine = StartCoroutine(PlayRareRoleRumble(forced ? 1f : matchingRareRoleRumbleSeconds, forced));
 #else
         // Input System未導入でも既存のスロットは動かせるよう、依存部分を除外する。
         if (!rumbleBackendWarningShown) {
@@ -90,13 +92,14 @@ public partial class SlotReelController : MonoBehaviour {
     }
 
 #if ENABLE_INPUT_SYSTEM
-    private IEnumerator PlayRareRoleRumble(float seconds) {
+    private IEnumerator PlayRareRoleRumble(float seconds, bool forceMaximum = false) {
         // このPCでGamepadとして認識されている、接続済みの機器を振動させる。
         foreach (var pad in UnityEngine.InputSystem.Gamepad.all) {
             if (!pad.added || !pad.enabled) continue;
             rumblingGamepads.Add(pad);
             try {
-                pad.SetMotorSpeeds(Mathf.Clamp01(rareRoleLowMotor), Mathf.Clamp01(rareRoleHighMotor));
+                pad.SetMotorSpeeds(forceMaximum ? 1f : Mathf.Clamp01(rareRoleLowMotor),
+                    forceMaximum ? 1f : Mathf.Clamp01(rareRoleHighMotor));
             }
             catch (System.Exception exception) {
                 // 機器やドライバーの問題でゲーム進行を止めない。
@@ -191,23 +194,26 @@ public partial class SlotReelController : MonoBehaviour {
     /// 受信側では再抽選せず、送信側から実際の始動時に届く開始通知を再生する。
     /// </summary>
     private void PrepareSevenStartDelay() {
-        if (!networkLocalControl || networkRemoteControl || !sevenStartDelayEnabled ||
+        bool forced = forcedRumbleRole == PachisuroSymbolKoyakuEnum.Seven;
+        if (!networkLocalControl || networkRemoteControl || (!sevenStartDelayEnabled && !forced) ||
             currentSlotSymbolRole != PachisuroSymbolKoyakuEnum.Seven) return;
-        if (rareRoleRumbleRandom.NextDouble() >= Mathf.Clamp01(sevenStartDelayChance)) return;
+        if (!forced && rareRoleRumbleRandom.NextDouble() >= Mathf.Clamp01(sevenStartDelayChance)) return;
         sevenStartDelayRunning = true;
         // 既存のフェイズ終了判定・停止入力・連打防止にも待機中であることを伝える。
         NetworkReelLockRunning = true;
     }
 
     private IEnumerator WaitSevenStartDelay() {
+        // コマンドの予約が消費される前に、このGの確定状態を保存する。
+        bool forced = forcedRumbleRole == PachisuroSymbolKoyakuEnum.Seven;
         StopRareRoleRumble();
 #if ENABLE_INPUT_SYSTEM
         if (Application.isFocused) {
             // 終了時刻はこの待機処理が管理する。始動直前に明示的に停止する。
-            rareRoleRumbleCoroutine = StartCoroutine(PlayRareRoleRumble(float.MaxValue));
+            rareRoleRumbleCoroutine = StartCoroutine(PlayRareRoleRumble(float.MaxValue, forced));
         }
 #endif
-        yield return new WaitForSecondsRealtime(Mathf.Max(0.01f, sevenStartDelaySeconds));
+        yield return new WaitForSecondsRealtime(forced ? 2f : Mathf.Max(0.01f, sevenStartDelaySeconds));
         StopRareRoleRumble();
         sevenStartDelayRunning = false;
         NetworkReelLockRunning = false;
@@ -237,11 +243,60 @@ public partial class SlotReelController : MonoBehaviour {
         sevenStartDelayRunning = false;
     }
 
+
+    // 確認用コマンドの予約。後から呼んだコマンドで上書きする。
+    private PachisuroSymbolKoyakuEnum? forcedRumbleRole;
+
+    /// <summary>
+    /// 次の自分のレバーオンで、指定レア役と1秒振動を確定する。
+    /// 引数省略時は強チェリー。対応モンスターの有無・疲労・振動確率を無視する。
+    /// 実行中のGは変更しない。回転開始に成功するまで予約を保持する。
+    /// </summary>
+    public bool ForceNextRareRumble(
+        PachisuroSymbolKoyakuEnum role = PachisuroSymbolKoyakuEnum.StrongCherry) {
+        if (role != PachisuroSymbolKoyakuEnum.WeakCherry &&
+            role != PachisuroSymbolKoyakuEnum.StrongCherry &&
+            role != PachisuroSymbolKoyakuEnum.Suika &&
+            role != PachisuroSymbolKoyakuEnum.Chance) return false;
+        if (!CanReserveRumbleCommand()) return false;
+        forcedRumbleRole = role;
+        return true;
+    }
+
+    /// <summary>次の自分のレバーオンでSeven＋2秒待機中の強振動を確定する。</summary>
+    public bool ForceNextSevenRumble() {
+        if (!CanReserveRumbleCommand()) return false;
+        forcedRumbleRole = PachisuroSymbolKoyakuEnum.Seven;
+        return true;
+    }
+
+    private bool CanReserveRumbleCommand() {
+        if (!Application.isPlaying || !isActiveAndEnabled || networkRemoteControl ||
+            IsAnyReelRotating() || NetworkReelLockRunning) {
+            Debug.LogWarning("振動確定コマンドは自分側のリール停止中に呼んでください。", this);
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>未使用の確認用予約を取り消す。終了時にも解除する。</summary>
+    public void ClearForcedRumbleCommand() {
+        forcedRumbleRole = null;
+    }
+
+    // Play中、コンポーネントのメニューからも予約できる。
+    [ContextMenu("振動テスト/次回 強チェリー＋1秒振動")]
+    private void ReserveRareRumbleFromInspector() { ForceNextRareRumble(); }
+
+    [ContextMenu("振動テスト/次回 Seven＋2秒待機振動")]
+    private void ReserveSevenRumbleFromInspector() { ForceNextSevenRumble(); }
+
     private void Awake() {
         Instance = this;
     }
 
     private void OnDestroy() {
+        ClearForcedRumbleCommand();
         CancelSevenStartDelay();
         StopRareRoleRumble();
         if (Instance == this) {
@@ -389,6 +444,7 @@ public partial class SlotReelController : MonoBehaviour {
     /// 相手を再生していた場合は、自分の状態へ戻します。
     /// </summary>
     public void EndNetworkPlayback() {
+        ClearForcedRumbleCommand();
         CancelSevenStartDelay();
         StopRareRoleRumble();
         if (networkLocalControl) ClearSlotCardEffects();
@@ -945,16 +1001,18 @@ public partial class SlotReelController : MonoBehaviour {
         }
 
         // 予約がなければ通常抽選。
-        PachisuroSymbolKoyakuEnum? fixedRole =
-            tutorialRoles.Count > 0
+        bool usingRumbleCommand = forcedRumbleRole.HasValue;
+        PachisuroSymbolKoyakuEnum? fixedRole = usingRumbleCommand
+            ? forcedRumbleRole
+            : (tutorialRoles.Count > 0
                 ? (PachisuroSymbolKoyakuEnum?)tutorialRoles.Peek()
-                : null;
+                : null);
 
         if (!StartSpinCore(fixedRole))
             return false;
 
         // 開始成功時だけ確定役を消費する。
-        if (fixedRole.HasValue) {
+        if (fixedRole.HasValue && !usingRumbleCommand) {
             tutorialRoles.Dequeue();
         }
 
@@ -1114,6 +1172,9 @@ public partial class SlotReelController : MonoBehaviour {
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.RUSHDrawRole(currentTable);
             currentSlotSymbolRole = ApplySlotCardEffects(currentSlotSymbolRole);
+            // 確認コマンドは降臨・Upperより優先して、指定した最終役を保証する。
+            if (networkLocalControl && !networkRemoteControl && forcedRumbleRole.HasValue)
+                currentSlotSymbolRole = forcedRumbleRole.Value;
             PrepareSevenStartDelay();
 
             Debug.Log("抽選結果: " + roleLottery.GetRoleName(currentSlotSymbolRole));
@@ -1155,6 +1216,9 @@ public partial class SlotReelController : MonoBehaviour {
             currentSlotSymbolRole =
                 receivedRole ?? roleLottery.DrawRole(currentTable);
             currentSlotSymbolRole = ApplySlotCardEffects(currentSlotSymbolRole);
+            // 確認コマンドは降臨・Upperより優先して、指定した最終役を保証する。
+            if (networkLocalControl && !networkRemoteControl && forcedRumbleRole.HasValue)
+                currentSlotSymbolRole = forcedRumbleRole.Value;
             PrepareSevenStartDelay();
             par = Random.Range(0, 1);
             switch (currentSlotSymbolRole) {
@@ -1226,6 +1290,8 @@ public partial class SlotReelController : MonoBehaviour {
         TryPlayRareRoleRumble(currentSlotSymbolRole);
         if (sevenStartDelayRunning)
             sevenStartDelayCoroutine = StartCoroutine(WaitSevenStartDelay());
+        // 演出開始まで成功した時点で1回分の予約を消費する。
+        if (networkLocalControl && !networkRemoteControl) forcedRumbleRole = null;
 
         // 両分岐でslotIndex++された後なので、「残りG数」を正しく表示。
         // 通常/RUSH/チュートリアル/相手の受信再生すべてこの経路を通る。
@@ -1709,6 +1775,7 @@ public partial class SlotReelController : MonoBehaviour {
 
     // フェイズ終了時にオブジェクト自体を非表示にする経路も保護。
     private void OnDisable() {
+        ClearForcedRumbleCommand();
         CancelSevenStartDelay();
         StopRareRoleRumble();
         ClearSlotCardEffects();
@@ -1968,7 +2035,7 @@ public partial class SlotReelController : MonoBehaviour {
             Debug.Log("★★★ RUSH = false にしました");
         }
 
-        //currentTable++;
+        // テーブル加算はStartPhase.SelfExecuteで行う。
         slotIndex = 0;
 
 
