@@ -246,9 +246,14 @@ public enum FadeType {
     Max,
 }
 
+/// <summary>
+/// エフェクトの種類
+/// </summary>
 public enum EffectType {
-    Invalid = -1,
-    ClickEffect,
+    None = -1,
+
+    // カードの発光
+    CardFlash,
 
     max,
 }

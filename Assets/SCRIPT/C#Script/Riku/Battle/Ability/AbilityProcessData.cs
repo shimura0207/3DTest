@@ -680,16 +680,20 @@ public class AbilityProcessData {
     /// <summary>
     /// ドロー効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <param name="player">発動プレイヤー</param>
     /// <param name="value">ドロー枚数</param>
     /// <returns></returns>
-    public async UniTask DrawAbility(PlayerType player, int value) {
+    public async UniTask DrawAbility(CardObject card, PlayerType player, int value) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // 枚数に指定がない場合は1枚
         if (value <= 0) value = 1;
         for (int i = 0; i < value; i++) {
             BattleSystemManager.instance.DrawCard(player);
         }
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -701,6 +705,10 @@ public class AbilityProcessData {
     /// <param name="value">ダメージ量</param>
     /// <returns></returns>
     public async UniTask GiveDamageAbility(CardObject card, PlayerType player, AbilityTarget target, int value) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // ダメージ量に指定がない場合は1ダメージ
         if (value <= 0) value = 1;
         // ダメージ付与
@@ -716,6 +724,10 @@ public class AbilityProcessData {
     /// <param name="value">増加量</param>
     /// <returns></returns>
     public async UniTask GiveHealthAbility(CardObject card, PlayerType player, AbilityTarget target, int value) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // 増加量に指定がない場合は1増加
         if (value <= 0) value = 1;
         // HP付与
@@ -731,6 +743,10 @@ public class AbilityProcessData {
     /// <param name="value">増加量</param>
     /// <returns></returns>
     public async UniTask GiveAttackAbility(CardObject card, PlayerType player, AbilityTarget target, int value) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // 増加量に指定がない場合は1増加
         if (value <= 0) value = 1;
         // ATK増加
@@ -746,6 +762,10 @@ public class AbilityProcessData {
     /// <param name="value">減少量</param>
     /// <returns></returns>
     public async UniTask ReduceAttackAbility(CardObject card, PlayerType player, AbilityTarget target, int value) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // 減少量に指定がない場合は1減少
         if (value <= 0) value = 1;
         // ATK減少
@@ -755,10 +775,15 @@ public class AbilityProcessData {
     /// <summary>
     /// 手札を捨てる効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <param name="player">発動プレイヤー</param>
     /// <param name="target">発動対象</param>
     /// <returns></returns>
-    public async UniTask HandDestructionAbility(PlayerType player, AbilityTarget target) {
+    public async UniTask HandDestructionAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // ターゲットが正常ではないなら処理しない
         if (handDestruction[target] == null) return;
         // 手札を捨てる
@@ -773,6 +798,10 @@ public class AbilityProcessData {
     /// <param name="target">発動対象</param>
     /// <returns></returns>
     public async UniTask DeleteMonsterAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // ターゲットが正常ではないなら処理しない
         if (deleteMonster[target] == null) return;
         // モンスター破壊
@@ -787,6 +816,10 @@ public class AbilityProcessData {
     /// <param name="target">発動対象</param>
     /// <returns></returns>
     public async UniTask ReturnMonsterAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // ターゲットが正常ではないなら処理しない
         if (returnMonster[target] == null) return;
         // モンスターを手札に戻す
@@ -801,6 +834,10 @@ public class AbilityProcessData {
     /// <param name="target">発動対象</param>
     /// <returns></returns>
     public async UniTask HealFatigueAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // ターゲットが正常ではないなら処理しない
         if (fatigueMonster[target] == null) return;
         // モンスターの疲労を癒す
@@ -815,6 +852,10 @@ public class AbilityProcessData {
     /// <param name="target">発動対象</param>
     /// <returns></returns>
     public async UniTask GiveFatigueAbility(CardObject card, PlayerType player, AbilityTarget target) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // ターゲットが正常ではないなら処理しない
         if (fatigueMonster[target] == null) return;
         // モンスターを疲労させる
@@ -824,63 +865,92 @@ public class AbilityProcessData {
     /// <summary>
     /// 次のパチスロフェイズの1ゲーム目の役をベルにする効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <returns></returns>
-    public async UniTask SetRoleBellAbility () {
+    public async UniTask SetRoleBellAbility (CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         SlotReelController.Instance.CardBellAdvent();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 次のパチスロフェイズの1ゲーム目の役をスイカにする効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <returns></returns>
-    public async UniTask SetRoleSuikaAbility() {
+    public async UniTask SetRoleSuikaAbility(CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         SlotReelController.Instance.CardSuikaAdvent();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 次のパチスロフェイズの1ゲーム目の役をリプレイにする効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <returns></returns>
-    public async UniTask SetRoleReplayAbility() {
+    public async UniTask SetRoleReplayAbility(CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         SlotReelController.Instance.CardReplayAdvent();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 次のパチスロフェイズの1ゲーム目の役をハズレにする効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <returns></returns>
-    public async UniTask SetRoleBlankAbility() {
+    public async UniTask SetRoleBlankAbility(CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         SlotReelController.Instance.CardBlankAdvent();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 次のパチスロフェイズの1ゲーム目の役をチェリーにする効果
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <returns></returns>
-    public async UniTask SetRoleCherryAbility() {
+    public async UniTask SetRoleCherryAbility(CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         SlotReelController.Instance.CardCherryAdvent();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// パチスロフェイズのテーブル上昇(うおおおおの専用効果)
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <returns></returns>
-    public async UniTask UooooAbility() {
+    public async UniTask UooooAbility(CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         SlotReelController.Instance.CardUoooo();
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// なかまよび効果(マジカルバードの特殊効果)
     /// </summary>
-    /// <param name="player"></param>
+    /// <param name="card">発動カード</param>
+    /// <param name="player">発動プレイヤー</param>
     /// <returns></returns>
-    public async UniTask NakamayobiAbility(PlayerType player) {
+    public async UniTask NakamayobiAbility(CardObject card, PlayerType player) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // マジカルバードモンスターのカードID全取得
         List<int> bardIDs = new List<int>();
         foreach (var cardID in CardDataMasterUtility.GetRaceCardData(CardTheme.MagicalBard)) {
@@ -928,6 +998,10 @@ public class AbilityProcessData {
     /// <param name="card"></param>
     /// <returns></returns>
     public async UniTask LevelUPAbility(CardObject card) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // それぞれのIDを取得
         int reacheLv1ID = CardDataMasterUtility.GetCardNameData(REACHE_LV1_NAME).cardID;
         int reacheLv2ID = CardDataMasterUtility.GetCardNameData(REACHE_LV2_NAME).cardID;
@@ -962,15 +1036,19 @@ public class AbilityProcessData {
             // イラスト設定
             card.ChangeCardImage(card.cardID);
         }
-        await UniTask.CompletedTask;
     }
 
     /// <summary>
     /// 総攻撃効果(ドラゴンの特殊効果)
     /// </summary>
+    /// <param name="card">発動カード</param>
     /// <param name="player"></param>
     /// <returns></returns>
-    public async UniTask SoukougekiAbility(PlayerType player) {
+    public async UniTask SoukougekiAbility(CardObject card, PlayerType player) {
+        // モンスターの効果の場合は効果発動演出再生
+        if (card && card.cardType == CardType.Monster) {
+            await CardEffectAnimationManager.instance.PlayAbilityExecute(card);
+        }
         // プレイヤーの全てのモンスター取得
         var fieldMonster = CardObjectManager.instance.fieldObjectList[player];
         for (FieldLane i = 0; i < FieldLane.Max; i++) {
@@ -985,6 +1063,5 @@ public class AbilityProcessData {
             // 取得したモンスターのサイズを0にする
             handCards[i].SetStatus(MonsterStatus.SIZE, 0);
         }
-        await UniTask.CompletedTask;
     }
 }
