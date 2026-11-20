@@ -629,6 +629,10 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身のメインフェイズ
         MainPhase mainPhase = (MainPhase)phaseList[(int)currentPhase];
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         CardObject raymond = CardObjectManager.instance.GetUseCardObject(0);
         // 矢印出す
         tutorialArrow.CreateVerticalArrow(new Vector2(570, 250), 180);
@@ -650,6 +654,10 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 矢印消す
         tutorialArrow.DeleteArrow();
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "フィールドにはサイズ上限があるから、\nモンスターを出すときは注意するんだ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "そのターン中に出したばかりのモンスターは疲労するぞ！\n疲労中は攻撃ができないから注意だ！";
@@ -706,6 +714,10 @@ public class BattleSystemManager : MonoBehaviour {
         NextPhaseSetup();
 
         // 自身のメインフェイズ
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "このターンからさっき出したモンスターは攻撃可能だ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "ターンが進むとフィールドに出せるサイズも大きくなるぞ！";
@@ -732,6 +744,10 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 矢印消す
         tutorialArrow.DeleteArrow();
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "攻撃するときはボタンを押してパチスロGO！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "引いた役と対応役が一致していたら攻撃するよ！";
@@ -930,6 +946,10 @@ public class BattleSystemManager : MonoBehaviour {
         NextPhaseSetup();
 
         // 自身のメインフェイズ
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "このままだと相手の攻撃を受けてしまうね。\nそんなときはモンスターを移動させて攻撃を防ごう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "移動させたいモンスターを左クリックで掴み、\n移動させたい場所まで持っていけば移動できるぞ！";
@@ -972,6 +992,8 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 矢印消す
         tutorialArrow.DeleteArrow();
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "さらにスペルを使ってみよう！\nスペルは1ターンに3回までつかうことができるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "「PERFECT・STOP」は自分のモンスターの\n疲労をいやすことができるぞ！";
@@ -996,6 +1018,8 @@ public class BattleSystemManager : MonoBehaviour {
         }
         // 矢印消す
         tutorialArrow.DeleteArrow();
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "これでみんな攻撃できるね！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "パチスロを回そう！";
@@ -1120,6 +1144,10 @@ public class BattleSystemManager : MonoBehaviour {
         NextPhaseSetup();
 
         // 自身のメインフェイズ
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         text = "今はラッシュ中で相手のモンスターは少ない。\nこのまま押し切っちゃおう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 矢印出す
@@ -1132,7 +1160,7 @@ public class BattleSystemManager : MonoBehaviour {
                     tutorialArrow.CreateVerticalArrow(new Vector2(1410, 180));
                 }
                 else {
-                    tutorialArrow.CreateVerticalArrow(new Vector2(1030, 250), 180);
+                    tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
                 }
             }
             currentShrink = CardObjectManager.instance.isHandShrink;
@@ -1140,6 +1168,10 @@ public class BattleSystemManager : MonoBehaviour {
                 break;
             await UniTask.Yield();
         }
+        turnEndActive = false;
+        pachisuroGoActive = false;
+        // 手札のエフェクトチェック
+        CardObjectManager.instance.HandCanPlayEffectCheck();
         // 矢印出す
         tutorialArrow.CreateHorizontalArrow(new Vector2(1520, 600), 90);
         // パチスロボタン
