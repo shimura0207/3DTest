@@ -64,7 +64,7 @@ public class AbilityProcessData {
     }
 
     /// <summary>
-    /// ダメージ付与効果の登録
+    /// ステータス付与関連効果
     /// </summary>
     private void RegisterGiveStatus() {
         giveStatus = new Dictionary<AbilityTarget, Func<MonsterStatus, CardObject, PlayerType, int, UniTask>>();
@@ -76,7 +76,7 @@ public class AbilityProcessData {
             return UniTask.CompletedTask;
         };
         // 相手プレイヤー
-        giveStatus[AbilityTarget.SelfPlayer] = (status, card, player, value) => {
+        giveStatus[AbilityTarget.OpponentPlayer] = (status, card, player, value) => {
             if (status != MonsterStatus.HP) return UniTask.CompletedTask;
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
@@ -87,7 +87,7 @@ public class AbilityProcessData {
         // 自身のランダムなモンスター
         giveStatus[AbilityTarget.SelfRandom] = async (status, card, player, value) => {
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(player);
+            CardObject monster = await GetRandomMonster(player, player);
             if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
@@ -97,7 +97,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(revPla);
+            CardObject monster = await GetRandomMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
@@ -105,7 +105,7 @@ public class AbilityProcessData {
         // 自身の選択したモンスター
         giveStatus[AbilityTarget.SelfSelect] = async (status, card, player, value) => {
             // 選択モンスターの取得
-            CardObject monster = await GetSelectMonster(player);
+            CardObject monster = await GetSelectMonster(player, player);
             if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
@@ -115,7 +115,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // 選択モンスター取得
-            CardObject monster = await GetSelectMonster(revPla);
+            CardObject monster = await GetSelectMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターに指定ステータスを付与
             monster.GiveStatus(status, value);
@@ -247,7 +247,7 @@ public class AbilityProcessData {
         // 自身のランダムなカード
         deleteMonster[AbilityTarget.SelfRandom] = async (card, player) => {
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(player);
+            CardObject monster = await GetRandomMonster(player, player);
             if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
@@ -257,7 +257,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(revPla);
+            CardObject monster = await GetRandomMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
@@ -265,7 +265,7 @@ public class AbilityProcessData {
         // 自分の選択したカード
         deleteMonster[AbilityTarget.SelfSelect] = async (card, player) => {
             // 選択モンスター取得
-            CardObject monster = await GetSelectMonster(player);
+            CardObject monster = await GetSelectMonster(player, player);
             if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
@@ -275,7 +275,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // 選択モンスター取得
-            CardObject monster = await GetSelectMonster(revPla);
+            CardObject monster = await GetSelectMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターを破壊
             monster.DestroyMonster(true);
@@ -340,9 +340,9 @@ public class AbilityProcessData {
         // 自身のランダムなカード
         returnMonster[AbilityTarget.SelfRandom] = async (card, player) => {
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(player);
+            CardObject monster = await GetRandomMonster(player, player);
             if (!monster) return;
-            // 取得したモンスターを破壊
+            // 取得したモンスターを手札に戻す
             monster.ReturnMonster(true);
         };
         // 相手のランダムなカード
@@ -350,17 +350,17 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(revPla);
+            CardObject monster = await GetRandomMonster(player, revPla);
             if (!monster) return;
-            // 取得したモンスターを破壊
+            // 取得したモンスターを手札に戻す
             monster.ReturnMonster(true);
         };
         // 自分の選択したカード
         returnMonster[AbilityTarget.SelfSelect] = async (card, player) => {
             // 選択したレーンのモンスター取得
-            CardObject monster = await GetSelectMonster(player);
+            CardObject monster = await GetSelectMonster(player, player);
             if (!monster) return;
-            // 取得したモンスターを破壊
+            // 取得したモンスターを手札に戻す
             monster.ReturnMonster(true);
         };
         // 相手の選択したカード
@@ -368,7 +368,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // 選択したレーンのモンスター取得
-            CardObject monster = await GetSelectMonster(revPla);
+            CardObject monster = await GetSelectMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターを手札に戻す
             monster.ReturnMonster(true);
@@ -432,7 +432,7 @@ public class AbilityProcessData {
         // 自身のランダムなカード
         fatigueMonster[AbilityTarget.SelfRandom] = async (fatigue, card, player) => {
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(player);
+            CardObject monster = await GetRandomMonster(player, player);
             if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
@@ -442,7 +442,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // ランダムなモンスター取得
-            CardObject monster = await GetRandomMonster(revPla);
+            CardObject monster = await GetRandomMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
@@ -450,7 +450,7 @@ public class AbilityProcessData {
         // 自分の選択したカード
         fatigueMonster[AbilityTarget.SelfSelect] = async (fatigue, card, player) => {
             // 選択モンスター取得
-            CardObject monster = await GetSelectMonster(player);
+            CardObject monster = await GetSelectMonster(player, player);
             if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
@@ -460,7 +460,7 @@ public class AbilityProcessData {
             // 相手プレイヤーを取得
             PlayerType revPla = GetReversePlayer(player);
             // 選択モンスター取得
-            CardObject monster = await GetSelectMonster(revPla);
+            CardObject monster = await GetSelectMonster(player, revPla);
             if (!monster) return;
             // 取得したモンスターの疲労状態変更
             monster.SetIsFatigue(fatigue);
@@ -532,15 +532,16 @@ public class AbilityProcessData {
     /// <summary>
     /// ランダムなモンスターの取得
     /// </summary>
-    /// <param name="player">どちらのモンスターか</param>
+    /// <param name="selectPlayer">選ぶプレイヤー</param>
+    /// <param name="targetPlayer">効果対象のプレイヤー</param>
     /// <returns></returns>
-    private async UniTask<CardObject> GetRandomMonster(PlayerType player) {
+    private async UniTask<CardObject> GetRandomMonster(PlayerType selectPlayer, PlayerType targetPlayer) {
         CardObject monster = null;
-        switch (player) {
+        switch (selectPlayer) {
             case PlayerType.Self:
                 // 指定したプレイヤーのフィールドのモンスターを積む
                 List<CardObject> fieldMonster = new List<CardObject>();
-                foreach (var obj in CardObjectManager.instance.fieldObjectList[player]) {
+                foreach (var obj in CardObjectManager.instance.fieldObjectList[targetPlayer]) {
                     if (!obj.Value) continue;
                     fieldMonster.Add(obj.Value);
                 }
@@ -567,16 +568,17 @@ public class AbilityProcessData {
     /// <summary>
     /// モンスターの選択
     /// </summary>
-    /// <param name="player">どちらのモンスターか</param>
+    /// <param name="selectPlayer">選ぶプレイヤー</param>
+    /// <param name="targetPlayer">効果対象のプレイヤー</param>
     /// <returns></returns>
-    private async UniTask<CardObject> GetSelectMonster(PlayerType player) {
+    private async UniTask<CardObject> GetSelectMonster(PlayerType selectPlayer, PlayerType targetPlayer) {
         CardObject monster = null;
-        switch (player) {
+        switch (selectPlayer) {
             case PlayerType.Self:
                 // レーン選択
-                FieldLane lane = await MenuWindowManager.Instance.PlacedLaneMenuOpen(player);
+                FieldLane lane = await MenuWindowManager.Instance.PlacedLaneMenuOpen(targetPlayer);
                 // 選択したレーンのモンスター取得
-                monster = CardObjectManager.instance.fieldObjectList[player][lane];
+                monster = CardObjectManager.instance.fieldObjectList[targetPlayer][lane];
                 // 相手へ選択結果を送信
                 var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, monster.objectID);
                 CustomNetworkManager.instance.SendStringToOpponent(pack);

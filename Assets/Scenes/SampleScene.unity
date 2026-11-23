@@ -658,7 +658,7 @@ PrefabInstance:
     - target: {fileID: 7290154012591679377, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
       propertyPath: playerPrefab
       value: 
-      objectReference: {fileID: 2119585161}
+      objectReference: {fileID: 1426259150907071394, guid: 25bf95ac7ab45c64885444a20c383546, type: 3}
     - target: {fileID: 7422603043375609736, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
       propertyPath: port
       value: 7777
@@ -726,11 +726,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 806046708}
   m_SourcePrefab: {fileID: 100100000, guid: 86f972706f5cef34ca5059ab32c5d95a, type: 3}
---- !u!1 &2119585161 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1426259150907071394, guid: 25bf95ac7ab45c64885444a20c383546, type: 3}
-  m_PrefabInstance: {fileID: 921175983}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2119585162 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3368650806150164488, guid: 25bf95ac7ab45c64885444a20c383546, type: 3}
