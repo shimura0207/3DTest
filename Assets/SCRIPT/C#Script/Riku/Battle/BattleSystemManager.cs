@@ -117,14 +117,18 @@ public class BattleSystemManager : MonoBehaviour {
         // 次のフェイズへの移行
         if (phaseList[(int)currentPhase].nextPhase) {
             // 移行処理
-            NextPhaseSetup();
+            await NextPhaseSetup();
         }
     }
 
     /// <summary>
     /// 次のフェイズへの移行
     /// </summary>
-    private void NextPhaseSetup() {
+    private async UniTask NextPhaseSetup() {
+        // 効果発動中なら終了まで待つ
+        while (AbilityManager.instance.isAbilityExecute) {
+            await UniTask.Yield();
+        }
         // フェイズの片付け
         phaseList[(int)currentPhase].Teardown();
         // 今回がエンドフェイズならターンを交代しスタートフェイズへ
@@ -543,6 +547,8 @@ public class BattleSystemManager : MonoBehaviour {
         battleState = BattleState.InProgress;
         // 現在のターンを1に
         currentTurn = 1;
+        // スペル回数を0に
+        spellCastCount = 0;
 
         // 各プレイヤーの初期化
         for (PlayerType i = 0; i < PlayerType.Max; i++) {
@@ -799,6 +805,9 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
         text = "5Gパチスロを回して\n引いた対応役の数だけ攻撃できるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+
+        text = "パチスロを回して\n引いた対応役の数だけ攻撃できるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
 
         // ── 1G目：ハズレ ──
@@ -1062,6 +1071,9 @@ public class BattleSystemManager : MonoBehaviour {
             PachisuroSymbolKoyakuEnum.Seven
         );
 
+        text = "ターンが進むとテーブルが上がり、\nテーブルが上がると強い役が出やすくなるぞ！";
+        await MenuWindowManager.Instance.TutorialTextWindow(text);
+
         // 1G目：ハズレ。
         // プレイヤーがBET・レバー・停止操作を行い、第3停止まで待つ。
         await WaitTutorialThirdStopAsync();
@@ -1151,7 +1163,7 @@ public class BattleSystemManager : MonoBehaviour {
         text = "今はラッシュ中で相手のモンスターは少ない。\nこのまま押し切っちゃおう！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         // 矢印出す
-        tutorialArrow.CreateVerticalArrow(new Vector2(1030, 250), 180);
+        tutorialArrow.CreateVerticalArrow(new Vector2(960, 250), 180);
         // RG:REIを出す
         CardObject rei = CardObjectManager.instance.GetUseCardObject(12);
         while (true) {

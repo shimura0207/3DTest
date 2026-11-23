@@ -208,6 +208,13 @@ public class CardObject : MonoBehaviour {
             // 見つかった効果を積む
             AbilityManager.instance.SetAblityQueue(this, ability);
         }
+        // エフェクトを消す
+        noFatigueEffect.SetParent(unuseEffectRoot);
+        attackReductionEffeect.SetParent(unuseEffectRoot);
+        fatigueEffect.SetParent(unuseEffectRoot);
+        canPlayEffect.SetParent(unuseEffectRoot);
+        upperEffect.SetParent(unuseEffectRoot);
+        gOverEffect.SetParent(unuseEffectRoot);
 
         if (isAbility) return;
         // 積まれた効果があれば発動
