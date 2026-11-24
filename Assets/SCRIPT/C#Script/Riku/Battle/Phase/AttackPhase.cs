@@ -6,6 +6,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,11 +31,11 @@ public class AttackPhase : PhaseBase {
         // 当選役の数分の対応役チェック
         foreach (var koyaku in koyakuList) {
             // フィールドのカードをひとつずつチェック
-            foreach (var card in fieldCards) {
+            for (FieldLane i = 0; i < FieldLane.Max; i++) {
                 // フィールドにカードがなければスキップ
-                if (!card.Value) continue;
+                if (!fieldCards[i]) continue;
                 // 対応役によって攻撃
-                await CardAttack(PlayerType.Opponent, koyaku, card.Value, 
+                await CardAttack(PlayerType.Opponent, koyaku, fieldCards[i], 
                     SlotReelController.Instance.AttackRush, 
                     SlotReelController.Instance.AttackNextRush);
                 
@@ -62,11 +63,11 @@ public class AttackPhase : PhaseBase {
         // 当選役の数分の対応役チェック
         foreach (var koyaku in koyakuList) {
             // フィールドのカードをひとつずつチェック
-            foreach (var card in fieldCards) {
+            for (FieldLane i = 0; i < 0; i++) {
                 // フィールドにカードがなければスキップ
-                if (!card.Value) continue;
+                if (!fieldCards[i]) continue;
                 // 対応役によって攻撃
-                await CardAttack(PlayerType.Self, koyaku, card.Value, 
+                await CardAttack(PlayerType.Self, koyaku, fieldCards[i], 
                     SlotReelController.Instance.AttackRush, 
                     SlotReelController.Instance.AttackNextRush);
 
@@ -169,6 +170,7 @@ public class AttackPhase : PhaseBase {
             // 積まれた効果があれば発動
             await AbilityManager.instance.AbilityExecute();
             AudioManager.instance.PlaySE("kougeki");
+            if (!frontMonster) return;
             // モンスターにダメージを与える
             frontMonster.GiveStatus(MonsterStatus.HP, -damage);
         }
