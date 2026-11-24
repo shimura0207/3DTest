@@ -19,14 +19,13 @@ public class DamageUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // ダメージを参照する
+        damageText.text = "" + UIManager.instance.damageValue;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // ダメージを参照する
-        damageText.text = "" + UIManager.instance.damageValue;
         // 徐々に透明にする
         damageText.alpha -= ALPHA_UPPER;
         // 徐々に上げる
