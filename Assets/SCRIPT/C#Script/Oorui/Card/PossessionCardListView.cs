@@ -162,8 +162,15 @@ public class PossessionCardListView : MonoBehaviour {
             if (masterA == null) return 1;
             if (masterB == null) return -1;
 
-            // Enumの値を比較し、高いレアリティを先にする
-            return ((int)masterB.rarityID).CompareTo((int)masterA.rarityID);
+            // レアリティが同じ場合はカードIDが小さい順にする
+            int rarityCompare =
+                ((int)masterB.rarityID).CompareTo((int)masterA.rarityID);
+
+            if (rarityCompare != 0) {
+                return rarityCompare;
+            }
+
+            return a.CardID.CompareTo(b.CardID);
         });
 
         // 並べ替えた順番をContentの表示に反映する
@@ -202,8 +209,18 @@ public class PossessionCardListView : MonoBehaviour {
     /// カードを所持枚数順に並べる
     /// </summary>
     public void OwnerCountSort() {
-        // 所持枚数が多い順にカードを並べ替える
-        cardItems.Sort((a, b) => b.OwnedCount.CompareTo(a.OwnedCount));
+        cardItems.Sort((a, b) => {
+
+            // 所持枚数が多い順にする
+            int countCompare = b.OwnedCount.CompareTo(a.OwnedCount);
+
+            if (countCompare != 0) {
+                return countCompare;
+            }
+
+            // 所持枚数が同じ場合はカードIDが小さい順にする
+            return a.CardID.CompareTo(b.CardID);
+        });
 
         // 並べ替えた順番をContentの表示に反映する
         for (int i = 0; i < cardItems.Count; i++) {

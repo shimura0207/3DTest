@@ -271,7 +271,10 @@ public class DeckCreateMenu : MenuWindowBase {
 
         // SaveManagerが存在しなければ終了する
         if (SaveManager.Instance == null) return;
-
+        // カードのデータを取得
+        var cardData = CardDataMasterUtility.GetCardMaster(cardID);
+        // 選択されたカードが汎用カードであればKEYカードに登録しない
+        if ((CardTheme)cardData.themeID == CardTheme.Neutral) return;
         // KEYカードIDを更新する
         keyCardID = cardID;
 
