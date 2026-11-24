@@ -63,7 +63,7 @@ public class AttackPhase : PhaseBase {
         // 当選役の数分の対応役チェック
         foreach (var koyaku in koyakuList) {
             // フィールドのカードをひとつずつチェック
-            for (FieldLane i = 0; i < 0; i++) {
+            for (FieldLane i = 0; i < FieldLane.Max; i++) {
                 // フィールドにカードがなければスキップ
                 if (!fieldCards[i]) continue;
                 // 対応役によって攻撃
