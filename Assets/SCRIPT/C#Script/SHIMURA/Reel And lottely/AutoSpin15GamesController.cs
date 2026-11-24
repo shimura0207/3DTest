@@ -52,7 +52,7 @@ public class AutoSpin15GamesController : MonoBehaviour
     {
         if (Input.GetKeyDown(startAutoSpinKey))
         {
-            StartAutoSpin();
+            //StartAutoSpin();
         }
     }
 
