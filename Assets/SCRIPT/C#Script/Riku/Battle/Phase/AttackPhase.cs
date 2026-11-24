@@ -34,16 +34,10 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(PlayerType.Opponent, koyaku, card.Value, 
+                await CardAttack(PlayerType.Opponent, koyaku, card.Value, 
                     SlotReelController.Instance.AttackRush, 
                     SlotReelController.Instance.AttackNextRush);
                 
-                // UIに反映
-                PlayerHPUIControllere hp; //呼ぶスクリプトにあだなつける
-                GameObject player = GameObject.Find("Player2HP");
-                hp = player.GetComponent<PlayerHPUIControllere>(); //付いているスクリプトを取得
-                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Opponent]);
-
                 await UniTask.DelayFrame(10);
             }
         }
@@ -72,15 +66,9 @@ public class AttackPhase : PhaseBase {
                 // フィールドにカードがなければスキップ
                 if (!card.Value) continue;
                 // 対応役によって攻撃
-                CardAttack(PlayerType.Self, koyaku, card.Value, 
+                await CardAttack(PlayerType.Self, koyaku, card.Value, 
                     SlotReelController.Instance.AttackRush, 
                     SlotReelController.Instance.AttackNextRush);
-
-                // UIに反映
-                PlayerHPUIControllere hp;
-                GameObject player = GameObject.Find("Player1HP");
-                hp = player.GetComponent<PlayerHPUIControllere>();
-                hp.SetCurrentHP(BattleSystemManager.instance.playerHP[PlayerType.Self]);
 
                 await UniTask.DelayFrame(10);
             }
@@ -111,7 +99,7 @@ public class AttackPhase : PhaseBase {
     /// <param name="card">確認するカード</param>
     /// <param name="rush">ラッシュ中か否か</param>
     /// <param name="nextRush">ラッシュ当選中かどうか</param>
-    public void CardAttack(PlayerType player, PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush, bool nextRush) {
+    public async UniTask CardAttack(PlayerType player, PachisuroSymbolKoyakuEnum koyaku, CardObject card, bool rush, bool nextRush) {
         // 疲労中は攻撃できない
         if (card.isFatigue) return;
         // カードの対応役の型を変換
@@ -157,7 +145,7 @@ public class AttackPhase : PhaseBase {
             AbilityManager.instance.SetAblityQueue(card, ability);
         }
         // 積まれた効果があれば発動
-        UniTask task = AbilityManager.instance.AbilityExecute();
+        await AbilityManager.instance.AbilityExecute();
 
         FieldLane frontLane = FieldLane.Lane5 - card.laneID;
         // 正面のモンスターを取得
@@ -179,7 +167,7 @@ public class AttackPhase : PhaseBase {
                 }
             }
             // 積まれた効果があれば発動
-            task = AbilityManager.instance.AbilityExecute();
+            await AbilityManager.instance.AbilityExecute();
             AudioManager.instance.PlaySE("kougeki");
             // モンスターにダメージを与える
             frontMonster.GiveStatus(MonsterStatus.HP, -damage);

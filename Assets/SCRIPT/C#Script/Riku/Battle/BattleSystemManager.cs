@@ -301,6 +301,23 @@ public class BattleSystemManager : MonoBehaviour {
             UIManager.instance.GenerateDamageUI(giveHP, null, player);
         }
 
+        switch (player) {
+            case PlayerType.Self:
+                // UIに反映
+                PlayerHPUIControllere hp1;
+                GameObject player1HPObj = GameObject.Find("Player1HP");
+                hp1 = player1HPObj.GetComponent<PlayerHPUIControllere>();
+                hp1.SetCurrentHP(playerHP[PlayerType.Self]);
+                break;
+            case PlayerType.Opponent:
+                // UIに反映
+                PlayerHPUIControllere hp2;
+                GameObject playerHP2Obj = GameObject.Find("Player2HP");
+                hp2 = playerHP2Obj.GetComponent<PlayerHPUIControllere>();
+                hp2.SetCurrentHP(playerHP[PlayerType.Opponent]);
+                break;
+        }
+
         // HPが0以下なら勝敗がつく
         if (playerHP[player] > 0) return;
 
@@ -631,7 +648,7 @@ public class BattleSystemManager : MonoBehaviour {
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         text = "手札のモンスターを左クリックで掴んで、\nフィールドまで移動させると召喚できるぞ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のメインフェイズ
         MainPhase mainPhase = (MainPhase)phaseList[(int)currentPhase];
@@ -690,11 +707,11 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 自身のエンドフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のスタートフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
@@ -713,11 +730,11 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 相手のエンドフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のスタートフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のメインフェイズ
         turnEndActive = false;
@@ -771,7 +788,7 @@ public class BattleSystemManager : MonoBehaviour {
         pachisuroGo = false;
         // 矢印消す
         tutorialArrow.DeleteArrow();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のパチスロフェイズ
         SlotReelController slot = SlotReelController.Instance;
@@ -866,7 +883,7 @@ public class BattleSystemManager : MonoBehaviour {
         slot.HideStopEffectImage();
 
         // 次のフェイズへ移る。
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のアタックフェイズ
         AttackPhase attackPhase = (AttackPhase)phaseList[(int)BattlePhase.AttackPhase];
@@ -881,7 +898,7 @@ public class BattleSystemManager : MonoBehaviour {
         bool firstAttack = true;
         foreach (var koyaku in koyakuList) {
             // Professor:Raymondの役チェック
-            attackPhase.CardAttack(PlayerType.Opponent, koyaku, raymond,
+            await attackPhase.CardAttack(PlayerType.Opponent, koyaku, raymond,
                 SlotReelController.Instance.AttackRush,
                 SlotReelController.Instance.AttackNextRush);
 
@@ -903,15 +920,15 @@ public class BattleSystemManager : MonoBehaviour {
                 }
             }
         }
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のエンドフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のスタートフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
@@ -924,7 +941,7 @@ public class BattleSystemManager : MonoBehaviour {
         text = "つまり出たターンからいきなり攻撃できるんだ！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
         await UniTask.DelayFrame(30);
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のパチスロフェイズ。
         // ハズレ → ハズレ → リプレイ → ベル → リプレイの順に自動再生。
@@ -938,21 +955,21 @@ public class BattleSystemManager : MonoBehaviour {
         );
 
         // 相手のアタックフェイズへ。
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のアタックフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
         text = "モンスターが1体やられてしまったね。";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のエンドフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のスタートフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のメインフェイズ
         turnEndActive = false;
@@ -1044,7 +1061,7 @@ public class BattleSystemManager : MonoBehaviour {
         pachisuroGo = false;
         // 矢印消す
         tutorialArrow.DeleteArrow();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のパチスロフェイズ（2回目）
         // この時点で、パチスロフェイズのSetupが完了していること。
@@ -1117,21 +1134,21 @@ public class BattleSystemManager : MonoBehaviour {
         secondSlot.HideStopEffectImage();
 
         // 自身のアタックフェイズへ。
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のアタックフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
         text = "相手に大きなダメージを与えたね！";
         await MenuWindowManager.Instance.TutorialTextWindow(text);
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のエンドフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のスタートフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 相手のメインフェイズ
         // 出されたレーンの対面に出す
@@ -1149,11 +1166,11 @@ public class BattleSystemManager : MonoBehaviour {
 
         // 相手のエンドフェイズ
         await phaseList[(int)currentPhase].OpponentExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のスタートフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のメインフェイズ
         turnEndActive = false;
@@ -1195,7 +1212,7 @@ public class BattleSystemManager : MonoBehaviour {
         pachisuroGo = false;
         // 矢印消す
         tutorialArrow.DeleteArrow();
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のパチスロフェイズ
         // この時点でパチスロフェイズのSetupが完了していること。
@@ -1243,11 +1260,11 @@ public class BattleSystemManager : MonoBehaviour {
         }
 
         // 自身のアタックフェイズへ。
-        NextPhaseSetup();
+        await NextPhaseSetup();
 
         // 自身のアタックフェイズ
         await phaseList[(int)currentPhase].SelfExecute();
-        NextPhaseSetup();
+        await NextPhaseSetup();
     }
 
     /// <summary>
