@@ -50,3 +50,18 @@ MonoBehaviour:
   - soundName: Button
     clip: {fileID: 8300000, guid: dd6b89a8a27c9674e85cd40b6e521cfe, type: 3}
     volume: 1
+  - soundName: E_TURN
+    clip: {fileID: 8300000, guid: 84bba2e3b8f8dc6459d241bb71d3bf66, type: 3}
+    volume: 1
+  - soundName: P_TURN
+    clip: {fileID: 8300000, guid: fd544c6b0dc20f648870fc5e3c118510, type: 3}
+    volume: 1
+  - soundName: M_SUCSESS
+    clip: {fileID: 8300000, guid: 3e95b7861ab33e345af0c6a6c4a50f7c, type: 3}
+    volume: 1
+  - soundName: M_START
+    clip: {fileID: 8300000, guid: 7b2bcc6a1572220478aba8f5c73030c5, type: 3}
+    volume: 1
+  - soundName: kougeki
+    clip: {fileID: 8300000, guid: 24fa0215fc26f4239be505589d87ac68, type: 3}
+    volume: 1
