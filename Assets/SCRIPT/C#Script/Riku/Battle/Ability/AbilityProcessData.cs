@@ -560,6 +560,7 @@ public class AbilityProcessData {
                 // 受け取った
                 monster = receiveCard;
                 receiveCard = null;
+                isReceiveCard = false;
                 break;
         }
         return monster;
@@ -591,6 +592,7 @@ public class AbilityProcessData {
                 // 受け取った
                 monster = receiveCard;
                 receiveCard = null;
+                isReceiveCard = false;
                 break;
         }
         return monster;
@@ -621,6 +623,7 @@ public class AbilityProcessData {
                 // 受け取った
                 card = receiveCard;
                 receiveCard = null;
+                isReceiveCard = false;
                 break;
         }
         return card;
@@ -674,6 +677,7 @@ public class AbilityProcessData {
                 // 受け取った
                 card = receiveCard;
                 receiveCard = null;
+                isReceiveCard = false;
                 break;
         }
         return card;
@@ -983,6 +987,8 @@ public class AbilityProcessData {
                 lane = receiveLane;
                 receiveCardID = -1;
                 receiveLane = FieldLane.None;
+                isReceiveCardID = false;
+                isReceiveLane = false;
                 break;
         }
 
