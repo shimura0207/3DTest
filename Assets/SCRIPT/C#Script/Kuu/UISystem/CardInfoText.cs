@@ -21,7 +21,7 @@ public class CardInfoText : MonoBehaviour {
     [SerializeField] private Canvas status = null;
 
     // ログウィンドウ
-    [SerializeField] private Canvas logWindow = null;
+    [SerializeField] private GameObject logWindow = null;
 
     // ログの名前
     [SerializeField] private TMP_Text logName = null;
@@ -345,13 +345,13 @@ public class CardInfoText : MonoBehaviour {
         logName.text = logData.name;
         logAbility.text = logData.ability;
         // 表示する
-        logWindow.enabled = true;
+        logWindow.SetActive(true);
     }
 
     /// <summary>
     /// ログを非表示にする
     /// </summary>
     public void HideLog() {
-        logWindow.enabled = false;
+        logWindow.SetActive(false);
     }
 }
