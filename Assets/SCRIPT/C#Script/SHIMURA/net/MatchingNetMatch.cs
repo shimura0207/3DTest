@@ -323,6 +323,7 @@ public partial class MatchingNetMatch : MonoBehaviour {
     private void SetStatus(string message) {
         if (!string.IsNullOrEmpty(activeRoomCode) && state != ScreenState.Battle)
             message = "ROOM：" + activeRoomCode + "\n" + message;
+        RoomMatchStatus = message;
         if (statusText != null)
             statusText.text = message;
     }

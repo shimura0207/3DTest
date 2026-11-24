@@ -7,6 +7,8 @@ using UnityEngine;
 public partial class MatchingNetMatch {
     [Header("4桁ROOMマッチ（同じLAN内）")]
     [SerializeField] private TMP_InputField roomCodeInput;
+    [Tooltip("未登録時に自動取得するTMP_InputFieldのGameObject名。完全一致で検索します。")]
+    [SerializeField] private string roomCodeInputObjectName = "RoomCodeInput";
     [SerializeField, Range(1, 65535)] private int roomDiscoveryPort = 55556;
     [SerializeField, Min(3f)] private float roomSearchSeconds = 5f;
     private RoomDiscovery roomDiscovery;
@@ -15,16 +17,73 @@ public partial class MatchingNetMatch {
     private bool roomHosting;
     private float roomJoinDeadline;
 
+    // 自動生成UIは既存statusTextの登録有無に依存せず、この表示文を読む。
+    public string RoomMatchStatus { get; private set; } = "";
+    public bool CanStartRoomMatch => state == ScreenState.Menu && !randomMatching &&
+        !roomMatching && !NetworkClient.active && !NetworkServer.active;
+
+    // 動的UIを直接結び付ける。戻り値を使って画面終了時に元の参照へ戻す。
+    public TMP_InputField BindRoomInput(TMP_InputField input) {
+        TMP_InputField previous = roomCodeInput;
+        roomCodeInput = input;
+        return previous;
+    }
+
     /// <summary>部屋作成ボタンのOnClickに登録する。</summary>
     public void OnCreateRoomButton() => StartRoomMatch(true);
     /// <summary>部屋参加ボタンのOnClickに登録する。</summary>
     public void OnJoinRoomButton() => StartRoomMatch(false);
 
+    /// <summary>
+    /// ボタンを押した時点で入力欄を取得する。
+    /// 起動後に生成されたUIも対象にし、毎フレームの検索は行わない。
+    /// Inspector登録済み・取得済みなら、その参照を優先する。
+    /// </summary>
+    private bool ResolveRoomCodeInput() {
+        if (roomCodeInput != null) return true;
+        TMP_InputField found = null;
+        int count = 0;
+
+        // まず、この画面に割り当てられたメニュー内を検索する。
+        // true指定で非表示の子オブジェクトも取得する。
+        if (menuPanel != null) {
+            foreach (var input in menuPanel.GetComponentsInChildren<TMP_InputField>(true)) {
+                if (input.gameObject.name != roomCodeInputObjectName) continue;
+                found = input;
+                count++;
+            }
+        }
+
+        // メニュー外に配置されている場合は、ロード済みシーンを検索する。
+        // Resourcesで取得したPrefab等のアセットはscene判定で除外する。
+        if (count == 0) {
+            foreach (var input in Resources.FindObjectsOfTypeAll<TMP_InputField>()) {
+                if (!input.gameObject.scene.IsValid() || !input.gameObject.scene.isLoaded ||
+                    input.gameObject.name != roomCodeInputObjectName) continue;
+                found = input;
+                count++;
+            }
+        }
+
+        // 同名が複数あるときは、別画面の番号を誤って使わないよう中止する。
+        if (count != 1) {
+            string message = count == 0
+                ? $"入力欄「{roomCodeInputObjectName}」が見つかりません"
+                : $"入力欄「{roomCodeInputObjectName}」が複数あります。名前を一意にしてください";
+            SetStatus(message);
+            Debug.LogError("[ROOM] " + message, this);
+            return false;
+        }
+        roomCodeInput = found;
+        return true;
+    }
+
     private void StartRoomMatch(bool create) {
         // ランダムマッチ中・接続中に別の募集を並行開始しない。
         if (state != ScreenState.Menu || randomMatching || roomMatching ||
             NetworkClient.active || NetworkServer.active) return;
-        string code = roomCodeInput != null ? roomCodeInput.text : "";
+        if (!ResolveRoomCodeInput()) return;
+        string code = roomCodeInput.text;
         if (!RoomDiscovery.IsValidCode(code)) {
             SetStatus("部屋番号を半角数字4桁で入力してください（例：0001）");
             return;

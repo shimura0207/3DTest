@@ -113,8 +113,11 @@ public sealed class RoomDiscovery : MonoBehaviour {
             if (sender != null && manager != null && Time.unscaledTime >= nextSend) {
                 nextSend = Time.unscaledTime + 0.5f;
                 var room = new Advertisement {
-                    game = Game, version = 1, code = advertisedCode,
-                    session = manager.RoomSessionId, port = manager.RoomGamePort,
+                    game = Game,
+                    version = 1,
+                    code = advertisedCode,
+                    session = manager.RoomSessionId,
+                    port = manager.RoomGamePort,
                     full = manager.HasRemoteParticipant || manager.ServerMatchStarted
                 };
                 byte[] bytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(room));
