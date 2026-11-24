@@ -25,26 +25,64 @@ public class BattleSettingsMenu : MenuWindowBase {
     /// </summary>
     /// <returns></returns>
     public async UniTask Open(int id) {
-        // 基底クラスの処理でメニューを表示する。
+
         await base.Open();
 
-        // 先攻情報が決定していない場合はバトルを開始しない。
+        // 先攻情報の確認
         if (!FirstPlayerManager.isFirstPlayerDecided) {
-            // メニューを閉じて処理を終了する。
+
+            UnityEngine.Debug.LogError(
+                "[BattleSettingsMenu] 先攻情報が未決定です。"
+            );
+
             await Close();
             return;
         }
 
-        // 決定済みの先攻プレイヤーを取得する。
-        PlayerType firstPlayer = FirstPlayerManager.firstPlayer;
+        PlayerType firstPlayer =
+            FirstPlayerManager.firstPlayer;
 
-        // バトルで使用するデッキを取得する。
+        if (firstPlayer != PlayerType.Self &&
+            firstPlayer != PlayerType.Opponent) {
+
+            UnityEngine.Debug.LogError(
+                $"[BattleSettingsMenu] 不正な先攻：{firstPlayer}"
+            );
+
+            await Close();
+            return;
+        }
+
+        // デッキ取得
         List<int> useDeckList = GetUseDeckList(id);
 
-        // 先攻情報とデッキを渡してバトルを初期化する。
-        await BattleSystemManager.instance.BattleSetup(useDeckList, firstPlayer);
+        // デッキが存在するか確認
+        if (useDeckList == null || useDeckList.Count == 0) {
 
-        // メニューを閉じる。
+            UnityEngine.Debug.LogError(
+                "[BattleSettingsMenu] デッキが存在しません。"
+            );
+
+            await Close();
+            return;
+        }
+
+        UnityEngine.Debug.Log(
+            $"[BattleSettingsMenu] BattleSetup開始" +
+            $" 先攻={firstPlayer}" +
+            $" デッキ枚数={useDeckList.Count}"
+        );
+
+        // バトル初期化
+        await BattleSystemManager.instance.BattleSetup(
+            useDeckList,
+            firstPlayer
+        );
+
+        UnityEngine.Debug.Log(
+            "[BattleSettingsMenu] BattleSetup完了"
+        );
+
         await Close();
     }
 
