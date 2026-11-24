@@ -498,6 +498,7 @@ public class BattleSystemManager : MonoBehaviour {
 
         // カード使用
         CardObject obj = CardObjectManager.instance.GetUseCardObject(objectID);
+        if (!obj) return;
         switch (obj.cardType) {
             case CardType.Monster:
                 UniTask task = SummonMonster(PlayerType.Opponent, obj, laneID);

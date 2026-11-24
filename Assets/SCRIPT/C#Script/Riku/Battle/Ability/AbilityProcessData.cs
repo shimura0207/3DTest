@@ -545,11 +545,17 @@ public class AbilityProcessData {
                     if (!obj.Value) continue;
                     fieldMonster.Add(obj.Value);
                 }
-                // 抽選
-                int randIndex = UnityEngine.Random.Range(0, fieldMonster.Count);
-                monster = fieldMonster[randIndex];
+                // フィールドのモンスターがいないなら抽選はしない
+                if (fieldMonster.Count > 0) {
+                    // 抽選
+                    int randIndex = UnityEngine.Random.Range(0, fieldMonster.Count);
+                    monster = fieldMonster[randIndex];
+                }
                 // 相手へ抽選結果を送信
-                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, monster.objectID);
+                int objectID = -1;
+                if (monster)
+                    objectID = monster.objectID;
+                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, objectID);
                 CustomNetworkManager.instance.SendStringToOpponent(pack);
                 break;
             case PlayerType.Opponent:
@@ -578,10 +584,14 @@ public class AbilityProcessData {
             case PlayerType.Self:
                 // レーン選択
                 FieldLane lane = await MenuWindowManager.Instance.PlacedLaneMenuOpen(targetPlayer);
-                // 選択したレーンのモンスター取得
-                monster = CardObjectManager.instance.fieldObjectList[targetPlayer][lane];
+                int objectID = -1;
+                if (lane != FieldLane.None) {
+                    // 選択したレーンのモンスター取得
+                    monster = CardObjectManager.instance.fieldObjectList[targetPlayer][lane];
+                    objectID = monster.objectID;
+                }
                 // 相手へ選択結果を送信
-                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, monster.objectID);
+                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, objectID);
                 CustomNetworkManager.instance.SendStringToOpponent(pack);
                 break;
             case PlayerType.Opponent:
@@ -607,12 +617,17 @@ public class AbilityProcessData {
         CardObject card = null;
         switch (player) {
             case PlayerType.Self:
-                List<CardObject> fieldMonster = CardObjectManager.instance.GetHandCardList(player);
-                // 抽選
-                int randIndex = UnityEngine.Random.Range(0, fieldMonster.Count);
-                card = fieldMonster[randIndex];
+                List<CardObject> handCards = CardObjectManager.instance.GetHandCardList(player);
+                // 手札がないなら抽選はしない
+                int objectID = -1;
+                if (handCards.Count > 0) {
+                    // 抽選
+                    int randIndex = UnityEngine.Random.Range(0, handCards.Count);
+                    card = handCards[randIndex];
+                    objectID = card.objectID;
+                }
                 // 相手へ抽選結果を送信
-                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, card.objectID);
+                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, objectID);
                 CustomNetworkManager.instance.SendStringToOpponent(pack);
                 break;
             case PlayerType.Opponent:
@@ -638,35 +653,41 @@ public class AbilityProcessData {
         CardObject card = null;
         switch (player) {
             case PlayerType.Self:
-                while (!card) {
-                    // マウスカーソルのスクリーン座標取得
-                    Vector3 mousePos = Input.mousePosition;
-                    // スクリーン座標からレイを取得
-                    Ray ray = Camera.main.ScreenPointToRay(mousePos);
-                    // カードオブジェクトレイヤー取得
-                    int cardLayer = LayerMask.GetMask("CardObject");
-                    // レイキャストでカードを選ぶ
-                    if (Physics.Raycast(
-                        ray, out RaycastHit hit,
-                        GameConst.RAY_RANGE_MAX, cardLayer)
-                        ) {
-                        if (!hit.collider) continue;
-                        // 選んだオブジェクトを保存
-                        GameObject selectObject = hit.collider.gameObject;
-                        // オブジェクトのクラス取得
-                        card = selectObject.GetComponent<CardObject>();
-                        // 相手のカードか手札以外のカードなら選択リセット
-                        if (card.playerType != PlayerType.Self ||
-                            card.handID >= 0) {
-                            selectObject = null;
-                            card = null;
+                List<CardObject> handCards = CardObjectManager.instance.GetHandCardList(player);
+                // 手札がないなら選択はしない
+                int objectID = -1;
+                if (handCards.Count > 0) {
+                    while (!card) {
+                        // マウスカーソルのスクリーン座標取得
+                        Vector3 mousePos = Input.mousePosition;
+                        // スクリーン座標からレイを取得
+                        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+                        // カードオブジェクトレイヤー取得
+                        int cardLayer = LayerMask.GetMask("CardObject");
+                        // レイキャストでカードを選ぶ
+                        if (Physics.Raycast(
+                            ray, out RaycastHit hit,
+                            GameConst.RAY_RANGE_MAX, cardLayer)
+                            ) {
+                            if (!hit.collider) continue;
+                            // 選んだオブジェクトを保存
+                            GameObject selectObject = hit.collider.gameObject;
+                            // オブジェクトのクラス取得
+                            card = selectObject.GetComponent<CardObject>();
+                            // 相手のカードか手札以外のカードなら選択リセット
+                            if (card.playerType != PlayerType.Self ||
+                                card.handID >= 0) {
+                                selectObject = null;
+                                card = null;
+                            }
                         }
+                        // 次のフレームまで待つ
+                        await UniTask.Yield();
                     }
-                    // 次のフレームまで待つ
-                    await UniTask.Yield();
+                    objectID = card.objectID;
                 }
                 // 相手へ選択結果を送信
-                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, card.objectID);
+                var pack = NetworkValueConverter.Pack(NetworkUseID.AbilityTargetCard, objectID);
                 CustomNetworkManager.instance.SendStringToOpponent(pack);
                 break;
             case PlayerType.Opponent:
