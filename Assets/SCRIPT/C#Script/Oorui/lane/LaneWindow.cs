@@ -38,13 +38,22 @@ public class LaneWindow : MenuWindowBase {
     // レーンボタン一覧
     private Button[] laneButtonList;
 
-    // レーン一覧
+    // 自分側のレーン一覧
     private readonly FieldLane[] fieldLaneList = {
     FieldLane.Lane1,
     FieldLane.Lane2,
     FieldLane.Lane3,
     FieldLane.Lane4,
     FieldLane.Lane5
+};
+
+    // 相手側のレーン一覧
+    private readonly FieldLane[] opponentFieldLaneList = {
+    FieldLane.Lane5,
+    FieldLane.Lane4,
+    FieldLane.Lane3,
+    FieldLane.Lane2,
+    FieldLane.Lane1
 };
     /// <summary>
     /// 初期化処理
@@ -79,11 +88,11 @@ public class LaneWindow : MenuWindowBase {
         Lane5Button.onClick.AddListener(OnClickLane5Button);
 
         // 敵側のボタンにもイベントを登録
-        Lane1Button_Opponent.onClick.AddListener(OnClickLane1Button);
-        Lane2Button_Opponent.onClick.AddListener(OnClickLane2Button);
+        Lane1Button_Opponent.onClick.AddListener(OnClickLane5Button);
+        Lane2Button_Opponent.onClick.AddListener(OnClickLane4Button);
         Lane3Button_Opponent.onClick.AddListener(OnClickLane3Button);
-        Lane4Button_Opponent.onClick.AddListener(OnClickLane4Button);
-        Lane5Button_Opponent.onClick.AddListener(OnClickLane5Button);
+        Lane4Button_Opponent.onClick.AddListener(OnClickLane2Button);
+        Lane5Button_Opponent.onClick.AddListener(OnClickLane1Button);
     }
 
     /// <summary>
@@ -106,36 +115,38 @@ public class LaneWindow : MenuWindowBase {
     /// レーンボタンの表示状態を設定
     /// </summary>
     private void Setup(PlayerType playerType, bool isPlaced) {
-
         // CardObjectManagerが存在しなければ終了
-        if (CardObjectManager.instance == null) {
-            Debug.LogError("CardObjectManagerが存在しません。");
-            return;
-        }
+        if (CardObjectManager.instance == null) return;
 
         // 対象プレイヤーのフィールド情報を取得
         var fieldObjectList =
             CardObjectManager.instance.fieldObjectList[playerType];
 
-        // プレイヤーに応じて使用するボタンを切り替える
-        laneButtonList = playerType == PlayerType.Self
+        // プレイヤーに応じて使用するボタンとレーン一覧を切り替える
+        bool isSelf = playerType == PlayerType.Self;
+
+        laneButtonList = isSelf
             ? selfLaneButtonList
             : opponentLaneButtonList;
 
+        FieldLane[] targetLaneList = isSelf
+            ? fieldLaneList
+            : opponentFieldLaneList;
+
         // 自分側・敵側のボタン表示を切り替える
         foreach (Button button in selfLaneButtonList) {
-            button.gameObject.SetActive(playerType == PlayerType.Self);
+            button.gameObject.SetActive(isSelf);
         }
 
         foreach (Button button in opponentLaneButtonList) {
-            button.gameObject.SetActive(playerType == PlayerType.Opponent);
+            button.gameObject.SetActive(!isSelf);
         }
 
         // 各レーンの表示状態を設定
         for (int i = 0; i < laneButtonList.Length; i++) {
 
-            // 配列から対応するレーンを取得
-            FieldLane lane = fieldLaneList[i];
+            // 対応するレーンを取得
+            FieldLane lane = targetLaneList[i];
 
             // カードが存在するか確認
             bool hasCard = fieldObjectList[lane] != null;
