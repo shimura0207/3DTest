@@ -44,7 +44,7 @@ public struct OpponentValueMessage : NetworkMessage {
 /// このコンポーネントは、画面切り替えで非表示になる
 /// パネルの子には置かないこと。
 /// </summary>
-public class CustomNetworkManager : NetworkManager {
+public partial class CustomNetworkManager : NetworkManager {
     // ============================================================
     // Inspector設定
     // ============================================================
@@ -188,7 +188,11 @@ public class CustomNetworkManager : NetworkManager {
     private ushort? configuredHostPort;
     public bool IsRoomBroadcasting => broadcaster != null && broadcaster.IsBroadcasting;
 
-    public bool BeginHost() {
+    public bool BeginHost() => BeginHostCore(false, "");
+
+    public bool BeginRoomHost(string code) => RoomDiscovery.IsValidCode(code) && BeginHostCore(true, code);
+
+    private bool BeginHostCore(bool privateRoom, string code) {
         if (!PrepareNetwork())
             return false;
 
@@ -210,6 +214,9 @@ public class CustomNetworkManager : NetworkManager {
             if (!configuredHostPort.HasValue) configuredHostPort = hostTransport.Port;
             hostTransport.Port = configuredHostPort.Value;
         }
+        privateRoomMode = privateRoom;
+        roomCode = code;
+        roomSession = Guid.NewGuid().ToString("N");
         stopping = false;
 
         try {
@@ -233,7 +240,13 @@ public class CustomNetworkManager : NetworkManager {
     /// trueは接続処理を開始できたことを示す。
     /// 接続成功はOnClientConnectで通知される。
     /// </summary>
-    public bool BeginClient(string ip, int port) {
+    public bool BeginClient(string ip, int port) => BeginClientCore(ip, port, false, "", "");
+
+    public bool BeginRoomClient(string ip, int port, string code, string session) =>
+        RoomDiscovery.IsValidCode(code) && !string.IsNullOrEmpty(session) &&
+        BeginClientCore(ip, port, true, code, session);
+
+    private bool BeginClientCore(string ip, int port, bool privateRoom, string code, string session) {
         if (string.IsNullOrWhiteSpace(ip)) {
             Debug.LogError("[Network] 接続先IPが空です。", this);
             return false;
@@ -250,6 +263,10 @@ public class CustomNetworkManager : NetworkManager {
             return false;
 
         stopping = false;
+
+        privateRoomMode = privateRoom;
+        roomCode = code;
+        roomSession = session;
 
         // PrepareNetworkでKcpTransportであることを確認済み
         KcpTransport kcp = (KcpTransport)transport;
@@ -328,6 +345,9 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnStartServer() {
         base.OnStartServer();
+        admittedPlayers.Clear();
+        pendingReady.Clear();
+        NetworkServer.RegisterHandler<RoomAdmissionRequest>(OnRoomAdmission);
 
         stopping = false;
         readyPlayers.Clear();
@@ -348,7 +368,7 @@ public class CustomNetworkManager : NetworkManager {
 
 
         // ホスト起動後に部屋情報を配信する
-        if (broadcaster != null && transport is KcpTransport kcp) {
+        if (!privateRoomMode && broadcaster != null && transport is KcpTransport kcp) {
             broadcaster.SetGamePlaying(false);
 
             bool started = broadcaster.StartSendIP(kcp.Port);
@@ -394,6 +414,13 @@ public class CustomNetworkManager : NetworkManager {
     /// このPCのサーバー接続が完了したとき。
     /// </summary>
     public override void OnClientConnect() {
+        // Readyより先に参加条件を送信。サーバー側でもReadyを保留して照合する。
+        NetworkClient.Send(new RoomAdmissionRequest {
+            version = 1,
+            privateRoom = privateRoomMode,
+            code = roomCode,
+            session = roomSession
+        });
         base.OnClientConnect();
 
         // Mirrorの基本処理ですでにReadyになっていれば重複送信しない
@@ -422,6 +449,7 @@ public class CustomNetworkManager : NetworkManager {
         }
 
         base.OnServerConnect(conn);
+        StartCoroutine(AdmissionTimeout(conn));
 
         Debug.Log(
             $"[Network] 接続受付: ID={conn.connectionId}",
@@ -434,6 +462,11 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnServerReady(
         NetworkConnectionToClient conn) {
+        // 照合前はReadyにしない。旧クライアントや番号違いで開始させない。
+        if (!admittedPlayers.Contains(conn.connectionId)) {
+            pendingReady.Add(conn.connectionId);
+            return;
+        }
         base.OnServerReady(conn);
 
         if (stopping)
@@ -458,7 +491,7 @@ public class CustomNetworkManager : NetworkManager {
 
             // ホスト自身を含む両クライアントへ通知
             SendRoomState(true, "対戦開始");
-            
+
         }
         else if (!matchStarted) {
             SendRoomState(
@@ -637,6 +670,8 @@ public class CustomNetworkManager : NetworkManager {
     /// </summary>
     public override void OnServerDisconnect(
         NetworkConnectionToClient conn) {
+        admittedPlayers.Remove(conn.connectionId);
+        pendingReady.Remove(conn.connectionId);
         bool wasReady = readyPlayers.Remove(conn.connectionId);
 
         base.OnServerDisconnect(conn);
@@ -690,6 +725,9 @@ public class CustomNetworkManager : NetworkManager {
         if (broadcaster != null)
             broadcaster.StopBroadcast();
 
+        admittedPlayers.Clear();
+        pendingReady.Clear();
+        NetworkServer.UnregisterHandler<RoomAdmissionRequest>();
         NetworkServer.UnregisterHandler<SendValueRequest>();
         NetworkServer.UnregisterHandler<SendBoolRequest>();
         NetworkServer.UnregisterHandler<SendStringRequest>();

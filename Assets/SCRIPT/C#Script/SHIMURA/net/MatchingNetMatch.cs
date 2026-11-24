@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MatchingNetMatch : MonoBehaviour {
+public partial class MatchingNetMatch : MonoBehaviour {
     public static MatchingNetMatch instance;
 
     [Header("管理コンポーネント")]
@@ -85,6 +85,7 @@ public class MatchingNetMatch : MonoBehaviour {
     }
 
     private void Update() {
+        UpdateRoomMatch();
         if (!randomMatching && state == ScreenState.Connecting &&
             Time.unscaledTime >= connectionDeadline) {
             LeaveRoom("接続がタイムアウトしました");
@@ -218,6 +219,7 @@ public class MatchingNetMatch : MonoBehaviour {
             randomMatching = false;
             failedRooms.Clear();
             receiver?.StopReceiveIP();
+            roomDiscovery?.StopDiscovery();
             ShowScreen(ScreenState.Battle, message);
 
             if (!battleRunning) {
@@ -270,6 +272,7 @@ public class MatchingNetMatch : MonoBehaviour {
     }
 
     public void StopSearch() {
+        StopRoomDiscovery();
         randomMatching = false;
         failedRooms.Clear();
         if (searchCoroutine != null) {
@@ -290,6 +293,7 @@ public class MatchingNetMatch : MonoBehaviour {
     }
 
     private void ResetRole() {
+        activeRoomCode = "";
         isHost = false;
         isClient = false;
         ipAddress = "";
@@ -317,6 +321,9 @@ public class MatchingNetMatch : MonoBehaviour {
     }
 
     private void SetStatus(string message) {
+        if (!string.IsNullOrEmpty(activeRoomCode) && state != ScreenState.Battle)
+            message = "ROOM：" + activeRoomCode + "\n" + message;
+        RoomMatchStatus = message;
         if (statusText != null)
             statusText.text = message;
     }
