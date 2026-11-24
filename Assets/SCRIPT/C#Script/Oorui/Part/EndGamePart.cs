@@ -156,13 +156,8 @@ public class EndGamePart : PartBase {
         // 勝敗に応じた画像を表示
         BattleResult(battleResult);
 
-        // キー入力またはクリックされるまで待機
-        await UniTask.WaitUntil(() =>
-            Input.anyKeyDown ||
-            Input.GetMouseButtonDown(0) ||
-            Input.GetMouseButtonDown(1) ||
-            Input.GetMouseButtonDown(2)
-        );
+        // 数秒待つ
+        await UniTask.Delay(1500);
 
         // Canvas1を非表示にする
         resultCanvas.SetActive(false);
