@@ -2,6 +2,7 @@
  * @file    CardInfo.cs
  * @autor   Kuu
  */
+using Cysharp.Threading.Tasks;
 using Mirror.Examples.CCU;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +19,15 @@ public class CardInfoText : MonoBehaviour {
     [SerializeField] private Canvas detaileText = null;
 
     [SerializeField] private Canvas status = null;
+
+    // ログウィンドウ
+    [SerializeField] private Canvas logWindow = null;
+
+    // ログの名前
+    [SerializeField] private TMP_Text logName = null;
+
+    // ログの効果
+    [SerializeField] private TMP_Text logAbility = null;
 
     // 名前テキスト
     [SerializeField] private TMP_Text nameText = null;
@@ -49,6 +59,8 @@ public class CardInfoText : MonoBehaviour {
     // 対応役アイコン
     [SerializeField] private DisplayKoyaku displayKoyaku = null;
 
+
+
     // RG:ISUKA Lv.2の名前
     private const string ISUKA_LV2_NAME = "RG:ISUKA LV2";
     // RG:REACHE Lv.2の名前
@@ -79,6 +91,9 @@ public class CardInfoText : MonoBehaviour {
 
     // ウィンドウに触れているか判定を保存する用
     private bool touchWindow = false;
+
+    // ログウィンドウを表示する秒数
+    private const int DISPLAY_TIME = 3;
 
 
     // Start is called before the first frame update
@@ -311,5 +326,32 @@ public class CardInfoText : MonoBehaviour {
                 break;
         }
         return suportRole;
+    }
+
+    /// <summary>
+    /// ログを表示する
+    /// </summary>
+    /// <returns></returns>
+    public void DisplayLog(int cardID) {
+        // IDがなければ表示しない
+        if (cardID <= 0) {
+            return;
+        }
+
+        // IDからステータスを取得
+        var logData = CardDataMasterUtility.GetCardMaster(cardID);
+
+        // 名前と効果をそれぞれ入れる
+        logName.text = logData.name;
+        logAbility.text = logData.ability;
+        // 表示する
+        logWindow.enabled = true;
+    }
+
+    /// <summary>
+    /// ログを非表示にする
+    /// </summary>
+    public void HideLog() {
+        logWindow.enabled = false;
     }
 }
