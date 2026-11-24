@@ -24,6 +24,9 @@ public class AbilityManager : MonoBehaviour {
     // 発動待機効果
     private Queue<Func<UniTask>> abilityQueue = null;
 
+    // 発動待機カードID
+    private Queue<int> cardIDQueue = null;
+
     // 効果発動中
     public bool isAbilityExecute { get; private set; } = false;
 
@@ -36,6 +39,7 @@ public class AbilityManager : MonoBehaviour {
         abilityProcessData.Initialize();
 
         abilityQueue = new Queue<Func<UniTask>>();
+        cardIDQueue = new Queue<int>();
     }
 
     /// <summary>
@@ -51,11 +55,18 @@ public class AbilityManager : MonoBehaviour {
         while (true) {
             if (abilityQueue.Count <= 0) break;
             var ability = abilityQueue.Dequeue();
-            if (ability == null) break; 
+            var cardID = cardIDQueue.Dequeue();
+            if (ability == null) break;
+
+            // 発動する効果を表示
+            UIManager.instance.DisplayLogWindow(cardID);
 
             // 効果発動
             await ability();
-            
+
+            // 効果表示の終了
+            UIManager.instance.HideLogWindow();
+
             // 次のフレームまで待機
             await UniTask.Yield();
         }
@@ -78,6 +89,7 @@ public class AbilityManager : MonoBehaviour {
         if (ability.abilityType != AbilityType.Normal) return;
         func = GetNormalAbility(card, ability.abilityTarget, ability.abilityProcess, ability.abilityValue);
         abilityQueue.Enqueue(func);
+        cardIDQueue.Enqueue(card.cardID);
     }
 
     /// <summary>
