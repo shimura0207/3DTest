@@ -24,6 +24,9 @@ public class AbilityManager : MonoBehaviour {
     // 発動待機効果
     private Queue<Func<UniTask>> abilityQueue = null;
 
+    // 効果発動中
+    public bool isAbilityExecute { get; private set; } = false;
+
     /// <summary>
     /// 初期化処理
     /// </summary>
@@ -40,6 +43,7 @@ public class AbilityManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public async UniTask AbilityExecute() {
+        isAbilityExecute = true;
         // ボタンの無効化
         BattleSystemManager.instance.SetPachisuroGoActive(false);
         BattleSystemManager.instance.SetTurnEndActive(false);
@@ -55,8 +59,9 @@ public class AbilityManager : MonoBehaviour {
             // 次のフレームまで待機
             await UniTask.Yield();
         }
+        isAbilityExecute = false;
         // ボタンの有効化
-        if (BattleSystemManager.instance.turnPlayer == PlayerType.Self ||
+        if (BattleSystemManager.instance.turnPlayer == PlayerType.Self &&
             BattleSystemManager.instance.currentPhase == BattlePhase.MainPhase) {
             BattleSystemManager.instance.SetTurnEndActive(true);
             BattleSystemManager.instance.SetPachisuroGoActive(true);
