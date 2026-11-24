@@ -53,7 +53,7 @@ MonoBehaviour:
   - soundName: E_TURN
     clip: {fileID: 8300000, guid: 84bba2e3b8f8dc6459d241bb71d3bf66, type: 3}
     volume: 1
-  - soundName: P_TRUN
+  - soundName: P_TURN
     clip: {fileID: 8300000, guid: fd544c6b0dc20f648870fc5e3c118510, type: 3}
     volume: 1
   - soundName: M_SUCSESS
