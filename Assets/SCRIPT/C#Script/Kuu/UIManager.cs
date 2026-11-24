@@ -205,5 +205,29 @@ public class UIManager : SystemObject {
         // バナーを表示する
         await displayBanner.DisplayBanner(player);
     }
+
+    /// <summary>
+    /// ログを表示する
+    /// </summary>
+    /// <param name="cardID"></param>
+    public void DisplayLogWindow(int cardID) {
+        //呼ぶスクリプト
+        CardInfoText cardInfoText;
+        GameObject simpleText = GameObject.Find("SimpleText");
+        //付いているスクリプトを取得
+        cardInfoText = simpleText.GetComponent<CardInfoText>();
+        // バナーを表示する
+        cardInfoText.DisplayLog(cardID);
+    }
+
+    public void HideLogWindow() {
+        //呼ぶスクリプト
+        CardInfoText cardInfoText;
+        GameObject simpleText = GameObject.Find("SimpleText");
+        //付いているスクリプトを取得
+        cardInfoText = simpleText.GetComponent<CardInfoText>();
+        // バナーを表示する
+        cardInfoText.HideLog();
+    }
 }
 
