@@ -128,7 +128,7 @@ MonoBehaviour:
       ATK: 6
       HP: 10
       CardType: 0
-      ability: "\u30FB\u30A2\u30B9\u30EA\u30FC\u30C8"
+      ability: "\u30FB\u3053\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u75B2\u52B4\u3057\u306A\u3044"
       PlayID: 0
     - cardID: 109
       name: RG:LANK
@@ -145,7 +145,7 @@ MonoBehaviour:
       ability: "\u30FB\u30BF\u30FC\u30F3\u958B\u59CB\u6642\u3001\u30AB\u30FC\u30C9\u30921\u679A\u5F15\u304F\u3002"
       PlayID: 0
     - cardID: 110
-      name: Raymond Blank
+      name: Professor:Raymond
       rarityID: 3
       themeID: 1
       suportRoleID: 1
@@ -215,7 +215,7 @@ MonoBehaviour:
       ability: "\u30FB\u76F8\u624B\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u30921\u4F53\u9078\u3076\u3002\u305D\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u306F\u6B21\u306E\u76F8\u624B\u306E\u30BF\u30FC\u30F3\u306B\u653B\u6483\u3067\u304D\u306A\u3044\u3002\n\u30FB\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7\u52B9\u679C\u3092\u6301\u3064\u300CRG\u300D\uFF11\u4F53\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\u30EC\u30D9\u30EB\u30A2\u30C3\u30D7\u3002"
       PlayID: 1
     - cardID: 115
-      name: "\u30D9\u30EB\u30AE\u30A2"
+      name: "BELL\u30FBGEAR"
       rarityID: 3
       themeID: 1
       suportRoleID: 0
@@ -229,7 +229,7 @@ MonoBehaviour:
       ability: "\u30FB\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u306EATK\u30922\u4E0A\u6607\u3002"
       PlayID: 0
     - cardID: 116
-      name: "\u30EA\u30D7\u30EC\u30A4\u30A6\u30A3\u30F3\u30B0"
+      name: "REPLAY\u30FBWING"
       rarityID: 3
       themeID: 1
       suportRoleID: 0
@@ -243,7 +243,7 @@ MonoBehaviour:
       ability: "\u30FB\u76F8\u624B\u306E\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u306B3\u30C0\u30E1\u30FC\u30B8\u3002"
       PlayID: 0
     - cardID: 117
-      name: "AIP\u3000\u03C7=S"
+      name: "AIP:\u03C7=S"
       rarityID: 2
       themeID: 1
       suportRoleID: 0
@@ -257,7 +257,7 @@ MonoBehaviour:
       ability: "\u30FB\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u306EHP\u30923\u56DE\u5FA9\u3002"
       PlayID: 0
     - cardID: 118
-      name: "AIP\u3000CH=RAY"
+      name: AIP:CH=RAY
       rarityID: 2
       themeID: 1
       suportRoleID: 0
@@ -271,7 +271,7 @@ MonoBehaviour:
       ability: "\u30FB\u624B\u672D\u3092\u3059\u3079\u3066\u6368\u3066\u3066\u3001\u6575\u30E2\u30F3\u30B9\u30BF\u30FC\u3092\uFF11\u4F53\u9078\u3093\u3067\u624B\u672D\u306B\u623B\u3059\u3002"
       PlayID: 0
     - cardID: 119
-      name: "AIP\u3000VAIL=\u0394"
+      name: "AIP:VAIL=\u0394"
       rarityID: 2
       themeID: 1
       suportRoleID: 0
@@ -285,7 +285,7 @@ MonoBehaviour:
       ability: "\u30FB\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC1\u4F53\u3092\u7834\u58CA\u3059\u308B\u3002\u81EA\u5206\u306E\u30E2\u30F3\u30B9\u30BF\u30FC\u3059\u3079\u3066\u306EHP\u30922\u56DE\u5FA9\u3002"
       PlayID: 0
     - cardID: 120
-      name: "AIP\u3000RERAY=0"
+      name: AIP:RERAY=0
       rarityID: 2
       themeID: 1
       suportRoleID: 0
@@ -313,7 +313,7 @@ MonoBehaviour:
       ability: "\u30FB\u30AB\u30FC\u30C9\u30922\u679A\u5F15\u304F\u3002"
       PlayID: 0
     - cardID: 122
-      name: "PERFECT\u3000STOP"
+      name: "PERFECT\u30FBSTOP"
       rarityID: 2
       themeID: 1
       suportRoleID: 0
