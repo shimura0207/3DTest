@@ -117,18 +117,82 @@ public class MainGamePart : PartBase {
     /// マッチングのExecute処理
     /// </summary>
     /// <returns></returns>
+    /// <summary>
+    /// マッチング対戦の実行処理
+    /// </summary>
     private async UniTask MatchingBattleExecute() {
-        // バトル開始前の準備を行う
-        await MenuWindowManager.Instance.BattleSettingsMenuOpen(deckID);
+
+        Debug.Log("[BATTLE] 対戦準備開始");
+
+        // バトル開始前の準備
+        await MenuWindowManager.Instance
+            .BattleSettingsMenuOpen(deckID);
+
+        Debug.Log(
+            $"[BATTLE] 準備終了時の状態：" +
+            $"{battleSystemManager.battleState}"
+        );
+
+        // バトルが正常に開始されなかった場合
+        if (battleSystemManager.battleState
+            != BattleState.InProgress) {
+
+            Debug.LogError(
+                "[BATTLE] 対戦の初期化に失敗しました。" +
+                $" State={battleSystemManager.battleState}" +
+                $" FirstPlayerDecided=" +
+                $"{FirstPlayerManager.isFirstPlayerDecided}"
+            );
+
+            // 対戦情報を片付ける
+            battleSystemManager.BattleTeardown();
+
+            // 通信を終了する
+            MatchingNetMatch.instance?.OnLeaveRoomButton();
+
+            // リザルトではなくメインメニューへ戻す
+            await PartManager.Instance.TransitionPart(
+                GamePart.MainMenu
+            );
+
+            return;
+        }
+
+        Debug.Log("[BATTLE] 対戦開始成功");
+
         // UIの進行処理
         UniTask task = UIExecute();
+
         // バトルの進行処理
         await BattleExecute();
-        // バトル終了後の結果を取得する
+
+        // バトル終了後の結果を取得
         result = battleSystemManager.battleState;
-        BattleSystemManager.instance.BattleTeardown();
-        // リザルトパートに遷移する
-        await PartManager.Instance.TransitionPart(GamePart.EndGame, result);
+
+        // バトル情報を片付ける
+        battleSystemManager.BattleTeardown();
+
+        // 正常な勝敗の場合のみリザルトへ移行
+        if (result == BattleState.Win ||
+            result == BattleState.Lose) {
+
+            await PartManager.Instance.TransitionPart(
+                GamePart.EndGame,
+                result
+            );
+        }
+        else {
+
+            Debug.LogError(
+                $"[BATTLE] 不正な終了状態：{result}"
+            );
+
+            MatchingNetMatch.instance?.OnLeaveRoomButton();
+
+            await PartManager.Instance.TransitionPart(
+                GamePart.MainMenu
+            );
+        }
     }
 
     /// <summary>
